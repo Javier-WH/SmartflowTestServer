@@ -88,14 +88,14 @@ const SignIn = () => {
                     ¿Olvidaste tu contraseña?
                 </Link>
 
-                <div className="text-center">
-                    <span>
-                        ¿No tienes una cuenta?{' '}
-                        <Link to="/auth/signup" className="text-center underline">
-                            Regístrate
-                        </Link>
-                    </span>
-                </div>
+                {/* <div className="text-center"> */}
+                {/*     <span> */}
+                {/*         ¿No tienes una cuenta?{' '} */}
+                {/*         <Link to="/auth/signup" className="text-center underline"> */}
+                {/*             Regístrate */}
+                {/*         </Link> */}
+                {/*     </span> */}
+                {/* </div> */}
             </div>
         </form>
     );
