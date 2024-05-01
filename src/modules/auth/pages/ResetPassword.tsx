@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import AlertMessage from '../components/ErrorMessage';
 
@@ -9,7 +9,6 @@ import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import useAuth from '../hooks/useAuth';
 
 const ResetPassword = () => {
-    const location = useLocation();
     const navigate = useNavigate();
 
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
