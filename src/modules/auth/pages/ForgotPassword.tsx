@@ -33,9 +33,12 @@ const ForgotPassword = () => {
             setLoading(true);
             const response = await forgotPassword({ email });
 
-            if (response) {
-                setSuccessMessage('Se ha enviado un correo electrónico con instrucciones para resetear tu contraseña');
+            if (response.error) {
+                setError(response.error.message);
+                return;
             }
+
+            setSuccessMessage('Se ha enviado un correo electrónico con instrucciones para resetear tu contraseña');
         } catch (error: unknown) {
             if (error instanceof Error) {
                 setError(error?.message);

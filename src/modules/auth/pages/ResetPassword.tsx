@@ -18,7 +18,7 @@ const ResetPassword = () => {
 
     const { resetPassword } = useAuth();
 
-    const token = new URLSearchParams(location.search).get('token');
+    // const token = new URLSearchParams(location.search).get('token');
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -38,18 +38,21 @@ const ResetPassword = () => {
             return;
         }
 
-        if (!token) {
-            setError('Token inválido o expirado');
-            return;
-        }
+        // if (!token) {
+        //     setError('Token inválido o expirado');
+        //     return;
+        // }
 
         try {
             setLoading(true);
-            const response = await resetPassword({ password, token });
+            const response = await resetPassword({ password });
 
-            if (response) {
-                navigate('/auth/signin');
+            if (response.error) {
+                setError(response.error.message);
+                return;
             }
+
+            navigate('/');
         } catch (error: unknown) {
             if (error instanceof Error) {
                 setError(error?.message);
@@ -61,21 +64,21 @@ const ResetPassword = () => {
         }
     }
 
-    if (!token) {
-        return (
-            <div className="flex justify-center items-center h-screen p-4">
-                <div className="flex flex-col gap-5 border-1 border-gray-200 rounded-lg p-5 w-full max-w-md">
-                    <h1 className="text-center text-xl">
-                        Este enlace de restablecimiento de contraseña expiró o no es válido
-                    </h1>
-
-                    <Link to="/forgot-password" className="text-center underline">
-                        Solicitar un nuevo enlace
-                    </Link>
-                </div>
-            </div>
-        );
-    }
+    // if (!token) {
+    //     return (
+    //         <div className="flex justify-center items-center h-screen p-4">
+    //             <div className="flex flex-col gap-5 border-1 border-gray-200 rounded-lg p-5 w-full max-w-md">
+    //                 <h1 className="text-center text-xl">
+    //                     Este enlace de restablecimiento de contraseña expiró o no es válido
+    //                 </h1>
+    //
+    //                 <Link to="/forgot-password" className="text-center underline">
+    //                     Solicitar un nuevo enlace
+    //                 </Link>
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
     return (
         <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen p-4">
@@ -121,7 +124,7 @@ const ResetPassword = () => {
                     type={isPasswordVisible ? 'text' : 'password'}
                 />
 
-                <input type="hidden" name="token" value={token} />
+                {/* <input type="hidden" name="token" value={token} /> */}
 
                 {error && <AlertMessage text={error} />}
 

@@ -1,8 +1,15 @@
-export default function isAuthenticated(): boolean {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+import supabase from '../../../lib/supabase';
 
-    if (token != null && user != null) return true;
+export default async function isAuthenticated(): Promise<boolean> {
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    return session != null;
 
-    return false;
+    // const token = localStorage.getItem('token');
+    // const user = localStorage.getItem('user');
+    //
+    // if (token != null && user != null) return true;
+    //
+    // return false;
 }

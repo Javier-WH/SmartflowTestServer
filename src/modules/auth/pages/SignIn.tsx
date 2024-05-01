@@ -37,9 +37,14 @@ const SignIn = () => {
             setLoading(true);
             const response = await signIn({ email, password });
 
-            if (response.user) {
-                setUser(response.user);
-                setToken(response.user.access_token);
+            if (response.error) {
+                setError(response.error.message);
+                return;
+            }
+
+            if (response.data.user) {
+                setUser(response.data.user);
+                setToken(response.data.session.access_token);
                 navigate('/');
             }
         } catch (error: unknown) {

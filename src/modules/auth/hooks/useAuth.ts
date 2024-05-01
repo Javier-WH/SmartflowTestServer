@@ -1,54 +1,53 @@
-import { Fetcher } from '../../../lib/fetcher';
-
 import type {
     ForgotPasswordParams,
-    ForgotPasswordResponse,
     ResetPasswordParams,
-    ResetPasswordResponse,
     SignInParams,
-    SignInResponse,
     SignUpParams,
     SignUpResponse,
 } from '../types/auth';
 
+import AuthService from '../services/auth';
+
+import { useNavigate } from 'react-router-dom';
+
 const useAuth = () => {
-    async function signIn({ email, password }: SignInParams): Promise<SignInResponse> {
-        const response = await Fetcher('/auth/login', {
-            method: 'POST',
-            body: JSON.stringify({ email, password }),
-        });
+    const navigate = useNavigate();
+
+    async function signIn({ email, password }: SignInParams) {
+        const response = await AuthService.signIn({ email, password });
 
         return response;
     }
 
     async function signUp({ name, lastname, email, password }: SignUpParams): Promise<SignUpResponse> {
-        const response = await Fetcher('/users/register', {
-            method: 'POST',
-            body: JSON.stringify({ name, lastname, email, password }),
-        });
+        const response = await AuthService.signUp({ name, lastname, email, password });
 
         return response;
     }
 
-    async function forgotPassword({ email }: ForgotPasswordParams): Promise<ForgotPasswordResponse> {
-        const response = await Fetcher('/users/forgot_password', {
-            method: 'POST',
-            body: JSON.stringify({ email }),
-        });
+    async function forgotPassword({ email }: ForgotPasswordParams) {
+        const response = await AuthService.forgotPassword({ email });
 
         return response;
     }
 
-    async function resetPassword({ password, token }: ResetPasswordParams): Promise<ResetPasswordResponse> {
-        const response = await Fetcher('/users/reset_password', {
-            method: 'POST',
-            body: JSON.stringify({ password, token }),
-        });
+    async function resetPassword({ password }: ResetPasswordParams) {
+        const response = await AuthService.resetPassword({ password });
 
         return response;
     }
 
-    return { signIn, signUp, forgotPassword, resetPassword };
+    async function signOut() {
+        const response = await AuthService.signOut();
+
+        if (!response.error) {
+            navigate('/auth/signin');
+        }
+
+        return response;
+    }
+
+    return { signIn, signUp, forgotPassword, resetPassword, signOut };
 };
 
 export default useAuth;

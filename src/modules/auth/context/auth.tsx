@@ -7,7 +7,7 @@ export interface AuthContextType {
     token: string | null | undefined;
     setUser: (user: User | null) => void;
     setToken: (token: string | null) => void;
-    isAuthenticated: () => boolean;
+    isAuthenticated: () => Promise<boolean>;
     logout: () => void;
 }
 
@@ -16,7 +16,7 @@ export const AuthContext = createContext<AuthContextType>({
     setUser: () => {},
     token: null,
     setToken: () => {},
-    isAuthenticated: () => false,
+    isAuthenticated: () => Promise.resolve(false),
     logout: () => {},
 });
 
@@ -53,11 +53,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }): React
         setUser(null);
     };
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useLayoutEffect(() => {
         const token = localStorage.getItem('token');
         const user = localStorage.getItem('user');
 
-        if (token !== null && user !== null) {
+        if (token != null && user != null) {
             try {
                 setToken(token);
                 setUser(JSON.parse(user));
@@ -65,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }): React
                 console.error('Error parsing user', error);
             }
         }
-    }, [setUser, setToken]);
+    }, []);
 
     return (
         <AuthContext.Provider value={{ user, token, setUser, setToken, isAuthenticated, logout }}>

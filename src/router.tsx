@@ -5,25 +5,26 @@ import ForgotPassword from './modules/auth/pages/ForgotPassword';
 import ResetPassword from './modules/auth/pages/ResetPassword';
 import Home from './modules/home/pages/Home';
 
-import PrivateRoute from './PrivateRoute';
-
 import { Navigate, redirect } from 'react-router-dom';
 import isAuthenticated from './modules/auth/utils/isAuthenticated';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: (
-            <PrivateRoute>
-                <Home />
-            </PrivateRoute>
-        ),
+        loader: async () => {
+            if (!(await isAuthenticated())) {
+                return redirect('/auth/signin');
+            }
+
+            return null;
+        },
+        element: <Home />,
         errorElement: <span>NothingFound</span>,
     },
     {
         path: '/auth',
-        loader: () => {
-            if (isAuthenticated()) {
+        loader: async () => {
+            if (await isAuthenticated()) {
                 return redirect('/');
             }
 
@@ -50,6 +51,13 @@ const router = createBrowserRouter([
     },
     {
         path: '/reset-password',
+        loader: async () => {
+            if (!(await isAuthenticated())) {
+                return redirect('/auth/signin');
+            }
+
+            return null;
+        },
         element: <ResetPassword />,
     },
 ]);

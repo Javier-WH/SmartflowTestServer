@@ -1,7 +1,35 @@
 import { RouterProvider } from 'react-router-dom';
 import router from './router';
 
+import supabase from './lib/supabase';
+import { useContext, useEffect } from 'react';
+import { AuthContext } from './modules/auth/context/auth';
+
 function App() {
+    const { setUser, setToken } = useContext(AuthContext);
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('onAuthStateChange: ', { event, session });
+            switch (event) {
+                case 'SIGNED_IN':
+                case 'USER_UPDATED':
+                case 'PASSWORD_RECOVERY':
+                    if (session != null) {
+                        setUser(session.user);
+                        setToken(session.access_token);
+                    }
+                    break;
+
+                case 'SIGNED_OUT':
+                    setUser(null);
+                    setToken(null);
+                    break;
+            }
+        });
+    }, []);
+
     return <RouterProvider router={router} />;
 }
 

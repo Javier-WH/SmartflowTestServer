@@ -1,17 +1,9 @@
 // TODO: type the user
-export type User = any;
+export type User = unkown;
 
 export interface SignInParams {
     email: string;
     password: string;
-}
-
-export interface SignInResponse {
-    message: string;
-    user: {
-        fullname: string;
-        access_token: string;
-    };
 }
 
 export interface SignUpParams {
@@ -39,7 +31,6 @@ export interface ForgotPasswordResponse {
 
 export interface ResetPasswordParams {
     password: string;
-    token: string;
 }
 
 export interface ResetPasswordResponse {
