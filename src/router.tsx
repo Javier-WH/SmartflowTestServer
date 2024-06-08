@@ -3,10 +3,14 @@ import { createBrowserRouter } from 'react-router-dom';
 import SignIn from './modules/auth/pages/SignIn';
 import ForgotPassword from './modules/auth/pages/ForgotPassword';
 import ResetPassword from './modules/auth/pages/ResetPassword';
+
 import Home from './modules/home/pages/Home';
+import Orders from './modules/orders/pages/Orders';
+import Inventory from './modules/inventory/pages/Inventory';
 
 import { Navigate, redirect } from 'react-router-dom';
 import isAuthenticated from './modules/auth/utils/isAuthenticated';
+import MainLayout from './modules/MainLayout';
 
 const router = createBrowserRouter([
     {
@@ -18,8 +22,26 @@ const router = createBrowserRouter([
 
             return null;
         },
-        element: <Home />,
+        element: <MainLayout />,
         errorElement: <span>NothingFound</span>,
+        children: [
+            {
+                index: true,
+                element: <Navigate to="/home" />,
+            },
+            {
+                path: 'home',
+                element: <Home />,
+            },
+            {
+                path: 'ordenes',
+                element: <Orders />,
+            },
+            {
+                path: 'inventario',
+                element: <Inventory />,
+            },
+        ],
     },
     {
         path: '/auth',
@@ -59,6 +81,17 @@ const router = createBrowserRouter([
             return null;
         },
         element: <ResetPassword />,
+    },
+    {
+        path: '/orders',
+        loader: async () => {
+            if (!(await isAuthenticated())) {
+                return redirect('/auth/signin');
+            }
+
+            return null;
+        },
+        element: <Orders />,
     },
 ]);
 
