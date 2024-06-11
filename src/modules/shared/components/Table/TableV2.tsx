@@ -93,11 +93,6 @@ function TableV2({
                     }
                 });
             }
-            console.log('LS -> src/modules/shared/components/Table/TableV2.tsx:97 -> newColumns: ', newColumns);
-            console.log(
-                'LS -> src/modules/shared/components/Table/TableV2.tsx:100 -> newVisibleColumns: ',
-                newVisibleColumns,
-            );
 
             setVisibleColumns(new Set(newVisibleColumns));
             setTableColumns(newColumns);
