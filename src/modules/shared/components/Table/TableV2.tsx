@@ -1,17 +1,9 @@
-import { useState, useEffect, useMemo, type ChangeEvent } from 'react';
+import { useState, useMemo, type ChangeEvent } from 'react';
 import { RotateCw, Columns, Download } from 'react-feather';
 import DataTable, { type SortOrder, type TableColumn } from 'react-data-table-component';
 import Pagination from './Pagination';
 import { CSVLink } from 'react-csv';
-import {
-    Button,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownTrigger,
-    Spinner,
-    type Selection,
-} from '@nextui-org/react';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner } from '@nextui-org/react';
 
 function TableV2({
     tableId,
@@ -54,52 +46,36 @@ function TableV2({
     page?: number;
     initialVisibleColumns?: string[];
 }) {
-    const [tableColumns, setTableColumns] = useState(columns);
+    const storedVisibility = localStorage.getItem(`${tableId}-columns-visibility`);
+    const persistedVisibility = storedVisibility ? JSON.parse(storedVisibility) : new Set(initialVisibleColumns);
 
-    const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(initialVisibleColumns));
+    const [tableColumns, setTableColumns] = useState(columns);
+    const [visibleColumns, setVisibleColumns] = useState(persistedVisibility);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return tableColumns;
 
-        return tableColumns.filter(column => Array.from(visibleColumns).includes(column.id as string));
-    }, [visibleColumns, tableColumns]);
+        const storedColumnsOrder = localStorage.getItem(`${tableId}-columns-order`);
+        const persistedColumnsOrder = storedColumnsOrder ? JSON.parse(storedColumnsOrder) : null;
 
-    useEffect(() => {
-        if (tableId) {
-            const storedColumns = localStorage.getItem(tableId);
-            const persistedColumns = storedColumns ? JSON.parse(storedColumns) : null;
-            let newColumns = columns;
-            let newVisibleColumns = initialVisibleColumns;
+        let newColumns = columns;
 
-            if (persistedColumns) {
-                newColumns = persistedColumns.map((persistedColumn: TableColumn<any>) => {
-                    const column = columns.find(column => column.id === persistedColumn.id);
+        if (persistedColumnsOrder) {
+            newColumns = persistedColumnsOrder.map((columnId: string) => {
+                const column = columns.find(col => col.id === columnId);
 
-                    if (persistedColumn.omit) {
-                        newVisibleColumns = newVisibleColumns.filter(col => col !== column?.id);
-                    }
+                if (column) {
+                    column.omit =
+                        persistedVisibility?.find((col: { id: string; omit: boolean }) => col.id === columnId)?.omit ??
+                        false;
+                }
 
-                    if (column) {
-                        return {
-                            ...column,
-                            ...persistedColumn,
-                            sortable: column.sortable,
-                            reorder: column.reorder,
-                            sortField: column.sortField,
-                            allowOverflow: column.allowOverflow,
-                            center: column.center,
-                            style: column.style,
-                        };
-                    }
-                });
-            }
-
-            setVisibleColumns(new Set(newVisibleColumns));
-            setTableColumns(newColumns);
-        } else {
-            setTableColumns(columns);
+                return column;
+            });
         }
-    }, [tableId, columns, initialVisibleColumns]);
+
+        return newColumns;
+    }, [visibleColumns, tableColumns, tableId, columns, persistedVisibility]);
 
     const handleRowsPerPageChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const rowsPerPage = Number(e.target.value);
@@ -161,32 +137,22 @@ function TableV2({
                             disallowEmptySelection
                             aria-label="Table Columns"
                             closeOnSelect={false}
-                            selectedKeys={visibleColumns || []}
+                            selectedKeys={visibleColumns?.map((col: { id: string }) => col.id) ?? []}
                             selectionMode="multiple"
                             onSelectionChange={keys => {
                                 setVisibleColumns(keys);
                                 const columnKeys = Array.from(keys);
 
                                 const columnsToPersist = tableColumns.map(col => {
-                                    if (col.id) {
-                                        if (columnKeys.includes(col.id)) {
-                                            return {
-                                                ...col,
-                                                omit: false,
-                                            };
-                                        } else {
-                                            return {
-                                                ...col,
-                                                omit: true,
-                                            };
-                                        }
-                                    }
-
-                                    return col;
+                                    return {
+                                        id: col.id,
+                                        omit: !columnKeys.includes(col.id as string),
+                                    };
                                 });
-                                localStorage.setItem(tableId ?? '', JSON.stringify(columnsToPersist));
 
-                                setTableColumns(columnsToPersist);
+                                localStorage.setItem(`${tableId}-columns-visibility`, JSON.stringify(columnsToPersist));
+
+                                setVisibleColumns(columnsToPersist);
                             }}
                         >
                             {columns.map(column => (
@@ -213,7 +179,7 @@ function TableV2({
                     progressComponent={<Spinner size="lg" />}
                     onRowClicked={onRowClicked}
                     onColumnOrderChange={cols => {
-                        localStorage.setItem(tableId ?? '', JSON.stringify(cols));
+                        localStorage.setItem(`${tableId}-columns-order`, JSON.stringify(cols.map(col => col.id)));
                         setTableColumns(cols);
                     }}
                     onSort={onSort}
