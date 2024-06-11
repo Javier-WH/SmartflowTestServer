@@ -4,6 +4,7 @@ import DataTable, { type SortOrder, type TableColumn } from 'react-data-table-co
 import Pagination from './Pagination';
 import { CSVLink } from 'react-csv';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner } from '@nextui-org/react';
+import type { ExpandableRowsComponent } from 'react-data-table-component/dist/DataTable/types';
 
 function Table({
     tableId,
@@ -25,6 +26,7 @@ function Table({
     rowsPerPage = 50,
     page = 1,
     initialVisibleColumns = [],
+    expandableRowsComponent,
 }: {
     tableId: string;
     pagination?: boolean;
@@ -44,7 +46,8 @@ function Table({
     onRefresh?: () => void;
     rowsPerPage?: number;
     page?: number;
-    initialVisibleColumns?: string[];
+    initialVisibleColumns?: Array<{ id: string; omit: boolean }>;
+    expandableRowsComponent?: ExpandableRowsComponent<any>;
 }) {
     const storedVisibility = localStorage.getItem(`${tableId}-columns-visibility`);
     const persistedVisibility = storedVisibility ? JSON.parse(storedVisibility) : initialVisibleColumns;
@@ -168,6 +171,8 @@ function Table({
                 <DataTable
                     data={data}
                     striped
+                    expandableRows
+                    expandableRowsComponent={expandableRowsComponent}
                     selectableRows
                     fixedHeader
                     fixedHeaderScrollHeight="calc(100vh - 21rem)"

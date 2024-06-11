@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import Table from '@/modules/shared/components/Table/Table';
 
 import useOrder from '../hooks/useOrder';
-import { orders_table_columns, orders_table_visible_columns } from './orders.data';
+import { type Order, orders_table_columns, orders_table_visible_columns } from './orders.data';
 import { useLocation, useNavigate } from 'react-router-dom';
+import type { ExpanderComponentProps } from 'react-data-table-component/dist/DataTable/types';
+import { Button } from '@nextui-org/react';
 
 const ROWS_PER_PAGE = 100;
 
@@ -40,6 +42,42 @@ export default function Orders() {
         }
     }, [selectedPage, rowsPerPage, location.pathname, location.search, navigate, parsedPage, parsedRowsPerPage]);
 
+    const ExpandedRowComponent: React.FC<ExpanderComponentProps<Order>> = ({ data }) => {
+        const comission_amount = data.order_lines.reduce(
+            (acc: number, orderLine: Order['order_lines'][0]) => acc + Number(orderLine.commission_amount),
+            0,
+        );
+        return (
+            <div className="w-full flex justify-end py-4">
+                <div className="flex gap-20 px-20">
+                    <div className="flex flex-col gap-4">
+                        <small className="flex gap-8 truncate max-w-[400px]">
+                            <span>URL Shipping</span>
+                            <a
+                                href={data.shipping_info?.shipping_tracking_url}
+                                className="text-blue-600"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                {data.shipping_info?.shipping_tracking_url}
+                            </a>
+                        </small>
+                        <small className="flex gap-[4.5rem] truncate">
+                            <span>Guia #</span>
+                            <span>{data.shipping_info?.shipping_tracking}</span>
+                        </small>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                        <small className="truncate">Comisiones ${comission_amount}</small>
+                        <Button size="sm" radius="full" color="primary">
+                            Marcar como enviado
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <Table
             tableId="orders-table-columns"
@@ -56,6 +94,7 @@ export default function Orders() {
             exportToCsv
             // actions={<div className="flex justify-end bg-red-500">Filters</div>}
             initialVisibleColumns={orders_table_visible_columns}
+            expandableRowsComponent={ExpandedRowComponent}
         />
     );
 }

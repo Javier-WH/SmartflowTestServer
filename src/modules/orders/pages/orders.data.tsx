@@ -1,13 +1,20 @@
 import type { TableColumn } from 'react-data-table-component';
 import type { Database } from '@/types/supabase';
 
-type Order = Database['public']['Tables']['order']['Row'] & {
+export type Order = Database['public']['Tables']['order']['Row'] & {
     marketplace_id: {
         name: string;
     };
     internal_status_id: {
         status: string;
     };
+    shipping_info: {
+        shipping_tracking_url?: string;
+        shipping_tracking?: string;
+    };
+    order_lines: Array<{
+        commission_amount?: string;
+    }>;
 };
 
 export const orders_table_columns: TableColumn<Order>[] = [
