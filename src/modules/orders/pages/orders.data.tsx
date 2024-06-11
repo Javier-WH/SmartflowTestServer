@@ -41,6 +41,7 @@ export const orders_table_columns: TableColumn<Order>[] = [
         id: 'marketplace_id.name',
         name: 'MARKETPLACE',
         selector: row => row.marketplace_id?.name,
+        format: row => <span className="capitalize">{row.marketplace_id?.name}</span>,
         reorder: true,
         omit: false,
     },
