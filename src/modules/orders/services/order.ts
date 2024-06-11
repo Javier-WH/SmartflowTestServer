@@ -9,7 +9,7 @@ class OrdersService {
     }
 
     getOrders({ page = 1, rowsPerPage = 50 }: { page?: number; rowsPerPage?: number }) {
-        const offset = page * rowsPerPage;
+        const offset = (page - 1) * rowsPerPage;
         const limit = rowsPerPage;
 
         return this.supabaseClient
@@ -34,8 +34,8 @@ class OrdersService {
         `,
                 { count: 'estimated' },
             )
-            .order('created_at', { ascending: false })
-            .range(offset, offset + limit - 1);
+            .range(offset, offset + limit - 1)
+            .order('created_at', { ascending: false });
     }
 }
 
