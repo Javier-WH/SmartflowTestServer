@@ -76,8 +76,7 @@ function TableV2({
                     const column = columns.find(column => column.id === persistedColumn.id);
 
                     if (persistedColumn.omit) {
-                        console.log('omited column', column);
-                        newVisibleColumns = newVisibleColumns.filter(col => col !== column.id);
+                        newVisibleColumns = newVisibleColumns.filter(col => col !== column?.id);
                     }
 
                     if (column) {
