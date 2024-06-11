@@ -47,14 +47,12 @@ function TableV2({
     initialVisibleColumns?: string[];
 }) {
     const storedVisibility = localStorage.getItem(`${tableId}-columns-visibility`);
-    const persistedVisibility = storedVisibility ? JSON.parse(storedVisibility) : new Set(initialVisibleColumns);
+    const persistedVisibility = storedVisibility ? JSON.parse(storedVisibility) : initialVisibleColumns;
 
     const [tableColumns, setTableColumns] = useState(columns);
     const [visibleColumns, setVisibleColumns] = useState(persistedVisibility);
 
     const headerColumns = useMemo(() => {
-        if (visibleColumns === 'all') return tableColumns;
-
         const storedColumnsOrder = localStorage.getItem(`${tableId}-columns-order`);
         const persistedColumnsOrder = storedColumnsOrder ? JSON.parse(storedColumnsOrder) : null;
 
@@ -62,20 +60,21 @@ function TableV2({
 
         if (persistedColumnsOrder) {
             newColumns = persistedColumnsOrder.map((columnId: string) => {
-                const column = columns.find(col => col.id === columnId);
+                return columns.find(col => col.id === columnId);
+            });
+        }
 
-                if (column) {
-                    column.omit =
-                        persistedVisibility?.find((col: { id: string; omit: boolean }) => col.id === columnId)?.omit ??
-                        false;
-                }
+        if (visibleColumns) {
+            newColumns = newColumns.map(col => {
+                col.omit =
+                    visibleColumns?.find((c: { id: string; omit: boolean }) => c.id === col.id)?.omit ?? col.omit;
 
-                return column;
+                return col;
             });
         }
 
         return newColumns;
-    }, [visibleColumns, tableColumns, tableId, columns, persistedVisibility]);
+    }, [tableId, columns, visibleColumns]);
 
     const handleRowsPerPageChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const rowsPerPage = Number(e.target.value);
@@ -137,10 +136,11 @@ function TableV2({
                             disallowEmptySelection
                             aria-label="Table Columns"
                             closeOnSelect={false}
-                            selectedKeys={visibleColumns?.map((col: { id: string }) => col.id) ?? []}
+                            selectedKeys={visibleColumns.map((col: { id: string; omit: boolean }) =>
+                                !col.omit ? col.id : '',
+                            )}
                             selectionMode="multiple"
                             onSelectionChange={keys => {
-                                setVisibleColumns(keys);
                                 const columnKeys = Array.from(keys);
 
                                 const columnsToPersist = tableColumns.map(col => {

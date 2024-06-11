@@ -68,11 +68,28 @@ export const orders_table_columns: TableColumn<Order>[] = [
 ];
 
 export const orders_table_visible_columns = [
-    'id',
-    'order_id',
-    'created_at',
-    'marketplace_id.name',
-    'marketplace_status',
-    'internal_status_id.status',
-    'total',
+    {
+        id: 'order_id',
+        omit: false,
+    },
+    {
+        id: 'created_at',
+        omit: false,
+    },
+    {
+        id: 'marketplace_id.name',
+        omit: false,
+    },
+    {
+        id: 'marketplace_status',
+        omit: false,
+    },
+    {
+        id: 'internal_status_id.status',
+        omit: false,
+    },
+    {
+        id: 'total',
+        omit: false,
+    },
 ];
