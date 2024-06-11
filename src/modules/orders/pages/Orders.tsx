@@ -1,11 +1,18 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+import { type Order, orders_table_columns, orders_table_visible_columns } from './orders.data';
+
+import { Button, type DateValue, Select, SelectItem, type RangeValue, DateRangePicker } from '@nextui-org/react';
+import type { ExpanderComponentProps } from 'react-data-table-component/dist/DataTable/types';
+import { parseDate } from '@internationalized/date';
+
 import Table from '@/modules/shared/components/Table/Table';
 
-import useOrder from '../hooks/useOrder';
-import { type Order, orders_table_columns, orders_table_visible_columns } from './orders.data';
 import { useLocation, useNavigate } from 'react-router-dom';
-import type { ExpanderComponentProps } from 'react-data-table-component/dist/DataTable/types';
-import { Button } from '@nextui-org/react';
+import useMarketplace from '../hooks/useMarketplace';
+import useOrder from '../hooks/useOrder';
+import useStatus from '../hooks/useStatus';
+import { IconX } from '@tabler/icons-react';
 
 const ROWS_PER_PAGE = 100;
 
@@ -14,13 +21,46 @@ export default function Orders() {
     const navigate = useNavigate();
 
     const urlSearchParams = new URLSearchParams(location.search);
-    const parsedPage = Number.parseInt(urlSearchParams.get('page') ?? '1', 10);
-    const parsedRowsPerPage = Number.parseInt(urlSearchParams.get('rowsPerPage') ?? `${ROWS_PER_PAGE}`, 10);
+    const parsedPage = Number.parseInt(urlSearchParams.get('page') ?? '1');
+    const parsedRowsPerPage = Number.parseInt(urlSearchParams.get('rowsPerPage') ?? `${ROWS_PER_PAGE}`);
+    const parsedSelectedStatusId = urlSearchParams.get('status') ?? null;
+    const parsedSelectedMarketplaceId = urlSearchParams.get('marketplace') ?? null;
+    const parsedSelectedDateFrom = urlSearchParams.get('from') ?? null;
+    const parsedSelectedDateTo = urlSearchParams.get('to') ?? null;
 
     const [selectedPage, setSelectedPage] = useState(parsedPage);
     const [rowsPerPage, setRowsPerPage] = useState(parsedRowsPerPage);
+    const [selectedStatusId, setSelectedStatusId] = useState<string | number | null>(parsedSelectedStatusId);
+    const [selectedMarketplaceId, setSelectedMarketplaceId] = useState<string | number | null>(
+        parsedSelectedMarketplaceId,
+    );
 
-    const { data: orders, totalRecords, isLoading } = useOrder({ page: selectedPage, rowsPerPage: rowsPerPage });
+    const dateValue =
+        parsedSelectedDateFrom && parsedSelectedDateTo
+            ? {
+                  start: parseDate(parsedSelectedDateFrom) as unknown as DateValue,
+                  end: parseDate(parsedSelectedDateTo) as unknown as DateValue,
+              }
+            : null;
+
+    const [selectedDateRange, setSelectedDateRange] = useState<RangeValue<DateValue> | null>(dateValue);
+    const [isDateRangePickerOpen, setIsDateRangePickerOpen] = useState(false);
+
+    const {
+        data: orders,
+        totalRecords: ordersTotalRecords,
+        isLoading: isOrdersLoading,
+    } = useOrder({
+        page: selectedPage,
+        rowsPerPage: rowsPerPage,
+        status_id: selectedStatusId,
+        marketplace_id: selectedMarketplaceId,
+        from: selectedDateRange?.start?.toString(),
+        to: selectedDateRange?.end?.toString(),
+    });
+
+    const { data: marketplaces, isLoading: isMarketplaceLoading, error: marketplaceError } = useMarketplace();
+    const { data: status, isLoading: isStatusLoading, error: statusError } = useStatus();
 
     const exportData = useMemo(() => {
         if (!orders) return [];
@@ -41,20 +81,65 @@ export default function Orders() {
 
         if (parsedPage !== selectedPage) {
             searchParams.set('page', `${selectedPage}`);
-            navigate({
-                pathname: location.pathname,
-                search: searchParams.toString(),
-            });
+            navigate({ pathname: location.pathname, search: searchParams.toString() });
         }
 
         if (parsedRowsPerPage !== rowsPerPage) {
             searchParams.set('rowsPerPage', `${rowsPerPage}`);
-            navigate({
-                pathname: location.pathname,
-                search: searchParams.toString(),
-            });
+            navigate({ pathname: location.pathname, search: searchParams.toString() });
         }
-    }, [selectedPage, rowsPerPage, location.pathname, location.search, navigate, parsedPage, parsedRowsPerPage]);
+
+        if (parsedSelectedStatusId !== selectedStatusId) {
+            if (selectedStatusId === null) {
+                searchParams.delete('status');
+            } else {
+                searchParams.set('status', `${selectedStatusId}`);
+            }
+            navigate({ pathname: location.pathname, search: searchParams.toString() });
+        }
+
+        if (parsedSelectedMarketplaceId !== selectedMarketplaceId) {
+            if (selectedMarketplaceId === null) {
+                searchParams.delete('marketplace');
+            } else {
+                searchParams.set('marketplace', `${selectedMarketplaceId}`);
+            }
+            navigate({ pathname: location.pathname, search: searchParams.toString() });
+        }
+
+        if (parsedSelectedDateFrom !== selectedDateRange?.start?.toString()) {
+            if (selectedDateRange?.start == null) {
+                searchParams.delete('from');
+            } else {
+                searchParams.set('from', `${selectedDateRange?.start?.toString()}`);
+            }
+            navigate({ pathname: location.pathname, search: searchParams.toString() });
+        }
+
+        if (parsedSelectedDateTo !== selectedDateRange?.end?.toString()) {
+            if (selectedDateRange?.end == null) {
+                searchParams.delete('to');
+            } else {
+                searchParams.set('to', `${selectedDateRange?.end?.toString()}`);
+            }
+            navigate({ pathname: location.pathname, search: searchParams.toString() });
+        }
+    }, [
+        selectedPage,
+        rowsPerPage,
+        location.pathname,
+        location.search,
+        navigate,
+        parsedPage,
+        parsedRowsPerPage,
+        parsedSelectedStatusId,
+        parsedSelectedMarketplaceId,
+        selectedStatusId,
+        selectedMarketplaceId,
+        selectedDateRange,
+        parsedSelectedDateFrom,
+        parsedSelectedDateTo,
+    ]);
 
     const ExpandedRowComponent: React.FC<ExpanderComponentProps<Order>> = ({ data }) => {
         const comission_amount = data.order_lines.reduce(
@@ -98,16 +183,104 @@ export default function Orders() {
             data={orders}
             exportData={exportData}
             columns={orders_table_columns}
-            loading={isLoading}
+            loading={isOrdersLoading}
             pagination
-            paginationTotalRows={totalRecords || 0}
+            paginationTotalRows={ordersTotalRecords || 0}
             rowsPerPage={rowsPerPage}
             onRowsPerPageChange={setRowsPerPage}
             onPaginationChange={setSelectedPage}
             page={selectedPage}
             sortServer
             exportToCsv
-            // actions={<div className="flex justify-end bg-red-500">Filters</div>}
+            actions={
+                <div className="flex justify-center xl:justify-end items-center gap-4 flex-wrap">
+                    <DateRangePicker
+                        startContent={
+                            selectedDateRange != null ? (
+                                <div role="button" className="absolute bottom-[3px] right-9">
+                                    <IconX
+                                        className="text-default-400"
+                                        onClick={() => {
+                                            setSelectedDateRange(null);
+                                            setIsDateRangePickerOpen(false);
+                                        }}
+                                    />
+                                </div>
+                            ) : null
+                        }
+                        value={selectedDateRange}
+                        className="w-72"
+                        label="FECHA"
+                        onChange={setSelectedDateRange}
+                        radius="full"
+                        size="sm"
+                        isOpen={isDateRangePickerOpen}
+                        onOpenChange={setIsDateRangePickerOpen}
+                        shouldForceLeadingZeros
+                        CalendarBottomContent={
+                            <div className="flex justify-center py-4">
+                                <Button
+                                    size="sm"
+                                    radius="full"
+                                    color="primary"
+                                    className="px-6"
+                                    onClick={() => {
+                                        setSelectedDateRange(null);
+                                        setIsDateRangePickerOpen(false);
+                                    }}
+                                >
+                                    Reset
+                                </Button>
+                            </div>
+                        }
+                    />
+
+                    <Select
+                        className="w-48 m-0"
+                        label="STATUS"
+                        size="sm"
+                        radius="full"
+                        isLoading={isStatusLoading}
+                        selectionMode="single"
+                        items={status}
+                        isInvalid={statusError != null}
+                        onSelectionChange={keys => {
+                            const statusId = Array.from(keys)[0] as number;
+
+                            setSelectedStatusId(statusId ?? null);
+                        }}
+                        selectedKeys={selectedStatusId ? [selectedStatusId] : []}
+                    >
+                        {item => (
+                            <SelectItem key={item.status as string} className="capitalize">
+                                {item.status}
+                            </SelectItem>
+                        )}
+                    </Select>
+                    <Select
+                        className="w-48 m-0"
+                        label="MARKETPLACE"
+                        size="sm"
+                        radius="full"
+                        isLoading={isMarketplaceLoading}
+                        selectionMode="single"
+                        items={marketplaces}
+                        isInvalid={marketplaceError != null}
+                        onSelectionChange={keys => {
+                            const marketplaceId = Array.from(keys)[0];
+
+                            setSelectedMarketplaceId(marketplaceId ?? null);
+                        }}
+                        selectedKeys={selectedMarketplaceId ? [selectedMarketplaceId] : []}
+                    >
+                        {item => (
+                            <SelectItem key={item.id} className="capitalize">
+                                {item.name}
+                            </SelectItem>
+                        )}
+                    </Select>
+                </div>
+            }
             initialVisibleColumns={orders_table_visible_columns}
             expandableRowsComponent={ExpandedRowComponent}
         />

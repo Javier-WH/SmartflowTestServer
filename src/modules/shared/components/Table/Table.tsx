@@ -112,7 +112,7 @@ function Table({
                     </div>
                 )}
                 <div className="flex-grow">{actions}</div>
-                <div className="flex justify-end items-center w-max">
+                <div className="flex justify-center xl:justify-end items-center">
                     {onRefresh && <RotateCw role="button" onClick={onRefresh} />}
 
                     {exportToCsv && (
@@ -130,7 +130,7 @@ function Table({
                         </CSVLink>
                     )}
                     <Dropdown>
-                        <DropdownTrigger className="hidden sm:flex">
+                        <DropdownTrigger>
                             <Button variant="light" className="px-0" size="sm">
                                 <Columns className="text-default-500" />
                             </Button>

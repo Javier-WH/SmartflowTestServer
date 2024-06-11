@@ -73,6 +73,7 @@ export const orders_table_columns: TableColumn<Order>[] = [
         id: 'total',
         name: 'TOTAL',
         selector: row => row.total,
+        format: row => <span>${row.total}</span>,
         reorder: true,
         omit: false,
     },

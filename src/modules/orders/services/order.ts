@@ -1,18 +1,33 @@
 import type { Database } from '@/types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { parseDate } from '@internationalized/date';
 
-class OrdersService {
+class OrderService {
     private supabaseClient: SupabaseClient<Database>;
 
     constructor(supabaseClient: SupabaseClient<Database>) {
         this.supabaseClient = supabaseClient;
     }
 
-    getOrders({ page = 1, rowsPerPage = 50 }: { page?: number; rowsPerPage?: number }) {
+    getOrders({
+        page = 1,
+        rowsPerPage = 50,
+        status_id,
+        marketplace_id,
+        from,
+        to,
+    }: {
+        page?: number;
+        rowsPerPage?: number;
+        status_id?: string | number | null;
+        marketplace_id?: string | number | null;
+        from?: string | null;
+        to?: string | null;
+    }) {
         const offset = (page - 1) * rowsPerPage;
         const limit = rowsPerPage;
 
-        return this.supabaseClient
+        let query = this.supabaseClient
             .from('order')
             .select(
                 `
@@ -36,7 +51,23 @@ class OrdersService {
             )
             .range(offset, offset + limit - 1)
             .order('created_at', { ascending: false });
+
+        if (status_id != null) {
+            query = query.eq('marketplace_status', status_id);
+        }
+
+        if (marketplace_id != null) {
+            query = query.eq('marketplace_id', marketplace_id);
+        }
+
+        if (from != null && to != null) {
+            const newTo = parseDate(to).add({ days: 1 }).toString();
+
+            query = query.gt('created_at', from).lt('created_at', newTo);
+        }
+
+        return query;
     }
 }
 
-export default OrdersService;
+export default OrderService;
