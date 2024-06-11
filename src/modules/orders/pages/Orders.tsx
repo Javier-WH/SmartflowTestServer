@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 
-import { type Order, orders_table_columns, orders_table_visible_columns } from './orders.data';
-
-import { Button, type DateValue, Select, SelectItem, type RangeValue, DateRangePicker } from '@nextui-org/react';
+import { Button, type DateValue, Select, SelectItem, type RangeValue, DateRangePicker, Input } from '@nextui-org/react';
 import type { ExpanderComponentProps } from 'react-data-table-component/dist/DataTable/types';
+import { IconX } from '@tabler/icons-react';
 import { parseDate } from '@internationalized/date';
 
 import Table from '@/modules/shared/components/Table/Table';
+import { type Order, orders_table_columns, orders_table_visible_columns } from './orders.data';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import useMarketplace from '../hooks/useMarketplace';
 import useOrder from '../hooks/useOrder';
 import useStatus from '../hooks/useStatus';
-import { IconX } from '@tabler/icons-react';
+import { useDebouncedCallback } from 'use-debounce';
 
 const ROWS_PER_PAGE = 100;
 
@@ -27,6 +27,7 @@ export default function Orders() {
     const parsedSelectedMarketplaceId = urlSearchParams.get('marketplace') ?? null;
     const parsedSelectedDateFrom = urlSearchParams.get('from') ?? null;
     const parsedSelectedDateTo = urlSearchParams.get('to') ?? null;
+    const parsedSearchTerm = urlSearchParams.get('search') ?? '';
 
     const [selectedPage, setSelectedPage] = useState(parsedPage);
     const [rowsPerPage, setRowsPerPage] = useState(parsedRowsPerPage);
@@ -34,6 +35,7 @@ export default function Orders() {
     const [selectedMarketplaceId, setSelectedMarketplaceId] = useState<string | number | null>(
         parsedSelectedMarketplaceId,
     );
+    const [searchTerm, setSearchTerm] = useState<string>(parsedSearchTerm);
 
     const dateValue =
         parsedSelectedDateFrom && parsedSelectedDateTo
@@ -57,6 +59,7 @@ export default function Orders() {
         marketplace_id: selectedMarketplaceId,
         from: selectedDateRange?.start?.toString(),
         to: selectedDateRange?.end?.toString(),
+        search: searchTerm,
     });
 
     const { data: marketplaces, isLoading: isMarketplaceLoading, error: marketplaceError } = useMarketplace();
@@ -124,6 +127,16 @@ export default function Orders() {
             }
             navigate({ pathname: location.pathname, search: searchParams.toString() });
         }
+
+        if (parsedSearchTerm !== searchTerm) {
+            if (searchTerm === '') {
+                searchParams.delete('search');
+            } else {
+                searchParams.set('search', `${searchTerm}`);
+            }
+
+            navigate({ pathname: location.pathname, search: searchParams.toString() });
+        }
     }, [
         selectedPage,
         rowsPerPage,
@@ -139,7 +152,14 @@ export default function Orders() {
         selectedDateRange,
         parsedSelectedDateFrom,
         parsedSelectedDateTo,
+        parsedSearchTerm,
+        searchTerm,
     ]);
+
+    const handleSearchTermChange = useDebouncedCallback((e: ChangeEvent<HTMLInputElement>) => {
+        console.log('handleSearchTermChange', e.target.value);
+        setSearchTerm(e.target.value);
+    }, 500);
 
     const ExpandedRowComponent: React.FC<ExpanderComponentProps<Order>> = ({ data }) => {
         const comission_amount = data.order_lines.reduce(
@@ -147,7 +167,7 @@ export default function Orders() {
             0,
         );
         return (
-            <div className="w-full flex justify-end py-4">
+            <div className="w-full flex justify-end py-4 border-b-1 border-gray-200">
                 <div className="flex gap-20 px-20">
                     <div className="flex flex-col gap-4">
                         <small className="flex gap-8 truncate max-w-[400px]">
@@ -194,6 +214,19 @@ export default function Orders() {
             exportToCsv
             actions={
                 <div className="flex justify-center xl:justify-end items-center gap-4 flex-wrap">
+                    <div className="flex-grow max-w-[600px] mr-auto">
+                        <Input
+                            placeholder="Search..."
+                            type="search"
+                            inputMode="search"
+                            color="default"
+                            size="lg"
+                            classNames={{ inputWrapper: 'shadow-lg' }}
+                            radius="full"
+                            onChange={handleSearchTermChange}
+                            defaultValue={searchTerm}
+                        />
+                    </div>
                     <DateRangePicker
                         startContent={
                             selectedDateRange != null ? (
@@ -209,7 +242,7 @@ export default function Orders() {
                             ) : null
                         }
                         value={selectedDateRange}
-                        className="w-72"
+                        className="max-w-72 w-full"
                         label="FECHA"
                         onChange={setSelectedDateRange}
                         radius="full"
@@ -217,6 +250,7 @@ export default function Orders() {
                         isOpen={isDateRangePickerOpen}
                         onOpenChange={setIsDateRangePickerOpen}
                         shouldForceLeadingZeros
+                        classNames={{ inputWrapper: 'shadow-lg' }}
                         CalendarBottomContent={
                             <div className="flex justify-center py-4">
                                 <Button
@@ -237,6 +271,7 @@ export default function Orders() {
 
                     <Select
                         className="w-48 m-0"
+                        classNames={{ trigger: 'shadow-lg' }}
                         label="STATUS"
                         size="sm"
                         radius="full"
@@ -259,6 +294,7 @@ export default function Orders() {
                     </Select>
                     <Select
                         className="w-48 m-0"
+                        classNames={{ trigger: 'shadow-lg' }}
                         label="MARKETPLACE"
                         size="sm"
                         radius="full"

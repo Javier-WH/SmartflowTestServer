@@ -16,6 +16,7 @@ class OrderService {
         marketplace_id,
         from,
         to,
+        search,
     }: {
         page?: number;
         rowsPerPage?: number;
@@ -23,9 +24,12 @@ class OrderService {
         marketplace_id?: string | number | null;
         from?: string | null;
         to?: string | null;
+        search?: string;
     }) {
         const offset = (page - 1) * rowsPerPage;
         const limit = rowsPerPage;
+
+        console.log('LS -> src/modules/orders/services/order.ts:28 -> search: ', search);
 
         let query = this.supabaseClient
             .from('order')
@@ -64,6 +68,10 @@ class OrderService {
             const newTo = parseDate(to).add({ days: 1 }).toString();
 
             query = query.gt('created_at', from).lt('created_at', newTo);
+        }
+
+        if (search != null && search !== '') {
+            query = query.or(`order_id.like.%${search}%, total.like.%${search}%`);
         }
 
         return query;

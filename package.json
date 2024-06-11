@@ -22,7 +22,8 @@
         "react-dom": "18.2.0",
         "react-feather": "2.0.10",
         "react-responsive-pagination": "2.5.0",
-        "react-router-dom": "6.23.0"
+        "react-router-dom": "6.23.0",
+        "use-debounce": "10.0.1"
     },
     "devDependencies": {
         "@types/react": "18.2.66",

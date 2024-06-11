@@ -91,7 +91,8 @@ function Table({
 
     return (
         <div className="flex flex-col gap-4 h-full">
-            <div className="flex flex-col lg:flex-row gap-3">
+            <div className="flex-grow items-center">{actions}</div>
+            <div className="flex flex-col lg:flex-row justify-between gap-3">
                 {pagination && (
                     <div className="flex flex-col justify-end items-center">
                         {/* <label htmlFor='rows-per-page'>{t('show')}</label> */}
@@ -111,7 +112,6 @@ function Table({
                         </label>
                     </div>
                 )}
-                <div className="flex-grow">{actions}</div>
                 <div className="flex justify-center xl:justify-end items-center">
                     {onRefresh && <RotateCw role="button" onClick={onRefresh} />}
 
@@ -175,7 +175,7 @@ function Table({
                     expandableRowsComponent={expandableRowsComponent}
                     selectableRows
                     fixedHeader
-                    fixedHeaderScrollHeight="calc(100vh - 21rem)"
+                    fixedHeaderScrollHeight={actions ? 'calc(100vh - 25rem)' : 'calc(100vh - 23rem)'}
                     persistTableHead
                     highlightOnHover
                     columns={headerColumns}

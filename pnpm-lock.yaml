@@ -44,6 +44,9 @@ dependencies:
   react-router-dom:
     specifier: 6.23.0
     version: 6.23.0(react-dom@18.2.0)(react@18.2.0)
+  use-debounce:
+    specifier: 10.0.1
+    version: 10.0.1(react@18.2.0)
 
 devDependencies:
   '@types/react':
@@ -5145,6 +5148,15 @@ packages:
     resolution: {integrity: sha512-GLMG0Jc/jiKov/3Ulid1wbv3r54K9HlMW29IWcDFPEqFkSO2nS0MuefWgMJpeHQ9YJeXDL3ZUF+P3jdXlZX/cQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
+
+  /use-debounce@10.0.1(react@18.2.0):
+    resolution: {integrity: sha512-0uUXjOfm44e6z4LZ/woZvkM8FwV1wiuoB6xnrrOmeAEjRDDzTLQNRFtYHvqUsJdrz1X37j0rVGIVp144GLHGKg==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      react: '>=16.8.0'
     dependencies:
       react: 18.2.0
     dev: false

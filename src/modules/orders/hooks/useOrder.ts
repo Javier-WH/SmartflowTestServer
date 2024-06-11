@@ -14,6 +14,7 @@ export default function useOrder(
         marketplace_id,
         from,
         to,
+        search,
     }: {
         page?: number;
         rowsPerPage?: number;
@@ -21,6 +22,7 @@ export default function useOrder(
         marketplace_id?: string | number | null;
         from?: string | null;
         to?: string | null;
+        search?: string;
     } = {
         page: 1,
         rowsPerPage: 100,
@@ -28,6 +30,7 @@ export default function useOrder(
         marketplace_id: null,
         from: null,
         to: null,
+        search: '',
     },
 ) {
     const {
@@ -36,7 +39,9 @@ export default function useOrder(
         error,
         count,
         mutate,
-    } = useQuery(ordersService.getOrders({ page, rowsPerPage, status_id, marketplace_id, from, to }));
+    } = useQuery(ordersService.getOrders({ page, rowsPerPage, status_id, marketplace_id, from, to, search }));
+
+    console.log('LS -> src/modules/orders/hooks/useOrder.ts:42 -> orders: ', orders);
 
     return {
         data: orders ?? [],
