@@ -36,11 +36,14 @@ export const orders_table_columns: TableColumn<Order>[] = [
     {
         id: 'created_at',
         name: 'FECHA',
-        selector: row =>
-            Intl.DateTimeFormat('es-MX', {
-                dateStyle: 'medium',
-                timeStyle: 'short',
-            }).format(new Date(row.created_at)),
+        selector: row => row.created_at,
+        format: row => (
+            <span className="capitalize" title={row.created_at}>
+                {Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' }).format(
+                    new Date(row.created_at),
+                )}
+            </span>
+        ),
         reorder: true,
         omit: false,
     },
