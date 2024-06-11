@@ -125,14 +125,14 @@ function Table({
                             target="_blank"
                         >
                             <Button variant="light" className="px-0" size="sm">
-                                <Download />
+                                <Download className="text-default-500" />
                             </Button>
                         </CSVLink>
                     )}
                     <Dropdown>
                         <DropdownTrigger className="hidden sm:flex">
                             <Button variant="light" className="px-0" size="sm">
-                                <Columns />
+                                <Columns className="text-default-500" />
                             </Button>
                         </DropdownTrigger>
                         <DropdownMenu
