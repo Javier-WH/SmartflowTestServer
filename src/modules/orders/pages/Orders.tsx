@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import TableV2 from '@/modules/shared/components/Table/TableV2';
+import Table from '@/modules/shared/components/Table/Table';
 
 import useOrder from '../hooks/useOrder';
 import { orders_table_columns, orders_table_visible_columns } from './orders.data';
@@ -41,7 +41,7 @@ export default function Orders() {
     }, [selectedPage, rowsPerPage, location.pathname, location.search, navigate, parsedPage, parsedRowsPerPage]);
 
     return (
-        <TableV2
+        <Table
             tableId="orders-table-columns"
             data={orders}
             columns={orders_table_columns}

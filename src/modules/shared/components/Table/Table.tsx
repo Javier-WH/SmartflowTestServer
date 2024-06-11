@@ -5,7 +5,7 @@ import Pagination from './Pagination';
 import { CSVLink } from 'react-csv';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner } from '@nextui-org/react';
 
-function TableV2({
+function Table({
     tableId,
     pagination = true,
     columns,
@@ -200,4 +200,4 @@ function TableV2({
     );
 }
 
-export default TableV2;
+export default Table;
