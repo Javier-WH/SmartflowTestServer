@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Table from '@/modules/shared/components/Table/Table';
 
 import useOrder from '../hooks/useOrder';
@@ -21,6 +21,20 @@ export default function Orders() {
     const [rowsPerPage, setRowsPerPage] = useState(parsedRowsPerPage);
 
     const { data: orders, totalRecords, isLoading } = useOrder({ page: selectedPage, rowsPerPage: rowsPerPage });
+
+    const exportData = useMemo(() => {
+        if (!orders) return [];
+
+        return orders?.map(order => ({
+            ...order,
+            marketplace_id: JSON.stringify(order.marketplace_id),
+            internal_status_id: JSON.stringify(order.internal_status_id),
+            shipping_info: JSON.stringify(order.shipping_info),
+            order_lines: JSON.stringify(order.order_lines),
+            charges: JSON.stringify(order.charges),
+            tax: JSON.stringify(order.tax),
+        }));
+    }, [orders]);
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -82,6 +96,7 @@ export default function Orders() {
         <Table
             tableId="orders-table-columns"
             data={orders}
+            exportData={exportData}
             columns={orders_table_columns}
             loading={isLoading}
             pagination
