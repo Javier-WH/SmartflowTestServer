@@ -11,15 +11,21 @@
     },
     "dependencies": {
         "@nextui-org/react": "2.3.6",
+        "@supabase-cache-helpers/postgrest-swr": "1.7.5",
         "@supabase/supabase-js": "2.42.7",
         "@tabler/icons-react": "3.2.0",
         "framer-motion": "11.1.7",
         "react": "18.2.0",
+        "react-csv": "2.2.2",
+        "react-data-table-component": "7.6.2",
         "react-dom": "18.2.0",
+        "react-feather": "2.0.10",
+        "react-responsive-pagination": "2.5.0",
         "react-router-dom": "6.23.0"
     },
     "devDependencies": {
         "@types/react": "18.2.66",
+        "@types/react-csv": "1.1.10",
         "@types/react-dom": "18.2.22",
         "@typescript-eslint/eslint-plugin": "7.2.0",
         "@typescript-eslint/parser": "7.2.0",

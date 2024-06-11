@@ -11,4 +11,15 @@
 
 body {
     font-family: Helvetica, Arial, sans-serif;
+    
+}
+
+a, th, td, tr, .rdt_TableCol, small {
+    color: #808080;
+}
+ 
+
+.page-item .page-link {
+    background-color: white !important;
+    color: #808080 !important;
 }

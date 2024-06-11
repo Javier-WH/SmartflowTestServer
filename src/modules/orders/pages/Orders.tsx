@@ -1,34 +1,33 @@
-import Table from '@/modules/shared/components/Table/Table';
+import { useState } from 'react';
+import TableV2 from '@/modules/shared/components/Table/TableV2';
 
 import useOrder from '../hooks/useOrder';
 import { orders_table_columns, orders_table_visible_columns } from './orders.data';
-import { getNestedProperty } from '@/modules/shared/components/Table/utils';
+
+const ROWS_PER_PAGE = 100;
 
 export default function Orders() {
-    const { data: orders, totalRecords, isLoading, error } = useOrder();
+    const [selectedPage, setSelectedPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE);
+
+    const { data: orders, totalRecords, isLoading } = useOrder({ page: selectedPage, rowsPerPage: rowsPerPage });
 
     return (
-        <div className="h-full">
-            <Table
-                data={orders}
-                columns={orders_table_columns}
-                sortDescriptor={{ column: 'created_at', direction: 'descending' }}
-                initialVisibleColumns={orders_table_visible_columns}
-                renderCell={(item, columnKey) => {
-                    const columns = columnKey.toString().split('.');
-
-                    const text = getNestedProperty(item, columns) || '';
-
-                    return <span>{text}</span>;
-                }}
-                onSearch={() => []}
-                filterElement={<div>Filters</div>}
-                rowsPerPage={100}
-                totalRecords={totalRecords}
-                onPageChange={page => console.log(page)}
-                isLoading={isLoading}
-                error={error}
-            />
-        </div>
+        <TableV2
+            tableId="orders-table-columns"
+            data={orders}
+            columns={orders_table_columns}
+            loading={isLoading}
+            pagination
+            paginationTotalRows={totalRecords || 0}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={setRowsPerPage}
+            onPaginationChange={setSelectedPage}
+            page={selectedPage}
+            sortServer
+            exportToCsv
+            // actions={<div className="flex justify-end bg-red-500">Filters</div>}
+            initialVisibleColumns={orders_table_visible_columns}
+        />
     );
 }

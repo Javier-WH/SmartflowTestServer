@@ -4,12 +4,15 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 class OrdersService {
     private supabaseClient: SupabaseClient<Database>;
 
-    constructor(supabaseClient: SupabaseClient) {
+    constructor(supabaseClient: SupabaseClient<Database>) {
         this.supabaseClient = supabaseClient;
     }
 
-    async getOrders() {
-        return await this.supabaseClient
+    getOrders({ page = 1, rowsPerPage = 50 }: { page?: number; rowsPerPage?: number }) {
+        const offset = page * rowsPerPage;
+        const limit = rowsPerPage;
+
+        return this.supabaseClient
             .from('order')
             .select(
                 `
@@ -32,7 +35,7 @@ class OrdersService {
                 { count: 'estimated' },
             )
             .order('created_at', { ascending: false })
-            .range(0, 500 - 1);
+            .range(offset, offset + limit - 1);
     }
 }
 

@@ -5,6 +5,7 @@ import { NextUIProvider } from '@nextui-org/react';
 import { AuthProvider } from './modules/auth/context/auth.tsx';
 
 import './index.css';
+import 'react-responsive-pagination/themes/classic.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

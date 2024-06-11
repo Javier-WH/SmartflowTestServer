@@ -1,46 +1,73 @@
-import type { TableColumn } from '@/modules/shared/types/table';
+import type { TableColumn } from 'react-data-table-component';
 import type { Database } from '@/types/supabase';
 
-export const orders_table_columns: TableColumn<keyof Database['public']['Tables']['order']['Row']>[] = [
+type Order = Database['public']['Tables']['order']['Row'] & {
+    marketplace_id: {
+        name: string;
+    };
+    internal_status_id: {
+        status: string;
+    };
+};
+
+export const orders_table_columns: TableColumn<Order>[] = [
     {
-        title: 'ID',
-        uid: 'id',
-        sortable: false,
+        id: 'id',
+        name: 'ID',
+        selector: row => row.id,
+        reorder: true,
+        omit: false,
     },
     {
-        title: '# PEDIDO',
-        uid: 'order_id',
+        id: 'order_id',
+        name: '# PEDIDO',
+        selector: row => row.order_id,
         sortable: false,
+        reorder: true,
+        omit: false,
     },
     {
-        title: 'FECHA',
-        uid: 'created_at',
-        format: (value: string) => new Date(value).toLocaleDateString('es-ES'),
-        sortable: false,
+        id: 'created_at',
+        name: 'FECHA',
+        selector: row =>
+            Intl.DateTimeFormat('es-MX', {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+            }).format(new Date(row.created_at)),
+        reorder: true,
+        omit: false,
     },
     {
-        title: 'MARKETPLACE',
-        uid: 'marketplace_id.name',
-        sortable: false,
+        id: 'marketplace_id.name',
+        name: 'MARKETPLACE',
+        selector: row => row.marketplace_id?.name,
+        reorder: true,
+        omit: false,
     },
     {
-        title: 'MARKETPLACE STATUS',
-        uid: 'marketplace_status',
-        sortable: false,
+        id: 'marketplace_status',
+        name: 'MARKETPLACE STATUS',
+        selector: row => row.marketplace_status,
+        reorder: true,
+        omit: false,
     },
     {
-        title: 'INTERNAL STATUS',
-        uid: 'internal_status_id.status',
-        sortable: false,
+        id: 'internal_status_id.status',
+        name: 'INTERNAL STATUS',
+        selector: row => row.internal_status_id?.status,
+        reorder: true,
+        omit: false,
     },
     {
-        title: 'TOTAL',
-        uid: 'total',
-        sortable: false,
+        id: 'total',
+        name: 'TOTAL',
+        selector: row => row.total,
+        reorder: true,
+        omit: false,
     },
 ];
 
-export const orders_table_visible_columns: Array<keyof Database['public']['Tables']['order']['Row']> = [
+export const orders_table_visible_columns = [
     'id',
     'order_id',
     'created_at',

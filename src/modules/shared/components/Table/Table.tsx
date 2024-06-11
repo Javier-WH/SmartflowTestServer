@@ -31,6 +31,7 @@ export default function Table({
     sortDescriptor: sortDescriptorProp,
     rowsPerPage: rowsPerPageProp,
     totalRecords,
+    page,
     onPageChange,
     isLoading,
     error,
@@ -43,8 +44,9 @@ export default function Table({
     filterElement?: React.ReactElement;
     sortDescriptor?: SortDescriptor;
     rowsPerPage?: number;
+    page?: number;
     onPageChange?: (page: number) => void;
-    totalRecords?: number;
+    totalRecords?: number | null;
     isLoading?: boolean;
     error?: string;
 }) {
@@ -54,15 +56,11 @@ export default function Table({
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageProp || 500);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>(sortDescriptorProp);
 
-    const [page, setPage] = useState(1);
-
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
 
         return columns.filter(column => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns, columns]);
-
-    const pages = Math.ceil(totalRecords ?? data.length / rowsPerPage);
 
     const sortedItems = useMemo(() => {
         return [...data].sort((a, b) => {
@@ -76,13 +74,11 @@ export default function Table({
 
     const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
-        setPage(1);
     }, []);
 
     const onSearchChange = useCallback((value?: string) => {
         if (value) {
             setFilterValue(value);
-            setPage(1);
         } else {
             setFilterValue('');
         }
@@ -90,7 +86,6 @@ export default function Table({
 
     const onClear = useCallback(() => {
         setFilterValue('');
-        setPage(1);
     }, []);
 
     const topContent = useMemo(() => {
@@ -171,6 +166,8 @@ export default function Table({
     ]);
 
     const bottomContent = useMemo(() => {
+        const pages = Math.ceil((totalRecords || data.length) / rowsPerPage);
+
         return (
             <div className="py-2 px-2 flex justify-between items-center">
                 <span className="w-[30%] text-small text-default-400">
@@ -178,19 +175,16 @@ export default function Table({
                 </span>
                 <Pagination
                     isCompact
-                    showControls
                     showShadow
                     color="primary"
                     page={page}
+                    initialPage={page}
                     total={pages}
-                    onChange={page => {
-                        setPage(page);
-                        onPageChange?.(page);
-                    }}
+                    onChange={onPageChange}
                 />
             </div>
         );
-    }, [selectedKeys, page, pages, data.length]);
+    }, [selectedKeys, page, data.length, totalRecords, rowsPerPage, onPageChange]);
 
     return (
         <TableComponent
