@@ -7,15 +7,19 @@
     padding:0;
     margin:0;
     background-color: #F0F0F0;
-}
-
-body {
     font-family: Helvetica, Arial, sans-serif;
-    
 }
 
 a, th, td, tr, .rdt_TableCol, small {
     color: #808080;
+}
+
+.rdt_TableCol {
+    letter-spacing: 0.1rem;
+}
+
+nav > * {
+    letter-spacing: 0.2rem;
 }
  
 
