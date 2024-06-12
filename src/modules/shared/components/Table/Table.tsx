@@ -179,9 +179,13 @@ function Table({
                     persistTableHead
                     highlightOnHover
                     columns={headerColumns}
-                    progressPending={loading}
                     className="h-full"
-                    progressComponent={<Spinner size="lg" />}
+                    progressPending={loading}
+                    progressComponent={
+                        <div className="p-48">
+                            <Spinner size="lg" />
+                        </div>
+                    }
                     onRowClicked={onRowClicked}
                     onColumnOrderChange={cols => {
                         localStorage.setItem(`${tableId}-columns-order`, JSON.stringify(cols.map(col => col.id)));
