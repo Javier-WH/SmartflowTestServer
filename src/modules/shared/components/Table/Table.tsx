@@ -175,7 +175,7 @@ function Table({
                     expandableRowsComponent={expandableRowsComponent}
                     selectableRows
                     fixedHeader
-                    fixedHeaderScrollHeight={actions ? 'calc(100vh - 25rem)' : 'calc(100vh - 23rem)'}
+                    fixedHeaderScrollHeight={actions ? 'calc(100vh - 30rem)' : 'calc(100vh - 28rem)'}
                     persistTableHead
                     highlightOnHover
                     columns={headerColumns}

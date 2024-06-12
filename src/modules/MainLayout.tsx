@@ -9,10 +9,12 @@ export default function MainLayout() {
 
     return (
         <div className="flex flex-col w-full h-full p-12">
-            <header className="flex justify-between items-center gap-12">
-                <img src={Logo} alt="Logo" className="w-32 h-32" />
+            <header className="flex justify-center items-center gap-12 mb-10">
+                <div className="flex justify-center flex-grow">
+                    <img src={Logo} alt="Logo" className="w-32 h-32" />
+                </div>
 
-                <nav className="flex flex-grow bg-[#E6E6E6] rounded-full px-4 justify-around mt-10 shadow-xl">
+                <nav className="flex flex-grow-[2] max-w-[1200px] bg-white rounded-lg px-4 justify-around mt-10 shadow-sm">
                     <Link
                         to="/home"
                         className="py-2 flex-grow text-center font-thin"
