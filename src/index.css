@@ -27,3 +27,9 @@ nav > * {
     background-color: white !important;
     color: #808080 !important;
 }
+
+#main-menu-nav {
+    border-width: 1px;
+    border-color: #FFF0E8;
+    border-style: solid;
+}
