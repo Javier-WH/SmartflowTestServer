@@ -8,15 +8,15 @@ export default function MainLayout() {
     const location = useLocation();
 
     return (
-        <div className="flex flex-col w-full h-full p-12 max-w-screen-2xl mx-auto">
-            <header className="flex justify-center items-center gap-12 mb-10">
+        <div className="flex flex-col w-full h-full px-12 pb-8 pt-4 max-w-[1800px] mx-auto">
+            <header className="flex justify-center items-center gap-12">
                 <div className="flex justify-center flex-grow">
-                    <img src={Logo} alt="Logo" className="w-32 h-32" />
+                    <img src={Logo} alt="Logo" className="w-16 h-16" />
                 </div>
 
                 <nav
                     id="main-menu-nav"
-                    className="flex flex-grow-[3] max-w-[1200px] bg-white rounded-lg px-4 justify-around mt-10 shadow-sm"
+                    className="flex flex-grow-[3] max-w-[1200px] bg-white rounded-lg px-4 justify-around shadow-sm text-xs"
                 >
                     <Link
                         to="/home"

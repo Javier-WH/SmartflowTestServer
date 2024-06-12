@@ -221,7 +221,7 @@ export default function Orders() {
                             inputMode="search"
                             color="default"
                             size="lg"
-                            classNames={{ inputWrapper: 'shadow-lg' }}
+                            classNames={{ inputWrapper: 'shadow-lg bg-white' }}
                             radius="full"
                             onChange={handleSearchTermChange}
                             defaultValue={searchTerm}
@@ -243,14 +243,15 @@ export default function Orders() {
                         }
                         value={selectedDateRange}
                         className="max-w-72 w-full"
-                        label="FECHA"
                         onChange={setSelectedDateRange}
                         radius="full"
                         size="sm"
+                        label="FECHA"
+                        labelPlacement="inside"
                         isOpen={isDateRangePickerOpen}
                         onOpenChange={setIsDateRangePickerOpen}
                         shouldForceLeadingZeros
-                        classNames={{ inputWrapper: 'shadow-lg' }}
+                        classNames={{ inputWrapper: 'shadow-lg bg-white' }}
                         CalendarBottomContent={
                             <div className="flex justify-center py-4">
                                 <Button
@@ -271,7 +272,7 @@ export default function Orders() {
 
                     <Select
                         className="w-48 m-0"
-                        classNames={{ trigger: 'shadow-lg' }}
+                        classNames={{ trigger: 'shadow-lg bg-white' }}
                         label="STATUS"
                         size="sm"
                         radius="full"
@@ -293,8 +294,8 @@ export default function Orders() {
                         )}
                     </Select>
                     <Select
-                        className="w-48 m-0"
-                        classNames={{ trigger: 'shadow-lg' }}
+                        className="w-40 m-0"
+                        classNames={{ trigger: 'shadow-lg bg-white' }}
                         label="MARKETPLACE"
                         size="sm"
                         radius="full"
