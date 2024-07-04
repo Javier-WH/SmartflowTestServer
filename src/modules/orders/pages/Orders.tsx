@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { type ChangeEvent, useEffect, useMemo, useState } from 'react';
 
 import { Button, type DateValue, Select, SelectItem, type RangeValue, DateRangePicker, Input } from '@nextui-org/react';
 import type { ExpanderComponentProps } from 'react-data-table-component/dist/DataTable/types';
