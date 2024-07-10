@@ -171,7 +171,7 @@ function Table({
                 <DataTable
                     data={data}
                     striped
-                    expandableRows
+                    expandableRows={Boolean(expandableRowsComponent)}
                     expandableRowsComponent={expandableRowsComponent}
                     selectableRows
                     fixedHeader
