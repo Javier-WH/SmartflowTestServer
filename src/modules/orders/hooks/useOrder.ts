@@ -41,8 +41,6 @@ export default function useOrder(
         mutate,
     } = useQuery(ordersService.getOrders({ page, rowsPerPage, status_id, marketplace_id, from, to, search }));
 
-    console.log('LS -> src/modules/orders/hooks/useOrder.ts:42 -> orders: ', orders);
-
     return {
         data: orders ?? [],
         totalRecords: count,

@@ -29,8 +29,6 @@ class OrderService {
         const offset = (page - 1) * rowsPerPage;
         const limit = rowsPerPage;
 
-        console.log('LS -> src/modules/orders/services/order.ts:28 -> search: ', search);
-
         let query = this.supabaseClient
             .from('order')
             .select(

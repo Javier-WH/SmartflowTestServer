@@ -37,7 +37,8 @@ export default function Inventory() {
                     </div>
                 }
             />
-            <NewProduct isOpen={isOpen} onClose={onClose} />
+
+            {isOpen && <NewProduct isOpen={isOpen} onClose={onClose} />}
         </>
     );
 }
