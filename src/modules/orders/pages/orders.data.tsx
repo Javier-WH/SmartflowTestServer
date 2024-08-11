@@ -15,6 +15,12 @@ export type Order = Database['public']['Tables']['order']['Row'] & {
     order_lines: Array<{
         commission_amount?: string;
     }>;
+    order_status_history: Array<{
+        status_id: {
+            status: string;
+        };
+        created_at: string;
+    }>;
 };
 
 export const orders_table_columns: TableColumn<Order>[] = [
@@ -63,9 +69,9 @@ export const orders_table_columns: TableColumn<Order>[] = [
         omit: false,
     },
     {
-        id: 'internal_status_id.status',
+        id: 'internal_status_id.status_id.status',
         name: 'INTERNAL STATUS',
-        selector: row => row.internal_status_id?.status,
+        selector: row => row.order_status_history[0]?.status_id?.status,
         reorder: true,
         omit: false,
     },

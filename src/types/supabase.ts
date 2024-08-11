@@ -3,6 +3,66 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
     public: {
         Tables: {
+            business: {
+                Row: {
+                    created_at: string;
+                    id: number;
+                    name: string;
+                };
+                Insert: {
+                    created_at?: string;
+                    id?: number;
+                    name: string;
+                };
+                Update: {
+                    created_at?: string;
+                    id?: number;
+                    name?: string;
+                };
+                Relationships: [];
+            };
+            business_product: {
+                Row: {
+                    business_id: number;
+                    created_at: string;
+                    id: number;
+                    product_id: number;
+                    sku: string;
+                    stock: number;
+                };
+                Insert: {
+                    business_id: number;
+                    created_at?: string;
+                    id?: number;
+                    product_id: number;
+                    sku: string;
+                    stock?: number;
+                };
+                Update: {
+                    business_id?: number;
+                    created_at?: string;
+                    id?: number;
+                    product_id?: number;
+                    sku?: string;
+                    stock?: number;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'business_product_business_id_fkey';
+                        columns: ['business_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'business';
+                        referencedColumns: ['id'];
+                    },
+                    {
+                        foreignKeyName: 'business_product_product_id_fkey';
+                        columns: ['product_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'product';
+                        referencedColumns: ['id'];
+                    },
+                ];
+            };
             export_file: {
                 Row: {
                     created_at: string;
@@ -64,49 +124,25 @@ export type Database = {
             };
             marketplace_product: {
                 Row: {
-                    brand: string | null;
                     created_at: string;
-                    description: string | null;
-                    discounted_price: number;
                     id: number;
-                    internal_sku: string | null;
                     marketplace_id: number;
-                    name: string | null;
-                    offer_id: number;
-                    price: number;
-                    product_sku: string;
-                    quantity: number;
-                    shop_sku: string;
+                    marketplace_sku: string;
+                    product_id: number;
                 };
                 Insert: {
-                    brand?: string | null;
                     created_at?: string;
-                    description?: string | null;
-                    discounted_price: number;
                     id?: number;
-                    internal_sku?: string | null;
                     marketplace_id: number;
-                    name?: string | null;
-                    offer_id: number;
-                    price: number;
-                    product_sku: string;
-                    quantity: number;
-                    shop_sku: string;
+                    marketplace_sku: string;
+                    product_id: number;
                 };
                 Update: {
-                    brand?: string | null;
                     created_at?: string;
-                    description?: string | null;
-                    discounted_price?: number;
                     id?: number;
-                    internal_sku?: string | null;
                     marketplace_id?: number;
-                    name?: string | null;
-                    offer_id?: number;
-                    price?: number;
-                    product_sku?: string;
-                    quantity?: number;
-                    shop_sku?: string;
+                    marketplace_sku?: string;
+                    product_id?: number;
                 };
                 Relationships: [
                     {
@@ -114,6 +150,13 @@ export type Database = {
                         columns: ['marketplace_id'];
                         isOneToOne: false;
                         referencedRelation: 'marketplace';
+                        referencedColumns: ['id'];
+                    },
+                    {
+                        foreignKeyName: 'marketplace_product_product_id_fkey';
+                        columns: ['product_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'product';
                         referencedColumns: ['id'];
                     },
                 ];
@@ -187,152 +230,6 @@ export type Database = {
                     },
                 ];
             };
-            order_charge: {
-                Row: {
-                    amount: string;
-                    currency: string;
-                    id: number;
-                    marketplace_order_id: string;
-                    order_id: number;
-                    type: string;
-                };
-                Insert: {
-                    amount: string;
-                    currency: string;
-                    id?: number;
-                    marketplace_order_id: string;
-                    order_id: number;
-                    type: string;
-                };
-                Update: {
-                    amount?: string;
-                    currency?: string;
-                    id?: number;
-                    marketplace_order_id?: string;
-                    order_id?: number;
-                    type?: string;
-                };
-                Relationships: [
-                    {
-                        foreignKeyName: 'order_charge_order_id_fkey';
-                        columns: ['order_id'];
-                        isOneToOne: false;
-                        referencedRelation: 'order';
-                        referencedColumns: ['id'];
-                    },
-                ];
-            };
-            order_item: {
-                Row: {
-                    commission_amount: string;
-                    commission_currency: string;
-                    condition: string;
-                    id: number;
-                    marketplace_order_id: string;
-                    offer_id: string;
-                    order_id: number;
-                    product_name: string;
-                    shipping_method: string;
-                    sku: string;
-                    status_id: number | null;
-                    unit_price_amount: string;
-                    unit_price_currency: string;
-                    unit_price_without_tax_amount: string;
-                    unit_price_without_tax_currency: string;
-                    upc: string;
-                };
-                Insert: {
-                    commission_amount: string;
-                    commission_currency: string;
-                    condition: string;
-                    id?: number;
-                    marketplace_order_id: string;
-                    offer_id: string;
-                    order_id: number;
-                    product_name: string;
-                    shipping_method: string;
-                    sku: string;
-                    status_id?: number | null;
-                    unit_price_amount: string;
-                    unit_price_currency: string;
-                    unit_price_without_tax_amount: string;
-                    unit_price_without_tax_currency: string;
-                    upc: string;
-                };
-                Update: {
-                    commission_amount?: string;
-                    commission_currency?: string;
-                    condition?: string;
-                    id?: number;
-                    marketplace_order_id?: string;
-                    offer_id?: string;
-                    order_id?: number;
-                    product_name?: string;
-                    shipping_method?: string;
-                    sku?: string;
-                    status_id?: number | null;
-                    unit_price_amount?: string;
-                    unit_price_currency?: string;
-                    unit_price_without_tax_amount?: string;
-                    unit_price_without_tax_currency?: string;
-                    upc?: string;
-                };
-                Relationships: [
-                    {
-                        foreignKeyName: 'order_item_order_id_fkey';
-                        columns: ['order_id'];
-                        isOneToOne: false;
-                        referencedRelation: 'order';
-                        referencedColumns: ['id'];
-                    },
-                    {
-                        foreignKeyName: 'order_item_status_id_fkey';
-                        columns: ['status_id'];
-                        isOneToOne: false;
-                        referencedRelation: 'order_status';
-                        referencedColumns: ['id'];
-                    },
-                ];
-            };
-            order_item_status: {
-                Row: {
-                    created_at: string;
-                    id: number;
-                    marketplace_order_id: string;
-                    order_item_id: number;
-                    status_id: number;
-                };
-                Insert: {
-                    created_at?: string;
-                    id?: number;
-                    marketplace_order_id: string;
-                    order_item_id: number;
-                    status_id: number;
-                };
-                Update: {
-                    created_at?: string;
-                    id?: number;
-                    marketplace_order_id?: string;
-                    order_item_id?: number;
-                    status_id?: number;
-                };
-                Relationships: [
-                    {
-                        foreignKeyName: 'order_item_status_order_item_id_fkey';
-                        columns: ['order_item_id'];
-                        isOneToOne: false;
-                        referencedRelation: 'order_item';
-                        referencedColumns: ['id'];
-                    },
-                    {
-                        foreignKeyName: 'order_item_status_status_id_fkey';
-                        columns: ['status_id'];
-                        isOneToOne: false;
-                        referencedRelation: 'order_status';
-                        referencedColumns: ['id'];
-                    },
-                ];
-            };
             order_status: {
                 Row: {
                     description: string | null;
@@ -398,40 +295,35 @@ export type Database = {
                     },
                 ];
             };
-            order_tax: {
+            product: {
                 Row: {
-                    amount: string;
-                    currency: string;
+                    active: boolean;
+                    brand: string | null;
+                    created_at: string;
+                    ean: string | null;
                     id: number;
-                    marketplace_order_id: string;
                     name: string;
-                    order_id: number;
+                    price: number;
                 };
                 Insert: {
-                    amount: string;
-                    currency: string;
+                    active?: boolean;
+                    brand?: string | null;
+                    created_at?: string;
+                    ean?: string | null;
                     id?: number;
-                    marketplace_order_id: string;
                     name: string;
-                    order_id: number;
+                    price: number;
                 };
                 Update: {
-                    amount?: string;
-                    currency?: string;
+                    active?: boolean;
+                    brand?: string | null;
+                    created_at?: string;
+                    ean?: string | null;
                     id?: number;
-                    marketplace_order_id?: string;
                     name?: string;
-                    order_id?: number;
+                    price?: number;
                 };
-                Relationships: [
-                    {
-                        foreignKeyName: 'order_tax_order_id_fkey';
-                        columns: ['order_id'];
-                        isOneToOne: false;
-                        referencedRelation: 'order';
-                        referencedColumns: ['id'];
-                    },
-                ];
+                Relationships: [];
             };
             role_permissions: {
                 Row: {
@@ -514,7 +406,25 @@ export type Database = {
             [_ in never]: never;
         };
         Functions: {
-            [_ in never]: never;
+            create_product: {
+                Args: {
+                    internal_sku: string;
+                    marketplace_id: number;
+                    marketplace_sku: string;
+                    name: string;
+                    brand: string;
+                    price: number;
+                    ean: string;
+                };
+                Returns: undefined;
+            };
+            schedule_start_syncing_marketplace: {
+                Args: {
+                    start_date: string;
+                    end_date: string;
+                };
+                Returns: undefined;
+            };
         };
         Enums: {
             app_permission:

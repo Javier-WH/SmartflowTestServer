@@ -46,6 +46,7 @@ class OrderService {
             total,
             marketplace_status,
             internal_status_id (status),
+            order_status_history (status_id (status), created_at),
             order_lines,
             charges,
             tax,
