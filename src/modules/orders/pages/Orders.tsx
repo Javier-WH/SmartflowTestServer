@@ -13,6 +13,8 @@ import useMarketplace from '../hooks/useMarketplace';
 import useOrder from '../hooks/useOrder';
 import useStatus from '../hooks/useStatus';
 import { useDebouncedCallback } from 'use-debounce';
+import ActionsSelect from '../components/ActionsSelect';
+import { OrderAction } from '../types/types';
 
 const ROWS_PER_PAGE = 100;
 
@@ -47,6 +49,9 @@ export default function Orders() {
 
     const [selectedDateRange, setSelectedDateRange] = useState<RangeValue<DateValue> | null>(dateValue);
     const [isDateRangePickerOpen, setIsDateRangePickerOpen] = useState(false);
+    const [selectedRows, setSelectedRows] = useState<Order[]>([]);
+
+    const [selectedAction, setSelectedAction] = useState<OrderAction | null>(null);
 
     const {
         data: orders,
@@ -197,6 +202,22 @@ export default function Orders() {
         );
     };
 
+    async function handleAction() {
+        switch (selectedAction) {
+            case OrderAction.Accept:
+                // TODO: mostrar el modal de aceptación
+                break;
+            case OrderAction.Reject:
+                // TODO: mostrar el modal de rechazo
+                break;
+            case OrderAction.Scan:
+                break;
+            case OrderAction.ReadyToShip:
+                // TODO: cambiar el status de las ordenes seleccionadas a "Preparado para despachar"
+                break;
+        }
+    }
+
     return (
         <Table
             tableId="orders-table-columns"
@@ -214,6 +235,13 @@ export default function Orders() {
             exportToCsv
             upperSlot={
                 <div className="flex w-full gap-3">
+                    <div>
+                        <ActionsSelect
+                            onChange={setSelectedAction}
+                            buttonDisabled={!selectedRows?.length}
+                            onButtonClick={handleAction}
+                        />
+                    </div>
                     <div className="flex-grow max-w-[600px] mr-auto">
                         <Input
                             placeholder="Search..."
@@ -319,6 +347,7 @@ export default function Orders() {
             }
             initialVisibleColumns={orders_table_visible_columns}
             expandableRowsComponent={ExpandedRowComponent}
+            onSelectedRowsChange={setSelectedRows}
         />
     );
 }

@@ -28,6 +28,7 @@ function Table({
     page = 1,
     initialVisibleColumns = [],
     expandableRowsComponent,
+    onSelectedRowsChange,
 }: {
     tableId: string;
     pagination?: boolean;
@@ -50,6 +51,7 @@ function Table({
     page?: number;
     initialVisibleColumns?: Array<{ id: string; omit: boolean }>;
     expandableRowsComponent?: ExpandableRowsComponent<any>;
+    onSelectedRowsChange?: (selectedRows: any[]) => void;
 }) {
     const storedVisibility = localStorage.getItem(`${tableId}-columns-visibility`);
     const persistedVisibility = storedVisibility ? JSON.parse(storedVisibility) : initialVisibleColumns;
@@ -172,6 +174,9 @@ function Table({
                     onColumnOrderChange={cols => {
                         localStorage.setItem(`${tableId}-columns-order`, JSON.stringify(cols.map(col => col.id)));
                         setTableColumns(cols);
+                    }}
+                    onSelectedRowsChange={({ selectedRows }) => {
+                        onSelectedRowsChange?.(selectedRows);
                     }}
                     onSort={onSort}
                     sortServer={sortServer}
