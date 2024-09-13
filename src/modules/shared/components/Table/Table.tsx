@@ -1,4 +1,4 @@
-import { useState, useMemo, type ChangeEvent } from 'react';
+import { useState, useMemo } from 'react';
 import { RotateCw, Columns, Download } from 'react-feather';
 import DataTable, { type SortOrder, type TableColumn } from 'react-data-table-component';
 import Pagination from './Pagination';
@@ -21,7 +21,8 @@ function Table({
     onSort = () => {},
     exportToCsv = false,
     exportData,
-    actions,
+    upperSlot,
+    bottomSlot,
     onRefresh,
     rowsPerPage = 50,
     page = 1,
@@ -42,7 +43,8 @@ function Table({
     onSort?: (selectedColumn: TableColumn<any>, sortDirection: SortOrder, sortedRows: any[]) => void;
     exportToCsv?: boolean;
     exportData?: any[];
-    actions?: React.ReactElement;
+    upperSlot?: React.ReactElement;
+    bottomSlot?: React.ReactElement;
     onRefresh?: () => void;
     rowsPerPage?: number;
     page?: number;
@@ -79,92 +81,72 @@ function Table({
         return newColumns;
     }, [tableId, columns, visibleColumns]);
 
-    const handleRowsPerPageChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        const rowsPerPage = Number(e.target.value);
-
-        onRowsPerPageChange(rowsPerPage);
-    };
-
     const handlePaginationChange = (page: number) => {
         onPaginationChange(page);
     };
 
     return (
         <div className="flex flex-col gap-4 h-full">
-            <div className="flex-grow items-center">{actions}</div>
-            <div className="flex flex-col lg:flex-row justify-between gap-3">
-                {pagination && (
-                    <div className="flex flex-col justify-end items-center">
-                        {/* <label htmlFor='rows-per-page'>{t('show')}</label> */}
-                        <label className="flex items-center text-default-400 text-small">
-                            Rows per page:
-                            <select
-                                className="bg-transparent outline-none text-default-400 text-sm"
-                                onChange={handleRowsPerPageChange}
-                                value={rowsPerPage}
-                            >
-                                {paginationPerPageOptions.map(rowsPerPage => (
-                                    <option key={rowsPerPage} value={rowsPerPage}>
-                                        {rowsPerPage}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
-                    </div>
-                )}
-                <div className="flex justify-center xl:justify-end items-center">
+            <div className="flex flex-col lg:flex-row gap-3">
+                <div className="flex items-center w-full">
+                    <div className="flex-grow">{upperSlot}</div>
                     {onRefresh && <RotateCw role="button" onClick={onRefresh} />}
 
-                    {exportToCsv && (
-                        <CSVLink
-                            data={exportData ?? data}
-                            filename={`${Intl.DateTimeFormat('es-MX', {
-                                dateStyle: 'medium',
-                                timeStyle: 'short',
-                            }).format(new Date())}.csv`}
-                            target="_blank"
-                        >
-                            <Button variant="light" className="px-0" size="sm">
-                                <Download className="text-default-500" />
-                            </Button>
-                        </CSVLink>
-                    )}
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Button variant="light" className="px-0" size="sm">
-                                <Columns className="text-default-500" />
-                            </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                            disallowEmptySelection
-                            aria-label="Table Columns"
-                            closeOnSelect={false}
-                            selectedKeys={visibleColumns.map((col: { id: string; omit: boolean }) =>
-                                !col.omit ? col.id : '',
-                            )}
-                            selectionMode="multiple"
-                            onSelectionChange={keys => {
-                                const columnKeys = Array.from(keys);
+                    <div className="">
+                        {exportToCsv && (
+                            <CSVLink
+                                data={exportData ?? data}
+                                filename={`${Intl.DateTimeFormat('es-MX', {
+                                    dateStyle: 'medium',
+                                    timeStyle: 'short',
+                                }).format(new Date())}.csv`}
+                                target="_blank"
+                            >
+                                <Button variant="light" className="px-0" size="sm">
+                                    <Download className="text-default-500" />
+                                </Button>
+                            </CSVLink>
+                        )}
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button variant="light" className="px-0" size="sm">
+                                    <Columns className="text-default-500" />
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                disallowEmptySelection
+                                aria-label="Table Columns"
+                                closeOnSelect={false}
+                                selectedKeys={visibleColumns.map((col: { id: string; omit: boolean }) =>
+                                    !col.omit ? col.id : '',
+                                )}
+                                selectionMode="multiple"
+                                onSelectionChange={keys => {
+                                    const columnKeys = Array.from(keys);
 
-                                const columnsToPersist = tableColumns.map(col => {
-                                    return {
-                                        id: col.id,
-                                        omit: !columnKeys.includes(col.id as string),
-                                    };
-                                });
+                                    const columnsToPersist = tableColumns.map(col => {
+                                        return {
+                                            id: col.id,
+                                            omit: !columnKeys.includes(col.id as string),
+                                        };
+                                    });
 
-                                localStorage.setItem(`${tableId}-columns-visibility`, JSON.stringify(columnsToPersist));
+                                    localStorage.setItem(
+                                        `${tableId}-columns-visibility`,
+                                        JSON.stringify(columnsToPersist),
+                                    );
 
-                                setVisibleColumns(columnsToPersist);
-                            }}
-                        >
-                            {columns.map(column => (
-                                <DropdownItem key={column.id} className="capitalize">
-                                    {column.name}
-                                </DropdownItem>
-                            ))}
-                        </DropdownMenu>
-                    </Dropdown>
+                                    setVisibleColumns(columnsToPersist);
+                                }}
+                            >
+                                {columns.map(column => (
+                                    <DropdownItem key={column.id} className="capitalize">
+                                        {column.name}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
                 </div>
             </div>
             <div className="flex-grow bg-white mt-1 rounded-3xl overflow-y-hidden h-full shadow-lg">
@@ -175,7 +157,7 @@ function Table({
                     expandableRowsComponent={expandableRowsComponent}
                     selectableRows
                     fixedHeader
-                    fixedHeaderScrollHeight={actions ? 'calc(100vh - 21rem)' : 'calc(100vh - 19rem)'}
+                    fixedHeaderScrollHeight={upperSlot ? 'calc(100vh - 21rem)' : 'calc(100vh - 19rem)'}
                     persistTableHead
                     highlightOnHover
                     columns={headerColumns}
@@ -196,15 +178,19 @@ function Table({
                     noDataComponent={<span className="text-center h-full">No hay datos</span>}
                 />
             </div>
-            <div className="">
-                <Pagination
-                    rowsPerPage={rowsPerPage}
-                    totalPages={Math.ceil(paginationTotalRows / rowsPerPage)}
-                    currentPage={page}
-                    onPageChange={handlePaginationChange}
-                    totalEntries={paginationTotalRows}
-                />
-            </div>
+            {pagination && (
+                <div>
+                    <Pagination
+                        rowsPerPage={rowsPerPage}
+                        totalPages={Math.ceil(paginationTotalRows / rowsPerPage)}
+                        currentPage={page}
+                        onPageChange={handlePaginationChange}
+                        totalEntries={paginationTotalRows}
+                        onRowsPerPageChange={onRowsPerPageChange}
+                        paginationPerPageOptions={paginationPerPageOptions}
+                    />
+                </div>
+            )}
         </div>
     );
 }

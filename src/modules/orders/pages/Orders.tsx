@@ -212,8 +212,8 @@ export default function Orders() {
             page={selectedPage}
             sortServer
             exportToCsv
-            actions={
-                <div className="flex justify-center xl:justify-end items-center gap-4 flex-wrap">
+            upperSlot={
+                <div className="flex w-full gap-3">
                     <div className="flex-grow max-w-[600px] mr-auto">
                         <Input
                             placeholder="Search..."
@@ -242,7 +242,7 @@ export default function Orders() {
                             ) : null
                         }
                         value={selectedDateRange}
-                        className="max-w-72 w-full"
+                        className="max-w-60 w-full"
                         onChange={setSelectedDateRange}
                         radius="full"
                         size="sm"
@@ -269,9 +269,8 @@ export default function Orders() {
                             </div>
                         }
                     />
-
                     <Select
-                        className="w-48 m-0"
+                        className="w-40 m-0"
                         classNames={{ trigger: 'shadow-lg bg-white' }}
                         label="STATUS"
                         size="sm"
@@ -294,7 +293,7 @@ export default function Orders() {
                         )}
                     </Select>
                     <Select
-                        className="w-40 m-0"
+                        className="w-36 m-0"
                         classNames={{ trigger: 'shadow-lg bg-white' }}
                         label="MARKETPLACE"
                         size="sm"
