@@ -29,6 +29,9 @@ function Table({
     initialVisibleColumns = [],
     expandableRowsComponent,
     onSelectedRowsChange,
+    showColumnsSelector = true,
+    className,
+    headerScrollHeight,
 }: {
     tableId: string;
     pagination?: boolean;
@@ -52,6 +55,9 @@ function Table({
     initialVisibleColumns?: Array<{ id: string; omit: boolean }>;
     expandableRowsComponent?: ExpandableRowsComponent<any>;
     onSelectedRowsChange?: (selectedRows: any[]) => void;
+    showColumnsSelector?: boolean;
+    className?: string;
+    headerScrollHeight?: string;
 }) {
     const storedVisibility = localStorage.getItem(`${tableId}-columns-visibility`);
     const persistedVisibility = storedVisibility ? JSON.parse(storedVisibility) : initialVisibleColumns;
@@ -109,57 +115,63 @@ function Table({
                                 </Button>
                             </CSVLink>
                         )}
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button variant="light" className="px-0" size="sm">
-                                    <Columns className="text-default-500" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={visibleColumns.map((col: { id: string; omit: boolean }) =>
-                                    !col.omit ? col.id : '',
-                                )}
-                                selectionMode="multiple"
-                                onSelectionChange={keys => {
-                                    const columnKeys = Array.from(keys);
+                        {showColumnsSelector && (
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button variant="light" className="px-0" size="sm">
+                                        <Columns className="text-default-500" />
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={visibleColumns.map((col: { id: string; omit: boolean }) =>
+                                        !col.omit ? col.id : '',
+                                    )}
+                                    selectionMode="multiple"
+                                    onSelectionChange={keys => {
+                                        const columnKeys = Array.from(keys);
 
-                                    const columnsToPersist = tableColumns.map(col => {
-                                        return {
-                                            id: col.id,
-                                            omit: !columnKeys.includes(col.id as string),
-                                        };
-                                    });
+                                        const columnsToPersist = tableColumns.map(col => {
+                                            return {
+                                                id: col.id,
+                                                omit: !columnKeys.includes(col.id as string),
+                                            };
+                                        });
 
-                                    localStorage.setItem(
-                                        `${tableId}-columns-visibility`,
-                                        JSON.stringify(columnsToPersist),
-                                    );
+                                        localStorage.setItem(
+                                            `${tableId}-columns-visibility`,
+                                            JSON.stringify(columnsToPersist),
+                                        );
 
-                                    setVisibleColumns(columnsToPersist);
-                                }}
-                            >
-                                {columns.map(column => (
-                                    <DropdownItem key={column.id} className="capitalize">
-                                        {column.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
+                                        setVisibleColumns(columnsToPersist);
+                                    }}
+                                >
+                                    {columns.map(column => (
+                                        <DropdownItem key={column.id} className="capitalize">
+                                            {column.name}
+                                        </DropdownItem>
+                                    ))}
+                                </DropdownMenu>
+                            </Dropdown>
+                        )}
                     </div>
                 </div>
             </div>
-            <div className="flex-grow bg-white mt-1 rounded-3xl overflow-y-hidden h-full shadow-lg">
+            <div className={`flex-grow bg-white mt-1 rounded-3xl overflow-y-hidden h-full shadow-lg ${className}`}>
                 <DataTable
                     data={data}
                     striped
-                    expandableRows
+                    expandableRows={Boolean(expandableRowsComponent)}
                     expandableRowsComponent={expandableRowsComponent}
                     selectableRows
                     fixedHeader
-                    fixedHeaderScrollHeight={upperSlot ? 'calc(100vh - 21rem)' : 'calc(100vh - 19rem)'}
+                    fixedHeaderScrollHeight={
+                        upperSlot
+                            ? headerScrollHeight || 'calc(100vh - 21rem)'
+                            : headerScrollHeight || 'calc(100vh - 19rem)'
+                    }
                     persistTableHead
                     highlightOnHover
                     columns={headerColumns}

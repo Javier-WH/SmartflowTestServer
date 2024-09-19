@@ -1,6 +1,7 @@
 import type { Database } from '@/types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { parseDate } from '@internationalized/date';
+import type { AcknowledgeableOrderList } from '../types/types';
 
 class OrderService {
     private supabaseClient: SupabaseClient<Database>;
@@ -29,14 +30,12 @@ class OrderService {
         const offset = (page - 1) * rowsPerPage;
         const limit = rowsPerPage;
 
-        console.log('LS -> src/modules/orders/services/order.ts:28 -> search: ', search);
-
         let query = this.supabaseClient
             .from('order')
             .select(
                 `
             id,
-            marketplace_id (name),
+            marketplace_id (id, name),
             order_id,
             created_at,
             shipping_info,
@@ -45,8 +44,7 @@ class OrderService {
             currency,
             total,
             marketplace_status,
-            internal_status_id (status),
-            order_status_history (status_id (status), created_at),
+            internal_status_id (id, status, name),
             order_lines,
             charges,
             tax,
@@ -58,7 +56,7 @@ class OrderService {
             .order('created_at', { ascending: false });
 
         if (status_id != null) {
-            query = query.eq('marketplace_status', status_id);
+            query = query.in('internal_status_id', [status_id]);
         }
 
         if (marketplace_id != null) {
@@ -76,6 +74,23 @@ class OrderService {
         }
 
         return query;
+    }
+
+    async acknowledgeOrders(orders: AcknowledgeableOrderList) {
+        const { data, error } = await this.supabaseClient.functions.invoke('acknowledge-order', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+            },
+            body: { orders },
+        });
+
+        if (error) {
+            const { errors } = (await error.context.json()) ?? {};
+            return [errors, null];
+        }
+
+        return [null, data];
     }
 }
 

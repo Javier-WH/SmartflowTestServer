@@ -8,6 +8,9 @@
     margin:0;
     background-color: #F0F0F0;
     font-family: Helvetica, Arial, sans-serif;
+    
+  --toastify-toast-width: 450px;
+  --toastify-toast-max-height: 400px;
 }
 
 a, th, td, tr, .rdt_TableCol, small {
@@ -33,3 +36,5 @@ nav > * {
     border-color: #FFF0E8;
     border-style: solid;
 }
+
+

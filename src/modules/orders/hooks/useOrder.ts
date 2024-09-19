@@ -3,6 +3,7 @@ import supabase from '@/lib/supabase';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 import OrderService from '../services/order';
+import type { AcknowledgeableOrderList } from '../types/types';
 
 const ordersService = new OrderService(supabase);
 
@@ -41,18 +42,22 @@ export default function useOrder(
         mutate,
     } = useQuery(ordersService.getOrders({ page, rowsPerPage, status_id, marketplace_id, from, to, search }));
 
-    const mappedOrders = orders
-        ? orders.map(order => ({
-              ...order,
-              order_status_history: order.order_status_history.sort((a, b) => b.created_at.localeCompare(a.created_at)),
-          }))
-        : [];
+    async function acknowledgeOrders(orders: AcknowledgeableOrderList) {
+        const [error, data] = await ordersService.acknowledgeOrders(orders);
+
+        if (error) {
+            return [error, null];
+        }
+
+        return [null, data];
+    }
 
     return {
-        data: mappedOrders,
+        data: orders,
         totalRecords: count,
         isLoading,
         error: error?.message,
         mutate,
+        acknowledgeOrders,
     };
 }

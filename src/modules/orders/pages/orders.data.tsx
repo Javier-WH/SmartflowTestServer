@@ -3,6 +3,7 @@ import type { Database } from '@/types/supabase';
 
 export type Order = Database['public']['Tables']['order']['Row'] & {
     marketplace_id: {
+        id: number;
         name: string;
     };
     internal_status_id: {
@@ -12,9 +13,9 @@ export type Order = Database['public']['Tables']['order']['Row'] & {
         shipping_tracking_url?: string;
         shipping_tracking?: string;
     };
-    order_lines: Array<{
-        commission_amount?: string;
-    }>;
+    // order_lines: Array<{
+    //     commission_amount?: string;
+    // }>;
     order_status_history: Array<{
         status_id: {
             status: string;
@@ -69,9 +70,9 @@ export const orders_table_columns: TableColumn<Order>[] = [
         omit: false,
     },
     {
-        id: 'internal_status_id.status_id.status',
+        id: 'internal_internal_status_id.name',
         name: 'INTERNAL STATUS',
-        selector: row => row.order_status_history[0]?.status_id?.status,
+        selector: row => row.internal_status_id?.name,
         reorder: true,
         omit: false,
     },

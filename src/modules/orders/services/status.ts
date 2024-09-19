@@ -9,7 +9,7 @@ class StatusService {
     }
 
     getStatus() {
-        return this.supabaseClient.from('order_status').select('*');
+        return this.supabaseClient.from('order_internal_status').select('*');
     }
 }
 

@@ -1,20 +1,35 @@
+// @ts-nocheck
 import { type ChangeEvent, useEffect, useMemo, useState } from 'react';
 
-import { Button, type DateValue, Select, SelectItem, type RangeValue, DateRangePicker, Input } from '@nextui-org/react';
+import {
+    Button,
+    type DateValue,
+    Select,
+    SelectItem,
+    type RangeValue,
+    DateRangePicker,
+    Input,
+    useDisclosure,
+} from '@nextui-org/react';
 import type { ExpanderComponentProps } from 'react-data-table-component/dist/DataTable/types';
 import { IconX } from '@tabler/icons-react';
-import { parseDate } from '@internationalized/date';
+import { toast } from 'react-toastify';
 
+import OrderProcessingModal from '../components/OrderProcessingModal';
 import Table from '@/modules/shared/components/Table/Table';
+import ActionsSelect from '../components/ActionsSelect';
+import LoadingOverlay from '@/modules/shared/components/LoadingOverlay';
+
+import { OrderAction } from '../types/types';
 import { type Order, orders_table_columns, orders_table_visible_columns } from './orders.data';
 
+import { parseDate } from '@internationalized/date';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useMarketplace from '../hooks/useMarketplace';
 import useOrder from '../hooks/useOrder';
 import useStatus from '../hooks/useStatus';
 import { useDebouncedCallback } from 'use-debounce';
-import ActionsSelect from '../components/ActionsSelect';
-import { OrderAction } from '../types/types';
+import { mapAcknowledgeableOrderList } from '../utils/mapper';
 
 const ROWS_PER_PAGE = 100;
 
@@ -52,11 +67,15 @@ export default function Orders() {
     const [selectedRows, setSelectedRows] = useState<Order[]>([]);
 
     const [selectedAction, setSelectedAction] = useState<OrderAction | null>(null);
+    const [selectedActionLoading, setSelectedActionLoading] = useState(false);
+
+    const { isOpen, onOpenChange, onOpen } = useDisclosure();
 
     const {
         data: orders,
         totalRecords: ordersTotalRecords,
         isLoading: isOrdersLoading,
+        acknowledgeOrders,
     } = useOrder({
         page: selectedPage,
         rowsPerPage: rowsPerPage,
@@ -204,9 +223,29 @@ export default function Orders() {
 
     async function handleAction() {
         switch (selectedAction) {
-            case OrderAction.Accept:
-                // TODO: mostrar el modal de aceptación
+            case OrderAction.Accept: {
+                setSelectedActionLoading(true);
+                const ordersToBeacknowledge = mapAcknowledgeableOrderList(selectedRows);
+
+                const [errors, response] = await acknowledgeOrders(ordersToBeacknowledge);
+                setSelectedActionLoading(false);
+
+                if (errors?.length) {
+                    toast.dismiss();
+                    for (const errMessage of errors) {
+                        toast.error(errMessage, {
+                            autoClose: false,
+                            draggablePercent: 60,
+                            draggable: true,
+                        });
+                    }
+                    return;
+                }
+
+                onOpen();
+
                 break;
+            }
             case OrderAction.Reject:
                 // TODO: mostrar el modal de rechazo
                 break;
@@ -219,135 +258,139 @@ export default function Orders() {
     }
 
     return (
-        <Table
-            tableId="orders-table-columns"
-            data={orders}
-            exportData={exportData}
-            columns={orders_table_columns}
-            loading={isOrdersLoading}
-            pagination
-            paginationTotalRows={ordersTotalRecords || 0}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={setRowsPerPage}
-            onPaginationChange={setSelectedPage}
-            page={selectedPage}
-            sortServer
-            exportToCsv
-            upperSlot={
-                <div className="flex w-full gap-3">
-                    <div>
-                        <ActionsSelect
-                            onChange={setSelectedAction}
-                            buttonDisabled={!selectedRows?.length}
-                            onButtonClick={handleAction}
-                        />
-                    </div>
-                    <div className="flex-grow max-w-[600px] mr-auto">
-                        <Input
-                            placeholder="Search..."
-                            type="search"
-                            inputMode="search"
-                            color="default"
-                            size="lg"
-                            classNames={{ inputWrapper: 'shadow-lg bg-white' }}
+        <>
+            {selectedActionLoading && <LoadingOverlay />}
+            <Table
+                tableId="orders-table-columns"
+                data={orders}
+                exportData={exportData}
+                columns={orders_table_columns}
+                loading={isOrdersLoading}
+                pagination
+                paginationTotalRows={ordersTotalRecords || 0}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={setRowsPerPage}
+                onPaginationChange={setSelectedPage}
+                page={selectedPage}
+                sortServer
+                exportToCsv
+                upperSlot={
+                    <div className="flex w-full gap-3">
+                        <div>
+                            <ActionsSelect
+                                onChange={setSelectedAction}
+                                buttonDisabled={!selectedRows?.length || !selectedAction}
+                                onButtonClick={handleAction}
+                            />
+                        </div>
+                        <div className="flex-grow max-w-[600px] mr-auto">
+                            <Input
+                                placeholder="Search..."
+                                type="search"
+                                inputMode="search"
+                                color="default"
+                                size="lg"
+                                classNames={{ inputWrapper: 'shadow-lg bg-white' }}
+                                radius="full"
+                                onChange={handleSearchTermChange}
+                                defaultValue={searchTerm}
+                            />
+                        </div>
+                        <DateRangePicker
+                            startContent={
+                                selectedDateRange != null ? (
+                                    <div role="button" className="absolute bottom-[3px] right-9">
+                                        <IconX
+                                            className="text-default-400"
+                                            onClick={() => {
+                                                setSelectedDateRange(null);
+                                                setIsDateRangePickerOpen(false);
+                                            }}
+                                        />
+                                    </div>
+                                ) : null
+                            }
+                            value={selectedDateRange}
+                            className="max-w-60 w-full"
+                            onChange={setSelectedDateRange}
                             radius="full"
-                            onChange={handleSearchTermChange}
-                            defaultValue={searchTerm}
-                        />
-                    </div>
-                    <DateRangePicker
-                        startContent={
-                            selectedDateRange != null ? (
-                                <div role="button" className="absolute bottom-[3px] right-9">
-                                    <IconX
-                                        className="text-default-400"
+                            size="sm"
+                            label="FECHA"
+                            labelPlacement="inside"
+                            isOpen={isDateRangePickerOpen}
+                            onOpenChange={setIsDateRangePickerOpen}
+                            shouldForceLeadingZeros
+                            classNames={{ inputWrapper: 'shadow-lg bg-white' }}
+                            CalendarBottomContent={
+                                <div className="flex justify-center py-4">
+                                    <Button
+                                        size="sm"
+                                        radius="full"
+                                        color="primary"
+                                        className="px-6"
                                         onClick={() => {
                                             setSelectedDateRange(null);
                                             setIsDateRangePickerOpen(false);
                                         }}
-                                    />
+                                    >
+                                        Reset
+                                    </Button>
                                 </div>
-                            ) : null
-                        }
-                        value={selectedDateRange}
-                        className="max-w-60 w-full"
-                        onChange={setSelectedDateRange}
-                        radius="full"
-                        size="sm"
-                        label="FECHA"
-                        labelPlacement="inside"
-                        isOpen={isDateRangePickerOpen}
-                        onOpenChange={setIsDateRangePickerOpen}
-                        shouldForceLeadingZeros
-                        classNames={{ inputWrapper: 'shadow-lg bg-white' }}
-                        CalendarBottomContent={
-                            <div className="flex justify-center py-4">
-                                <Button
-                                    size="sm"
-                                    radius="full"
-                                    color="primary"
-                                    className="px-6"
-                                    onClick={() => {
-                                        setSelectedDateRange(null);
-                                        setIsDateRangePickerOpen(false);
-                                    }}
-                                >
-                                    Reset
-                                </Button>
-                            </div>
-                        }
-                    />
-                    <Select
-                        className="w-40 m-0"
-                        classNames={{ trigger: 'shadow-lg bg-white' }}
-                        label="STATUS"
-                        size="sm"
-                        radius="full"
-                        isLoading={isStatusLoading}
-                        selectionMode="single"
-                        items={status}
-                        isInvalid={statusError != null}
-                        onSelectionChange={keys => {
-                            const statusId = Array.from(keys)[0] as number;
+                            }
+                        />
+                        <Select
+                            className="w-40 m-0"
+                            classNames={{ trigger: 'shadow-lg bg-white' }}
+                            label="STATUS"
+                            size="sm"
+                            radius="full"
+                            isLoading={isStatusLoading}
+                            selectionMode="single"
+                            items={status}
+                            isInvalid={statusError != null}
+                            onSelectionChange={keys => {
+                                const statusId = Array.from(keys)[0] as number;
 
-                            setSelectedStatusId(statusId ?? null);
-                        }}
-                        selectedKeys={selectedStatusId ? [selectedStatusId] : []}
-                    >
-                        {item => (
-                            <SelectItem key={item.status as string} className="capitalize">
-                                {item.status}
-                            </SelectItem>
-                        )}
-                    </Select>
-                    <Select
-                        className="w-36 m-0"
-                        classNames={{ trigger: 'shadow-lg bg-white' }}
-                        label="MARKETPLACE"
-                        size="sm"
-                        radius="full"
-                        isLoading={isMarketplaceLoading}
-                        selectionMode="single"
-                        items={marketplaces}
-                        isInvalid={marketplaceError != null}
-                        onSelectionChange={keys => {
-                            const marketplaceId = Array.from(keys)[0];
+                                setSelectedStatusId(statusId ?? null);
+                            }}
+                            selectedKeys={selectedStatusId ? [selectedStatusId] : []}
+                        >
+                            {item => (
+                                <SelectItem key={item.id} className="capitalize">
+                                    {item.name}
+                                </SelectItem>
+                            )}
+                        </Select>
+                        <Select
+                            className="w-36 m-0"
+                            classNames={{ trigger: 'shadow-lg bg-white' }}
+                            label="MARKETPLACE"
+                            size="sm"
+                            radius="full"
+                            isLoading={isMarketplaceLoading}
+                            selectionMode="single"
+                            items={marketplaces}
+                            isInvalid={marketplaceError != null}
+                            onSelectionChange={keys => {
+                                const marketplaceId = Array.from(keys)[0];
 
-                            setSelectedMarketplaceId(marketplaceId ?? null);
-                        }}
-                        selectedKeys={selectedMarketplaceId ? [selectedMarketplaceId] : []}
-                    >
-                        {item => (
-                            <SelectItem key={item.id} className="capitalize">
-                                {item.name}
-                            </SelectItem>
-                        )}
-                    </Select>
-                </div>
-            }
-            initialVisibleColumns={orders_table_visible_columns}
-            expandableRowsComponent={ExpandedRowComponent}
-            onSelectedRowsChange={setSelectedRows}
-        />
+                                setSelectedMarketplaceId(marketplaceId ?? null);
+                            }}
+                            selectedKeys={selectedMarketplaceId ? [selectedMarketplaceId] : []}
+                        >
+                            {item => (
+                                <SelectItem key={item.id} className="capitalize">
+                                    {item.name}
+                                </SelectItem>
+                            )}
+                        </Select>
+                    </div>
+                }
+                initialVisibleColumns={orders_table_visible_columns}
+                expandableRowsComponent={ExpandedRowComponent}
+                onSelectedRowsChange={setSelectedRows}
+            />
+            {isOpen && <OrderProcessingModal data={selectedRows} isOpen={isOpen} onOpenChange={onOpenChange} />}
+        </>
     );
 }
