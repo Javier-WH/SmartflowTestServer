@@ -32,6 +32,7 @@ function Table({
     showColumnsSelector = true,
     className,
     headerScrollHeight,
+    selectableRows = true,
 }: {
     tableId: string;
     pagination?: boolean;
@@ -58,6 +59,7 @@ function Table({
     showColumnsSelector?: boolean;
     className?: string;
     headerScrollHeight?: string;
+    selectableRows?: boolean;
 }) {
     const storedVisibility = localStorage.getItem(`${tableId}-columns-visibility`);
     const persistedVisibility = storedVisibility ? JSON.parse(storedVisibility) : initialVisibleColumns;
@@ -80,7 +82,7 @@ function Table({
         if (visibleColumns) {
             newColumns = newColumns.map(col => {
                 col.omit =
-                    visibleColumns?.find((c: { id: string; omit: boolean }) => c.id === col.id)?.omit ?? col.omit;
+                    visibleColumns?.find((c: { id: string; omit: boolean }) => c.id === col?.id)?.omit ?? col.omit;
 
                 return col;
             });
@@ -165,7 +167,7 @@ function Table({
                     striped
                     expandableRows={Boolean(expandableRowsComponent)}
                     expandableRowsComponent={expandableRowsComponent}
-                    selectableRows
+                    selectableRows={selectableRows}
                     fixedHeader
                     fixedHeaderScrollHeight={
                         upperSlot

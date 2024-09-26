@@ -68,6 +68,7 @@ export default function Orders() {
 
     const [selectedAction, setSelectedAction] = useState<OrderAction | null>(null);
     const [selectedActionLoading, setSelectedActionLoading] = useState(false);
+    const [ordersWithStockInfo, setOrdersWithStockInfo] = useState<Order[]>([]);
 
     const { isOpen, onOpenChange, onOpen } = useDisclosure();
 
@@ -247,6 +248,8 @@ export default function Orders() {
                     return;
                 }
 
+                setOrdersWithStockInfo(response.orders as Order[]);
+
                 onOpen();
 
                 break;
@@ -395,7 +398,7 @@ export default function Orders() {
                 expandableRowsComponent={ExpandedRowComponent}
                 onSelectedRowsChange={setSelectedRows}
             />
-            {isOpen && <OrderProcessingModal data={selectedRows} isOpen={isOpen} onOpenChange={onOpenChange} />}
+            {isOpen && <OrderProcessingModal data={ordersWithStockInfo} isOpen={isOpen} onOpenChange={onOpenChange} />}
         </>
     );
 }

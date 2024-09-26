@@ -22,6 +22,7 @@ export type Order = Database['public']['Tables']['order']['Row'] & {
         };
         created_at: string;
     }>;
+    has_stock?: boolean;
 };
 
 export const orders_table_columns: TableColumn<Order>[] = [
