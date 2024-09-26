@@ -230,15 +230,20 @@ export default function Orders() {
                 const [errors, response] = await acknowledgeOrders(ordersToBeacknowledge);
                 setSelectedActionLoading(false);
 
-                if (errors?.length) {
-                    toast.dismiss();
-                    for (const errMessage of errors) {
-                        toast.error(errMessage, {
-                            autoClose: false,
-                            draggablePercent: 60,
-                            draggable: true,
-                        });
+                if (errors) {
+                    if (Array.isArray(errors)) {
+                        toast.dismiss();
+                        for (const errMessage of errors) {
+                            toast.error(errMessage, {
+                                autoClose: false,
+                                draggablePercent: 60,
+                                draggable: true,
+                            });
+                        }
+                    } else {
+                        toast.error(errors);
                     }
+
                     return;
                 }
 

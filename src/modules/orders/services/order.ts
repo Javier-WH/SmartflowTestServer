@@ -86,8 +86,18 @@ class OrderService {
         });
 
         if (error) {
-            const { errors } = (await error.context.json()) ?? {};
-            return [errors, null];
+            try {
+                if (error.context.json) {
+                    const { errors } = (await error.context.json()) ?? {};
+                    return [errors, null];
+                }
+
+                if (error.context.message) {
+                    return [error.context.message, null];
+                }
+            } catch (error: any) {
+                return [error.message, null];
+            }
         }
 
         return [null, data];
