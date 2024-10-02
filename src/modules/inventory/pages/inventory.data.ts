@@ -20,6 +20,14 @@ export const products_table_columns: TableColumn<Product>[] = [
         omit: false,
     },
     {
+        id: 'marketplace_sku',
+        name: 'SKU Marketplace',
+        selector: row => row.marketplace_product?.[0]?.marketplace_sku ?? '', // WARNING: This must be correctly handled as a list of skus, one per marketplace
+        sortable: false,
+        reorder: true,
+        omit: false,
+    },
+    {
         id: 'price',
         name: 'Precio',
         selector: row => row.price,

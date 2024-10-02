@@ -8,8 +8,32 @@ class ProductService {
         this.supabaseClient = supabaseClient;
     }
 
-    getProducts() {
-        return this.supabaseClient.from('product').select();
+    getProducts({ page, rowsPerPage }: { page: number; rowsPerPage: number }) {
+        const offset = (page - 1) * rowsPerPage;
+        const limit = rowsPerPage;
+
+        return this.supabaseClient
+            .from('product')
+            .select(
+                `
+                    id,
+                    name,
+                    marketplace_product (marketplace_sku),
+                    brand,
+                    type,
+                    currency,
+                    price,
+                    upc,
+                    ean,
+                    gtin,
+                    status,
+                    active,
+                    created_at
+                    `,
+                { count: 'estimated' },
+            )
+            .range(offset, offset + limit - 1)
+            .order('created_at', { ascending: false });
     }
 
     async createProduct({

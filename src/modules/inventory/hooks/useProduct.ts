@@ -6,8 +6,14 @@ import ProductService from '../services/product';
 
 const productService = new ProductService(supabase);
 
-export default function useProduct() {
-    const { data: products, isLoading, error, mutate } = useQuery(productService.getProducts());
+export default function useProduct({ page, rowsPerPage }: { page: number; rowsPerPage: number }) {
+    const {
+        data: products,
+        isLoading,
+        error,
+        mutate,
+        count,
+    } = useQuery(productService.getProducts({ page, rowsPerPage }));
 
     function generateSKU() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -50,6 +56,7 @@ export default function useProduct() {
 
     return {
         data: products ?? [],
+        totalRecords: count,
         isLoading,
         error: error?.message,
         mutate,
