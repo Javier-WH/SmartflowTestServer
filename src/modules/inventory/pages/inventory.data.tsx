@@ -1,7 +1,16 @@
 import type { Database } from '@/types/supabase';
 import type { TableColumn } from 'react-data-table-component';
 
-export type Product = Database['public']['Tables']['product']['Row'];
+export type Product = Database['public']['Tables']['product']['Row'] & {
+    marketplace_product: Array<{
+        marketplace_sku: string;
+    }>;
+};
+
+export type SupplyProduct = Product & {
+    business: { name: string; id: number };
+    quantity: number;
+};
 
 export const products_table_columns: TableColumn<Product>[] = [
     {
@@ -30,7 +39,7 @@ export const products_table_columns: TableColumn<Product>[] = [
     {
         id: 'price',
         name: 'Precio',
-        selector: row => row.price,
+        selector: row => row.price ?? 0,
         sortable: false,
         reorder: true,
         omit: false,

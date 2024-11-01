@@ -8,17 +8,20 @@ class ProductService {
         this.supabaseClient = supabaseClient;
     }
 
-    getProducts({ page, rowsPerPage }: { page: number; rowsPerPage: number }) {
-        const offset = (page - 1) * rowsPerPage;
-        const limit = rowsPerPage;
+    getProducts({ page, rowsPerPage, search }: { page?: number; rowsPerPage?: number; search?: string }) {
+        let offset: number | undefined;
+        let limit: number | undefined;
 
-        return this.supabaseClient
-            .from('product')
-            .select(
-                `
+        if (page && rowsPerPage) {
+            offset = (page - 1) * rowsPerPage;
+            limit = rowsPerPage;
+        }
+
+        let query = this.supabaseClient.from('product').select(
+            `
                     id,
                     name,
-                    marketplace_product (marketplace_sku),
+                    marketplace_product!inner(marketplace_sku),
                     brand,
                     type,
                     currency,
@@ -30,10 +33,20 @@ class ProductService {
                     active,
                     created_at
                     `,
-                { count: 'estimated' },
-            )
-            .range(offset, offset + limit - 1)
-            .order('created_at', { ascending: false });
+            offset !== undefined && limit !== undefined ? { count: 'estimated' } : {},
+        );
+
+        if (offset !== undefined && limit !== undefined) {
+            query = query.range(offset, offset + limit - 1);
+        }
+
+        if (search) {
+            query = query.or(`name.ilike.%${search}%`);
+        }
+
+        query = query.order('created_at', { ascending: false });
+
+        return query;
     }
 
     async createProduct({

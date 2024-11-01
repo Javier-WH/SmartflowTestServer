@@ -1,19 +1,24 @@
 import supabase from '@/lib/supabase';
 
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { type UseQueryReturn, useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 import ProductService from '../services/product';
+import type { Product } from '../pages/inventory.data';
 
 const productService = new ProductService(supabase);
 
-export default function useProduct({ page, rowsPerPage }: { page: number; rowsPerPage: number }) {
+export default function useProduct({
+    page,
+    rowsPerPage,
+    search,
+}: { page?: number; rowsPerPage?: number; search?: string }) {
     const {
         data: products,
         isLoading,
         error,
         mutate,
         count,
-    } = useQuery(productService.getProducts({ page, rowsPerPage }));
+    } = useQuery(productService.getProducts({ page, rowsPerPage, search })) as UseQueryReturn<Product>;
 
     function generateSKU() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

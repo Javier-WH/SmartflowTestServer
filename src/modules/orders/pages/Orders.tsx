@@ -287,8 +287,8 @@ export default function Orders() {
                         selectedKeys={selectedStatusId ? [selectedStatusId] : []}
                     >
                         {item => (
-                            <SelectItem key={item.status as string} className="capitalize">
-                                {item.status}
+                            <SelectItem key={item.id as string} className="capitalize">
+                                {item.name}
                             </SelectItem>
                         )}
                     </Select>

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Table from '@/modules/shared/components/Table/Table';
 import { Button, useDisclosure } from '@nextui-org/react';
 
-import NewProduct from './NewProduct';
+import SupplyProduct from './SupplyProduct';
 
 import useProduct from '../hooks/useProduct';
 import { products_table_columns } from './inventory.data';
@@ -63,13 +63,13 @@ export default function Inventory() {
                 actions={
                     <div className="flex justify-center xl:justify-end items-center gap-4 flex-wrap">
                         <Button radius="full" color="default" onClick={onOpen}>
-                            Nuevo Producto
+                            Abastecer SKU
                         </Button>
                     </div>
                 }
             />
 
-            {isOpen && <NewProduct isOpen={isOpen} onClose={onClose} />}
+            {isOpen && <SupplyProduct isOpen={isOpen} onClose={onClose} />}
         </>
     );
 }

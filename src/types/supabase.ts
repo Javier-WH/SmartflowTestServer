@@ -101,6 +101,30 @@ export type Database = {
           },
         ]
       }
+      inventory_history: {
+        Row: {
+          business_id: number
+          created_at: string
+          id: number
+          quantity: number
+          sku: string
+        }
+        Insert: {
+          business_id: number
+          created_at?: string
+          id?: number
+          quantity: number
+          sku: string
+        }
+        Update: {
+          business_id?: number
+          created_at?: string
+          id?: number
+          quantity?: number
+          sku?: string
+        }
+        Relationships: []
+      }
       marketplace: {
         Row: {
           active: boolean | null
@@ -127,6 +151,35 @@ export type Database = {
           name?: string | null
         }
         Relationships: []
+      }
+      marketplace_order_status: {
+        Row: {
+          description: string | null
+          id: number
+          marketplace_id: number | null
+          status: string | null
+        }
+        Insert: {
+          description?: string | null
+          id?: number
+          marketplace_id?: number | null
+          status?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: number
+          marketplace_id?: number | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_order_status_marketplace_id_fkey"
+            columns: ["marketplace_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       marketplace_product: {
         Row: {
@@ -174,7 +227,6 @@ export type Database = {
           currency: string
           id: number
           internal_last_updated_date: string
-          internal_status_id: number | null
           marketplace_id: number
           marketplace_status: string
           order_id: string
@@ -191,7 +243,6 @@ export type Database = {
           currency: string
           id?: number
           internal_last_updated_date?: string
-          internal_status_id?: number | null
           marketplace_id: number
           marketplace_status: string
           order_id: string
@@ -208,7 +259,6 @@ export type Database = {
           currency?: string
           id?: number
           internal_last_updated_date?: string
-          internal_status_id?: number | null
           marketplace_id?: number
           marketplace_status?: string
           order_id?: string
@@ -221,13 +271,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "order_internal_status_id_fkey"
-            columns: ["internal_status_id"]
-            isOneToOne: false
-            referencedRelation: "order_status"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "order_marketplace_id_fkey"
             columns: ["marketplace_id"]
             isOneToOne: false
@@ -236,36 +279,28 @@ export type Database = {
           },
         ]
       }
-      order_status: {
+      order_internal_status: {
         Row: {
           description: string | null
           id: number
-          marketplace_id: number | null
+          name: string | null
           status: string | null
         }
         Insert: {
           description?: string | null
           id?: number
-          marketplace_id?: number | null
+          name?: string | null
           status?: string | null
         }
         Update: {
           description?: string | null
           id?: number
-          marketplace_id?: number | null
+          name?: string | null
           status?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "order_status_marketplace_id_fkey"
-            columns: ["marketplace_id"]
-            isOneToOne: false
-            referencedRelation: "marketplace"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
-      order_status_history: {
+      order_internal_status_history: {
         Row: {
           created_at: string
           id: number
@@ -286,17 +321,17 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "order_status_history_order_id_fkey"
+            foreignKeyName: "order_internal_status_history_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "order"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "order_status_history_status_id_fkey"
+            foreignKeyName: "order_internal_status_history_status_id_fkey"
             columns: ["status_id"]
             isOneToOne: false
-            referencedRelation: "order_status"
+            referencedRelation: "order_internal_status"
             referencedColumns: ["id"]
           },
         ]
@@ -306,28 +341,43 @@ export type Database = {
           active: boolean
           brand: string | null
           created_at: string
+          currency: string | null
           ean: string | null
+          gtin: string | null
           id: number
           name: string
-          price: number
+          price: number | null
+          status: string | null
+          type: string | null
+          upc: string | null
         }
         Insert: {
           active?: boolean
           brand?: string | null
           created_at?: string
+          currency?: string | null
           ean?: string | null
+          gtin?: string | null
           id?: number
           name: string
-          price: number
+          price?: number | null
+          status?: string | null
+          type?: string | null
+          upc?: string | null
         }
         Update: {
           active?: boolean
           brand?: string | null
           created_at?: string
+          currency?: string | null
           ean?: string | null
+          gtin?: string | null
           id?: number
           name?: string
-          price?: number
+          price?: number | null
+          status?: string | null
+          type?: string | null
+          upc?: string | null
         }
         Relationships: []
       }
@@ -348,6 +398,47 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"]
         }
         Relationships: []
+      }
+      scanned_product: {
+        Row: {
+          category: string
+          created_at: string
+          id: number
+          marketplace_id: number
+          name: string
+          product_id: string
+          product_id_type: string
+          sku: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: number
+          marketplace_id: number
+          name: string
+          product_id: string
+          product_id_type: string
+          sku: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: number
+          marketplace_id?: number
+          name?: string
+          product_id?: string
+          product_id_type?: string
+          sku?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scanned_product_marketplace_id_fkey"
+            columns: ["marketplace_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tracking_identifier: {
         Row: {
@@ -412,7 +503,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_product: {
+        Args: {
+          internal_sku: string
+          product_marketplace_id: number
+          product_marketplace_sku: string
+          product_name: string
+          brand: string
+          type: string
+          currency: string
+          price: number
+          product_upc: string
+          product_ean: string
+          product_gtin: string
+          status: string
+        }
+        Returns: undefined
+      }
+      schedule_start_syncing_marketplace_orders: {
+        Args: {
+          start_date: string
+          end_date: string
+        }
+        Returns: undefined
+      }
+      schedule_start_syncing_marketplace_products: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       app_permission:

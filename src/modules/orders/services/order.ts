@@ -55,7 +55,7 @@ class OrderService {
             .order('created_at', { ascending: false });
 
         if (status_id != null) {
-            query = query.eq('marketplace_status', status_id);
+            query = query.eq('internal_status_id', status_id);
         }
 
         if (marketplace_id != null) {
