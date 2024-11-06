@@ -1,6 +1,12 @@
 import type { Database } from '@/types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+export interface InventorySkuSum {
+    sku: string;
+    quantity: number;
+    business_id: number;
+}
+
 class ProductService {
     private supabaseClient: SupabaseClient<Database>;
 
@@ -75,6 +81,14 @@ class ProductService {
             price,
             ean,
         });
+    }
+
+    async sumInventory({ sku_list }: { sku_list: Array<InventorySkuSum> }) {
+        const response = await this.supabaseClient.functions.invoke('inventory', {
+            body: { sku_list },
+        });
+
+        return response;
     }
 }
 

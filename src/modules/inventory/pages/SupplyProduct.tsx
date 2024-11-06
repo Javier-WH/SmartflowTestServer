@@ -19,15 +19,21 @@ import type { Product, SupplyProduct as SupplyProductType } from './inventory.da
 import Table from '@/modules/shared/components/Table/Table';
 import type { TableColumn } from 'react-data-table-component';
 import { Trash } from 'react-feather';
+import useProduct from '../hooks/useProduct';
+import type { InventorySkuSum } from '../services/product';
+import AlertMessage from '@/modules/auth/components/ErrorMessage';
 
 export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const { data: businesses, isLoading: businessesLoading, error: businessesError } = useBusiness();
+    const { sumInventory } = useProduct({});
 
     const [selectedBusinessId, setSelectedBusinessId] = useState<{ name: string; id: number }>();
     const [selectedProduct, setSelectedProduct] = useState<Product>();
     const [quantity, setQuantity] = useState<number>(1);
 
     const [productsPreview, setProductsPreview] = useState<SupplyProductType[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string>();
 
     const supply_products_table_columns: TableColumn<SupplyProductType>[] = [
         {
@@ -75,7 +81,13 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
                     color="danger"
                     className="p-0"
                     variant="light"
-                    onClick={() => setProductsPreview(productsPreview.filter(product => product.id !== row.id))}
+                    onClick={() =>
+                        setProductsPreview(
+                            productsPreview.filter(product => {
+                                return product.id !== row.id || product.business.id !== row.business.id;
+                            }),
+                        )
+                    }
                 >
                     <Trash size={15} />
                 </Button>
@@ -91,7 +103,9 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
 
         if (selectedProduct && selectedBusinessId && quantity) {
             let existing = false;
-            for (const product of productsPreview) {
+            let copy_products_preview = [...productsPreview];
+
+            for (const product of copy_products_preview) {
                 if (product.id === selectedProduct.id && product.business.id === selectedBusinessId.id) {
                     existing = true;
                     product.quantity += quantity;
@@ -100,14 +114,45 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
             }
 
             if (!existing) {
-                setProductsPreview([
-                    { ...selectedProduct, business: selectedBusinessId, quantity },
+                copy_products_preview = [
+                    { ...selectedProduct, business: selectedBusinessId, quantity: quantity },
                     ...productsPreview,
-                ]);
+                ];
             }
+
+            setProductsPreview(copy_products_preview);
 
             setSelectedProduct(undefined);
             setQuantity(1);
+        }
+    }
+
+    async function handleSave() {
+        if (!productsPreview.length) return;
+
+        setError(undefined);
+        setIsLoading(true);
+
+        try {
+            const sku_list: Array<InventorySkuSum> = productsPreview.map(p => ({
+                sku: p.marketplace_product[0].marketplace_sku,
+                quantity: p.quantity,
+                business_id: p.business.id,
+            }));
+
+            const response = await sumInventory({ sku_list });
+
+            console.log('[LS] -> src/modules/inventory/pages/SupplyProduct.tsx:138 -> response: ', response);
+
+            if (response?.data?.error) {
+                return setError(response?.data?.error);
+            }
+
+            setProductsPreview([]);
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -138,9 +183,13 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
                                         items={businesses ?? []}
                                         isInvalid={businessesError != null}
                                         onSelectionChange={keys => {
-                                            const businessId = Array.from(keys)[0] as number;
+                                            const businessId = Number.parseInt(Array.from(keys)[0] as string);
 
                                             const business = businesses?.find(business => business.id === businessId);
+                                            console.log(
+                                                '[LS] -> src/modules/inventory/pages/SupplyProduct.tsx:163 -> business: ',
+                                                business,
+                                            );
 
                                             setSelectedBusinessId({ name: business?.name ?? '', id: businessId });
                                         }}
@@ -178,7 +227,19 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
                                         pagination={false}
                                     />
                                 </div>
-                                <Button color="primary" className="w-36">
+
+                                {error && (
+                                    <div className="flex justify-center w-full">
+                                        <AlertMessage text={error} type="error" />
+                                    </div>
+                                )}
+                                <Button
+                                    color="primary"
+                                    className="w-36"
+                                    onClick={handleSave}
+                                    isLoading={isLoading}
+                                    isDisabled={isLoading}
+                                >
                                     Guardar
                                 </Button>
                             </div>
