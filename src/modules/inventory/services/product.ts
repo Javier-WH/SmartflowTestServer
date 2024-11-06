@@ -14,7 +14,12 @@ class ProductService {
         this.supabaseClient = supabaseClient;
     }
 
-    getProducts({ page, rowsPerPage, search }: { page?: number; rowsPerPage?: number; search?: string }) {
+    getProducts({
+        page,
+        rowsPerPage,
+        search,
+        single,
+    }: { page?: number; rowsPerPage?: number; search?: string; single?: boolean }) {
         let offset: number | undefined;
         let limit: number | undefined;
 
@@ -47,10 +52,18 @@ class ProductService {
         }
 
         if (search) {
-            query = query.or(`name.ilike.%${search}%`);
+            // query = query.or(
+            //     `name.ilike.%${search}%, upc.ilike.%${search}%, ean.ilike.%${search}%, gtin.ilike.%${search}%`,
+            // );
+
+            query = query.ilike('marketplace_product.marketplace_sku', `%${search}%`);
         }
 
         query = query.order('created_at', { ascending: false });
+
+        if (single) {
+            return query.maybeSingle();
+        }
 
         return query;
     }

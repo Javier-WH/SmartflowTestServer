@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 
 import {
@@ -11,17 +11,27 @@ import {
     ModalHeader,
     Select,
     SelectItem,
+    Spinner,
 } from '@nextui-org/react';
-
-import SKUSelector from '@/modules/shared/components/SKUSelector';
-import useBusiness from '../hooks/useBusiness';
-import type { Product, SupplyProduct as SupplyProductType } from './inventory.data';
-import Table from '@/modules/shared/components/Table/Table';
 import type { TableColumn } from 'react-data-table-component';
 import { Trash } from 'react-feather';
-import useProduct from '../hooks/useProduct';
+
+import type { Product, SupplyProduct, SupplyProduct as SupplyProductType } from './inventory.data';
 import type { InventorySkuSum } from '../services/product';
+import SKUSelector from '@/modules/shared/components/SKUSelector';
+import Table from '@/modules/shared/components/Table/Table';
 import AlertMessage from '@/modules/auth/components/ErrorMessage';
+
+import ProductService from '../services/product';
+
+import supabase from '@/lib/supabase';
+import useBusiness from '../hooks/useBusiness';
+import useProduct from '../hooks/useProduct';
+
+import onScan from 'onscan.js';
+onScan.attachTo(document);
+
+const productService = new ProductService(supabase);
 
 export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const { data: businesses, isLoading: businessesLoading, error: businessesError } = useBusiness();
@@ -32,6 +42,7 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
     const [quantity, setQuantity] = useState<number>(1);
 
     const [productsPreview, setProductsPreview] = useState<SupplyProductType[]>([]);
+    const [scanSearchLoading, setScanSearchLoading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string>();
 
@@ -98,34 +109,40 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
         },
     ];
 
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
+    async function handleSubmit(e: FormEvent<HTMLFormElement> | undefined) {
+        e?.preventDefault();
 
-        if (selectedProduct && selectedBusinessId && quantity) {
-            let existing = false;
-            let copy_products_preview = [...productsPreview];
+        if (!selectedProduct || !selectedBusinessId || !quantity) return;
 
-            for (const product of copy_products_preview) {
-                if (product.id === selectedProduct.id && product.business.id === selectedBusinessId.id) {
-                    existing = true;
-                    product.quantity += quantity;
-                    break;
-                }
-            }
-
-            if (!existing) {
-                copy_products_preview = [
-                    { ...selectedProduct, business: selectedBusinessId, quantity: quantity },
-                    ...productsPreview,
-                ];
-            }
-
-            setProductsPreview(copy_products_preview);
-
-            setSelectedProduct(undefined);
-            setQuantity(1);
-        }
+        submitProduct(selectedProduct, selectedBusinessId, quantity);
     }
+
+    const submitProduct = useCallback(
+        (product: Product, business: { name: string; id: number }, quantity: number) => {
+            if (product && selectedBusinessId && quantity) {
+                let existing = false;
+                let copy_products_preview = [...productsPreview] as SupplyProduct[];
+
+                for (const p of copy_products_preview) {
+                    if (p.id === product.id && p.business.id === business.id) {
+                        existing = true;
+                        p.quantity += quantity;
+                        break;
+                    }
+                }
+
+                if (!existing) {
+                    copy_products_preview = [{ ...product, business, quantity }, ...productsPreview];
+                }
+
+                setProductsPreview(copy_products_preview);
+
+                setSelectedProduct(undefined);
+                setQuantity(1);
+            }
+        },
+        [productsPreview, selectedBusinessId],
+    );
 
     async function handleSave() {
         if (!productsPreview.length) return;
@@ -141,8 +158,6 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
             }));
 
             const response = await sumInventory({ sku_list });
-
-            console.log('[LS] -> src/modules/inventory/pages/SupplyProduct.tsx:138 -> response: ', response);
 
             if (response?.data?.error) {
                 return setError(response?.data?.error);
@@ -162,9 +177,45 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
         }
     }, [businesses]);
 
+    useEffect(() => {
+        async function onScan(props) {
+            setScanSearchLoading(true);
+            try {
+                const { data } = await productService.getProducts({
+                    search: props.detail.scanCode,
+                    single: true,
+                });
+                console.log('[LS] -> src/modules/inventory/pages/SupplyProduct.tsx:186 -> data: ', data);
+
+                if (!data) {
+                    return setError('No se encontro el producto');
+                }
+
+                if (selectedBusinessId) {
+                    submitProduct(data as Product, selectedBusinessId, 1);
+                }
+            } catch (error: any) {
+                alert(error?.message);
+            } finally {
+                setScanSearchLoading(false);
+            }
+        }
+
+        document.addEventListener('scan', onScan);
+
+        return () => {
+            document.removeEventListener('scan', onScan);
+        };
+    }, [submitProduct, selectedBusinessId]);
+
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} size="5xl">
-            <ModalContent>
+            <ModalContent className="relative">
+                {scanSearchLoading && (
+                    <div className="absolute flex justify-center w-full h-full bg-zinc-300 bg-opacity-70 z-50">
+                        <Spinner color="primary" size="lg" />
+                    </div>
+                )}
                 <ModalHeader>Abastecer SKU</ModalHeader>
 
                 <form onSubmit={handleSubmit}>
