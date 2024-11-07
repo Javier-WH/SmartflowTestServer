@@ -192,19 +192,22 @@ export default function Orders() {
             (acc: number, orderLine: Order['order_lines'][0]) => acc + Number(orderLine.commission_amount),
             0,
         );
+
+        let shipping_url = data.shipping_info?.shipping_tracking_url;
+
+        switch (data.marketplace_id.name) {
+            case 'walmart':
+                shipping_url = data.order_lines[0]?.shipment?.trackingURL;
+        }
+
         return (
             <div className="w-full flex justify-end py-4 border-b-1 border-gray-200">
                 <div className="flex gap-20 px-20">
                     <div className="flex flex-col gap-4">
                         <small className="flex gap-8 truncate max-w-[400px]">
                             <span>URL Shipping</span>
-                            <a
-                                href={data.shipping_info?.shipping_tracking_url}
-                                className="text-blue-600"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                {data.shipping_info?.shipping_tracking_url}
+                            <a href={shipping_url} className="text-blue-600" target="_blank" rel="noreferrer">
+                                {shipping_url}
                             </a>
                         </small>
                         <small className="flex gap-[4.5rem] truncate">
