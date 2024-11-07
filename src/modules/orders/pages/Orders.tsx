@@ -284,7 +284,7 @@ export default function Orders() {
                 page={selectedPage}
                 sortServer
                 exportToCsv
-                upperSlot={
+                bottomSlot={
                     <div className="flex w-full gap-3">
                         <div>
                             <ActionsSelect

@@ -99,7 +99,7 @@ function Table({
         <div className="flex flex-col gap-4 h-full">
             <div className="flex flex-col lg:flex-row gap-3">
                 <div className="flex items-center w-full">
-                    <div className="flex-grow">{upperSlot}</div>
+                    <div className="flex-grow">{bottomSlot}</div>
                     {onRefresh && <RotateCw role="button" onClick={onRefresh} />}
 
                     <div className="">

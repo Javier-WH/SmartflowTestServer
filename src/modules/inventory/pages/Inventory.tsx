@@ -60,7 +60,7 @@ export default function Inventory() {
                 sortServer
                 exportToCsv
                 initialVisibleColumns={[]}
-                actions={
+                bottomSlot={
                     <div className="flex justify-center xl:justify-end items-center gap-4 flex-wrap">
                         <Button radius="full" color="default" onClick={onOpen}>
                             Abastecer SKU

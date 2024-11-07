@@ -16,7 +16,7 @@ import {
 import type { TableColumn } from 'react-data-table-component';
 import { Trash } from 'react-feather';
 
-import type { Product, SupplyProduct, SupplyProduct as SupplyProductType } from './inventory.data';
+import type { Product, SupplyProduct as SupplyProductType } from './inventory.data';
 import type { InventorySkuSum } from '../services/product';
 import SKUSelector from '@/modules/shared/components/SKUSelector';
 import Table from '@/modules/shared/components/Table/Table';
@@ -121,7 +121,7 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
         (product: Product, business: { name: string; id: number }, quantity: number) => {
             if (product && selectedBusinessId && quantity) {
                 let existing = false;
-                let copy_products_preview = [...productsPreview] as SupplyProduct[];
+                let copy_products_preview = [...productsPreview] as SupplyProductType[];
 
                 for (const p of copy_products_preview) {
                     if (p.id === product.id && p.business.id === business.id) {
@@ -276,6 +276,7 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
                                         data={productsPreview}
                                         columns={supply_products_table_columns}
                                         pagination={false}
+                                        showColumnsSelector={false}
                                     />
                                 </div>
 
