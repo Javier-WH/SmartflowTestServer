@@ -25,11 +25,11 @@ import { type Order, orders_table_columns, orders_table_visible_columns } from '
 
 import { parseDate } from '@internationalized/date';
 import { useLocation, useNavigate } from 'react-router-dom';
-import useMarketplace from '../hooks/useMarketplace';
 import useOrder from '../hooks/useOrder';
 import useStatus from '../hooks/useStatus';
 import { useDebouncedCallback } from 'use-debounce';
 import { mapAcknowledgeableOrderList } from '../utils/mapper';
+import MarketplaceSelector, { type Key } from '@/modules/shared/components/MarketplaceSelector';
 
 const ROWS_PER_PAGE = 100;
 
@@ -49,7 +49,7 @@ export default function Orders() {
     const [selectedPage, setSelectedPage] = useState(parsedPage);
     const [rowsPerPage, setRowsPerPage] = useState(parsedRowsPerPage);
     const [selectedStatusId, setSelectedStatusId] = useState<string | number | null>(parsedSelectedStatusId);
-    const [selectedMarketplaceId, setSelectedMarketplaceId] = useState<string | number | null>(
+    const [selectedMarketplaceId, setSelectedMarketplaceId] = useState<Key | null | undefined>(
         parsedSelectedMarketplaceId,
     );
     const [searchTerm, setSearchTerm] = useState<string>(parsedSearchTerm);
@@ -65,8 +65,10 @@ export default function Orders() {
     const [selectedDateRange, setSelectedDateRange] = useState<RangeValue<DateValue> | null>(dateValue);
     const [isDateRangePickerOpen, setIsDateRangePickerOpen] = useState(false);
     const [selectedRows, setSelectedRows] = useState<Order[]>([]);
+    console.log('[LS] -> src/modules/orders/pages/Orders.tsx:67 -> selectedRows: ', selectedRows);
 
     const [selectedAction, setSelectedAction] = useState<OrderAction | null>(null);
+    console.log('[LS] -> src/modules/orders/pages/Orders.tsx:69 -> selectedAction: ', selectedAction);
     const [selectedActionLoading, setSelectedActionLoading] = useState(false);
     const [ordersWithStockInfo, setOrdersWithStockInfo] = useState<Order[]>([]);
 
@@ -87,7 +89,6 @@ export default function Orders() {
         search: searchTerm,
     });
 
-    const { data: marketplaces, isLoading: isMarketplaceLoading, error: marketplaceError } = useMarketplace();
     const { data: status, isLoading: isStatusLoading, error: statusError } = useStatus();
 
     const exportData = useMemo(() => {
@@ -127,7 +128,7 @@ export default function Orders() {
         }
 
         if (parsedSelectedMarketplaceId !== selectedMarketplaceId) {
-            if (selectedMarketplaceId === null) {
+            if (selectedMarketplaceId == null) {
                 searchParams.delete('marketplace');
             } else {
                 searchParams.set('marketplace', `${selectedMarketplaceId}`);
@@ -279,6 +280,7 @@ export default function Orders() {
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={setRowsPerPage}
                 onPaginationChange={setSelectedPage}
+                onSelectedRowsChange={setSelectedRows}
                 page={selectedPage}
                 sortServer
                 exportToCsv
@@ -369,34 +371,14 @@ export default function Orders() {
                                 </SelectItem>
                             )}
                         </Select>
-                        <Select
-                            className="w-36 m-0"
-                            classNames={{ trigger: 'shadow-lg bg-white' }}
-                            label="MARKETPLACE"
-                            size="sm"
-                            radius="full"
-                            isLoading={isMarketplaceLoading}
-                            selectionMode="single"
-                            items={marketplaces}
-                            isInvalid={marketplaceError != null}
-                            onSelectionChange={keys => {
-                                const marketplaceId = Array.from(keys)[0];
-
-                                setSelectedMarketplaceId(marketplaceId ?? null);
-                            }}
-                            selectedKeys={selectedMarketplaceId ? [selectedMarketplaceId] : []}
-                        >
-                            {item => (
-                                <SelectItem key={item.id} className="capitalize">
-                                    {item.name}
-                                </SelectItem>
-                            )}
-                        </Select>
+                        <MarketplaceSelector
+                            selectedKeys={selectedMarketplaceId != null ? [selectedMarketplaceId] : []}
+                            onSelect={setSelectedMarketplaceId}
+                        />
                     </div>
                 }
                 initialVisibleColumns={orders_table_visible_columns}
                 expandableRowsComponent={ExpandedRowComponent}
-                onSelectedRowsChange={setSelectedRows}
             />
             {isOpen && <OrderProcessingModal data={ordersWithStockInfo} isOpen={isOpen} onOpenChange={onOpenChange} />}
         </>
