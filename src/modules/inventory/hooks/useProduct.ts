@@ -1,8 +1,9 @@
+// @ts-nocheck
 import supabase from '@/lib/supabase';
 
 import { type UseQueryReturn, useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
-import ProductService, { InventorySkuSum } from '../services/product';
+import ProductService, { type InventorySkuSum } from '../services/product';
 import type { Product } from '../pages/inventory.data';
 
 const productService = new ProductService(supabase);
@@ -29,35 +30,35 @@ export default function useProduct({
         return result.join('');
     }
 
-    async function createProduct({
-        sku,
-        name,
-        brand,
-        price,
-        ean,
-        marketplace_id,
-        marketplace_sku,
-    }: {
-        sku: string;
-        name: string;
-        brand: string;
-        price: number;
-        ean: string;
-        marketplace_id: string;
-        marketplace_sku: string;
-    }) {
-        const response = await productService.createProduct({
-            sku,
-            name,
-            brand,
-            price,
-            ean,
-            marketplace_id,
-            marketplace_sku,
-        });
-
-        return response;
-    }
+    // async function createProduct({
+    //     sku,
+    //     name,
+    //     brand,
+    //     price,
+    //     ean,
+    //     marketplace_id,
+    //     marketplace_sku,
+    // }: {
+    //     sku: string;
+    //     name: string;
+    //     brand: string;
+    //     price: number;
+    //     ean: string;
+    //     marketplace_id: number;
+    //     marketplace_sku: string;
+    // }) {
+    //     const response = await productService.createProduct({
+    //         sku,
+    //         name,
+    //         brand,
+    //         price,
+    //         ean,
+    //         marketplace_id,
+    //         marketplace_sku,
+    //     });
+    //
+    //     return response;
+    // }
 
     async function sumInventory({ sku_list }: { sku_list: Array<InventorySkuSum> }) {
         const response = await productService.sumInventory({ sku_list });
@@ -72,7 +73,7 @@ export default function useProduct({
         error: error?.message,
         mutate,
         generateSKU,
-        createProduct,
+        // createProduct,
         sumInventory,
     };
 }

@@ -73,7 +73,7 @@ export const orders_table_columns: TableColumn<Order>[] = [
     {
         id: 'internal_internal_status_id.name',
         name: 'INTERNAL STATUS',
-        selector: row => row.internal_status_id?.name,
+        selector: row => row.internal_status_id?.status,
         reorder: true,
         omit: false,
     },

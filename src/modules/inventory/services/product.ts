@@ -68,33 +68,33 @@ class ProductService {
         return query;
     }
 
-    async createProduct({
-        sku,
-        name,
-        brand,
-        price,
-        ean,
-        marketplace_id,
-        marketplace_sku,
-    }: {
-        sku: string;
-        name: string;
-        brand: string;
-        price: number;
-        ean: string;
-        marketplace_id: string;
-        marketplace_sku: string;
-    }) {
-        return this.supabaseClient.rpc('create_product', {
-            internal_sku: sku,
-            marketplace_id,
-            marketplace_sku,
-            name,
-            brand,
-            price,
-            ean,
-        });
-    }
+    // async createProduct({
+    //     sku,
+    //     name,
+    //     brand,
+    //     price,
+    //     ean,
+    //     marketplace_id,
+    //     marketplace_sku,
+    // }: {
+    //     sku: string;
+    //     name: string;
+    //     brand: string;
+    //     price: number;
+    //     ean: string;
+    //     marketplace_id: number;
+    //     marketplace_sku: string;
+    // }) {
+    //     return this.supabaseClient.rpc('create_product', {
+    //         internal_sku: sku,
+    //         product_marketplace_id: marketplace_id,
+    //         product_marketplace_sku: marketplace_sku,
+    //         product_name: name,
+    //         brand,
+    //         price,
+    //         product_ean: ean,
+    //     });
+    // }
 
     async sumInventory({ sku_list }: { sku_list: Array<InventorySkuSum> }) {
         const response = await this.supabaseClient.functions.invoke('inventory', {

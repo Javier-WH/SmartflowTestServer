@@ -5,7 +5,7 @@ import useProduct from '../hooks/useProduct';
 import MarketplaceSelector, { type Key } from '@/modules/shared/components/MarketplaceSelector';
 
 export default function NewProduct({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-    const { generateSKU } = useProduct();
+    const { generateSKU } = useProduct({});
 
     const [sku, setSKU] = useState('');
     const [selectedMarketplaceId, setSelectedMarketplaceId] = useState<Key | null | undefined>(null);

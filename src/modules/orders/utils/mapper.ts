@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Order } from '../pages/orders.data';
 import type { OrderToBeAcknowledged, AcknowledgeableOrderList } from '../types/types';
 

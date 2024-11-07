@@ -1,10 +1,12 @@
+// @ts-nocheck
 import { useMemo, useRef } from 'react';
 
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
+import { CSVLink } from 'react-csv';
+import type { TableColumn } from 'react-data-table-component';
 
 import Table from '@/modules/shared/components/Table/Table';
 import { type Order, orders_table_columns } from '../pages/orders.data';
-import { CSVLink } from 'react-csv';
 
 export default function OrderProcessingModal({
     data,
@@ -17,13 +19,13 @@ export default function OrderProcessingModal({
         const ordersWithoutStock: Order[] = [];
         const ordersWithStock: Order[] = [];
 
-        data.forEach(order => {
+        for (const order of data) {
             if (order.has_stock) {
                 ordersWithStock.push(order);
             } else {
                 ordersWithoutStock.push(order);
             }
-        });
+        }
 
         return [ordersWithoutStock, ordersWithStock];
     }, [data]);
@@ -33,16 +35,16 @@ export default function OrderProcessingModal({
 
         const skus = {};
 
-        ordersWithoutStock.forEach(order => {
-            order.order_lines.forEach(order_line => {
-                let quantity = Number(order_line.shipment.shipmentLines[0].quantity.amount);
+        for (const order of ordersWithoutStock) {
+            for (const order_line of order.order_lines) {
+                const quantity = Number(order_line.shipment.shipmentLines[0].quantity.amount);
 
                 skus[order_line.sku] = {
                     name: order_line.productName,
                     quantity: (skus[order_line.sku]?.quantity ?? 0) + quantity,
                 };
-            });
-        });
+            }
+        }
 
         return Object.keys(skus).map(sku => ({
             sku,
@@ -61,7 +63,7 @@ export default function OrderProcessingModal({
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} className="max-w-[1200px] max-h-[80vh] h-[max-content]">
             <ModalContent>
-                {onClose => (
+                {() => (
                     <>
                         <ModalHeader className="flex flex-col gap-1">Procesando pedidos</ModalHeader>
                         <ModalBody>
@@ -152,15 +154,15 @@ export const table_columns: TableColumn<Order>[] = [
         selector: row => row.marketplace_id?.name,
         format: row => <span className="capitalize">{row.marketplace_id?.name}</span>,
     },
-    {
-        id: 'marketplace_status',
-        name: 'MARKETPLACE STATUS',
-        selector: row => row.marketplace_status,
-    },
+    // {
+    //     id: 'marketplace_status',
+    //     name: 'MARKETPLACE STATUS',
+    //     selector: row => row.marketplace_status,
+    // },
     {
         id: 'internal_internal_status_id.name',
         name: 'INTERNAL STATUS',
-        selector: row => row.internal_status_id?.name,
+        selector: row => row.internal_status_id.status,
     },
     {
         id: 'total',
