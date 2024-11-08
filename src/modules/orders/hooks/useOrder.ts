@@ -3,7 +3,7 @@ import supabase from '@/lib/supabase';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 import OrderService from '../services/order';
-import type { AcknowledgeableOrderList } from '../types/types';
+import type { AcknowledgeableOrderList, ShippingLabelOrder } from '../types/types';
 
 const ordersService = new OrderService(supabase);
 
@@ -52,6 +52,16 @@ export default function useOrder(
         return [null, data];
     }
 
+    async function downloadShippingLabels(orders: ShippingLabelOrder) {
+        const [error, data] = await ordersService.downloadShippingLabels(orders);
+
+        if (error) {
+            return [error, null];
+        }
+
+        return [null, data];
+    }
+
     return {
         data: orders,
         totalRecords: count,
@@ -59,5 +69,6 @@ export default function useOrder(
         error: error?.message,
         mutate,
         acknowledgeOrders,
+        downloadShippingLabels,
     };
 }

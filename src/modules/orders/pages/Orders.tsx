@@ -79,6 +79,7 @@ export default function Orders() {
         totalRecords: ordersTotalRecords,
         isLoading: isOrdersLoading,
         acknowledgeOrders,
+        downloadShippingLabels,
     } = useOrder({
         page: selectedPage,
         rowsPerPage: rowsPerPage,
@@ -256,6 +257,35 @@ export default function Orders() {
 
                 onOpen();
 
+                break;
+            }
+            case OrderAction.DownloadGuide: {
+                setSelectedActionLoading(true);
+                try {
+                    const ordersToDownload = selectedRows.map(o => {
+                        const tracking_number = o.order_lines[0]?.shipment?.trackingNumber;
+
+                        return {
+                            marketplace_id: o.marketplace_id.id,
+                            tracking_number,
+                        };
+                    });
+
+                    const [errors, response] = await downloadShippingLabels(ordersToDownload);
+
+                    if (response) {
+                        const url = window.URL.createObjectURL(response);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'shipping-labels.zip';
+                        a.click();
+                        toast.success('Guías de envio descargadas correctamente');
+                    }
+                } catch (error) {
+                    console.error(error);
+                } finally {
+                    setSelectedActionLoading(false);
+                }
                 break;
             }
             case OrderAction.Reject:

@@ -1,7 +1,7 @@
 import type { Database } from '@/types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { parseDate } from '@internationalized/date';
-import type { AcknowledgeableOrderList } from '../types/types';
+import type { AcknowledgeableOrderList, ShippingLabelOrder } from '../types/types';
 
 class OrderService {
     private supabaseClient: SupabaseClient<Database>;
@@ -99,6 +99,32 @@ class OrderService {
                 return [error.message, null];
             }
         }
+
+        return [null, data];
+    }
+
+    async downloadShippingLabels(tracking_numbers: ShippingLabelOrder) {
+        const { data, error } = await this.supabaseClient.functions.invoke('shipping-label', {
+            method: 'POST',
+            body: { tracking_numbers },
+        });
+
+        if (error) {
+            try {
+                if (error.context.json) {
+                    const { errors } = (await error.context.json()) ?? {};
+                    return [errors, null];
+                }
+
+                if (error.context.message) {
+                    return [error.context.message, null];
+                }
+            } catch (error: any) {
+                return [error.message, null];
+            }
+        }
+
+        console.log('[LS] -> src/modules/orders/services/order.ts:110 -> data: ', data);
 
         return [null, data];
     }

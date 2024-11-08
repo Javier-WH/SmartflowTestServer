@@ -1,5 +1,6 @@
 export enum OrderAction {
     Accept = 'accept',
+    DownloadGuide = 'download_guide',
     Reject = 'reject',
     Scan = 'scan',
     ReadyToShip = 'ready_to_ship',
@@ -37,3 +38,8 @@ export type AcknowledgeableOrderList = Record<
     string,
     Array<WalmartOrderToBeAcknowledged | LiverpoolOrderToBeAcknowledged>
 >;
+
+export type ShippingLabelOrder = {
+    tracking_number: string;
+    marketplace_id: string;
+};

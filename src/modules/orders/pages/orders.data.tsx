@@ -7,7 +7,7 @@ export type Order = Database['public']['Tables']['order']['Row'] & {
         name: string;
     };
     internal_status_id: {
-        status: string;
+        name: string;
     };
     shipping_info: {
         shipping_tracking_url?: string;
@@ -73,7 +73,7 @@ export const orders_table_columns: TableColumn<Order>[] = [
     {
         id: 'internal_internal_status_id.name',
         name: 'INTERNAL STATUS',
-        selector: row => row.internal_status_id?.status,
+        selector: row => row.internal_status_id?.name,
         reorder: true,
         omit: false,
     },

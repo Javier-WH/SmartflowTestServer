@@ -8,6 +8,10 @@ const select_items: Array<{ label: string; value: OrderAction }> = [
         value: OrderAction.Accept,
     },
     {
+        label: 'Descargar Guía',
+        value: OrderAction.DownloadGuide,
+    },
+    {
         label: 'Rechazar',
         value: OrderAction.Reject,
     },
@@ -29,7 +33,7 @@ export default function ActionsSelect({
     return (
         <div className="flex items-center gap-4">
             <Select
-                className="w-32 m-0"
+                className="w-40 m-0"
                 classNames={{
                     trigger: 'shadow-lg',
                 }}
