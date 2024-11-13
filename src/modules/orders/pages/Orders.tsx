@@ -196,13 +196,46 @@ export default function Orders() {
 
         let shipping_url = data.shipping_info?.shipping_tracking_url;
 
+        const order_lines = data.order_lines.map(orderLine => ({
+            sku: orderLine.sku,
+            name: orderLine.productName,
+            status: orderLine.status,
+            upc: orderLine.upc,
+            quantity: orderLine.shipment?.shipmentLines.reduce(
+                (acc, shipmentLine) => acc + Number(shipmentLine.quantity.amount),
+                0,
+            ),
+            tracking_number: orderLine.shipment?.trackingNumber,
+        }));
+
         switch (data.marketplace_id.name) {
             case 'walmart':
                 shipping_url = data.order_lines[0]?.shipment?.trackingURL;
         }
 
         return (
-            <div className="w-full flex justify-end py-4 border-b-1 border-gray-200">
+            <div className="w-full flex justify-between p-4 border-b-1 border-gray-200">
+                <div className="flex flex-col gap-4">
+                    {order_lines?.map(ol => (
+                        <div key={ol.sku} className="flex gap-8 items-center">
+                            <div className="flex gap-4 items-center">
+                                <span className="text-sm">{ol.sku}</span>
+                                <span className="text-sm">{ol.name}</span>
+                                <span className="text-sm">{ol.quantity}</span>
+                            </div>
+                            <div className="flex gap-4 items-center">
+                                <div>
+                                    <span className="text-sm">Status: </span>
+                                    <span className="text-sm">{ol.status}</span>
+                                </div>
+                                <div>
+                                    <span className="text-sm">Tracking: </span>
+                                    <span className="text-sm">{ol.tracking_number}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
                 <div className="flex gap-20 px-20">
                     <div className="flex flex-col gap-4">
                         <small className="flex gap-8 truncate max-w-[400px]">
@@ -219,7 +252,7 @@ export default function Orders() {
                     <div className="flex flex-col gap-4">
                         <small className="truncate">Comisiones ${comission_amount}</small>
                         <Button size="sm" radius="full" color="primary">
-                            Marcar como enviado
+                            Marcar como empacado
                         </Button>
                     </div>
                 </div>
