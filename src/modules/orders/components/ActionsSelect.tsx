@@ -11,14 +11,14 @@ const select_items: Array<{ label: string; value: OrderAction }> = [
         label: 'Descargar Guía',
         value: OrderAction.DownloadGuide,
     },
-    {
-        label: 'Rechazar',
-        value: OrderAction.Reject,
-    },
-    {
-        label: 'Escanear',
-        value: OrderAction.Scan,
-    },
+    // {
+    //     label: 'Rechazar',
+    //     value: OrderAction.Reject,
+    // },
+    // {
+    //     label: 'Escanear',
+    //     value: OrderAction.Scan,
+    // },
     {
         label: 'Despachar',
         value: OrderAction.ReadyToShip,
