@@ -88,7 +88,12 @@ class OrderService {
         if (error) {
             try {
                 if (error.context.json) {
-                    const { errors } = (await error.context.json()) ?? {};
+                    const { errors, error: individualError } = (await error.context.json()) ?? {};
+
+                    if (individualError) {
+                        return [individualError, null];
+                    }
+
                     return [errors, null];
                 }
 
