@@ -15,7 +15,7 @@ export default function Inventory() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const urlSearchParams = new URLSearchParams(location.search);
     const parsedPage = Number.parseInt(urlSearchParams.get('page') ?? '1');
@@ -24,7 +24,12 @@ export default function Inventory() {
     const [selectedPage, setSelectedPage] = useState(parsedPage);
     const [rowsPerPage, setRowsPerPage] = useState(parsedRowsPerPage);
 
-    const { data: products, totalRecords: totalProducts } = useProduct({
+    const {
+        data: products,
+        totalRecords: totalProducts,
+        mutate: updateProducts,
+        isLoading: productsLoading,
+    } = useProduct({
         page: selectedPage,
         rowsPerPage: rowsPerPage,
     });
@@ -50,7 +55,7 @@ export default function Inventory() {
                 data={products}
                 exportData={products}
                 columns={products_table_columns}
-                loading={false}
+                loading={productsLoading}
                 pagination
                 paginationTotalRows={totalProducts || 0}
                 rowsPerPage={rowsPerPage}
@@ -62,14 +67,23 @@ export default function Inventory() {
                 initialVisibleColumns={[]}
                 bottomSlot={
                     <div className="flex justify-center xl:justify-end items-center gap-4 flex-wrap">
-                        <Button radius="full" color="default" onClick={onOpen}>
+                        <Button radius="full" color="default" onClick={onOpenChange}>
                             Abastecer SKU
                         </Button>
                     </div>
                 }
             />
 
-            {isOpen && <SupplyProduct isOpen={isOpen} onClose={onClose} />}
+            {isOpen && (
+                <SupplyProduct
+                    isOpen={isOpen}
+                    onClose={onOpenChange}
+                    onSubmit={() => {
+                        console.log('Updating products');
+                        updateProducts();
+                    }}
+                />
+            )}
         </>
     );
 }

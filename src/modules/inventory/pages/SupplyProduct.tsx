@@ -34,7 +34,11 @@ onScan.attachTo(document);
 
 const productService = new ProductService(supabase);
 
-export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+export default function SupplyProduct({
+    isOpen,
+    onClose,
+    onSubmit,
+}: { isOpen: boolean; onClose: () => void; onSubmit: () => void }) {
     const { data: businesses, isLoading: businessesLoading, error: businessesError } = useBusiness();
     const { sumInventory } = useProduct({});
 
@@ -165,6 +169,8 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
             }
 
             setProductsPreview([]);
+            onSubmit();
+            onClose();
         } catch (error: any) {
             setError(error.message);
         } finally {
@@ -208,6 +214,12 @@ export default function SupplyProduct({ isOpen, onClose }: { isOpen: boolean; on
             document.removeEventListener('scan', onScan);
         };
     }, [submitProduct, selectedBusinessId]);
+
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         onScan.simulate(document, '2326WMT');
+    //     }, 2000);
+    // }, []);
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} size="5xl">

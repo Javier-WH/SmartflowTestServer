@@ -5,6 +5,9 @@ export type Product = Database['public']['Tables']['product']['Row'] & {
     marketplace_product: Array<{
         marketplace_sku: string;
     }>;
+    business_product: Array<{
+        stock: number;
+    }>;
 };
 
 export type SupplyProduct = Product & {
@@ -40,6 +43,14 @@ export const products_table_columns: TableColumn<Product>[] = [
         id: 'price',
         name: 'Precio',
         selector: row => row.price ?? 0,
+        sortable: false,
+        reorder: true,
+        omit: false,
+    },
+    {
+        id: 'stock',
+        name: 'Stock',
+        selector: row => row.business_product.reduce((acc, curr) => acc + curr.stock, 0),
         sortable: false,
         reorder: true,
         omit: false,

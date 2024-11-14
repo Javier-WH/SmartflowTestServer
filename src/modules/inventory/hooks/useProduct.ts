@@ -18,6 +18,7 @@ export default function useProduct({
         isLoading,
         error,
         mutate,
+        isValidating,
         count,
     } = useQuery(productService.getProducts({ page, rowsPerPage, search })) as UseQueryReturn<Product>;
 
@@ -69,7 +70,7 @@ export default function useProduct({
     return {
         data: products ?? [],
         totalRecords: count,
-        isLoading,
+        isLoading: isLoading || isValidating,
         error: error?.message,
         mutate,
         generateSKU,

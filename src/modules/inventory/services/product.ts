@@ -33,6 +33,7 @@ class ProductService {
                     id,
                     name,
                     marketplace_product!inner(marketplace_sku),
+                    business_product!inner(stock),
                     brand,
                     type,
                     currency,
