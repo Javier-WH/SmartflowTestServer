@@ -6,6 +6,14 @@ export enum OrderAction {
     ReadyToShip = 'ready_to_ship',
 }
 
+export enum OrderStatus {
+    ReadyToAccept = 'ReadyToAccept',
+    MissingInventory = 'MissingInventory',
+    ReadyToPackage = 'ReadyToPackage',
+    ReadyToShip = 'ReadyToShip',
+    Shipped = 'Shipped',
+}
+
 export type WalmartOrderToBeAcknowledged = {
     orderId: string;
     orderAcknowledge: {

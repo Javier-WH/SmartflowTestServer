@@ -7,6 +7,7 @@ export type Order = Database['public']['Tables']['order']['Row'] & {
         name: string;
     };
     internal_status_id: {
+        id: number;
         name: string;
     };
     shipping_info: {

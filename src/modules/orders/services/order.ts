@@ -129,7 +129,18 @@ class OrderService {
             }
         }
 
-        console.log('[LS] -> src/modules/orders/services/order.ts:110 -> data: ', data);
+        return [null, data];
+    }
+
+    async changeOrderStatus(order_id: number, status_id: number) {
+        const { data, error } = await this.supabaseClient.from('order_internal_status_history').insert({
+            order_id,
+            status_id,
+        });
+
+        if (error) {
+            return [error.message, null];
+        }
 
         return [null, data];
     }

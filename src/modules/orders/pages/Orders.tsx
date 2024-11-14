@@ -20,7 +20,7 @@ import Table from '@/modules/shared/components/Table/Table';
 import ActionsSelect from '../components/ActionsSelect';
 import LoadingOverlay from '@/modules/shared/components/LoadingOverlay';
 
-import { OrderAction } from '../types/types';
+import { OrderAction, OrderStatus } from '../types/types';
 import { type Order, orders_table_columns, orders_table_visible_columns } from './orders.data';
 
 import { parseDate } from '@internationalized/date';
@@ -30,6 +30,7 @@ import useStatus from '../hooks/useStatus';
 import { useDebouncedCallback } from 'use-debounce';
 import { mapAcknowledgeableOrderList } from '../utils/mapper';
 import MarketplaceSelector, { type Key } from '@/modules/shared/components/MarketplaceSelector';
+import OrderService from '../services/order';
 
 const ROWS_PER_PAGE = 100;
 
@@ -78,8 +79,10 @@ export default function Orders() {
         data: orders,
         totalRecords: ordersTotalRecords,
         isLoading: isOrdersLoading,
+        mutate: updateOrders,
         acknowledgeOrders,
         downloadShippingLabels,
+        changeOrderStatus,
     } = useOrder({
         page: selectedPage,
         rowsPerPage: rowsPerPage,
@@ -90,7 +93,7 @@ export default function Orders() {
         search: searchTerm,
     });
 
-    const { data: status, isLoading: isStatusLoading, error: statusError } = useStatus();
+    const { data: statusList, isLoading: isStatusLoading, error: statusError } = useStatus();
 
     const exportData = useMemo(() => {
         if (!orders) return [];
@@ -189,6 +192,7 @@ export default function Orders() {
     }, 500);
 
     const ExpandedRowComponent: React.FC<ExpanderComponentProps<Order>> = ({ data }) => {
+        console.log('[LS] -> src/modules/orders/pages/Orders.tsx:191 -> data: ', data);
         const comission_amount = data.order_lines.reduce(
             (acc: number, orderLine: Order['order_lines'][0]) => acc + Number(orderLine.commission_amount),
             0,
@@ -207,6 +211,49 @@ export default function Orders() {
             ),
             tracking_number: orderLine.shipment?.trackingNumber,
         }));
+
+        let action_onclick = null;
+        let action_name = '';
+
+        const update_current_order_in_table = () => {
+            const new_orders = orders.map(order => {
+                if (order.id === data.id) {
+                    return {
+                        ...order,
+                        internal_status_id: statusList.find(s => s.id === order.internal_status_id.id + 1),
+                    };
+                }
+
+                return order;
+            });
+            updateOrders(new_orders);
+        };
+
+        switch (data.internal_status_id.status) {
+            case OrderStatus.ReadyToPackage:
+                action_name = 'Marcar como empacado';
+                action_onclick = async () => {
+                    await changeOrderStatus(data.id, data.internal_status_id.id + 1);
+                    update_current_order_in_table();
+                };
+                break;
+            case OrderStatus.ReadyToShip:
+                action_name = 'Marcar como enviado';
+                action_onclick = async () => {
+                    await changeOrderStatus(data.id, data.internal_status_id.id + 1);
+                    update_current_order_in_table();
+                };
+                break;
+            case OrderStatus.Shipped:
+                action_name = 'Marcar como devolución';
+                action_onclick = () => {
+                    changeOrderStatus(data.id, data.internal_status_id.id + 1);
+                    update_current_order_in_table();
+                };
+                break;
+            default:
+                break;
+        }
 
         switch (data.marketplace_id.name) {
             case 'walmart':
@@ -251,9 +298,11 @@ export default function Orders() {
                     </div>
                     <div className="flex flex-col gap-4">
                         <small className="truncate">Comisiones ${comission_amount}</small>
-                        <Button size="sm" radius="full" color="primary">
-                            Marcar como empacado
-                        </Button>
+                        {action_name ? (
+                            <Button size="sm" radius="full" color="primary" onClick={action_onclick}>
+                                {action_name}
+                            </Button>
+                        ) : null}
                     </div>
                 </div>
             </div>
@@ -422,7 +471,7 @@ export default function Orders() {
                             radius="full"
                             isLoading={isStatusLoading}
                             selectionMode="single"
-                            items={status}
+                            items={statusList}
                             isInvalid={statusError != null}
                             onSelectionChange={keys => {
                                 const statusId = Array.from(keys)[0] as number;
