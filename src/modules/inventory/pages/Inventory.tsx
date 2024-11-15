@@ -15,7 +15,7 @@ export default function Inventory() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpenChange } = useDisclosure();
 
     const urlSearchParams = new URLSearchParams(location.search);
     const parsedPage = Number.parseInt(urlSearchParams.get('page') ?? '1');
