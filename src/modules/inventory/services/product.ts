@@ -99,7 +99,15 @@ class ProductService {
 
     async sumInventory({ sku_list }: { sku_list: Array<InventorySkuSum> }) {
         const response = await this.supabaseClient.functions.invoke('inventory', {
-            body: { sku_list },
+            body: { sku_list, action: 'add' },
+        });
+
+        return response;
+    }
+
+    async substractInventory({ sku_list }: { sku_list: Array<InventorySkuSum> }) {
+        const response = await this.supabaseClient.functions.invoke('inventory', {
+            body: { sku_list, action: 'substract' },
         });
 
         return response;

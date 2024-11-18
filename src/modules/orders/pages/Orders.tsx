@@ -31,6 +31,8 @@ import { useDebouncedCallback } from 'use-debounce';
 import { mapAcknowledgeableOrderList } from '../utils/mapper';
 import MarketplaceSelector, { type Key } from '@/modules/shared/components/MarketplaceSelector';
 import OrderService from '../services/order';
+import ReturnModal from '@/modules/shared/components/ReturnModal';
+import useProduct from '@/modules/inventory/hooks/useProduct';
 
 const ROWS_PER_PAGE = 100;
 
@@ -66,14 +68,18 @@ export default function Orders() {
     const [selectedDateRange, setSelectedDateRange] = useState<RangeValue<DateValue> | null>(dateValue);
     const [isDateRangePickerOpen, setIsDateRangePickerOpen] = useState(false);
     const [selectedRows, setSelectedRows] = useState<Order[]>([]);
-    console.log('[LS] -> src/modules/orders/pages/Orders.tsx:67 -> selectedRows: ', selectedRows);
 
     const [selectedAction, setSelectedAction] = useState<OrderAction | null>(null);
-    console.log('[LS] -> src/modules/orders/pages/Orders.tsx:69 -> selectedAction: ', selectedAction);
     const [selectedActionLoading, setSelectedActionLoading] = useState(false);
     const [ordersWithStockInfo, setOrdersWithStockInfo] = useState<Order[]>([]);
+    const [orderToBeReturned, setOrderToBeReturned] = useState<Order | null>(null);
+    const [markAsReadyToShipLoading, setMarkAsReadyToShipLoading] = useState(false);
 
-    const { isOpen, onOpenChange, onOpen } = useDisclosure();
+    const {
+        isOpen: processOrderIsOpen,
+        onOpenChange: processOrderOnOpenChange,
+        onOpen: processOrderOnOpen,
+    } = useDisclosure();
 
     const {
         data: orders,
@@ -92,6 +98,8 @@ export default function Orders() {
         to: selectedDateRange?.end?.toString(),
         search: searchTerm,
     });
+
+    const { substractInventory } = useProduct({});
 
     const { data: statusList, isLoading: isStatusLoading, error: statusError } = useStatus();
 
@@ -192,7 +200,6 @@ export default function Orders() {
     }, 500);
 
     const ExpandedRowComponent: React.FC<ExpanderComponentProps<Order>> = ({ data }) => {
-        console.log('[LS] -> src/modules/orders/pages/Orders.tsx:191 -> data: ', data);
         const comission_amount = data.order_lines.reduce(
             (acc: number, orderLine: Order['order_lines'][0]) => acc + Number(orderLine.commission_amount),
             0,
@@ -214,6 +221,7 @@ export default function Orders() {
 
         let action_onclick = null;
         let action_name = '';
+        let isLoading = false;
 
         const update_current_order_in_table = () => {
             const new_orders = orders.map(order => {
@@ -240,15 +248,41 @@ export default function Orders() {
             case OrderStatus.ReadyToShip:
                 action_name = 'Marcar como enviado';
                 action_onclick = async () => {
-                    await changeOrderStatus(data.id, data.internal_status_id.id + 1);
-                    update_current_order_in_table();
+                    setMarkAsReadyToShipLoading(true);
+                    try {
+                        const response = await substractInventory({
+                            sku_list: data.order_lines.map(ol => ({
+                                sku: ol.sku,
+                                quantity:
+                                    ol.shipment?.shipmentLines.reduce(
+                                        (acc, sl) => acc + Number(sl.quantity.amount),
+                                        0,
+                                    ) ?? 0,
+                            })),
+                        });
+
+                        if (response?.error) {
+                            const error = await response?.error?.context?.json();
+                            toast.error(error?.error);
+                            return;
+                        }
+
+                        await changeOrderStatus(data.id, data.internal_status_id.id + 1);
+                        update_current_order_in_table();
+                    } catch (error) {
+                        toast.error(error);
+                    } finally {
+                        setMarkAsReadyToShipLoading(false);
+                    }
                 };
+                isLoading = markAsReadyToShipLoading;
                 break;
             case OrderStatus.Shipped:
                 action_name = 'Marcar como devolución';
                 action_onclick = () => {
-                    changeOrderStatus(data.id, data.internal_status_id.id + 1);
-                    update_current_order_in_table();
+                    setOrderToBeReturned(data);
+                    // changeOrderStatus(data.id, data.internal_status_id.id + 1);
+                    // update_current_order_in_table();
                 };
                 break;
             default:
@@ -299,7 +333,14 @@ export default function Orders() {
                     <div className="flex flex-col gap-4">
                         <small className="truncate">Comisiones ${comission_amount}</small>
                         {action_name ? (
-                            <Button size="sm" radius="full" color="primary" onClick={action_onclick}>
+                            <Button
+                                size="sm"
+                                radius="full"
+                                color="primary"
+                                onClick={action_onclick}
+                                isLoading={isLoading}
+                                isDisabled={isLoading}
+                            >
                                 {action_name}
                             </Button>
                         ) : null}
@@ -337,7 +378,7 @@ export default function Orders() {
 
                 setOrdersWithStockInfo(response.orders as Order[]);
 
-                onOpen();
+                processOrderOnOpen();
 
                 break;
             }
@@ -495,7 +536,20 @@ export default function Orders() {
                 initialVisibleColumns={orders_table_visible_columns}
                 expandableRowsComponent={ExpandedRowComponent}
             />
-            {isOpen && <OrderProcessingModal data={ordersWithStockInfo} isOpen={isOpen} onOpenChange={onOpenChange} />}
+            {processOrderIsOpen && (
+                <OrderProcessingModal
+                    data={ordersWithStockInfo}
+                    isOpen={processOrderIsOpen}
+                    onOpenChange={processOrderOnOpenChange}
+                />
+            )}
+            {orderToBeReturned && (
+                <ReturnModal
+                    order={orderToBeReturned}
+                    isOpen={orderToBeReturned}
+                    onOpenChange={() => setOrderToBeReturned(null)}
+                />
+            )}
         </>
     );
 }

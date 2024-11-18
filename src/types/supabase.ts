@@ -1,5 +1,21 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
+export type OrderLine = {
+    sku: string;
+    productName: string;
+    status: string;
+    upc: string;
+    shipment?: {
+        shipmentLines: Array<{
+            quantity: {
+                amount: string;
+            };
+        }>;
+        trackingNumber: string;
+        trackingURL: string;
+    };
+};
+
 export type Database = {
     public: {
         Tables: {
@@ -200,7 +216,7 @@ export type Database = {
                     marketplace_id: number;
                     marketplace_status: string;
                     order_id: string;
-                    order_lines: Json[] | null;
+                    order_lines: OrderLine[] | null;
                     shipping_info: Json | null;
                     tax: Json[] | null;
                     total: string;
@@ -216,7 +232,7 @@ export type Database = {
                     marketplace_id: number;
                     marketplace_status: string;
                     order_id: string;
-                    order_lines?: Json[] | null;
+                    order_lines?: OrderLine[] | null;
                     shipping_info?: Json | null;
                     tax?: Json[] | null;
                     total: string;
@@ -232,7 +248,7 @@ export type Database = {
                     marketplace_id?: number;
                     marketplace_status?: string;
                     order_id?: string;
-                    order_lines?: Json[] | null;
+                    order_lines?: OrderLine[] | null;
                     shipping_info?: Json | null;
                     tax?: Json[] | null;
                     total?: string;

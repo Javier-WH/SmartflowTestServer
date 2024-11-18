@@ -67,6 +67,12 @@ export default function useProduct({
         return response;
     }
 
+    async function substractInventory({ sku_list }: { sku_list: Array<InventorySkuSum> }) {
+        const response = await productService.substractInventory({ sku_list });
+
+        return response;
+    }
+
     return {
         data: products ?? [],
         totalRecords: count,
@@ -76,5 +82,6 @@ export default function useProduct({
         generateSKU,
         // createProduct,
         sumInventory,
+        substractInventory,
     };
 }
