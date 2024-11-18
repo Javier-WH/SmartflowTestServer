@@ -33,6 +33,8 @@ function Table({
     className,
     headerScrollHeight,
     selectableRows = true,
+    selectableRowsSingle = false,
+    clearSelectedRows = false,
 }: {
     tableId: string;
     pagination?: boolean;
@@ -60,6 +62,8 @@ function Table({
     className?: string;
     headerScrollHeight?: string;
     selectableRows?: boolean;
+    selectableRowsSingle?: boolean;
+    clearSelectedRows?: boolean;
 }) {
     const storedVisibility = localStorage.getItem(`${tableId}-columns-visibility`);
     const persistedVisibility = storedVisibility ? JSON.parse(storedVisibility) : initialVisibleColumns;
@@ -168,6 +172,8 @@ function Table({
                     expandableRows={Boolean(expandableRowsComponent)}
                     expandableRowsComponent={expandableRowsComponent}
                     selectableRows={selectableRows}
+                    selectableRowsSingle={selectableRowsSingle}
+                    selectableRowsHighlight
                     fixedHeader
                     fixedHeaderScrollHeight={
                         upperSlot
@@ -192,6 +198,7 @@ function Table({
                     onSelectedRowsChange={({ selectedRows }) => {
                         onSelectedRowsChange?.(selectedRows);
                     }}
+                    clearSelectedRows={clearSelectedRows}
                     onSort={onSort}
                     sortServer={sortServer}
                     noDataComponent={<span className="text-center h-full">No hay datos</span>}

@@ -31,8 +31,9 @@ import { useDebouncedCallback } from 'use-debounce';
 import { mapAcknowledgeableOrderList } from '../utils/mapper';
 import MarketplaceSelector, { type Key } from '@/modules/shared/components/MarketplaceSelector';
 import OrderService from '../services/order';
-import ReturnModal from '@/modules/shared/components/ReturnModal';
+import ReturnModal from '../components/ReturnModal';
 import useProduct from '@/modules/inventory/hooks/useProduct';
+import ShipModal from '../components/ShipModal';
 
 const ROWS_PER_PAGE = 100;
 
@@ -73,6 +74,7 @@ export default function Orders() {
     const [selectedActionLoading, setSelectedActionLoading] = useState(false);
     const [ordersWithStockInfo, setOrdersWithStockInfo] = useState<Order[]>([]);
     const [orderToBeReturned, setOrderToBeReturned] = useState<Order | null>(null);
+    const [ordersToShip, setOrdersToShip] = useState<Order[]>([]);
     const [markAsReadyToShipLoading, setMarkAsReadyToShipLoading] = useState(false);
 
     const {
@@ -416,9 +418,19 @@ export default function Orders() {
                 break;
             case OrderAction.Scan:
                 break;
-            case OrderAction.ReadyToShip:
-                // TODO: cambiar el status de las ordenes seleccionadas a "Preparado para despachar"
+            case OrderAction.ReadyToShip: {
+                const allOrdersAreReadyToShip = selectedRows.every(order => {
+                    return order.internal_status_id.status === OrderStatus.ReadyToShip;
+                });
+
+                if (allOrdersAreReadyToShip) {
+                    setOrdersToShip(selectedRows);
+                } else {
+                    toast.error('No todas las ordenes seleccionadas están preparadas para el envío');
+                }
+
                 break;
+            }
         }
     }
 
@@ -548,6 +560,13 @@ export default function Orders() {
                     order={orderToBeReturned}
                     isOpen={orderToBeReturned}
                     onOpenChange={() => setOrderToBeReturned(null)}
+                />
+            )}
+            {ordersToShip.length > 0 && (
+                <ShipModal
+                    orders={ordersToShip}
+                    isOpen={ordersToShip.length > 0}
+                    onOpenChange={() => setOrdersToShip([])}
                 />
             )}
         </>
