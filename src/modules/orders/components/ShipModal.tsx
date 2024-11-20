@@ -139,11 +139,11 @@ export default function ShipModal({
         };
     }, [ordersToShip, ordersPreview]);
 
-    useEffect(() => {
-        setTimeout(() => {
-            onScan.simulate(document, '9350866851');
-        }, 2000);
-    }, []);
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         onScan.simulate(document, '9350866851');
+    //     }, 2000);
+    // }, []);
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
