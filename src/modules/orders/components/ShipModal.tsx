@@ -12,6 +12,7 @@ import type { InventorySkuChange } from '@/modules/inventory/services/product';
 import useProduct from '@/modules/inventory/hooks/useProduct';
 import { toast } from 'react-toastify';
 import useOrder from '../hooks/useOrder';
+import onScan from 'onscan.js';
 
 export default function ShipModal({
     orders,
@@ -111,6 +112,19 @@ export default function ShipModal({
         async function onScan(props) {
             try {
                 setScanSearchLoading(true);
+                const tracking_number = props.detail.scanCode;
+
+                const found_order = ordersToShip.find(o => {
+                    return o.order_lines?.find(ol => ol.shipment?.trackingNumber === tracking_number);
+                });
+
+                if (!found_order) {
+                    setError(`Orden con el número de seguimiento ${tracking_number} no encontrada`);
+                    return;
+                }
+
+                setOrdersToShip(ordersToShip.filter(order => order.id !== found_order.id));
+                setOrdersPreview([...ordersPreview, found_order]);
             } catch (error: any) {
                 alert(error?.message);
             } finally {
@@ -123,6 +137,12 @@ export default function ShipModal({
         return () => {
             document.removeEventListener('scan', onScan);
         };
+    }, [ordersToShip, ordersPreview]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            onScan.simulate(document, '9350866851');
+        }, 2000);
     }, []);
 
     return (
