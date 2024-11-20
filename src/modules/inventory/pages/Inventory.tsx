@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 
 import Table from '@/modules/shared/components/Table/Table';
-import { Button, useDisclosure } from '@nextui-org/react';
+import { Button, Input, useDisclosure } from '@nextui-org/react';
 
 import SupplyProduct from './SupplyProduct';
 
 import useProduct from '../hooks/useProduct';
 import { products_table_columns } from './inventory.data';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDebouncedCallback } from 'use-debounce';
 
 const ROWS_PER_PAGE = 100;
 
@@ -23,6 +24,7 @@ export default function Inventory() {
 
     const [selectedPage, setSelectedPage] = useState(parsedPage);
     const [rowsPerPage, setRowsPerPage] = useState(parsedRowsPerPage);
+    const [searchTerm, setSearchTerm] = useState<string>('');
 
     const {
         data: products,
@@ -32,7 +34,13 @@ export default function Inventory() {
     } = useProduct({
         page: selectedPage,
         rowsPerPage: rowsPerPage,
+        search: searchTerm,
     });
+
+    const handleSearchTermChange = useDebouncedCallback((e: ChangeEvent<HTMLInputElement>) => {
+        console.log('handleSearchTermChange', e.target.value);
+        setSearchTerm(e.target.value);
+    }, 500);
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -67,6 +75,19 @@ export default function Inventory() {
                 initialVisibleColumns={[]}
                 bottomSlot={
                     <div className="flex justify-center xl:justify-end items-center gap-4 flex-wrap">
+                        <div className="flex-grow max-w-[600px] mr-auto">
+                            <Input
+                                placeholder="Search..."
+                                type="search"
+                                inputMode="search"
+                                color="default"
+                                size="lg"
+                                classNames={{ inputWrapper: 'shadow-lg bg-white' }}
+                                radius="full"
+                                onChange={handleSearchTermChange}
+                                defaultValue={searchTerm}
+                            />
+                        </div>
                         <Button radius="full" color="default" onClick={onOpenChange}>
                             Abastecer SKU
                         </Button>
