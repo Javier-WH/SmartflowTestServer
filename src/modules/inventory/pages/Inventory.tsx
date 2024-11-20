@@ -1,13 +1,15 @@
 import { type ChangeEvent, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Table from '@/modules/shared/components/Table/Table';
 import { Button, Input, useDisclosure } from '@nextui-org/react';
 
 import SupplyProduct from './SupplyProduct';
+import { MoveInventoryModal } from '../components/MoveInventoryModal';
 
 import useProduct from '../hooks/useProduct';
-import { products_table_columns } from './inventory.data';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { type Product, products_table_columns } from './inventory.data';
+
 import { useDebouncedCallback } from 'use-debounce';
 
 const ROWS_PER_PAGE = 100;
@@ -16,7 +18,7 @@ export default function Inventory() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const { isOpen, onOpenChange } = useDisclosure();
+    const { isOpen: supplyProductOpen, onOpenChange: supplyProductOnOpenChange } = useDisclosure();
 
     const urlSearchParams = new URLSearchParams(location.search);
     const parsedPage = Number.parseInt(urlSearchParams.get('page') ?? '1');
@@ -25,6 +27,31 @@ export default function Inventory() {
     const [selectedPage, setSelectedPage] = useState(parsedPage);
     const [rowsPerPage, setRowsPerPage] = useState(parsedRowsPerPage);
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [moveInventoryProduct, setMoveInventoryProduct] = useState<Product | null>(null);
+
+    const table_columns = [
+        ...products_table_columns,
+        {
+            id: 'stock',
+            name: 'Stock',
+            selector: (row: Product) => {
+                return (
+                    <Button
+                        color="primary"
+                        size="sm"
+                        variant="light"
+                        className="text-default-500"
+                        onClick={() => setMoveInventoryProduct(row)}
+                    >
+                        {row.business_product.reduce((acc: number, curr: any) => acc + curr.stock, 0)}
+                    </Button>
+                );
+            },
+            sortable: false,
+            reorder: true,
+            omit: false,
+        },
+    ];
 
     const {
         data: products,
@@ -62,7 +89,7 @@ export default function Inventory() {
                 tableId="inventory-table-columns"
                 data={products}
                 exportData={products}
-                columns={products_table_columns}
+                columns={table_columns}
                 loading={productsLoading}
                 pagination
                 paginationTotalRows={totalProducts || 0}
@@ -88,21 +115,28 @@ export default function Inventory() {
                                 defaultValue={searchTerm}
                             />
                         </div>
-                        <Button radius="full" color="default" onClick={onOpenChange}>
+                        <Button radius="full" color="default" onClick={supplyProductOnOpenChange}>
                             Abastecer SKU
                         </Button>
                     </div>
                 }
             />
 
-            {isOpen && (
+            {supplyProductOpen && (
                 <SupplyProduct
-                    isOpen={isOpen}
-                    onClose={onOpenChange}
+                    isOpen={supplyProductOpen}
+                    onClose={supplyProductOnOpenChange}
                     onSubmit={() => {
                         console.log('Updating products');
                         updateProducts();
                     }}
+                />
+            )}
+            {moveInventoryProduct != null && (
+                <MoveInventoryModal
+                    product={moveInventoryProduct}
+                    isOpen={moveInventoryProduct != null}
+                    onOpenChange={() => setMoveInventoryProduct(null)}
                 />
             )}
         </>

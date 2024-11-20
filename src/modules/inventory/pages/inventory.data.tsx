@@ -6,6 +6,11 @@ export type Product = Database['public']['Tables']['product']['Row'] & {
         marketplace_sku: string;
     }>;
     business_product: Array<{
+        id: number;
+        name: string;
+        business_id: {
+            name: string;
+        };
         stock: number;
     }>;
 };
@@ -47,21 +52,13 @@ export const products_table_columns: TableColumn<Product>[] = [
         reorder: true,
         omit: false,
     },
-    {
-        id: 'stock',
-        name: 'Stock',
-        selector: row => row.business_product.reduce((acc, curr) => acc + curr.stock, 0),
-        sortable: false,
-        reorder: true,
-        omit: false,
-    },
-    {
-        id: 'created_at',
-        name: 'Fecha Creación',
-        selector: row => row.created_at,
-        format: row => new Date(row.created_at).toLocaleDateString(),
-        sortable: false,
-        reorder: true,
-        omit: false,
-    },
+    // {
+    //     id: 'created_at',
+    //     name: 'Fecha Creación',
+    //     selector: row => row.created_at,
+    //     format: row => new Date(row.created_at).toLocaleDateString(),
+    //     sortable: false,
+    //     reorder: true,
+    //     omit: false,
+    // },
 ];
