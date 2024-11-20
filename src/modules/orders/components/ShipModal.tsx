@@ -109,7 +109,7 @@ export default function ShipModal({
     }
 
     useEffect(() => {
-        async function onScan(props) {
+        async function onScan(props: any) {
             try {
                 setScanSearchLoading(true);
                 const tracking_number = props.detail.scanCode;
