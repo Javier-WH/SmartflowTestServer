@@ -35,6 +35,7 @@ export default function Inventory() {
             id: 'id',
             name: 'ID',
             selector: row => row.id,
+            width: 'max-content',
             reorder: true,
             omit: false,
         },
@@ -49,6 +50,7 @@ export default function Inventory() {
         {
             id: 'marketplace_sku',
             name: 'SKU Marketplace',
+            width: 'max-content',
             selector: row => row.marketplace_product?.[0]?.marketplace_sku ?? '', // WARNING: This must be correctly handled as a list of skus, one per marketplace
             sortable: false,
             reorder: true,
@@ -57,6 +59,7 @@ export default function Inventory() {
         {
             id: 'price',
             name: 'Precio',
+            width: 'max-content',
             selector: row => row.price ?? 0,
             sortable: false,
             reorder: true,
@@ -65,6 +68,7 @@ export default function Inventory() {
         {
             id: 'stock',
             name: 'Stock',
+            width: 'max-content',
             selector: row => row.business_product.reduce((acc: number, curr: any) => acc + curr.stock, 0),
             format: (row: Product) => {
                 return (
