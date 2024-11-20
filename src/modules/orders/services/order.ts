@@ -144,6 +144,16 @@ class OrderService {
 
         return [null, data];
     }
+
+    async changeOrderStatusInBulk(orders: Array<{ order_id: number; status_id: number }>) {
+        const { data, error } = await this.supabaseClient.from('order_internal_status_history').insert(orders);
+
+        if (error) {
+            return [error.message, null];
+        }
+
+        return [null, data];
+    }
 }
 
 export default OrderService;

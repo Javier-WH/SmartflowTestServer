@@ -72,6 +72,16 @@ export default function useOrder(
         return [null, data];
     }
 
+    async function changeOrderStatusInBulk(orders: Array<{ order_id: number; status_id: number }>) {
+        const [error, data] = await ordersService.changeOrderStatusInBulk(orders);
+
+        if (error) {
+            return [error, null];
+        }
+
+        return [null, data];
+    }
+
     return {
         data: orders,
         totalRecords: count,
@@ -81,5 +91,6 @@ export default function useOrder(
         acknowledgeOrders,
         downloadShippingLabels,
         changeOrderStatus,
+        changeOrderStatusInBulk,
     };
 }

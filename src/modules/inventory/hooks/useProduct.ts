@@ -3,7 +3,7 @@ import supabase from '@/lib/supabase';
 
 import { type UseQueryReturn, useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
-import ProductService, { type InventorySkuSum } from '../services/product';
+import ProductService, { type InventorySkuChange } from '../services/product';
 import type { Product } from '../pages/inventory.data';
 
 const productService = new ProductService(supabase);
@@ -61,13 +61,13 @@ export default function useProduct({
     //     return response;
     // }
 
-    async function sumInventory({ sku_list }: { sku_list: Array<InventorySkuSum> }) {
+    async function sumInventory({ sku_list }: { sku_list: Array<InventorySkuChange> }) {
         const response = await productService.sumInventory({ sku_list });
 
         return response;
     }
 
-    async function substractInventory({ sku_list }: { sku_list: Array<InventorySkuSum> }) {
+    async function substractInventory({ sku_list }: { sku_list: Array<InventorySkuChange> }) {
         const response = await productService.substractInventory({ sku_list });
 
         return response;

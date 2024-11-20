@@ -567,6 +567,7 @@ export default function Orders() {
                     orders={ordersToShip}
                     isOpen={ordersToShip.length > 0}
                     onOpenChange={() => setOrdersToShip([])}
+                    onClose={updateOrders}
                 />
             )}
         </>

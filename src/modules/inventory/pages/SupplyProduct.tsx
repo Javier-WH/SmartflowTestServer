@@ -18,7 +18,7 @@ import type { TableColumn } from 'react-data-table-component';
 import { Trash } from 'react-feather';
 
 import type { Product, SupplyProduct as SupplyProductType } from './inventory.data';
-import type { InventorySkuSum } from '../services/product';
+import type { InventorySkuChange } from '../services/product';
 import SKUSelector from '@/modules/shared/components/SKUSelector';
 import Table from '@/modules/shared/components/Table/Table';
 import AlertMessage from '@/modules/auth/components/ErrorMessage';
@@ -28,9 +28,6 @@ import ProductService from '../services/product';
 import supabase from '@/lib/supabase';
 import useBusiness from '../hooks/useBusiness';
 import useProduct from '../hooks/useProduct';
-
-import onScan from 'onscan.js';
-onScan.attachTo(document);
 
 const productService = new ProductService(supabase);
 
@@ -156,7 +153,7 @@ export default function SupplyProduct({
         setIsLoading(true);
 
         try {
-            const sku_list: Array<InventorySkuSum> = productsPreview.map(p => ({
+            const sku_list: Array<InventorySkuChange> = productsPreview.map(p => ({
                 sku: p.marketplace_product[0].marketplace_sku,
                 quantity: p.quantity,
                 business_id: p.business.id,

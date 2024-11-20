@@ -1,10 +1,10 @@
 import type { Database } from '@/types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-export interface InventorySkuSum {
+export interface InventorySkuChange {
     sku: string;
     quantity: number;
-    business_id: number;
+    business_id?: number;
 }
 
 class ProductService {
@@ -97,7 +97,7 @@ class ProductService {
     //     });
     // }
 
-    async sumInventory({ sku_list }: { sku_list: Array<InventorySkuSum> }) {
+    async sumInventory({ sku_list }: { sku_list: Array<InventorySkuChange> }) {
         const response = await this.supabaseClient.functions.invoke('inventory', {
             body: { sku_list, action: 'add' },
         });
@@ -105,7 +105,7 @@ class ProductService {
         return response;
     }
 
-    async substractInventory({ sku_list }: { sku_list: Array<InventorySkuSum> }) {
+    async substractInventory({ sku_list }: { sku_list: Array<InventorySkuChange> }) {
         const response = await this.supabaseClient.functions.invoke('inventory', {
             body: { sku_list, action: 'substract' },
         });
