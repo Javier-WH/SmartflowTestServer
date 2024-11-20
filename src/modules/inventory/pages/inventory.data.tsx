@@ -1,5 +1,4 @@
 import type { Database } from '@/types/supabase';
-import type { TableColumn } from 'react-data-table-component';
 
 export type Product = Database['public']['Tables']['product']['Row'] & {
     marketplace_product: Array<{

@@ -65,7 +65,8 @@ export default function Inventory() {
         {
             id: 'stock',
             name: 'Stock',
-            selector: (row: Product) => {
+            selector: row => row.business_product.reduce((acc: number, curr: any) => acc + curr.stock, 0),
+            format: (row: Product) => {
                 return (
                     <Button
                         color="primary"

@@ -23,7 +23,7 @@ export const MoveInventoryModal = ({
                                 <span>Stock {bp.business_id.name}: </span>
                                 <Input
                                     type="number"
-                                    value={bp.stock}
+                                    value={bp.stock?.toString()}
                                     onChange={e => {
                                         console.log(
                                             '[LS] -> src/modules/inventory/components/MoveInventoryModal.tsx:18 -> e: ',
