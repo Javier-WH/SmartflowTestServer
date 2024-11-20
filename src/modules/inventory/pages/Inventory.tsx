@@ -3,12 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import Table from '@/modules/shared/components/Table/Table';
 import { Button, Input, useDisclosure } from '@nextui-org/react';
+import type { TableColumn } from 'react-data-table-component';
 
 import SupplyProduct from './SupplyProduct';
 import { MoveInventoryModal } from '../components/MoveInventoryModal';
 
 import useProduct from '../hooks/useProduct';
-import { type Product, products_table_columns } from './inventory.data';
+import type { Product } from './inventory.data';
 
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -29,8 +30,38 @@ export default function Inventory() {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [moveInventoryProduct, setMoveInventoryProduct] = useState<Product | null>(null);
 
-    const table_columns = [
-        ...products_table_columns,
+    const products_table_columns: TableColumn<Product>[] = [
+        {
+            id: 'id',
+            name: 'ID',
+            selector: row => row.id,
+            reorder: true,
+            omit: false,
+        },
+        {
+            id: 'name',
+            name: 'Nombre',
+            selector: row => row.name,
+            sortable: false,
+            reorder: true,
+            omit: false,
+        },
+        {
+            id: 'marketplace_sku',
+            name: 'SKU Marketplace',
+            selector: row => row.marketplace_product?.[0]?.marketplace_sku ?? '', // WARNING: This must be correctly handled as a list of skus, one per marketplace
+            sortable: false,
+            reorder: true,
+            omit: false,
+        },
+        {
+            id: 'price',
+            name: 'Precio',
+            selector: row => row.price ?? 0,
+            sortable: false,
+            reorder: true,
+            omit: false,
+        },
         {
             id: 'stock',
             name: 'Stock',
@@ -51,6 +82,15 @@ export default function Inventory() {
             reorder: true,
             omit: false,
         },
+        // {
+        //     id: 'created_at',
+        //     name: 'Fecha Creación',
+        //     selector: row => row.created_at,
+        //     format: row => new Date(row.created_at).toLocaleDateString(),
+        //     sortable: false,
+        //     reorder: true,
+        //     omit: false,
+        // },
     ];
 
     const {
@@ -89,7 +129,7 @@ export default function Inventory() {
                 tableId="inventory-table-columns"
                 data={products}
                 exportData={products}
-                columns={table_columns}
+                columns={products_table_columns}
                 loading={productsLoading}
                 pagination
                 paginationTotalRows={totalProducts || 0}

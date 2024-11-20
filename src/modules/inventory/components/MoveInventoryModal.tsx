@@ -7,8 +7,6 @@ export const MoveInventoryModal = ({
     isOpen,
     onOpenChange,
 }: { product: Product; isOpen: boolean; onOpenChange: () => void }) => {
-    async function handleSubmit() {}
-
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
             <ModalContent>
