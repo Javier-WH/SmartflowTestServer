@@ -212,11 +212,11 @@ export default function SupplyProduct({
         };
     }, [submitProduct, selectedBusinessId]);
 
-    useEffect(() => {
-        setTimeout(() => {
-            onScan.simulate(document, '670WMT');
-        }, 2000);
-    }, []);
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         onScan.simulate(document, '670WMT');
+    //     }, 2000);
+    // }, []);
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} size="5xl">
