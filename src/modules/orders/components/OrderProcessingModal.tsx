@@ -37,7 +37,12 @@ export default function OrderProcessingModal({
 
         for (const order of ordersWithoutStock) {
             for (const order_line of order.order_lines) {
-                const quantity = Number(order_line.shipment.shipmentLines[0].quantity.amount);
+                let quantity = Number(order_line.shipment.shipmentLines[0].quantity.amount);
+                const current_stock = order_line.current_stock;
+
+                if (current_stock) {
+                    quantity -= current_stock;
+                }
 
                 skus[order_line.sku] = {
                     name: order_line.productName,
