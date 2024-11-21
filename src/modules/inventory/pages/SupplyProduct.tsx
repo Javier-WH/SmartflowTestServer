@@ -22,6 +22,7 @@ import type { InventorySkuChange } from '../services/product';
 import SKUSelector from '@/modules/shared/components/SKUSelector';
 import Table from '@/modules/shared/components/Table/Table';
 import AlertMessage from '@/modules/auth/components/ErrorMessage';
+import onScan from 'onscan.js';
 
 import ProductService from '../services/product';
 
@@ -185,11 +186,10 @@ export default function SupplyProduct({
         async function onScan(props) {
             setScanSearchLoading(true);
             try {
-                const { data } = await productService.getProducts({
-                    search: props.detail.scanCode,
+                const { data, error } = await productService.getProducts({
+                    sku: props.detail.scanCode,
                     single: true,
                 });
-                console.log('[LS] -> src/modules/inventory/pages/SupplyProduct.tsx:186 -> data: ', data);
 
                 if (!data) {
                     return setError('No se encontro el producto');
@@ -212,11 +212,11 @@ export default function SupplyProduct({
         };
     }, [submitProduct, selectedBusinessId]);
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         onScan.simulate(document, '2326WMT');
-    //     }, 2000);
-    // }, []);
+    useEffect(() => {
+        setTimeout(() => {
+            onScan.simulate(document, '670WMT');
+        }, 2000);
+    }, []);
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} size="5xl">

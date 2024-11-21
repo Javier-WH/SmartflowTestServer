@@ -19,7 +19,8 @@ class ProductService {
         rowsPerPage,
         search,
         single,
-    }: { page?: number; rowsPerPage?: number; search?: string; single?: boolean }) {
+        sku,
+    }: { page?: number; rowsPerPage?: number; search?: string; single?: boolean; sku?: string }) {
         let offset: number | undefined;
         let limit: number | undefined;
 
@@ -58,6 +59,10 @@ class ProductService {
             // );
 
             query = query.ilike('marketplace_product.marketplace_sku', `%${search}%`);
+        }
+
+        if (sku) {
+            query = query.eq('marketplace_product.marketplace_sku', sku);
         }
 
         query = query.order('created_at', { ascending: false });

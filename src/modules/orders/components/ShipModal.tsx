@@ -12,7 +12,6 @@ import type { InventorySkuChange } from '@/modules/inventory/services/product';
 import useProduct from '@/modules/inventory/hooks/useProduct';
 import { toast } from 'react-toastify';
 import useOrder from '../hooks/useOrder';
-import onScan from 'onscan.js';
 
 export default function ShipModal({
     orders,
