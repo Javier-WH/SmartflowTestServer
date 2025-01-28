@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { Spinner } from '@nextui-org/react';
 
 import { AuthContext } from './modules/auth/context/auth';
 
@@ -7,7 +8,15 @@ const PrivateRoute = ({ children }: { children: React.ReactElement }): React.Rea
     const { token } = useContext(AuthContext);
     const location = useLocation();
 
-    if (!token) {
+    if (token === undefined)
+        return (
+            <div className="flex justify-center items-center h-full">
+                <Spinner size="lg" />
+            </div>
+        );
+
+    if (token === null) {
+        console.log('token', token);
         return (
             <Navigate
                 state={{ message: 'La sesión expiró. Inicia sesion nuevamente' }}

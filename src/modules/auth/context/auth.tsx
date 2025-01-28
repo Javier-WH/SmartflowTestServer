@@ -22,7 +22,7 @@ export const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
-    const [token, setTokenState] = useState<string | null>(null);
+    const [token, setTokenState] = useState<string | null>();
 
     const [user, setUserState] = useState<User | null>(null);
 
