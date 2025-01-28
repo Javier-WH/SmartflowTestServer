@@ -16,7 +16,6 @@ const PrivateRoute = ({ children }: { children: React.ReactElement }): React.Rea
         );
 
     if (token === null) {
-        console.log('token', token);
         return (
             <Navigate
                 state={{ message: 'La sesión expiró. Inicia sesion nuevamente' }}
