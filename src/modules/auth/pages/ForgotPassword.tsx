@@ -1,6 +1,6 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useState, useEffect } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Button, Input } from '@nextui-org/react';
 
@@ -10,11 +10,13 @@ import AlertMessage from '../components/ErrorMessage';
 import useAuth from '../hooks/useAuth';
 
 const ForgotPassword = () => {
+    const navigate = useNavigate();
+
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { forgotPassword } = useAuth();
+    const { token, forgotPassword } = useAuth();
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -49,6 +51,11 @@ const ForgotPassword = () => {
             setLoading(false);
         }
     }
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        if (token) navigate('/');
+    }, [token]);
 
     return (
         <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen p-4">

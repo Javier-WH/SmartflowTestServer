@@ -1,6 +1,7 @@
-import { createContext, useState, useLayoutEffect } from 'react';
+import { useEffect, createContext, useState } from 'react';
 import isAuthenticated from '../utils/isAuthenticated';
 import type { User } from '../types/auth';
+import supabase from '@/lib/supabase';
 
 export interface AuthContextType {
     user: User | null | undefined;
@@ -22,7 +23,6 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
     const [token, setTokenState] = useState<string | null>(null);
-    //TODO: Type the user
 
     const [user, setUserState] = useState<User | null>(null);
 
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }): React
             setTokenState(token ?? null);
         }
     };
-    // TODO: Type the user
+
     const setUser = (user: User | null | undefined): void => {
         if (user !== undefined) {
             if (user === null) {
@@ -53,19 +53,50 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }): React
         setUser(null);
     };
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    useLayoutEffect(() => {
-        const token = localStorage.getItem('token');
-        const user = localStorage.getItem('user');
+    // useLayoutEffect(() => {
+    //     const token = localStorage.getItem('token');
+    //     const user = localStorage.getItem('user');
+    //
+    //     if (token != null && user != null) {
+    //         try {
+    //             setToken(token);
+    //             setUser(JSON.parse(user));
+    //         } catch (error) {
+    //             console.error('Error parsing user', error);
+    //         }
+    //     }
+    // }, []);
 
-        if (token != null && user != null) {
-            try {
-                setToken(token);
-                setUser(JSON.parse(user));
-            } catch (error) {
-                console.error('Error parsing user', error);
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data }) => {
+            if (data.session) {
+                setUser(data.session.user);
+                setToken(data.session.access_token);
+            } else {
+                setUser(null);
+                setToken(null);
             }
-        }
+        });
+
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('[LS] -> src/modules/auth/context/auth.tsx:83 -> event: ', event);
+            switch (event) {
+                case 'INITIAL_SESSION':
+                case 'SIGNED_OUT':
+                case 'SIGNED_IN':
+                case 'USER_UPDATED':
+                case 'TOKEN_REFRESHED':
+                    if (session) {
+                        setUser(session.user);
+                        setToken(session.access_token);
+                    } else {
+                        setUser(null);
+                        setToken(null);
+                    }
+                    break;
+            }
+        });
     }, []);
 
     return (

@@ -1,12 +1,4 @@
-import { Fetcher } from '../../../lib/fetcher';
-
-import type {
-    ForgotPasswordParams,
-    ResetPasswordParams,
-    SignInParams,
-    SignUpParams,
-    SignUpResponse,
-} from '../types/auth';
+import type { ForgotPasswordParams, ResetPasswordParams, SignInParams, SignUpParams } from '../types/auth';
 
 import supabase from '../../../lib/supabase';
 
@@ -21,11 +13,21 @@ class AuthService {
 
         return response;
     }
-    async signUp({ name, lastname, email, password }: SignUpParams): Promise<SignUpResponse> {
-        const response = await Fetcher('/users/register', {
-            method: 'POST',
-            body: JSON.stringify({ name, lastname, email, password }),
+    async signUp({ name, lastname, email, password }: SignUpParams) {
+        const response = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    name,
+                    lastname,
+                },
+            },
         });
+        // const response = await Fetcher('/users/register', {
+        //     method: 'POST',
+        //     body: JSON.stringify({ name, lastname, email, password }),
+        // });
 
         return response;
     }

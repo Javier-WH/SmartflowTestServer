@@ -1,26 +1,34 @@
-import type {
-    ForgotPasswordParams,
-    ResetPasswordParams,
-    SignInParams,
-    SignUpParams,
-    SignUpResponse,
-} from '../types/auth';
+import type { ForgotPasswordParams, ResetPasswordParams, SignInParams, SignUpParams } from '../types/auth';
 
 import AuthService from '../services/auth';
 
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../context/auth';
 
 const useAuth = () => {
+    const { user, token, logout, setUser, setToken } = useContext(AuthContext);
+
     const navigate = useNavigate();
 
     async function signIn({ email, password }: SignInParams) {
         const response = await AuthService.signIn({ email, password });
 
+        if (!response.error) {
+            setUser(response.data.user);
+            setToken(response.data.session.access_token);
+        }
+
         return response;
     }
 
-    async function signUp({ name, lastname, email, password }: SignUpParams): Promise<SignUpResponse> {
+    async function signUp({ name, lastname, email, password }: SignUpParams) {
         const response = await AuthService.signUp({ name, lastname, email, password });
+
+        if (!response.error && response.data.user && response.data.session) {
+            setUser(response.data.user);
+            setToken(response.data.session.access_token);
+        }
 
         return response;
     }
@@ -38,6 +46,7 @@ const useAuth = () => {
     }
 
     async function signOut() {
+        logout();
         const response = await AuthService.signOut();
 
         if (!response.error) {
@@ -47,7 +56,7 @@ const useAuth = () => {
         return response;
     }
 
-    return { signIn, signUp, forgotPassword, resetPassword, signOut };
+    return { user, token, signIn, signUp, forgotPassword, resetPassword, signOut };
 };
 
 export default useAuth;

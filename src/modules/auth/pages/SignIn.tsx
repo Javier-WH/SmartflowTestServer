@@ -1,4 +1,4 @@
-import { type FormEvent, useState, useContext } from 'react';
+import { type FormEvent, useState, useEffect } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -7,7 +7,6 @@ import AlertMessage from '../components/ErrorMessage';
 import { Button, Input } from '@nextui-org/react';
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import useAuth from '../hooks/useAuth';
-import { AuthContext } from '../context/auth';
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -16,9 +15,7 @@ const SignIn = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { signIn } = useAuth();
-
-    const { setUser, setToken } = useContext(AuthContext);
+    const { token, signIn } = useAuth();
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -41,12 +38,6 @@ const SignIn = () => {
                 setError(response.error.message);
                 return;
             }
-
-            if (response.data.user) {
-                setUser(response.data.user);
-                setToken(response.data.session.access_token);
-                navigate('/');
-            }
         } catch (error: unknown) {
             if (error instanceof Error) {
                 setError(error?.message);
@@ -58,10 +49,17 @@ const SignIn = () => {
         }
     }
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        if (token) {
+            navigate('/');
+        }
+    }, [token]);
+
     return (
         <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen p-4">
             <div className="flex flex-col gap-5 border-1 border-gray-200 rounded-lg p-5 w-full max-w-md">
-                <h1 className="text-center text-xl">Bienvenido a Gochata</h1>
+                <h1 className="text-center text-xl">Bienvenido</h1>
                 <Input name="email" label="Email" variant="underlined" autoFocus />
                 <Input
                     name="password"
@@ -93,14 +91,14 @@ const SignIn = () => {
                     ¿Olvidaste tu contraseña?
                 </Link>
 
-                {/* <div className="text-center"> */}
-                {/*     <span> */}
-                {/*         ¿No tienes una cuenta?{' '} */}
-                {/*         <Link to="/auth/signup" className="text-center underline"> */}
-                {/*             Regístrate */}
-                {/*         </Link> */}
-                {/*     </span> */}
-                {/* </div> */}
+                <div className="text-center">
+                    <span>
+                        ¿No tienes una cuenta?{' '}
+                        <Link to="/auth/signup" className="text-center underline">
+                            Regístrate
+                        </Link>
+                    </span>
+                </div>
             </div>
         </form>
     );

@@ -1,28 +1,24 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 import SignIn from './modules/auth/pages/SignIn';
+import SignUp from './modules/auth/pages/SignUp';
 import ForgotPassword from './modules/auth/pages/ForgotPassword';
 import ResetPassword from './modules/auth/pages/ResetPassword';
 
 import Home from './modules/home/pages/Home';
-import Orders from './modules/orders/pages/Orders';
-import Inventory from './modules/inventory/pages/Inventory';
 
-import { Navigate, redirect } from 'react-router-dom';
-import isAuthenticated from './modules/auth/utils/isAuthenticated';
+import { Navigate } from 'react-router-dom';
 import MainLayout from './modules/MainLayout';
+import PrivateRoute from './PrivateRoute';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        loader: async () => {
-            if (!(await isAuthenticated())) {
-                return redirect('/auth/signin');
-            }
-
-            return null;
-        },
-        element: <MainLayout />,
+        element: (
+            <PrivateRoute>
+                <MainLayout />
+            </PrivateRoute>
+        ),
         errorElement: <span>NothingFound</span>,
         children: [
             {
@@ -33,25 +29,10 @@ const router = createBrowserRouter([
                 path: 'home',
                 element: <Home />,
             },
-            {
-                path: 'ordenes',
-                element: <Orders />,
-            },
-            {
-                path: 'inventario',
-                element: <Inventory />,
-            },
         ],
     },
     {
         path: '/auth',
-        loader: async () => {
-            if (await isAuthenticated()) {
-                return redirect('/');
-            }
-
-            return null;
-        },
         children: [
             {
                 index: true,
@@ -61,10 +42,10 @@ const router = createBrowserRouter([
                 path: 'signin',
                 element: <SignIn />,
             },
-            // {
-            //     path: 'signup',
-            //     element: <SignUp />,
-            // },
+            {
+                path: 'signup',
+                element: <SignUp />,
+            },
         ],
     },
     {
@@ -73,25 +54,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/reset-password',
-        loader: async () => {
-            if (!(await isAuthenticated())) {
-                return redirect('/auth/signin');
-            }
-
-            return null;
-        },
         element: <ResetPassword />,
-    },
-    {
-        path: '/orders',
-        loader: async () => {
-            if (!(await isAuthenticated())) {
-                return redirect('/auth/signin');
-            }
-
-            return null;
-        },
-        element: <Orders />,
     },
 ]);
 

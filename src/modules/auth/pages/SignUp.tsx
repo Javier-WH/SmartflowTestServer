@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useState, useEffect } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ const SignUp = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { signUp } = useAuth();
+    const { token, signUp } = useAuth();
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -41,11 +41,9 @@ const SignUp = () => {
 
         try {
             setLoading(true);
-            const response = await signUp({ name, lastname, email, password });
+            const { error } = await signUp({ name, lastname, email, password });
 
-            if (response.user) {
-                navigate('/auth/signin');
-            }
+            if (error) setError(error.message);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 setError(error?.message);
@@ -57,10 +55,17 @@ const SignUp = () => {
         }
     }
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        if (token) {
+            navigate('/');
+        }
+    }, [token]);
+
     return (
         <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen p-4">
             <div className="flex flex-col gap-5 border-1 border-gray-200 rounded-lg p-5 w-full max-w-md">
-                <h1 className="text-center text-xl">Regístrate en Gochata</h1>
+                <h1 className="text-center text-xl">Regístrate</h1>
 
                 <Input name="user-name" label="Nombre" variant="underlined" autoFocus />
                 <Input name="lastname" label="Apellido" variant="underlined" />

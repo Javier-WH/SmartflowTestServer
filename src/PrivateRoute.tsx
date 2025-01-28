@@ -4,10 +4,10 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './modules/auth/context/auth';
 
 const PrivateRoute = ({ children }: { children: React.ReactElement }): React.ReactElement => {
-    const { isAuthenticated } = useContext(AuthContext);
+    const { token } = useContext(AuthContext);
     const location = useLocation();
 
-    if (!isAuthenticated()) {
+    if (!token) {
         return (
             <Navigate
                 state={{ message: 'La sesión expiró. Inicia sesion nuevamente' }}
