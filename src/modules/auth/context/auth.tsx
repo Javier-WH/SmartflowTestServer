@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }): React
         });
 
         supabase.auth.onAuthStateChange((event, session) => {
-            console.log('[LS] -> src/modules/auth/context/auth.tsx:83 -> event: ', event);
+            //console.log('[LS] -> src/modules/auth/context/auth.tsx:83 -> event: ', event);
             switch (event) {
                 case 'INITIAL_SESSION':
                 case 'SIGNED_OUT':

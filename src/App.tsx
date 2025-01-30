@@ -11,7 +11,7 @@ function App() {
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         supabase.auth.onAuthStateChange((event, session) => {
-            console.log('onAuthStateChange: ', { event, session });
+           // console.log('onAuthStateChange: ', { event, session });
             switch (event) {
                 case 'SIGNED_IN':
                 case 'USER_UPDATED':

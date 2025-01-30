@@ -1,0 +1,26 @@
+.folder{
+  cursor: pointer;
+  position: relative;
+}
+.folder::before{
+  content: ' ';
+  position: absolute;
+  border-bottom: 2px solid white;
+  /*border-left: 2px solid white;*/
+  width: 9px;
+  height: 20px;
+  left: -10px;
+  top: -1px;
+
+}
+.folder-container{
+  position: relative;
+}
+.folder-container::before{
+  position: absolute;
+  content: " ";
+  border-left: 2px solid white;
+  height: 100%;
+  left: -10px;
+}
+

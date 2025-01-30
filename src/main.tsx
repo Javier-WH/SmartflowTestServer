@@ -4,6 +4,7 @@ import App from './App.tsx';
 import { NextUIProvider } from '@nextui-org/react';
 import { AuthProvider } from './modules/auth/context/auth.tsx';
 import { ToastContainer } from 'react-toastify';
+import { ConfigProvider } from 'antd';
 
 import './index.css';
 import 'react-responsive-pagination/themes/classic.css';
@@ -15,8 +16,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <NextUIProvider className="h-full">
             <AuthProvider>
-                <App />
-                <ToastContainer />
+                <ConfigProvider direction="rtl">
+                    <App />
+                    <ToastContainer />
+                </ConfigProvider>
             </AuthProvider>
         </NextUIProvider>
     </React.StrictMode>,
