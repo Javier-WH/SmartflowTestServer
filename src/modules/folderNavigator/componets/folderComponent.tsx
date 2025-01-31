@@ -2,16 +2,20 @@ import { Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
 import { ContainerElement } from "../types/componets";
 import FolderContainer from "./folderContainer";
-import { useState } from "react";
+import { useState, useContext, useEffect} from "react";
 import openedFolder from '../assets/svg/opened_folder.svg'
 import closedFolder from '../assets/svg/closed_folder.svg'
-import "./folderContainer.css"
 import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
+import { Folder, FolderNavigatorContextValues } from '../types/folder';
+import { FolderNavigatorContext } from '../context/folderNavigatorContext';
+import "./folderContainer.css"
 
 
 
 export function FolderComponent({ folder, onFolderMove }: { folder: ContainerElement, onFolderMove: () => void }) {
+
+  const { setModalFolder, updateOnCreate,  setUpdateOnCreate } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
 
   const { moveFolder } = useFolderManager()
   const { moveFile } = useFilesManager()
@@ -26,11 +30,31 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
     }
   }
 
+  useEffect(() => {
+    if (updateOnCreate !== folder.id)  return
+      setContentId(null)
+      setTimeout(() => {
+        setContentId(folder.id)
+        setUpdateOnCreate(null)
+      }, 150);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateOnCreate])
+
+
+  const handleCreateOrUpdateFolder = (update = false) => {
+    const containerId = folder.id
+    const newFolder: Folder = { 
+      name: update ? folder.name : '', 
+      container: containerId,
+    }
+    setModalFolder(newFolder)
+  }
+
   const menu: MenuProps['items'] = [
     {
       key: '1',
       label: <div style={{ textAlign: 'left' }}>Create a new folder</div>,
-      onClick: () => message.info('Click on Create a new folder'),
+      onClick: () => handleCreateOrUpdateFolder(),
     },
     {
       key: '2',

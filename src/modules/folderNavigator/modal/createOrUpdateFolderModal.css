@@ -1,0 +1,14 @@
+/* this fixes the close button position */
+.createOrUpdateFolderModal{
+  text-align: left !important;
+}
+.createOrUpdateFolderModal .ant-modal-close {
+ margin-left: 90% !important;
+}
+.createOrUpdateFolderModal .ant-modal-footer {
+  display: flex !important;
+}
+.createOrUpdateFolderModal .ant-input {
+  text-align: left !important;
+  direction: ltr !important;
+}

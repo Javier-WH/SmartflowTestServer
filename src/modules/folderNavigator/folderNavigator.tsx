@@ -7,8 +7,9 @@ import useFolderManager from "./hooks/useFolderManager";
 import useFilesManager from "./hooks/useFileManager";
 import { useState } from "react";
 
+
 export default function FolderNavigator() {
-  const { moveFolder } = useFolderManager();
+  const { moveFolder} = useFolderManager();
   const { moveFile } = useFilesManager();
   const [contentId, setContentId] = useState<string | null>(null);
 
