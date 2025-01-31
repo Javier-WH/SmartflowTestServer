@@ -3,7 +3,6 @@ import { Folder, FolderResponse } from "../types/folder"
 import errorManager from '../errorManager/folderErrorManager';
 
 const createFolder = async (folder: Folder): Promise<FolderResponse> => {
-
   // if folder has no container check if it already exists in root
   if (!folder.container) {
     const response = await supabase.from('folders')
@@ -42,9 +41,22 @@ const getFolders = async (container: string | null): Promise<FolderResponse> => 
 }
 
 
+const moveFolder = async (folderId: string, containerId: string): Promise<FolderResponse> => {
+  const response = await supabase
+    .from('folders')
+    .update({ container: containerId })
+    .eq('id', folderId);
+
+  if (response.error) return errorManager(response.error)
+
+  return { error: false, message: 'Folder moved successfully' };
+
+}
+
 export default function useFolderManager() {
   return {
     createFolder,
-    getFolders
+    getFolders,
+    moveFolder
   }
 }

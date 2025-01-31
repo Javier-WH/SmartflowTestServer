@@ -11,4 +11,12 @@ export interface FolderResponse {
   data?: Folder[];
 }
 
+
+
+export interface FolderNavigatorContextValues{
+  Loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+
+}
+
 export type getFolderResponse = (folderId: string | null) => Promise<FolderResponse>
