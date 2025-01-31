@@ -41,10 +41,23 @@ const getFiles = async (container: string | null): Promise<FileResponse> => {
   return { error: false, message: 'Files retrieved successfully', data: response.data };
 }
 
+const moveFile = async (fileId: string, containerId: string): Promise<FileResponse> => {
+  const response = await supabase
+    .from('files')
+    .update({ container: containerId })
+    .eq('id', fileId);
+
+  if (response.error) return errorManager(response.error)
+
+  return { error: false, message: 'File moved successfully' };
+
+}
+
 
 export default function useFilesManager() {
   return {
     //createFile,
-    getFiles
+    getFiles,
+    moveFile
   }
 }

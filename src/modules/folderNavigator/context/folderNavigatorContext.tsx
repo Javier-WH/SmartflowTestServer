@@ -20,7 +20,7 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
     <FolderNavigatorContext.Provider value={values}>
       <div style={{height: "20px", marginBottom: "10px"}}>
         {
-          Loading && <Spin />
+          Loading && <div><Spin /><span>{" Loading..."}</span> </div>
         }
       </div>
       {children}

@@ -14,7 +14,7 @@ import { FolderNavigatorContextValues } from "../types/folder";
 
 export default function FolderContainer({ folderId }: { folderId: string | null}) {
 
-  const {setLoading} = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
+  const {Loading, setLoading} = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
 
   const { getFolders } = useFolderManager()
   const { getFiles }: { getFiles: getFilesResponse } = useFilesManager()
@@ -50,8 +50,6 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
       }
       
     })
-    
-
     setContent([...newFolders, ...newFiles])
     setLoading(false)
   }
@@ -61,12 +59,18 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderId])
 
-  const refreshContent = async () => {
-    await fetchData()
+  const refreshContent = () => {
+    // update origin container in 10ms, this is necesary to avoid a bug
+    setTimeout(() => {
+      fetchData()
+    }, 20);
   };
 
 
+
+
   if (content?.length === 0) {
+    if(Loading) return <Tag >Loading...</Tag>
     return <Tag >Empty Folder</Tag>
   }
 
@@ -80,10 +84,8 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
           {
             item.type === 1
               ? <FolderComponent folder={item} onFolderMove={refreshContent} />
-              : <div
-              >
-                <FileComponent file={item} />
-              </div>
+              : <FileComponent file={item} onFileMove={refreshContent} />
+       
           }
 
         </div>

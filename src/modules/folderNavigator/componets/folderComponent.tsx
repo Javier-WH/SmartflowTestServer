@@ -7,11 +7,16 @@ import openedFolder from '../assets/svg/opened_folder.svg'
 import closedFolder from '../assets/svg/closed_folder.svg'
 import "./folderContainer.css"
 import useFolderManager from '../hooks/useFolderManager';
+import useFilesManager from '../hooks/useFileManager';
+
 
 
 export function FolderComponent({ folder, onFolderMove }: { folder: ContainerElement, onFolderMove: () => void }) {
 
+
+
   const { moveFolder } = useFolderManager()
+  const { moveFile } = useFilesManager()
   const [contentId, setContentId] = useState<string | null>(null)
 
 
@@ -28,7 +33,7 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
     {
       key: '1',
       label: <div style={{ textAlign: 'left' }}>Create a new folder</div>,
-      onClick: () => message.info('Click on Create a new folder'), 
+      onClick: () => message.info('Click on Create a new folder'),
     },
     {
       key: '2',
@@ -41,18 +46,22 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
       onClick: () => message.info('Click on Delete this folder'),
     },
     {
+      key: '4',
+      label: <div style={{ textAlign: 'left' }}>Move this folder to root</div>,
+      onClick: () => message.info('Click on Move this folder to root'),
+    },
+    {
       type: 'divider',
     },
     {
-      key: '4',
+      key: '5',
       label: <div style={{ textAlign: 'left' }}>Create a new file</div>,
       onClick: () => message.info('Click on Create a new file'),
     },
   ];
 
 
-  ///
-
+  /// drag and drop logic
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>, itemId: string, itemType: number) => {
     event.dataTransfer.setData("id", itemId);
     event.dataTransfer.setData("type", itemType.toString());
@@ -60,33 +69,39 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    onFolderMove();
   };
 
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>, targetItemId: string, targetType: number) => {
     event.preventDefault();
-    //event.stopPropagation();
-    const draggedItemId = event.dataTransfer.getData("id");    
+    const draggedItemId = event.dataTransfer.getData("id");
+    const draggedItemType = Number(event.dataTransfer.getData("type"));
     if (draggedItemId === targetItemId) return
+    if (targetType === 0) return
 
-    // move folder in data base
-    if (targetType === 1) {
-      const response = await moveFolder(draggedItemId, targetItemId)
-      if (response.error) {
-        message.error(response.error)
-        return
-      }
-    }
-
-    
-//////// update target container in 10ms
     setContentId(null)
-    setTimeout(() => {
-      setContentId(folder.id)
-    }, 10);
+    const fetchData = draggedItemType === 1 ? moveFolder : moveFile
+
+    fetchData(draggedItemId, targetItemId)
+      .then((response) => {
+        if (response.error) {
+          if (response.message === "uroboros") return
+          message.error(response.message)
+          return
+        }
+      })
+      .catch((error) => {
+        message.error(error)
+      })
+      .finally(() => {
+        setContentId(folder.id)
+      })
   };
 
-  
+
+  const onDragEnd = () => {
+    onFolderMove()
+  }
+
 
   return <div>
     <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft" arrow>
@@ -98,6 +113,7 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
         onDragStart={(event) => handleDragStart(event, folder.id, folder.type)}
         onDragOver={handleDragOver}
         onDrop={(event) => handleDrop(event, folder.id, folder.type)}
+        onDragEnd={onDragEnd}
       >
         <img src={contentId ? openedFolder : closedFolder} alt="" width={30} />
         <span>{folder.name}</span>

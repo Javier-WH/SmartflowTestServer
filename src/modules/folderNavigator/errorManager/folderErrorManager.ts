@@ -26,6 +26,8 @@ const folderErrorManager = (error: PostgrestError):FolderResponse  => {
       return { error: true, message: 'The specified table does not exist. Please verify the table name.' };
     case '57014':
       return { error: true, message: 'The operation was cancelled. Please try again.' };
+    case 'P0001':
+      return { error: true, message: 'uroboros' };
     default:
       return { error: true, message: 'An unexpected error occurred. Please try again or contact support if the issue persists.' };
   }
