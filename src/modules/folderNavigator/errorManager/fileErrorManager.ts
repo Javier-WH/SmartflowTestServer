@@ -7,7 +7,8 @@ const fileErrorManager = (error: PostgrestError): FileResponse  => {
     case '23505':
       return { error: true, message: 'A file with the same name already exists in this location. Please choose a different name.' };
     case '22P02':
-      return { error: true, message: 'The container file name is invalid. Please check the file name and try again.' };
+      // set error to false for now to prevent a bug
+      return { error: false, message: 'The container file name is invalid. Please check the file name and try again.' };
     case '23503':
       return { error: true, message: 'The specified container does not exist. Please verify the container ID.' };
     case '22001':

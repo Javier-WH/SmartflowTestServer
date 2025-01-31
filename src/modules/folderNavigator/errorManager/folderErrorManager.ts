@@ -7,7 +7,8 @@ const folderErrorManager = (error: PostgrestError):FolderResponse  => {
     case '23505':
       return { error: true, message: 'A folder with the same name already exists in this location. Please choose a different name.' };
     case '22P02':
-      return { error: true, message: 'The container folder name is invalid. Please check the folder name and try again.' };
+      // set error to false for now to prevent a bug
+      return { error: false, message: 'The container folder name is invalid. Please check the folder name and try again.' };
     case '23503':
       return { error: true, message: 'The specified container does not exist. Please verify the container ID.' };
     case '22001':

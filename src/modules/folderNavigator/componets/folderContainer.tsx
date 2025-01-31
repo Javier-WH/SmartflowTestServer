@@ -26,7 +26,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
     setLoading(true)
     const response = await getFolders(folderId)
     if (response.error) {
-      message.error(response.error)
+      message.error(response.message)
       return
     }
     
@@ -63,7 +63,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
     // update origin container in 10ms, this is necesary to avoid a bug
     setTimeout(() => {
       fetchData()
-    }, 20);
+    }, 150);
   };
 
 

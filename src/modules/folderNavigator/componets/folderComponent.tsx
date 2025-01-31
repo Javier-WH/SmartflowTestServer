@@ -13,13 +13,10 @@ import useFilesManager from '../hooks/useFileManager';
 
 export function FolderComponent({ folder, onFolderMove }: { folder: ContainerElement, onFolderMove: () => void }) {
 
-
-
   const { moveFolder } = useFolderManager()
   const { moveFile } = useFilesManager()
   const [contentId, setContentId] = useState<string | null>(null)
-
-
+  
   const toggleFolder = (id: string | null) => {
     if (!id) return
     if (!contentId) {
@@ -77,7 +74,6 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
     const draggedItemType = Number(event.dataTransfer.getData("type"));
     if (draggedItemId === targetItemId) return
     if (targetType === 0) return
-
     setContentId(null)
     const fetchData = draggedItemType === 1 ? moveFolder : moveFile
 
@@ -92,15 +88,16 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
       .catch((error) => {
         message.error(error)
       })
-      .finally(() => {
+      .finally(async() => {
         setContentId(folder.id)
       })
   };
 
-
   const onDragEnd = () => {
     onFolderMove()
   }
+
+
 
 
   return <div>

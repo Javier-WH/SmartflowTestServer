@@ -41,10 +41,11 @@ const getFolders = async (container: string | null): Promise<FolderResponse> => 
 }
 
 
-const moveFolder = async (folderId: string, containerId: string): Promise<FolderResponse> => {
+const moveFolder = async (folderId: string, containerId?: string): Promise<FolderResponse> => {
+  
   const response = await supabase
     .from('folders')
-    .update({ container: containerId })
+    .update({ container: containerId ?? null })
     .eq('id', folderId);
 
   if (response.error) return errorManager(response.error)
