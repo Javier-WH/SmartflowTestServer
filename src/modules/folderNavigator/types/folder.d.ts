@@ -14,8 +14,8 @@ export interface FolderResponse {
 
 
 export interface FolderNavigatorContextValues{
-  Loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  Loading: string | null;
+  setLoading: React.Dispatch<React.SetStateAction<string | null>>;
   modalFolder: Folder | null;
   setModalFolder: React.Dispatch<React.SetStateAction<Folder | null>>;
   modalDeleteFolder: Folder | null;

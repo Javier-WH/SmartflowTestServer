@@ -23,7 +23,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchData = async () => {
-    setLoading(true)
+    setLoading(folderId)
     const response = await getFolders(folderId)
     if (response.error) {
       message.error(response.message)
@@ -51,7 +51,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
       
     })
     setContent([...newFolders, ...newFiles])
-    setLoading(false)
+    setLoading(null)
   }
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
 
  
   if (content?.length === 0) {
-    if(Loading) return <Tag >Loading...</Tag>
+    if(Loading === folderId) return <Tag >Loading...</Tag>
     return <Tag >Empty Folder</Tag>
   }
 

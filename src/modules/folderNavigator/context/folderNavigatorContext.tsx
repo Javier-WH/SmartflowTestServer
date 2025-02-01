@@ -12,7 +12,7 @@ export const FolderNavigatorContext = createContext<FolderNavigatorContextValues
 
 export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
-  const [Loading, setLoading] = useState(false);
+  const [Loading, setLoading] = useState<string | null>(null);
   const [modalFolder, setModalFolder] = useState<Folder | null>(null);
   const [modalDeleteFolder, setModalDeleteFolder] = useState<Folder | null>(null);
   const [updateOnCreate, setUpdateOnCreate] = useState<string | null>( null);
