@@ -30,6 +30,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     }
   }
 
+  // update folder when updateOnCreate changes
   useEffect(() => {
     //some magic here, dont touch anything
     if (updateOnCreate !== folder.id)  return
@@ -99,10 +100,25 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    const target = event.target as HTMLDivElement;
+    if (target.classList.contains('folder')) {
+      target.classList.add('drag-over');
+    }
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLDivElement;
+    if (target.classList.contains('folder')) {
+      target.classList.remove('drag-over');
+    }
   };
 
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>, targetItemId: string, targetType: number) => {
     event.preventDefault();
+    const target = event.target as HTMLDivElement;
+    if (target.classList.contains('folder')) {
+      target.classList.remove('drag-over'); 
+    }
     const draggedItemId = event.dataTransfer.getData("id");
     const draggedItemType = Number(event.dataTransfer.getData("type"));
     if (draggedItemId === targetItemId) return
@@ -147,9 +163,10 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         onDragOver={handleDragOver}
         onDrop={(event) => handleDrop(event, folder.id, folder.type)}
         onDragEnd={onDragEnd}
+        onDragLeave={handleDragLeave}
       >
-        <img src={contentId ? openedFolder : closedFolder} alt="" width={30} />
-        <span>{folder.name}</span>
+        <img style={{pointerEvents: 'none'}} src={contentId ? openedFolder : closedFolder} alt="" width={30} />
+        <span className='folder-name'>{folder.name}</span>
       </div>
     </Dropdown>
     <div style={{ marginLeft: 20 }}>

@@ -15,32 +15,33 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
   const [Loading, setLoading] = useState<string | null>(null);
   const [modalFolder, setModalFolder] = useState<Folder | null>(null);
   const [modalDeleteFolder, setModalDeleteFolder] = useState<Folder | null>(null);
-  const [updateOnCreate, setUpdateOnCreate] = useState<string | null>( null);
-  
+  const [updateOnCreate, setUpdateOnCreate] = useState<string | null>(null);
+
 
 
   const values: FolderNavigatorContextValues = {
-    Loading, 
+    Loading,
     setLoading,
-    modalFolder, 
+    modalFolder,
     setModalFolder,
     modalDeleteFolder,
     setModalDeleteFolder,
-    updateOnCreate, 
+    updateOnCreate,
     setUpdateOnCreate
 
   }
 
-  return (
+  return <div style={{ display: "flex", flexDirection: "column" }}>
     <FolderNavigatorContext.Provider value={values}>
-      <CreateOrUpdateFolderModal folder={modalFolder} setFolder={setModalFolder} setUpdateOnCreate ={setUpdateOnCreate}/>
-      <DeleteFolderModal folder={modalDeleteFolder} setFolder={setModalDeleteFolder} setUpdateOnCreate={setUpdateOnCreate}/>
-      <div style={{height: "20px", marginBottom: "10px"}}>
+      <CreateOrUpdateFolderModal folder={modalFolder} setFolder={setModalFolder} setUpdateOnCreate={setUpdateOnCreate} />
+      <DeleteFolderModal folder={modalDeleteFolder} setFolder={setModalDeleteFolder} setUpdateOnCreate={setUpdateOnCreate} />
+      <div style={{ height: "20px", marginBottom: "10px" }}>
         {
           Loading && <div><Spin /><span>{" Loading..."}</span> </div>
         }
       </div>
       {children}
     </FolderNavigatorContext.Provider>
-  )
+  </div>
+
 }

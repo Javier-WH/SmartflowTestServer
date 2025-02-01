@@ -1,8 +1,10 @@
 import { Outlet } from 'react-router-dom';
 import { Input } from 'antd';
-import FolderNavigator from './folderNavigator/folderNavigator';
+import useAuth from '@/modules/auth/hooks/useAuth';
+
 
 export default function MainLayout() {
+    const { signOut } = useAuth();
     return (
         <div className="flex flex-col h-screen w-screen mx-auto">
             {/* Navbar */}
@@ -15,17 +17,12 @@ export default function MainLayout() {
                     <ul className="flex space-x-4">
                         <li><a href="#">Inicio</a></li>
                         <li><a href="#">Acerca de</a></li>
-                        <li><a href="#">Contacto</a></li>
+                        <li onClick={signOut} style={{ cursor: 'pointer' }}><a>Logout</a></li>
                     </ul>
                 </nav>
             </header>
 
-            <div className="flex flex-grow">
-                {/* Sidebar */}
-                <aside className="w-64 bg-gray-800 text-white p-6">
-                    <FolderNavigator />
-                </aside>
-
+            <div className="flex flex-grow bg-gray-250">
                 {/* Main Content */}
                 <main className="flex-grow mt-8 ">
                     <Outlet />

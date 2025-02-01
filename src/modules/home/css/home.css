@@ -1,0 +1,10 @@
+.home-container{
+  background-color: white;
+  margin-left: 20px;
+  padding-left: 20px;
+  padding-top: 10px;
+  min-width: 700px;
+  height: calc(100vh - 200px);
+  width: calc(100vw - 400px);
+  overflow: auto;
+}

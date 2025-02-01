@@ -1,11 +1,23 @@
 .folder{
+  height: 40px;
+  max-width: 250px;
   cursor: pointer;
   position: relative;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+  
+}
+.folder-name{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
+
 }
 .folder::before{
   content: ' ';
   position: absolute;
-  border-bottom: 2px solid white;
+  border-bottom: 2px solid hsl(205, 65%, 55%);
   /*border-left: 2px solid white;*/
   width: 9px;
   height: 20px;
@@ -19,8 +31,14 @@
 .folder-container::before{
   position: absolute;
   content: " ";
-  border-left: 2px solid white;
+  border-left: 2px solid hsl(205, 65%, 55%);
   height: 100%;
   left: -10px;
 }
 
+
+
+/* illuminate the folder when it's being dragged over */
+.folder.drag-over {
+  border-color: hsl(205, 65%, 55%);
+}

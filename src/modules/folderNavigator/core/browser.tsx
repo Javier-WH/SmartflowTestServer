@@ -90,7 +90,7 @@ export default function Browser() {
 
 
   return (
-    <>
+    <div>
       <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft" arrow>
         <div
           style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}
@@ -104,7 +104,7 @@ export default function Browser() {
       <div className="folder-container" style={{ marginLeft: "20px" }}>
         <FolderContainer folderId={contentId} />
       </div>
-    </>
+    </div>
 
   );
 }
