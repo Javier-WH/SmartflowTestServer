@@ -4,7 +4,7 @@
   cursor: pointer;
   position: relative;
   border: 2px solid transparent;
-  transition: border-color 0.2s;
+  /*transition: border-color 0.2s;*/
   
 }
 .folder-name{
@@ -12,6 +12,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 250px;
+  pointer-events: none;
 
 }
 .folder::before{
