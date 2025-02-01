@@ -55,20 +55,12 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
   }
 
   useEffect(() => {
+    if(folderId === "x") return
     fetchData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderId])
 
-  const refreshContent = () => {
-    // update origin container in 10ms, this is necesary to avoid a bug
-    setTimeout(() => {
-      fetchData()
-    }, 150);
-  };
-
-
-
-
+ 
   if (content?.length === 0) {
     if(Loading) return <Tag >Loading...</Tag>
     return <Tag >Empty Folder</Tag>
@@ -83,8 +75,8 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
         >
           {
             item.type === 1
-              ? <FolderComponent folder={item} onFolderMove={refreshContent} />
-              : <FileComponent file={item} onFileMove={refreshContent} />
+              ? <FolderComponent folder={item} containerid={folderId} />
+              : <FileComponent file={item} containerid={folderId} />
        
           }
 

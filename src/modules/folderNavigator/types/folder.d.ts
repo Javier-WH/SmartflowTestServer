@@ -1,7 +1,7 @@
 export interface Folder{
   id?: string;
   name: string;
-  container?: string;
+  container?: string | null;
   created_at?: string;
 }
 
@@ -18,11 +18,10 @@ export interface FolderNavigatorContextValues{
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   modalFolder: Folder | null;
   setModalFolder: React.Dispatch<React.SetStateAction<Folder | null>>;
+  modalDeleteFolder: Folder | null;
+  setModalDeleteFolder: React.Dispatch<React.SetStateAction<Folder | null>>
   updateOnCreate: string | null;
-  setUpdateOnCreate: React.Dispatch<React.SetStateAction<string | null>>
-  
-
-
+  setUpdateOnCreate: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export type getFolderResponse = (folderId: string | null) => Promise<FolderResponse>

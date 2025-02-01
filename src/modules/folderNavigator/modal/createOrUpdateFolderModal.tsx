@@ -5,9 +5,9 @@ import useFolderManager from "../hooks/useFolderManager";
 import "./createOrUpdateFolderModal.css"
 
 
-export default function CreateOrUpdateFolderModal({folder, setFolder, setUpdateOnCreate}: {folder: Folder | null, setFolder: (folder: Folder| null) => void, setUpdateOnCreate: (update: string | null) => void}) {
+export default function CreateOrUpdateFolderModal({ folder, setFolder, setUpdateOnCreate }: { folder: Folder | null, setFolder: (folder: Folder | null) => void, setUpdateOnCreate: (update: string | null) => void }) {
 
-  const { createFolder } = useFolderManager()
+  const { createFolder, updateFolderName } = useFolderManager()
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [name, setName] = useState('');
 
@@ -15,8 +15,8 @@ export default function CreateOrUpdateFolderModal({folder, setFolder, setUpdateO
   useEffect(() => {
     if (folder) {
       setIsModalOpen(true);
-      if(folder.name) setName(folder.name);
-    }else {
+      if (folder.name) setName(folder.name);
+    } else {
       setIsModalOpen(false);
       setName('');
     }
@@ -29,43 +29,53 @@ export default function CreateOrUpdateFolderModal({folder, setFolder, setUpdateO
   }
 
   const handleOk = async () => {
-
     if (name.length === 0) return
-
+    setUpdateOnCreate("x")
     const newFolder: Folder = {
-      ... folder,
+      ...folder,
       name
     }
+  
+    // if folder has a name update it
+    if (folder?.name) {
+      const response = await updateFolderName(newFolder)
+      if (response.error) {
+        message.error(response.message)
+        return
+      }
+      setUpdateOnCreate(folder?.container ?? null)
+      message.success(response.message)
+      setFolder(null)
+      return
+    }
 
+    // if folder has no name create it
     const response = await createFolder(newFolder)
     if (response.error) {
       message.error(response.message)
       return
     }
 
- 
-
-    setUpdateOnCreate(folder?.container ?? '')
+    setUpdateOnCreate(folder?.container ?? null)
     message.success(response.message)
     setFolder(null)
-    
+
   }
 
   return <Modal
-    title="Crear nueva carpeta"
+    title={folder?.name ? 'Rename Folder' : 'Create Folder'}
     open={isModalOpen}
     onOk={handleOk}
     onCancel={handleCancel}
-    okText="Create"
+    okText={folder?.name ? 'Rename' : 'Create'}
     className="createOrUpdateFolderModal"
     okButtonProps={{ disabled: name.length === 0 }}
   >
     <div>
-      <div >
-        <label htmlFor="">Nombre de la carpeta</label>
+      <div>
+        <label htmlFor="">Folder Name</label>
         <Input value={name} onChange={(e) => setName(e.target.value)} />
       </div>
-
     </div>
   </Modal>
 }

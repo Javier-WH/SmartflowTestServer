@@ -29,6 +29,17 @@ const createFolder = async (folder: Folder): Promise<FolderResponse> => {
   return { error: false, message: 'Folder created successfully' };
 }
 
+const updateFolderName = async (folder: Folder): Promise<FolderResponse> => {
+
+  const response = await supabase.from('folders')
+  .update({ name: folder.name })
+  .eq('id', folder.id);
+
+  if (response.error) return errorManager(response.error)
+
+  return { error: false, message: 'Folder name updated successfully' };
+}
+
 
 const getFolders = async (container: string | null): Promise<FolderResponse> => {
   const response = await supabase
@@ -42,7 +53,6 @@ const getFolders = async (container: string | null): Promise<FolderResponse> => 
 
 
 const moveFolder = async (folderId: string, containerId?: string): Promise<FolderResponse> => {
-  
   const response = await supabase
     .from('folders')
     .update({ container: containerId ?? null })
@@ -51,13 +61,27 @@ const moveFolder = async (folderId: string, containerId?: string): Promise<Folde
   if (response.error) return errorManager(response.error)
 
   return { error: false, message: 'Folder moved successfully' };
+}
 
+const deleteFolder = async (folderId: string): Promise<FolderResponse> => {
+  if (folderId == null) return { error: true, message: 'Folder not found' }
+  
+  const response = await supabase
+    .from('folders')
+    .delete()
+    .eq('id', folderId);
+
+  if (response.error) return errorManager(response.error)
+
+  return { error: false, message: 'Folder deleted successfully' };
 }
 
 export default function useFolderManager() {
   return {
     createFolder,
     getFolders,
-    moveFolder
+    moveFolder,
+    updateFolderName,
+    deleteFolder
   }
 }

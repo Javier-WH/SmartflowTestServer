@@ -13,9 +13,9 @@ import "./folderContainer.css"
 
 
 
-export function FolderComponent({ folder, onFolderMove }: { folder: ContainerElement, onFolderMove: () => void }) {
+export function FolderComponent({ folder, containerid }: { folder: ContainerElement, containerid: string | null}) {
 
-  const { setModalFolder, updateOnCreate,  setUpdateOnCreate } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
+  const { setModalFolder, updateOnCreate,  setUpdateOnCreate, setModalDeleteFolder } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
 
   const { moveFolder } = useFolderManager()
   const { moveFile } = useFilesManager()
@@ -31,23 +31,37 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
   }
 
   useEffect(() => {
+    //some magic here, dont touch anything
     if (updateOnCreate !== folder.id)  return
-      setContentId(null)
+      setContentId("x")
       setTimeout(() => {
         setContentId(folder.id)
-        setUpdateOnCreate(null)
-      }, 150);
+        setUpdateOnCreate("x")
+      }, 200);
+      
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateOnCreate])
 
 
   const handleCreateOrUpdateFolder = (update = false) => {
-    const containerId = folder.id
+    const container = update ? containerid ?? undefined : folder.id
     const newFolder: Folder = { 
+      id: folder.id,
       name: update ? folder.name : '', 
-      container: containerId,
+      container: container ?? undefined
     }
     setModalFolder(newFolder)
+  }
+
+  const handleDeleteFolder = () => {
+    const container = containerid ?? undefined
+    const newFolder: Folder = {
+      id: folder.id,
+      name: folder.name ,
+      container
+    }
+    setModalDeleteFolder(newFolder)
+
   }
 
   const menu: MenuProps['items'] = [
@@ -59,23 +73,18 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
     {
       key: '2',
       label: <div style={{ textAlign: 'left' }}> Rename this folder</div>,
-      onClick: () => message.info('Click on Rename this folder'),
+      onClick: () => handleCreateOrUpdateFolder(true),
     },
     {
       key: '3',
       label: <div style={{ textAlign: 'left' }}>Delete this folder</div>,
-      onClick: () => message.info('Click on Delete this folder'),
-    },
-    {
-      key: '4',
-      label: <div style={{ textAlign: 'left' }}>Move this folder to root</div>,
-      onClick: () => message.info('Click on Move this folder to root'),
+      onClick: () => handleDeleteFolder(),
     },
     {
       type: 'divider',
     },
     {
-      key: '5',
+      key: '4',
       label: <div style={{ textAlign: 'left' }}>Create a new file</div>,
       onClick: () => message.info('Click on Create a new file'),
     },
@@ -98,7 +107,7 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
     const draggedItemType = Number(event.dataTransfer.getData("type"));
     if (draggedItemId === targetItemId) return
     if (targetType === 0) return
-    setContentId(null)
+    setContentId("x")
     const fetchData = draggedItemType === 1 ? moveFolder : moveFile
 
     fetchData(draggedItemId, targetItemId)
@@ -113,12 +122,15 @@ export function FolderComponent({ folder, onFolderMove }: { folder: ContainerEle
         message.error(error)
       })
       .finally(async() => {
-        setContentId(folder.id)
+        // need to test which one is better
+        //setContentId(folder.id)
+       setUpdateOnCreate(folder.id)
+     
       })
   };
 
   const onDragEnd = () => {
-    onFolderMove()
+    setUpdateOnCreate(containerid)
   }
 
 
