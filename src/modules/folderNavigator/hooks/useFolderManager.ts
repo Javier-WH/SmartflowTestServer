@@ -52,16 +52,7 @@ const getFolders = async (container: string | null): Promise<FolderResponse> => 
 }
 
 
-const moveFolder = async (folderId: string, containerId?: string): Promise<FolderResponse> => {
-  const response = await supabase
-    .from('folders')
-    .update({ container: containerId ?? null })
-    .eq('id', folderId);
 
-  if (response.error) return errorManager(response.error)
-
-  return { error: false, message: 'Folder moved successfully' };
-}
 
 const deleteFolder = async (folderId: string): Promise<FolderResponse> => {
   if (folderId == null) return { error: true, message: 'Folder not found' }
@@ -76,12 +67,43 @@ const deleteFolder = async (folderId: string): Promise<FolderResponse> => {
   return { error: false, message: 'Folder deleted successfully' };
 }
 
+const moveFolder = async (folderId: string, newContainerId: string): Promise<FolderResponse> => {
+  const { data, error } = await supabase
+    .rpc('mover_carpeta', {
+      p_folder_id: folderId,   
+      p_new_container_id: newContainerId, 
+    });
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Folder moved successfully', data };
+  }
+}
+
+const getFolderContent = async (folderId: string): Promise<FolderResponse> => {
+  const { data, error } = await supabase
+    .rpc('getfoldercontent', {
+      p_folder_id: folderId
+    });
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Folder content retrieved successfully', data };
+  }
+}
+
+
 export default function useFolderManager() {
   return {
     createFolder,
     getFolders,
     moveFolder,
     updateFolderName,
-    deleteFolder
+    deleteFolder,
+    getFolderContent
   }
 }

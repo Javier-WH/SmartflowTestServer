@@ -2,26 +2,27 @@ import { Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
 import { ContainerElement } from "../types/componets";
 import FolderContainer from "./folderContainer";
-import { useState, useContext, useEffect} from "react";
+import { useState, useContext } from "react";
 import openedFolder from '../assets/svg/opened_folder.svg'
 import closedFolder from '../assets/svg/closed_folder.svg'
 import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
-import { Folder, FolderNavigatorContextValues } from '../types/folder';
+import { Folder, FolderNavigatorContextValues, FolderResquest } from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import "./folderContainer.css"
 
 
 
-export function FolderComponent({ folder, containerid }: { folder: ContainerElement, containerid: string | null}) {
+export function FolderComponent({ folder, containerid }: { folder: ContainerElement, containerid: string | null }) {
 
-  const { setModalFolder, updateOnCreate,  setUpdateOnCreate, setModalDeleteFolder } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
+  const { setModalFolder, setModalDeleteFolder, setUpdateFolderRequest } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
 
   const { moveFolder } = useFolderManager()
   const { moveFile } = useFilesManager()
   const [contentId, setContentId] = useState<string | null>(null)
-  
+
   const toggleFolder = (id: string | null) => {
+ 
     if (!id) return
     if (!contentId) {
       setContentId(id)
@@ -30,25 +31,13 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     }
   }
 
-  // update folder when updateOnCreate changes
-  useEffect(() => {
-    //some magic here, dont touch anything
-    if (updateOnCreate !== folder.id)  return
-      setContentId("x")
-      setTimeout(() => {
-        setContentId(folder.id)
-        setUpdateOnCreate("x")
-      }, 200);
-      
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateOnCreate])
-
+ 
 
   const handleCreateOrUpdateFolder = (update = false) => {
     const container = update ? containerid ?? undefined : folder.id
-    const newFolder: Folder = { 
+    const newFolder: Folder = {
       id: folder.id,
-      name: update ? folder.name : '', 
+      name: update ? folder.name : '',
       container: container ?? undefined
     }
     setModalFolder(newFolder)
@@ -58,7 +47,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     const container = containerid ?? undefined
     const newFolder: Folder = {
       id: folder.id,
-      name: folder.name ,
+      name: folder.name,
       container
     }
     setModalDeleteFolder(newFolder)
@@ -116,39 +105,52 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>, targetItemId: string, targetType: number) => {
     event.preventDefault();
     const target = event.target as HTMLDivElement;
+
+    // styles for drag and drop
     if (target.classList.contains('folder')) {
-      target.classList.remove('drag-over'); 
+      target.classList.remove('drag-over');
     }
     const draggedItemId = event.dataTransfer.getData("id");
     const draggedItemType = Number(event.dataTransfer.getData("type"));
+
+  
     if (draggedItemId === targetItemId) return
     if (targetType === 0) return
-    setContentId("x")
-    const fetchData = draggedItemType === 1 ? moveFolder : moveFile
 
-    fetchData(draggedItemId, targetItemId)
-      .then((response) => {
-        if (response.error) {
-          if (response.message === "uroboros") return
-          message.error(response.message)
-          return
+    setUpdateFolderRequest(null)
+
+    const requestFunction = draggedItemType === 0 ? moveFile : moveFolder
+
+      const request = await requestFunction(draggedItemId, targetItemId)
+      if (request.error) {
+        if (request.message === "uroboros") return
+        message.error(request.message)
+        return
+      }
+
+      const gruppedByContainer = request?.data?.reduce((acumulador, _folder) => {
+        const { container_id, itemid, name, old_container_empty, old_container_id, published, type } = _folder;
+        if (!acumulador[container_id]) {
+          acumulador[container_id] = [];
         }
-      })
-      .catch((error) => {
-        message.error(error)
-      })
-      .finally(async() => {
-        // need to test which one is better
-        //setContentId(folder.id)
-       setUpdateOnCreate(folder.id)
-     
-      })
+
+        if(old_container_empty){
+          acumulador[old_container_id] = []
+        }
+
+        acumulador[container_id].push({ 
+          id: itemid,
+          type,
+          name, 
+          container: null,
+          published, 
+        });
+        return acumulador;
+      }, {});
+   
+      setUpdateFolderRequest(gruppedByContainer)
+    
   };
-
-  const onDragEnd = () => {
-    setUpdateOnCreate(containerid)
-  }
-
 
 
 
@@ -162,10 +164,9 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         onDragStart={(event) => handleDragStart(event, folder.id, folder.type)}
         onDragOver={handleDragOver}
         onDrop={(event) => handleDrop(event, folder.id, folder.type)}
-        onDragEnd={onDragEnd}
         onDragLeave={handleDragLeave}
       >
-        <img style={{pointerEvents: 'none'}} src={contentId ? openedFolder : closedFolder} alt="" width={30} />
+        <img style={{ pointerEvents: 'none' }} src={contentId ? openedFolder : closedFolder} alt="" width={30} />
         <span className='folder-name'>{folder.name}</span>
       </div>
     </Dropdown>

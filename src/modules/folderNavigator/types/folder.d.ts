@@ -8,9 +8,20 @@ export interface Folder{
 export interface FolderResponse {
   error: boolean;
   message: string;
-  data?: Folder[];
+  data?: Array[];
 }
 
+export interface FolderRequestItem {
+  id: string;
+  name: string;
+  container?: string;
+  published?: boolean
+  type: number
+}
+
+type FolderResquest = {
+  [contenedor_id: string]: FolderRequestItem[];
+};
 
 
 export interface FolderNavigatorContextValues{
@@ -22,6 +33,8 @@ export interface FolderNavigatorContextValues{
   setModalDeleteFolder: React.Dispatch<React.SetStateAction<Folder | null>>
   updateOnCreate: string | null;
   setUpdateOnCreate: React.Dispatch<React.SetStateAction<string | null>>;
+  updateFolderRequest: FolderResquest | null;
+  setUpdateFolderRequest: React.Dispatch<React.SetStateAction<FolderResquest | null>>
 }
 
 export type getFolderResponse = (folderId: string | null) => Promise<FolderResponse>

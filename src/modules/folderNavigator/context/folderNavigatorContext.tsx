@@ -2,7 +2,7 @@ import { createContext, ReactNode, useState } from "react"
 import { FolderNavigatorContextValues } from "../types/folder";
 import CreateOrUpdateFolderModal from "../modal/createOrUpdateFolderModal";
 import DeleteFolderModal from "../modal/deleteFolderModal";
-import { Folder } from "../types/folder";
+import { Folder, FolderResquest } from "../types/folder";
 import { Spin } from "antd";
 
 
@@ -16,6 +16,7 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
   const [modalFolder, setModalFolder] = useState<Folder | null>(null);
   const [modalDeleteFolder, setModalDeleteFolder] = useState<Folder | null>(null);
   const [updateOnCreate, setUpdateOnCreate] = useState<string | null>(null);
+  const [updateFolderRequest, setUpdateFolderRequest] = useState<FolderResquest | null>(null);
 
 
 
@@ -27,8 +28,9 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
     modalDeleteFolder,
     setModalDeleteFolder,
     updateOnCreate,
-    setUpdateOnCreate
-
+    setUpdateOnCreate,
+    updateFolderRequest, 
+    setUpdateFolderRequest
   }
 
   return <div style={{ display: "flex", flexDirection: "column" }}>

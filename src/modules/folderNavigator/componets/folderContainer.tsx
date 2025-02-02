@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { message, Tag } from "antd";
-import { Folder } from "../types/folder";
+import { Folder, FolderRequestItem } from "../types/folder";
 import { File, getFilesResponse } from "../types/file";
 import { ContainerElement } from "../types/componets";
 import useFolderManager from "../hooks/useFolderManager";
@@ -12,24 +12,24 @@ import { FolderNavigatorContextValues } from "../types/folder";
 
 
 
-export default function FolderContainer({ folderId }: { folderId: string | null}) {
+export default function FolderContainer({ folderId }: { folderId: string | null }) {
 
-  const {Loading, setLoading} = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
-
-  const { getFolders } = useFolderManager()
+  const { Loading, setLoading, updateFolderRequest } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
+  const { getFolders, getFolderContent } = useFolderManager()
   const { getFiles }: { getFiles: getFilesResponse } = useFilesManager()
   const [content, setContent] = useState<ContainerElement[] | null>([])
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchData = async () => {
+
     setLoading(folderId)
     const response = await getFolders(folderId)
     if (response.error) {
       message.error(response.message)
       return
     }
-    
+
     const newFolders: ContainerElement[] = (response.data ?? []).map((folder: Folder) => {
       return {
         id: folder.id ?? "",
@@ -38,7 +38,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
         container: folder.container ?? null
       }
     })
-    
+
     const newFiles: ContainerElement[] = ((await getFiles(folderId)).data ?? []).map((file: File) => {
       return {
         id: file.id ?? "",
@@ -48,21 +48,71 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
         content: file.content,
         published: file.published
       }
-      
+
     })
     setContent([...newFolders, ...newFiles])
     setLoading(null)
   }
 
   useEffect(() => {
-    if(folderId === "x") return
-    fetchData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!folderId) {
+      console.log('no folder id')
+      fetchData()
+      return
+    }
+    async function getContent() {
+      if (!folderId) return
+      setLoading(folderId)
+      const response = await getFolderContent(folderId)
+      if (response.error) {
+        message.error(response.message)
+        return
+      }
+      const newData = response.data ?? []
+      const newContent = newData.map((item: ContainerElement) => {
+        return {
+          id: item.id ?? "",
+          type: item.type,
+          name: item.name,
+          container: null,
+          published: item.published
+        }
+      })
+      setContent(newContent)
+      setLoading(null)
+
+    }
+    getContent()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderId])
 
- 
+  // on move folder
+  useEffect(() => {
+    if (!updateFolderRequest || !folderId) return
+    const keys = Object.keys(updateFolderRequest)
+    if (!keys.includes(folderId)) {
+      return
+    }
+
+
+    const newData = updateFolderRequest[folderId]
+
+    const newFolders = newData.map((item: FolderRequestItem) => {
+      return {
+        id: item.id ?? "",
+        type: item.type as 0 | 1,
+        name: item.name,
+        container: null,
+        published: item.published
+      }
+    })
+    setContent(newFolders)
+
+  }, [updateFolderRequest, folderId])
+
+
   if (content?.length === 0) {
-    if(Loading === folderId) return <Tag >Loading...</Tag>
+    if (Loading === folderId) return <Tag >Loading...</Tag>
     return <Tag >Empty Folder</Tag>
   }
 
@@ -77,7 +127,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
             item.type === 1
               ? <FolderComponent folder={item} containerid={folderId} />
               : <FileComponent file={item} containerid={folderId} />
-       
+
           }
 
         </div>

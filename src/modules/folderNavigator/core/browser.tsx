@@ -26,21 +26,8 @@ export default function Browser() {
     const draggedItemType = Number(event.dataTransfer.getData("type"));
 
     // Move the item to the root (container = null)
-    const fetchData = draggedItemType === 1 ? moveFolder : moveFile;
-    setContentId("x")
-    fetchData(draggedItemId)
-      .then((response) => {
-        if (response.error) {
-          if (response.message === "uroboros") return
-          message.error(response.message);
-          return;
-        }
-      })
-      .catch((error) => {
-        message.error(error.message);
-      }).finally(() => {
-        setContentId(null)
-      })
+   
+
   };
 
   const handleCreateFolder = () => {
@@ -53,10 +40,7 @@ export default function Browser() {
     }
 
   const handleReload = () => {
-    setContentId("x")
-    setTimeout(() => {
-      setContentId(null)
-    }, 200);
+   
   }
 
   const menu: MenuProps['items'] = [
@@ -77,15 +61,7 @@ export default function Browser() {
     },
   ];
   
-    useEffect(() => {
-      if (updateOnCreate !== contentId)  return
-          setContentId("x")
-          setTimeout(() => {
-            setContentId(contentId)
-            setUpdateOnCreate("x")
-          }, 200);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [updateOnCreate])
+  
 
 
 
@@ -102,7 +78,7 @@ export default function Browser() {
         </div>
       </Dropdown>
       <div className="folder-container" style={{ marginLeft: "20px" }}>
-        <FolderContainer folderId={contentId} />
+        <FolderContainer folderId={null} />
       </div>
     </div>
 

@@ -41,16 +41,19 @@ const getFiles = async (container: string | null): Promise<FileResponse> => {
   return { error: false, message: 'Files retrieved successfully', data: response.data };
 }
 
-const moveFile = async (fileId: string, containerId?: string): Promise<FileResponse> => {
-  const response = await supabase
-    .from('files')
-    .update({ container: containerId ?? null })
-    .eq('id', fileId);
+const moveFile = async (fileId: string, newContainerId: string): Promise<FileResponse> => {
+  const { data, error } = await supabase
+    .rpc('move_file', {
+      p_file_id: fileId,
+      p_new_container_id: newContainerId,
+    });
 
-  if (response.error) return errorManager(response.error)
-
-  return { error: false, message: 'File moved successfully' };
-
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'File moved successfully', data };
+  }
 }
 
 
