@@ -70,17 +70,18 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
 
   // on move folder
   useEffect(() => {
+    //console.log(updateFolderRequest)
     if(!folderId) {
       getRoot()
     }
 
-    if (!updateFolderRequest || !folderId) return
+    if (!updateFolderRequest) return
     const keys = Object.keys(updateFolderRequest)
-    if (!keys.includes(folderId)) {
+    if (!keys.includes(folderId ?? "")) {
       return
     }
 
-    const newData = updateFolderRequest[folderId]
+    const newData = updateFolderRequest[folderId ?? ""]
 
     const newFolders = newData.map((item: FolderRequestItem) => {
       return {
