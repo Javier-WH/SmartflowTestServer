@@ -3,15 +3,13 @@ import type { MenuProps } from 'antd';
 import { ContainerElement } from "../types/componets";
 import publishedIcon from '../assets/svg/publishedFile.svg'
 import unPublishedIcon from '../assets/svg/unPublishedFile.svg'
-import { FolderNavigatorContext } from "../context/folderNavigatorContext";
-import { FolderNavigatorContextValues } from "../types/folder";
 import "./folderContainer.css"
-import { useContext } from 'react';
 
 
-export function FileComponent({ file, containerid }: { file: ContainerElement, containerid: string | null }) {
 
-    const {setUpdateOnCreate} = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
+export function FileComponent({ file }: { file: ContainerElement }) {
+
+   
   const handleClick = (id: string) => {
     console.log(id)
   }
@@ -21,7 +19,7 @@ export function FileComponent({ file, containerid }: { file: ContainerElement, c
     event.dataTransfer.setData("type", itemType.toString());
   };
   const onDragEnd = () => {
-    setUpdateOnCreate(containerid)
+  
   }
 
 

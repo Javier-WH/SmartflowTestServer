@@ -116,7 +116,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
           {
             item.type === 1
               ? <FolderComponent folder={item} containerid={folderId} />
-              : <FileComponent file={item} containerid={folderId} />
+              : <FileComponent file={item} />
 
           }
 
