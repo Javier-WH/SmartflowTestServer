@@ -1,11 +1,11 @@
 import { Modal, Input, message } from "antd";
 import { useEffect, useState } from "react";
-import { Folder } from "../types/folder";
+import { Folder, FolderResquest } from "../types/folder";
 import useFolderManager from "../hooks/useFolderManager";
 import "./createOrUpdateFolderModal.css"
 
 
-export default function CreateOrUpdateFolderModal({ folder, setFolder, setUpdateOnCreate }: { folder: Folder | null, setFolder: (folder: Folder | null) => void, setUpdateOnCreate: (update: string | null) => void }) {
+export default function CreateOrUpdateFolderModal({ folder, setFolder, setUpdateFolderRequest }: { folder: Folder | null, setFolder: (folder: Folder | null) => void, setUpdateFolderRequest: (folder: FolderResquest | null) => void }) {
 
   const { createFolder, updateFolderName } = useFolderManager()
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -29,36 +29,7 @@ export default function CreateOrUpdateFolderModal({ folder, setFolder, setUpdate
   }
 
   const handleOk = async () => {
-    if (name.length === 0) return
-    setUpdateOnCreate("x")
-    const newFolder: Folder = {
-      ...folder,
-      name
-    }
-  
-    // if folder has a name update it
-    if (folder?.name) {
-      const response = await updateFolderName(newFolder)
-      if (response.error) {
-        message.error(response.message)
-        return
-      }
-      setUpdateOnCreate(folder?.container ?? null)
-      message.success(response.message)
-      setFolder(null)
-      return
-    }
-
-    // if folder has no name create it
-    const response = await createFolder(newFolder)
-    if (response.error) {
-      message.error(response.message)
-      return
-    }
-
-    setUpdateOnCreate(folder?.container ?? null)
-    message.success(response.message)
-    setFolder(null)
+    message.info('Click on ok');
 
   }
 

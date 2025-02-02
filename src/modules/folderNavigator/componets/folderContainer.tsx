@@ -1,10 +1,8 @@
 import { useEffect, useState, useContext } from "react";
 import { message, Tag } from "antd";
-import { Folder, FolderRequestItem } from "../types/folder";
-import { File, getFilesResponse } from "../types/file";
+import { FolderRequestItem } from "../types/folder";
 import { ContainerElement } from "../types/componets";
 import useFolderManager from "../hooks/useFolderManager";
-import useFilesManager from "../hooks/useFileManager";
 import { FolderComponent } from "./folderComponent";
 import { FileComponent } from "./fileComponent";
 import { FolderNavigatorContext } from "../context/folderNavigatorContext";
@@ -15,59 +13,23 @@ import { FolderNavigatorContextValues } from "../types/folder";
 export default function FolderContainer({ folderId }: { folderId: string | null }) {
 
   const { Loading, setLoading, updateFolderRequest } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
-  const { getFolders, getFolderContent } = useFolderManager()
-  const { getFiles }: { getFiles: getFilesResponse } = useFilesManager()
+  const { getFolderContent, getRootContent } = useFolderManager()
+  
   const [content, setContent] = useState<ContainerElement[] | null>([])
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fetchData = async () => {
-
-    setLoading(folderId)
-    const response = await getFolders(folderId)
-    if (response.error) {
-      message.error(response.message)
-      return
-    }
-
-    const newFolders: ContainerElement[] = (response.data ?? []).map((folder: Folder) => {
-      return {
-        id: folder.id ?? "",
-        type: 1,
-        name: folder.name,
-        container: folder.container ?? null
-      }
-    })
-
-    const newFiles: ContainerElement[] = ((await getFiles(folderId)).data ?? []).map((file: File) => {
-      return {
-        id: file.id ?? "",
-        type: 0,
-        name: file.name,
-        container: file.container ?? null,
-        content: file.content,
-        published: file.published
-      }
-
-    })
-    setContent([...newFolders, ...newFiles])
-    setLoading(null)
-  }
+ 
 
   useEffect(() => {
-    if (!folderId) {
-      console.log('no folder id')
-      fetchData()
-      return
-    }
     async function getContent() {
-      if (!folderId) return
       setLoading(folderId)
       const response = await getFolderContent(folderId)
       if (response.error) {
         message.error(response.message)
         return
       }
+      
       const newData = response.data ?? []
       const newContent = newData.map((item: ContainerElement) => {
         return {
@@ -86,14 +48,37 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderId])
 
+
+  async function getRoot() {
+    const response = await getRootContent()
+    if (response.error) {
+      message.error(response.message)
+      return
+    }
+    const newItems = response.data?.map((item: ContainerElement) => {
+      return {
+        id: item.id ?? "",
+        type: item.type as 0 | 1,
+        name: item.name,
+        container: null,
+        published: item.published
+      }
+    })
+    //console.log(newItems)
+    setContent(newItems ?? [])
+  }
+
   // on move folder
   useEffect(() => {
+    if(!folderId) {
+      getRoot()
+    }
+
     if (!updateFolderRequest || !folderId) return
     const keys = Object.keys(updateFolderRequest)
     if (!keys.includes(folderId)) {
       return
     }
-
 
     const newData = updateFolderRequest[folderId]
 
@@ -108,20 +93,25 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
     })
     setContent(newFolders)
 
-  }, [updateFolderRequest, folderId])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateFolderRequest])
 
 
   if (content?.length === 0) {
     if (Loading === folderId) return <Tag >Loading...</Tag>
     return <Tag >Empty Folder</Tag>
   }
+  
 
-  return <div>
+  return <div style={{display:"inline-block"}}>
 
     {
       content?.map((item) => {
         return <div
           key={item.id}
+          style={{
+            maxWidth: '250px'
+          }}
         >
           {
             item.type === 1

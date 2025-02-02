@@ -31,8 +31,6 @@ export interface FolderNavigatorContextValues{
   setModalFolder: React.Dispatch<React.SetStateAction<Folder | null>>;
   modalDeleteFolder: Folder | null;
   setModalDeleteFolder: React.Dispatch<React.SetStateAction<Folder | null>>
-  updateOnCreate: string | null;
-  setUpdateOnCreate: React.Dispatch<React.SetStateAction<string | null>>;
   updateFolderRequest: FolderResquest | null;
   setUpdateFolderRequest: React.Dispatch<React.SetStateAction<FolderResquest | null>>
 }

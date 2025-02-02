@@ -5,7 +5,7 @@ import useFolderManager from "../hooks/useFolderManager";
 import "./createOrUpdateFolderModal.css"
 
 
-export default function DeleteFolderModal({ folder, setFolder, setUpdateOnCreate }: { folder: Folder | null, setFolder: (folder: Folder | null) => void, setUpdateOnCreate: (update: string | null) => void }) {
+export default function DeleteFolderModal({ folder, setFolder, setUpdateFolderRequest }: { folder: Folder | null, setFolder: (folder: Folder | null) => void, setUpdateFolderRequest: (folder: FolderResquest | null) => void }) {
 
   const { deleteFolder } = useFolderManager()
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -28,18 +28,7 @@ export default function DeleteFolderModal({ folder, setFolder, setUpdateOnCreate
   }
 
   const handleOk = async () => {
-    if (deleteText !== "delete") return
-    setUpdateOnCreate("x")
-   
-    const response = await deleteFolder(folder?.id ?? '')
-    if (response.error) {
-      message.error(response.message)
-      return
-    }
-
-    setUpdateOnCreate(folder?.container ?? null)
-    message.success(response.message)
-    setFolder(null)
+    message.info('Click on ok');
 
   }
 

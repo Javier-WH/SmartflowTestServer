@@ -7,7 +7,7 @@ import openedFolder from '../assets/svg/opened_folder.svg'
 import closedFolder from '../assets/svg/closed_folder.svg'
 import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
-import { Folder, FolderNavigatorContextValues, FolderResquest } from '../types/folder';
+import { Folder, FolderNavigatorContextValues } from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import "./folderContainer.css"
 
@@ -57,16 +57,21 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
   const menu: MenuProps['items'] = [
     {
       key: '1',
+      label: <div style={{ textAlign: 'left' }}>Move to root</div>,
+      onClick: () => message.info('Click on Move to root'),
+    },
+    {
+      key: '2',
       label: <div style={{ textAlign: 'left' }}>Create a new folder</div>,
       onClick: () => handleCreateOrUpdateFolder(),
     },
     {
-      key: '2',
+      key: '3',
       label: <div style={{ textAlign: 'left' }}> Rename this folder</div>,
       onClick: () => handleCreateOrUpdateFolder(true),
     },
     {
-      key: '3',
+      key: '4',
       label: <div style={{ textAlign: 'left' }}>Delete this folder</div>,
       onClick: () => handleDeleteFolder(),
     },
@@ -74,7 +79,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
       type: 'divider',
     },
     {
-      key: '4',
+      key: '5',
       label: <div style={{ textAlign: 'left' }}>Create a new file</div>,
       onClick: () => message.info('Click on Create a new file'),
     },
@@ -128,6 +133,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         return
       }
 
+
       const gruppedByContainer = request?.data?.reduce((acumulador, _folder) => {
         const { container_id, itemid, name, old_container_empty, old_container_id, published, type } = _folder;
         if (!acumulador[container_id]) {
@@ -147,9 +153,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         });
         return acumulador;
       }, {});
-   
       setUpdateFolderRequest(gruppedByContainer)
-    
   };
 
 

@@ -25,10 +25,12 @@ BEGIN
     SET container = p_new_container_id
     WHERE id = p_file_id;
 
-    -- 3. Comprobar si el contenedor de origen está vacío
+    -- 3. Comprobar en la tabla de archivos si el contenedor de origen está vacío
     IF v_old_container_id IS NOT NULL THEN
         SELECT NOT EXISTS (
             SELECT 1 FROM public.folders WHERE container = v_old_container_id
+             UNION ALL
+            SELECT 1 FROM public.files WHERE container = v_old_container_id
         ) INTO v_old_container_empty;
     ELSE
         v_old_container_empty := NULL;
@@ -62,6 +64,3 @@ BEGIN
 
 END;
 $$ LANGUAGE plpgsql;
-
-
-
