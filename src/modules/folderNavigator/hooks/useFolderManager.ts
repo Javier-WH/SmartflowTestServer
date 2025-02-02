@@ -108,6 +108,19 @@ const getRootContent = async (): Promise<FolderResponse> => {
   }
 }
 
+const moveFolderToRoot = async (folderId: string | null): Promise<FolderResponse> => {
+  const { data, error } = await supabase
+    .rpc('move_folder_to_root', {
+      p_folder_id: folderId
+    });
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Folder moved to root successfully', data };
+  }
+}
 
 export default function useFolderManager() {
   return {
@@ -117,6 +130,7 @@ export default function useFolderManager() {
     updateFolderName,
     deleteFolder,
     getFolderContent,
-    getRootContent
+    getRootContent,
+    moveFolderToRoot
   }
 }

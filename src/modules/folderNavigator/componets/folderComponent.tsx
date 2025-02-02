@@ -7,7 +7,7 @@ import openedFolder from '../assets/svg/opened_folder.svg'
 import closedFolder from '../assets/svg/closed_folder.svg'
 import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
-import { Folder, FolderNavigatorContextValues } from '../types/folder';
+import { Folder, FolderNavigatorContextValues, FolderResquest} from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import "./folderContainer.css"
 
@@ -17,7 +17,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
 
   const { setModalFolder, setModalDeleteFolder, setUpdateFolderRequest } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
 
-  const { moveFolder } = useFolderManager()
+  const { moveFolder, moveFolderToRoot } = useFolderManager()
   const { moveFile } = useFilesManager()
   const [contentId, setContentId] = useState<string | null>(null)
 
@@ -54,11 +54,17 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
 
   }
 
+  const handleMoveToRoot = async () => {
+    const request = await moveFolderToRoot(folder.id)
+    const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
+    setUpdateFolderRequest(gruppedByContainer);
+  }
+
   const menu: MenuProps['items'] = [
     {
       key: '1',
       label: <div style={{ textAlign: 'left' }}>Move to root</div>,
-      onClick: () => message.info('Click on Move to root'),
+      onClick: () => handleMoveToRoot(),
     },
     {
       key: '2',
@@ -134,28 +140,47 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
       }
 
 
-      const gruppedByContainer = request?.data?.reduce((acumulador, _folder) => {
-        const { container_id, itemid, name, old_container_empty, old_container_id, published, type } = _folder;
-        if (!acumulador[container_id]) {
-          acumulador[container_id] = [];
-        }
-
-        if(old_container_empty){
-          acumulador[old_container_id] = []
-        }
-
-        acumulador[container_id].push({ 
-          id: itemid,
-          type,
-          name, 
-          container: null,
-          published, 
-        });
-        return acumulador;
-      }, {});
-      setUpdateFolderRequest(gruppedByContainer)
+      if (request.data) {
+        const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
+        setUpdateFolderRequest(gruppedByContainer);
+      }
+  
   };
 
+ 
+  interface FolderData {
+    container_id: string;
+    itemid: string;
+    name: string;
+    old_container_empty: boolean;
+    old_container_id: string;
+    published: boolean;
+    type: number;
+  }
+
+ 
+  const groupDataByContainer = (request: { data: FolderData[] }): FolderResquest => {
+    const gruppedByContainer = request?.data?.reduce((acumulador: FolderResquest, _folder: FolderData) => {
+      const { container_id, itemid, name, old_container_empty, old_container_id, published, type } = _folder;
+      if (!acumulador[container_id]) {
+        acumulador[container_id] = [];
+      }
+
+      if (old_container_empty) {
+        acumulador[old_container_id] = []
+      }
+
+      acumulador[container_id].push({
+        id: itemid,
+        type,
+        name,
+        container: undefined,
+        published,
+      });
+      return acumulador;
+    }, {});
+    return gruppedByContainer;
+  }
 
 
   return <div>
