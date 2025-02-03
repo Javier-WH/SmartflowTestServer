@@ -58,6 +58,9 @@
 
 .ant-dropdown-menu{
   background-color: var(--mainColor) !important;
+  width: 151px;
+  border-radius: 0px !important;
+  margin-top: -3px !important;
 }
 .ant-dropdown-menu-title-content{
   color: var(--secondaryColor) !important;
@@ -82,6 +85,9 @@
   border: none;
   height: 50px;
   width: 120px;
+  border-radius: 0px;
+  font-size: 16px;
+  
   
 }
 
@@ -89,6 +95,3 @@
   color: var(--mainColor) !important;
 }
 
-.brouse-container .ant-dropdown-menu-title-content {
-  background-color: red !important;
-}
