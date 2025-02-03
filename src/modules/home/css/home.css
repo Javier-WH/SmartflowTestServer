@@ -3,8 +3,10 @@
   margin-left: 20px;
   padding-left: 20px;
   padding-top: 10px;
+  padding-bottom: 20px;
   min-width: 700px;
   height: calc(100vh - 200px);
   width: calc(100vw - 400px);
+  /*max-height: 500px;*/
   overflow: auto;
 }

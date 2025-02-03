@@ -1,0 +1,94 @@
+.navbar-container{
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--tercearyColor);
+  position: relative;
+}
+.title-container{
+  width: 100%;
+  padding: 20px;
+  max-width: calc(100vw - 150px);
+}
+.navbar-title{
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--folderTextColor);
+  filter: brightness(0.9);
+  margin-left: 15px;
+}
+.logo-container{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 600px;
+  
+}
+.btn-user-container{
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  padding: 1.1px;
+  border-radius: 5px;
+  background-color: var(--boderColor);
+  filter: grayscale(0.1);
+}
+
+.logo-container input{
+  max-width: 512px;
+  height: 25px;
+  direction: ltr;
+  background-color: var(--secondaryColor) !important;
+  border: none;
+  color: var(--currentColor) !important;
+  font-family: var(--folderFontFamily);
+}
+
+.logo-container span {
+  border: none;
+  background-color: var(--secondaryColor) !important;
+}
+
+.logo-container svg{
+
+  fill: var(--currentColor);
+
+}
+
+.ant-dropdown-menu{
+  background-color: var(--mainColor) !important;
+}
+.ant-dropdown-menu-title-content{
+  color: var(--secondaryColor) !important;
+}
+.ant-dropdown-menu-item:hover {
+  background-color: var(--currentColor) !important;
+}
+
+.navbar-buttons{
+  position: absolute;
+  right: 20px;
+  bottom: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-buttons button{
+  background-color: var(--mainColor) !important;
+  color: var(--secondaryColor) !important;
+  border: none;
+  height: 50px;
+  width: 120px;
+  
+}
+
+.navbar-buttons a {
+  color: var(--mainColor) !important;
+}
+
+.brouse-container .ant-dropdown-menu-title-content {
+  background-color: red !important;
+}

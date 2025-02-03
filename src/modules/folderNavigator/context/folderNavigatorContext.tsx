@@ -34,11 +34,6 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
     <FolderNavigatorContext.Provider value={values}>
       <CreateOrUpdateFolderModal folder={modalFolder} setFolder={setModalFolder} setUpdateFolderRequest={setUpdateFolderRequest} />
       <DeleteFolderModal folder={modalDeleteFolder} setFolder={setModalDeleteFolder} setUpdateFolderRequest={setUpdateFolderRequest} />
-      <div style={{ height: "20px", marginBottom: "10px" }}>
-        {
-          Loading && <div><Spin /><span>{" Loading..."}</span> </div>
-        }
-      </div>
       {children}
     </FolderNavigatorContext.Provider>
   </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { message, Tag } from "antd";
+import { message, Spin, Tag } from "antd";
 import { FolderRequestItem } from "../types/folder";
 import { ContainerElement } from "../types/componets";
 import useFolderManager from "../hooks/useFolderManager";
@@ -99,7 +99,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
 
 
   if (content?.length === 0) {
-    if (Loading === folderId) return <Tag >Loading...</Tag>
+    if (Loading === folderId) return <Spin />
     return <Tag >Empty Folder</Tag>
   }
   

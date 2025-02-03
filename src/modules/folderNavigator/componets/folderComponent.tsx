@@ -160,13 +160,14 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
 
  
   const groupDataByContainer = (request: { data: FolderData[] }): FolderResquest => {
+  
     const gruppedByContainer = request?.data?.reduce((acumulador: FolderResquest, _folder: FolderData) => {
       const { container_id, itemid, name, old_container_empty, old_container_id, published, type } = _folder;
       if (!acumulador[container_id]) {
         acumulador[container_id] = [];
       }
-
-      if (old_container_empty) {
+      //console.log({old_container_id, old_container_empty})
+      if (old_container_empty === true && old_container_id !== null) {
         acumulador[old_container_id] = []
       }
 
@@ -174,17 +175,17 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         id: itemid,
         type,
         name,
-        container: undefined,
         published,
       });
       return acumulador;
     }, {});
+    
     return gruppedByContainer;
   }
 
 
   return <div>
-    <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft" arrow>
+    <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
       <div
         style={{ display: 'flex', alignItems: 'center', gap: 10 }}
         onClick={() => toggleFolder(folder.id ?? null)}

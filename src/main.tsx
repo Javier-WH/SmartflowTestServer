@@ -5,11 +5,11 @@ import { NextUIProvider } from '@nextui-org/react';
 import { AuthProvider } from './modules/auth/context/auth.tsx';
 import { ToastContainer } from 'react-toastify';
 import { ConfigProvider } from 'antd';
-
-import './index.css';
 import 'react-responsive-pagination/themes/classic.css';
 import 'react-toastify/dist/ReactToastify.css';
 import onScan from 'onscan.js';
+import './root.css'
+import './index.css';
 onScan.attachTo(document);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

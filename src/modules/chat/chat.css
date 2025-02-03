@@ -1,0 +1,16 @@
+.chat-button{
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background-color: var(--mainColor);
+  right: 20px;
+  bottom: 20px;
+}
+.chat-button img{
+  scale: 1.2;
+}
+
+.chat-button:hover {
+ scale: 1.2;
+  background-color: var(--mainColor) !important;
+}

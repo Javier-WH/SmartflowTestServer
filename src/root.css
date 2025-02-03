@@ -1,0 +1,15 @@
+:root {
+  
+  --mainColor: hsla(205, 76%, 39%);
+  --secondaryColor: hsla(205, 79%, 92%);
+  --tercearyColor: rgba(255, 255, 255);
+  --currentColor: hsl(205, 65%, 55%);
+  --boderColor: hsla(210, 31%, 80%);
+  --folderTextColor: hsla(209, 34%, 30%);
+  --titleFontFamily: Roboto, sans-serif;
+  --folderFontFamily: "SF Pro", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+body {
+  background-color: var(--backGroundColor) !important;
+}
