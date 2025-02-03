@@ -1,4 +1,5 @@
 -- create folder table
+DROP TABLE IF EXISTS public.folders;
 create table public.folders (
   id uuid not null default gen_random_uuid (),
   name character varying(100) not null,
@@ -16,6 +17,7 @@ create table public.folders (
 ) TABLESPACE pg_default;
 
 -- create file table
+DROP TABLE IF EXISTS public.files;
 create table public.files (
   id uuid not null default gen_random_uuid (),
   name character varying(100) not null,
