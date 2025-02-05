@@ -18,7 +18,7 @@
 .folder::before{
   content: ' ';
   position: absolute;
-  border-bottom: 2px solid hsl(205, 65%, 55%);
+  border-bottom: var(--folder-decoration-lines);
   /*border-left: 2px solid white;*/
   width: 9px;
   height: 20px;
@@ -29,13 +29,14 @@
 .main-folder-container{
   max-height: calc(90vh - var(--navBarHeight));
   overflow: auto;
+  padding-left: 10px;
 }
 
 .folder-container{
   position: relative;
   background-color: white;
   max-width: 750px;
-  padding: 10px;
+
 }
 
 .folder-container::before {
@@ -51,7 +52,7 @@
 .folder-container::before{
   position: absolute;
   content: " ";
-  border-left: 2px solid hsl(205, 65%, 55%);
+  border-left: var(--folder-decoration-lines);
   height: 100%;
   left: -10px;
 }
