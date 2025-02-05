@@ -4,9 +4,8 @@ import SignIn from './modules/auth/pages/SignIn';
 import SignUp from './modules/auth/pages/SignUp';
 import ForgotPassword from './modules/auth/pages/ForgotPassword';
 import ResetPassword from './modules/auth/pages/ResetPassword';
-
 import Home from './modules/home/pages/Home';
-
+import Page from './modules/page/page'
 import { Navigate } from 'react-router-dom';
 import MainLayout from './modules/MainLayout';
 import PrivateRoute from './PrivateRoute';
@@ -28,6 +27,10 @@ const router = createBrowserRouter([
             {
                 path: 'home',
                 element: <Home />,
+            },
+            {
+                path: 'page',
+                element: <Page/>
             },
         ],
     },

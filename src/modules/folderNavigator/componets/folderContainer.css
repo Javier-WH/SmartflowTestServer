@@ -26,9 +26,28 @@
   top: -1px;
 
 }
+.main-folder-container{
+  max-height: calc(90vh - var(--navBarHeight));
+  overflow: auto;
+}
+
 .folder-container{
   position: relative;
+  background-color: white;
+  max-width: 750px;
+  padding: 10px;
 }
+
+.folder-container::before {
+  position: absolute;
+  content: " ";
+  background-color: white;
+  height: 100%;
+  width: 30px;
+  left: -20px;
+  top: -0.4px;
+
+} 
 .folder-container::before{
   position: absolute;
   content: " ";

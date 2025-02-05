@@ -1,31 +1,40 @@
-.navbar-container{
+.navbar-container {
   width: 100vw;
+  height: var(--navBarHeight);
   display: flex;
-  align-items: center;
   justify-content: space-between;
   background-color: var(--tercearyColor);
   position: relative;
+  flex-direction: column;
 }
-.title-container{
+
+.title-container {
   width: 100%;
-  padding: 20px;
+  height: 100%;
+  padding: 10px;
   max-width: calc(100vw - 150px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
-.navbar-title{
+
+.navbar-title {
   font-size: 3rem;
   font-weight: bold;
   color: var(--folderTextColor);
   filter: brightness(0.9);
   margin-left: 15px;
 }
-.logo-container{
+
+.logo-container {
   display: flex;
   align-items: center;
   gap: 10px;
   max-width: 600px;
-  
+
 }
-.btn-user-container{
+
+.btn-user-container {
   position: absolute;
   right: 20px;
   top: 20px;
@@ -35,7 +44,7 @@
   filter: grayscale(0.1);
 }
 
-.logo-container input{
+.logo-container input {
   max-width: 512px;
   height: 25px;
   direction: ltr;
@@ -50,36 +59,38 @@
   background-color: var(--secondaryColor) !important;
 }
 
-.logo-container svg{
+.logo-container svg {
 
   fill: var(--currentColor);
 
 }
 
-.ant-dropdown-menu{
+.ant-dropdown-menu {
   background-color: var(--mainColor) !important;
   width: 151px;
   border-radius: 0px !important;
   margin-top: -3px !important;
 }
-.ant-dropdown-menu-title-content{
+
+.ant-dropdown-menu-title-content {
   color: var(--secondaryColor) !important;
 }
+
 .ant-dropdown-menu-item:hover {
   background-color: var(--currentColor) !important;
 }
 
-.navbar-buttons{
+.navbar-buttons {
   position: absolute;
   right: 20px;
-  bottom: 40px;
+  bottom: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 10px;
 }
 
-.navbar-buttons button{
+.navbar-buttons button {
   background-color: var(--mainColor) !important;
   color: var(--secondaryColor) !important;
   border: none;
@@ -87,11 +98,35 @@
   width: 120px;
   border-radius: 0px;
   font-size: 16px;
-  
-  
+
+
 }
 
 .navbar-buttons a {
   color: var(--mainColor) !important;
 }
 
+.navbar-page-size {
+  max-height: 120px !important;
+}
+
+.page-bar-container {
+  background-color: var(--pageBarColor);
+  filter: opacity(0.95);
+  height: 110px;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  padding-right: 10px;
+}
+
+.page-bar-publish-button {
+  background-color: hsla(162, 63%, 41%);
+  color: white;
+  filter: brightness(0.95);
+  padding: 10px 5px;
+  width: 70px;
+  height: 40px;
+  font-size: 14px;
+}

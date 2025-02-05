@@ -5,10 +5,17 @@ import Logo from '../../assets/svg/logo.svg';
 import UserPlaceHolder from '../../assets/svg/userPlaceHolder.svg'
 import { CaretDownOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { MainContext, MainContextValues } from '../mainContext';
+
 import './navBar.css';
+import { useContext } from 'react';
 
 export default function NavBar() {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const { inPage } = useContext(MainContext) as MainContextValues
+
 
   const userMenu: MenuProps['items'] = [
     {
@@ -61,49 +68,53 @@ export default function NavBar() {
   ];
 
 
-
-  //bg-gray-900 text-white w-full p-4 flex items-center justify-between"
-  return <header className="navbar-container">
-
-    <div className="title-container">
-      <div className="logo-container">
-        <img src={Logo} alt="" />
-        <Input suffix={<IoSearchSharp />} size='large' />
-      </div>
-      <div className="navbar-title">Kepen</div>
-    </div>
-
+  return <header className={`navbar-container ${inPage && 'navbar-page-size'}`}>
     <Dropdown menu={{ items: userMenu }} trigger={['click']}>
       <button className="btn-user-container">
         <img src={UserPlaceHolder} alt="" />
       </button>
     </Dropdown>
 
-    <div className='navbar-buttons'>
-      <div className='brouse-container'>
-        <Dropdown menu={{ items: beowseMenu }} trigger={['click']}>
-          <a onClick={(e) => e.preventDefault()}>
-            Brouse
-            <CaretDownOutlined />
-          </a>
-        </Dropdown>
+
+    <div className="title-container">
+      <div className="logo-container">
+        <img src={Logo} alt="" />
+        <Input suffix={<IoSearchSharp />} size='large' />
       </div>
-
-      <div className='create-container'>
-
-        <Dropdown.Button
-          icon={<CaretDownOutlined />}
-          menu={{ items: createMenu }}
-          onClick={() => message.info('Click on Create page')}
-          trigger={['click']}
-          style={{ direction: 'ltr' }}
-        >
-          <span>Create page</span>
-        </Dropdown.Button>
-      </div>
-
-
+      {!inPage && <div className="navbar-title">Kepen</div>}
     </div>
+
+    {
+      !inPage
+        ? <div className='navbar-buttons'>
+          <div className='brouse-container'>
+            <Dropdown menu={{ items: beowseMenu }} trigger={['click']}>
+              <a onClick={(e) => e.preventDefault()}>
+                Brouse
+                <CaretDownOutlined />
+              </a>
+            </Dropdown>
+          </div>
+
+          <div className='create-container'>
+
+            <Dropdown.Button
+              icon={<CaretDownOutlined />}
+              menu={{ items: createMenu }}
+              onClick={() => navigate('/page')}
+              trigger={['click']}
+              style={{ direction: 'ltr' }}
+            >
+              <span>Create page</span>
+            </Dropdown.Button>
+          </div>
+        </div>
+        : <div className='page-bar-container'>
+          <button className='page-bar-publish-button'>Publish</button>
+        </div>
+
+    }
+
 
   </header>
 
