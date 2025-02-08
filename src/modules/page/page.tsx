@@ -1,20 +1,23 @@
 import { MainContext, MainContextValues } from "../mainContext"
-import React, { useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
+import type { Dispatch, SetStateAction } from "react";
 import homeIcon from "../../assets/svg/homeIcon.svg"
 import { useNavigate } from "react-router-dom"
+import { v4 as uuidv4 } from 'uuid';
+import type {  PageItem } from "./types/pageTypes.d.ts"
+import { PageType, Mode } from "./types/pageEnums.ts"
 import styles from "./page.module.css"
+import TextComponent from "./components/text/textComponent.tsx";
+import ImageComponent from "./components/image/imageComponent.tsx";
 
 
-enum PageType {
-  Text = "text",
-  Image = "image"
+
+export interface PageContextValues {
+  pageContent: PageItem[];
+  setPageContent: Dispatch<SetStateAction<PageItem[]>>;
 }
-interface PageItem {
-  type: PageType;
-  text: string;
-  src?: string;
-  styles: React.CSSProperties
-}
+
+export const PageContext = createContext<PageContextValues | null>(null);
 
 export default function Page() {
   const { setInPage } = useContext(MainContext) as MainContextValues
@@ -23,27 +26,44 @@ export default function Page() {
   const [title, setTitle] = useState("");
   const [pageContent, setPageContent] = useState<PageItem[]>([
     {
+      id: uuidv4(),
       type: PageType.Image,
-      text: "",
       src: "https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       styles: {
         width: "100px",
         height: "100px",
-        float: "right"
-      }
+        float: "left",
+        display: "block",
+        margin: "0 auto",
+      },
+      mode: Mode.Edit
     },
     {
+      id: uuidv4(),
       type: PageType.Text,
       text: "Hello absworld Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello worldHello world Hello world Hello world Hello world Hello world Hello world Hello world",
       styles: {
         width: "100%",
-        height: "100%",
-        float: "none"
-      }
+        display: "block"
+      },
+      mode: Mode.Edit
     },
+    {
+      id: uuidv4(),
+      type: PageType.Image,
+      src: "https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      styles: {
+        width: "100px",
+        height: "100px",
+        float: "right",
+        display: "block",
+        margin: "0 auto",
+        
+      },
+      mode: Mode.Edit
+    },
+    
   ]);
-
-
 
 
   useEffect(() => {
@@ -53,20 +73,28 @@ export default function Page() {
     }
   }, [setInPage])
 
-  const handleClickOnPage = (e: React.MouseEvent) => {
-    setPageContent([...pageContent, {
-      type: PageType.Text,
-      text: "Hello absworld Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello world Hello worldHello world Hello world Hello world Hello world Hello world Hello world Hello world",
-      styles: {
-        width: "100%",
-        height: "100%",
-        float: "none"
-      }
-    },])
+  const handleClickOnPage = () => {
+
+    const lastIdex = pageContent.length - 1
+    if(pageContent.length === 0 || pageContent[lastIdex].type !== PageType.Text) {
+      setPageContent([...pageContent, {
+        id: uuidv4(),
+        type: PageType.Text,
+        text: "",
+        styles: {
+          width: "100%",
+          float: "none",
+          display: "block"
+        },
+        mode: Mode.Edit
+      },])
+      return
+    }
+    document.getElementById(pageContent[lastIdex].id)?.focus();
+    
+
   }
 
-  
-  
   return <>
     <div className={styles.pageMainContainer }>
       <div className={styles.pageMainButonsContainer} style={{float: "right"}}>
@@ -74,26 +102,17 @@ export default function Page() {
       </div>
         <input placeholder="Give your page a title" className={styles.title} type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>
         <div onClick={handleClickOnPage}  className={styles.pageContentContainer}>
-
+        <PageContext.Provider value={{ pageContent, setPageContent }} > 
           {
             pageContent.map((item) => {
               if (item.type === PageType.Text) {
-                return <span 
-                        onClick={(e) => e.stopPropagation()}
-                        style={item.styles}
-                        className={styles.textItem} 
-                        contentEditable>{item.text}
-                      </span>
+                return <TextComponent item={item} key={item.id}/>
               }else if (item.type === PageType.Image) {
-                return <img 
-                        style={item.styles}
-                        className={styles.imageItem} 
-                        src={item.src || ""} 
-                      />
+                return <ImageComponent item={item} key={item.id}/>
               }
             })
           }
-
+          </PageContext.Provider>
         </div>
     </div>
   </>

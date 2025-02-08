@@ -1,5 +1,5 @@
 .chat-button{
-  position: absolute;
+  position: fixed;
   width: 60px;
   height: 60px;
   background-color: var(--mainColor);
