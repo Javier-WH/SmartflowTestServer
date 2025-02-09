@@ -35,11 +35,19 @@ export default function ImageComponent({ item }: { item: PageItem }) {
 
   const popContent = () => {
     return <div className={styles.intemPopover}>
-      <Button icon={<CiAlignLeft />} onClick={() => onTextAlign('left')} />
-      <Button icon={<CiAlignCenterH />} onClick={() => onTextAlign('none')} />
-      <Button icon={<CiAlignRight />} onClick={() => onTextAlign('right')}/> 
+      <Popover content={<span style={{ color: "white" }}>Aling left and wrap text</span>} color="var(--folderTextColor)">
+        <Button icon={<CiAlignLeft />} onClick={() => onTextAlign('left')} />
+      </Popover>
+      <Popover content={<span style={{ color: "white" }}>Do not wrap text</span>} color="var(--folderTextColor)">
+        <Button icon={<CiAlignCenterH />} onClick={() => onTextAlign('none')} />
+      </Popover>
+      <Popover content={<span style={{ color: "white" }}>Aling right and wrap text</span>} color="var(--folderTextColor)">
+        <Button icon={<CiAlignRight />} onClick={() => onTextAlign('right')}/> 
+      </Popover>
       <div className={styles.divider}>|</div>
-      <Button icon={<CiTrash />} onClick={onDelete}/>
+      <Popover content={<span style={{ color: "white" }}>Delete this image</span>} color="var(--folderTextColor)">
+        <Button icon={<CiTrash />} onClick={onDelete}/>
+      </Popover>
     </div>
 
   }
