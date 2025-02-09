@@ -1,6 +1,6 @@
 import { PageItem } from "../../types/pageTypes";
 import { Button, Popover } from "antd"
-import { CiAlignLeft, CiAlignRight, CiAlignCenterH } from "react-icons/ci";
+import { CiAlignLeft, CiAlignRight, CiAlignCenterH, CiTrash } from "react-icons/ci";
 import { PageContext, PageContextValues } from "../../page";
 import { useContext } from "react";
 import styles from "../../page.module.css"
@@ -25,13 +25,21 @@ export default function ImageComponent({ item }: { item: PageItem }) {
     setPageContent(pageContentCopy);
   }
 
+  const onDelete = () => {
+    const pageContentCopy = JSON.parse(JSON.stringify(pageContent));
+    const index = pageContentCopy.findIndex((pageItem: PageItem) => pageItem.id === item.id);
+    pageContentCopy.splice(index, 1);
+    setPageContent(pageContentCopy);
+  }
 
 
   const popContent = () => {
     return <div className={styles.intemPopover}>
       <Button icon={<CiAlignLeft />} onClick={() => onTextAlign('left')} />
       <Button icon={<CiAlignCenterH />} onClick={() => onTextAlign('none')} />
-      <Button icon={<CiAlignRight />} onClick={() => onTextAlign('right')}/>  
+      <Button icon={<CiAlignRight />} onClick={() => onTextAlign('right')}/> 
+      <div className={styles.divider}>|</div>
+      <Button icon={<CiTrash />} onClick={onDelete}/>
     </div>
 
   }
