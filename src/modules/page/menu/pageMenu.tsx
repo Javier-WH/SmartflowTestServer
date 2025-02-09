@@ -1,0 +1,98 @@
+import addImageIcon from "./assets/svg/addImageIcon.svg"
+import addVideoIcon from "./assets/svg/addVideoIcon.svg"
+import addBulletListIcon from "./assets/svg/addBulletListIcon.svg"
+import addNumberListIcon from "./assets/svg/addNumberedListIcon.svg"
+import addHelpBlockIcon from "./assets/svg/addHelpBlockIcon.svg"
+import addCheckboxIcon from "./assets/svg/addCheckBoxIcon.svg"
+import addMultipleChoiceIcon from "./assets/svg/addMultipleChoisesIcon.svg"
+import addTextInputIcon from "./assets/svg/addTextInputIcon.svg"
+import addGuidedChecklistIcon from "./assets/svg/addGuidedCheckList.svg"
+import { Button, Popover } from "antd"
+import { PageContext, PageContextValues } from "../page"
+import { useContext, useRef } from "react"
+import { v4 as uuidv4 } from 'uuid';
+import { Mode, PageType } from "../types/pageEnums"
+import { PageItem } from "../types/pageTypes"
+import styles from "../page.module.css"
+
+export default function PageMenu() {
+
+  const {pageContent, setPageContent } = useContext(PageContext) as PageContextValues
+  const inputFileRef = useRef<HTMLInputElement>(null);
+
+  const handleAddImage = () => {
+    if (inputFileRef.current) {
+      inputFileRef.current.click(); 
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]; 
+
+    if (file) {
+      const reader = new FileReader(); 
+
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        const src = e.target?.result as string; 
+
+        const imageItem: PageItem = {
+          id: uuidv4(),
+          type: PageType.Image,
+          src: src, 
+          styles: {
+            width: "90%",
+            height: "auto",
+            float: "none",
+            display: "block",
+            margin: "0 auto",
+          },
+          mode: Mode.Edit,
+        };
+        const pageContentCopy = [...pageContent];
+        pageContentCopy.push(imageItem);
+        setPageContent(pageContentCopy);
+      };
+
+      reader.readAsDataURL(file); 
+    }
+  };
+
+  return <div className={styles.buttonBar}>
+    <Popover content={<span style={{ color: "white" }}>Add image</span>} color="var(--pageBarColor)">
+      <Button type="primary" icon={<img src={addImageIcon} />} onClick={handleAddImage} />
+      <input
+        type="file"
+        ref={inputFileRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+        accept="image/*" 
+      />
+    </Popover>
+    <Popover content={<span style={{ color: "white" }}>Add video</span>} color="var(--pageBarColor)">
+      <Button type="primary" icon={<img src={addVideoIcon} />} />
+    </Popover>
+    <Popover content={<span style={{ color: "white" }}>Add bullet list</span>} color="var(--pageBarColor)">
+      <Button type="primary" icon={<img src={addBulletListIcon} />} />
+    </Popover>
+    <Popover content={<span style={{ color: "white" }}>Add numbered list</span>} color="var(--pageBarColor)">
+      <Button type="primary" icon={<img src={addNumberListIcon} />} />
+    </Popover>
+    <Popover content={<span style={{ color: "white" }}>Add help block</span>} color="var(--pageBarColor)">
+      <Button type="primary" icon={<img src={addHelpBlockIcon} />} />
+    </Popover>
+    <Popover content={<span style={{ color: "white" }}>Add checkbox</span>} color="var(--pageBarColor)">
+      <Button type="primary" icon={<img src={addCheckboxIcon} />} />
+    </Popover>
+    <Popover content={<span style={{ color: "white" }}>Add multiple choice input</span>} color="var(--pageBarColor)">
+      <Button type="primary" icon={<img src={addMultipleChoiceIcon} />} />
+    </Popover>
+    <Popover content={<span style={{ color: "white" }}>Add text input</span>} color="var(--pageBarColor)">
+      <Button type="primary" icon={<img src={addTextInputIcon} />} />
+    </Popover>
+    <Popover content={<span style={{ color: "white" }}>Add guided checklist</span>} color="var(--pageBarColor)">
+      <Button type="primary" icon={<img src={addGuidedChecklistIcon} />} />
+    </Popover>
+  </div>;
+}
+
+// hsla(211, 39%, 23%, var(--tw-bg-opacity))

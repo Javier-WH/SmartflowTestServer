@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function TextComponent({ item }: { item: PageItem }) {
   const id = item.id;
-  const { pageContent, setPageContent} = useContext(PageContext) as PageContextValues;
+  const { pageContent, setPageContent } = useContext(PageContext) as PageContextValues;
   const spanRef = useRef<HTMLSpanElement>(null);
   const [localText, setLocalText] = useState("");
 
@@ -23,18 +23,6 @@ export default function TextComponent({ item }: { item: PageItem }) {
   useEffect(() => {
     if (spanRef.current) {
       spanRef.current.textContent = localText ?? "";
-      if (item.mode === "edit") {
-        //spanRef.current.focus();
-        // Set cursor to the end of the text
-        /*const range = document.createRange();
-        range.selectNodeContents(spanRef.current);
-        range.collapse(false); 
-        const selection = window.getSelection();
-        if (selection) {
-          selection.removeAllRanges();
-          selection.addRange(range);
-        }*/
-      }
     }
   }, [localText, item.mode]);
 
@@ -151,8 +139,8 @@ export default function TextComponent({ item }: { item: PageItem }) {
             if (previousSpan) {
               previousSpan.focus();
               const range = document.createRange();
-              range.setStart(previousSpan.firstChild || previousSpan, pageContentCopy[previousTextItemIndex].text.length - localText.length); 
-              range.collapse(true); 
+              range.setStart(previousSpan.firstChild || previousSpan, pageContentCopy[previousTextItemIndex].text.length - localText.length);
+              range.collapse(true);
               const selection = window.getSelection();
               if (selection) {
                 selection.removeAllRanges();
@@ -160,11 +148,120 @@ export default function TextComponent({ item }: { item: PageItem }) {
               }
             }
           }, 1);
-          
+
+        }
+      }
+    } else if (e.key === "ArrowUp") {
+      const itemIndex = pageContent.findIndex((pageItem) => pageItem.id === id);
+      const previousTextItemIndex = getPreviusTextItemIndex(itemIndex);
+      const previusElement = document.getElementById(pageContent[previousTextItemIndex]?.id);
+      const element = document.getElementById(id);
+
+      if (element && previusElement) {
+
+        if (element?.textContent?.trim() === "") {
+          previusElement.focus();
+          setTimeout(() => {
+            const range = document.createRange();
+            range.selectNodeContents(previusElement);
+            range.collapse(false);
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+          }, 1);
+          return;
+        }
+
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const cursorRect = range.getBoundingClientRect();
+          const elementRect = element.getBoundingClientRect();
+
+          const tolerance = 5;
+          if (Math.abs(cursorRect.top - elementRect.top) <= tolerance) {
+            console.log("El cursor está en la primera línea");
+            previusElement.focus();
+            setTimeout(() => {
+              const range = document.createRange();
+              range.selectNodeContents(previusElement);
+              range.collapse(false);
+              const selection = window.getSelection();
+              selection?.removeAllRanges();
+              selection?.addRange(range);
+            }, 1);
+
+          }
+        }
+      }
+    } else if (e.key === "ArrowDown") {
+      const itemIndex = pageContent.findIndex((pageItem) => pageItem.id === id);
+      const nextTextItemIndex = getNextTextItemIndex(itemIndex);
+      const nextElement = document.getElementById(pageContent[nextTextItemIndex]?.id);
+      const element = document.getElementById(id);
+
+      if (element && nextElement) {
+
+        if (element?.textContent?.trim() === "") {
+          nextElement.focus();
+          setTimeout(() => {
+            const range = document.createRange();
+            range.selectNodeContents(nextElement);
+            range.collapse(true);
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+          }, 1)
+          return;
+        }
+
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const cursorRect = range.getBoundingClientRect();
+          const elementRect = element.getBoundingClientRect();
+
+          const tolerance = 4;
+          if (Math.abs(cursorRect.bottom - elementRect.bottom) <= tolerance) {
+
+            nextElement.focus();
+            setTimeout(() => {
+              const range = document.createRange();
+              range.selectNodeContents(nextElement);
+              range.collapse(true);
+              const selection = window.getSelection();
+              selection?.removeAllRanges();
+              selection?.addRange(range);
+            }, 1)
+
+          }
         }
       }
     }
   };
+
+  const getPreviusTextItemIndex = (itemIndex: number): number => {
+    let previousTextItemIndex = -1;
+    for (let i = itemIndex - 1; i >= 0; i--) {
+      if (pageContent[i].type === PageType.Text) {
+        previousTextItemIndex = i;
+        break;
+      }
+    }
+    return previousTextItemIndex;
+  }
+
+  const getNextTextItemIndex = (itemIndex: number): number => {
+    let nextTextItemIndex = -1;
+    for (let i = itemIndex + 1; i < pageContent.length; i++) {
+      if (pageContent[i].type === PageType.Text) {
+        nextTextItemIndex = i;
+        break;
+      }
+    }
+    return nextTextItemIndex;
+  };
+
 
   return (
     <span onClick={onClick}>
@@ -173,7 +270,7 @@ export default function TextComponent({ item }: { item: PageItem }) {
         id={id}
         className={styles.textItem}
         contentEditable={item.mode === "edit"}
-        style={{ ...item.styles, /*border: "1px solid black" */}}
+        style={item.styles}
         onInput={handleOnInput}
         onBlur={handleOnBlur}
         onKeyDown={handleKeyDown}

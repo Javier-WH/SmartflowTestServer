@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+*{
+    direction: ltr
+}
 #root, html, body{
     height: 100%;
     padding:0;

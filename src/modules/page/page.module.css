@@ -33,7 +33,7 @@
 }
 
 .pageContentContainer {
-  border: 1px solid rgb(192, 213, 228);
+  /*border: 1px solid rgb(192, 213, 228);*/
   background-color: white;
   width: var(--pageWidth);
   min-height: 80%;
@@ -43,3 +43,33 @@
 .textItem{
   outline: none;
 }
+
+.buttonBar{
+  background-color: var(--pageBarColor);
+  width: calc(var(--pageWidth) * 0.54);
+  min-width: 378px;
+  height: 43px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.buttonBar button {
+  background-color: transparent;
+}
+.intemPopover {
+  display: flex ;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 0px;
+  margin: 0px;
+}
+
+.intemPopover button{
+  background-color: transparent;
+  color: white;
+  border: none;
+}
+
+
