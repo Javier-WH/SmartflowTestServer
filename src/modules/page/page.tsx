@@ -10,6 +10,7 @@ import PageMenu from "./menu/pageMenu.tsx";
 import styles from "./page.module.css"
 import TextComponent from "./components/text/textComponent.tsx";
 import ImageComponent from "./components/image/imageComponent.tsx";
+import VideoComponent from "./components/video/videoComponent.tsx";
 
 
 
@@ -72,10 +73,13 @@ export default function Page() {
               return <TextComponent item={item} key={item.id} />
             } else if (item.type === PageType.Image) {
               return <ImageComponent item={item} key={item.id} />
+            }else if (item.type === PageType.Video) {
+              return <VideoComponent item={item} key={item.id} />
             }
           })
         }
       </div>
+      <div style={{ height: "50px" }}></div>
       <PageMenu />
     </div>
   </PageContext.Provider>

@@ -15,8 +15,8 @@ export default function ImageComponent({ item }: { item: PageItem }) {
     e.stopPropagation();
   }
 
-  const onTextAlign = (aling: 'left' | 'right' | 'none') => {
-    const pageContentCopy = JSON.parse(JSON.stringify(pageContent));
+  const onTextAlign = async (aling: 'left' | 'right' | 'none') => {
+    const pageContentCopy = await JSON.parse(JSON.stringify(pageContent));
     const index = pageContentCopy.findIndex((pageItem: PageItem) => pageItem.id === item.id);
     const styles = pageContentCopy[index].styles
     styles.float = aling;
@@ -25,8 +25,8 @@ export default function ImageComponent({ item }: { item: PageItem }) {
     setPageContent(pageContentCopy);
   }
 
-  const onDelete = () => {
-    const pageContentCopy = JSON.parse(JSON.stringify(pageContent));
+  const onDelete = async () => {
+    const pageContentCopy = await JSON.parse(JSON.stringify(pageContent));
     const index = pageContentCopy.findIndex((pageItem: PageItem) => pageItem.id === item.id);
     pageContentCopy.splice(index, 1);
     setPageContent(pageContentCopy);

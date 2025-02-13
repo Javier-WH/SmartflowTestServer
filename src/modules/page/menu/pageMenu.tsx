@@ -1,5 +1,4 @@
 import addImageIcon from "./assets/svg/addImageIcon.svg"
-import addVideoIcon from "./assets/svg/addVideoIcon.svg"
 import addBulletListIcon from "./assets/svg/addBulletListIcon.svg"
 import addNumberListIcon from "./assets/svg/addNumberedListIcon.svg"
 import addHelpBlockIcon from "./assets/svg/addHelpBlockIcon.svg"
@@ -7,6 +6,7 @@ import addCheckboxIcon from "./assets/svg/addCheckBoxIcon.svg"
 import addMultipleChoiceIcon from "./assets/svg/addMultipleChoisesIcon.svg"
 import addTextInputIcon from "./assets/svg/addTextInputIcon.svg"
 import addGuidedChecklistIcon from "./assets/svg/addGuidedCheckList.svg"
+import VideoModal from "./videoModal/videoModal"
 import { Button, Popover } from "antd"
 import { PageContext, PageContextValues } from "../page"
 import { useContext, useRef } from "react"
@@ -40,7 +40,7 @@ export default function PageMenu() {
           type: PageType.Image,
           src: src, 
           styles: {
-            width: "90%",
+            width: "100%",
             height: "auto",
             float: "none",
             display: "block",
@@ -49,8 +49,25 @@ export default function PageMenu() {
           mode: Mode.Edit,
         };
         const pageContentCopy = [...pageContent];
+
+        const textItem: PageItem = {
+          id: uuidv4(),
+          type: PageType.Text,
+          text: "",
+          styles: {
+            width: "100%",
+            float: "none",
+            display: "block"
+          },
+          mode: Mode.Edit
+        }
         pageContentCopy.push(imageItem);
+        pageContentCopy.push(textItem);
         setPageContent(pageContentCopy);
+        // Clear the input after using the file
+        if (inputFileRef.current) {
+          inputFileRef.current.value = ''; 
+        }
       };
 
       reader.readAsDataURL(file); 
@@ -69,7 +86,7 @@ export default function PageMenu() {
       />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add video</span>} color="var(--pageBarColor)">
-      <Button type="primary" icon={<img src={addVideoIcon} />} />
+      <VideoModal />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add bullet list</span>} color="var(--pageBarColor)">
       <Button type="primary" icon={<img src={addBulletListIcon} />} />

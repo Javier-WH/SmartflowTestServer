@@ -116,6 +116,14 @@ export default function TextComponent({ item }: { item: PageItem }) {
           const pageContentCopy = JSON.parse(JSON.stringify(pageContent));
           const itemIndex = pageContent.findIndex((pageItem) => pageItem.id === id);
 
+            // delete the previous element if it is not text
+          if(pageContentCopy[itemIndex-1]?.type !== PageType.Text) {
+            pageContentCopy.splice((itemIndex-1), 1);
+            setPageContent(pageContentCopy);
+            return
+          }
+
+            // text behavior rules
           let previousTextItemIndex = -1;
           for (let i = itemIndex - 1; i >= 0; i--) {
             if (pageContent[i].type === PageType.Text) {
