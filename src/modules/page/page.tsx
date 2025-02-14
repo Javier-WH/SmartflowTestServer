@@ -11,6 +11,7 @@ import styles from "./page.module.css"
 import TextComponent from "./components/text/textComponent.tsx";
 import ImageComponent from "./components/image/imageComponent.tsx";
 import VideoComponent from "./components/video/videoComponent.tsx";
+import ListComponent from "./components/list/listComponent.tsx";
 
 
 
@@ -66,7 +67,7 @@ export default function Page() {
         <button onClick={() => navigate(-1)}> <img src={homeIcon} /> {">"}</button>
       </div>
       <input placeholder="Give your page a title" className={styles.title} type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-      <div onClick={handleClickOnPage} className={styles.pageContentContainer}>
+      <div onClick={handleClickOnPage} className={styles.pageContentContainer} id="pageContentContainer">
         {
           pageContent.map((item) => {
             if (item.type === PageType.Text) {
@@ -75,6 +76,8 @@ export default function Page() {
               return <ImageComponent item={item} key={item.id} />
             }else if (item.type === PageType.Video) {
               return <VideoComponent item={item} key={item.id} />
+            }else if (item.type === PageType.List) {
+              return <ListComponent item={item} key={item.id} />
             }
           })
         }

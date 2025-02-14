@@ -1,7 +1,8 @@
 export enum PageType {
   Text = "text",
   Image = "image",
-  Video = "video"
+  Video = "video",
+  List = "list"
 }
 
 export enum Mode{

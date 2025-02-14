@@ -74,6 +74,25 @@ export default function PageMenu() {
     }
   };
 
+  const addList = async (listType: "ordered" | "unordered") => {
+    const pageContentCopy = await JSON.parse(JSON.stringify(pageContent));
+    const newList: PageItem = {
+      id: uuidv4(),
+      type: PageType.List,
+      text: "",
+      listType,
+      listItems: [""],
+      styles: {
+        width: "100%",
+        float: "none",
+        display: "block"
+      },
+      mode: Mode.Edit
+    }
+    pageContentCopy.push(newList);
+    setPageContent(pageContentCopy);
+  }
+
   return <div className={styles.buttonBar}>
     <Popover content={<span style={{ color: "white" }}>Add image</span>} color="var(--pageBarColor)">
       <Button type="primary" icon={<img src={addImageIcon} />} onClick={handleAddImage} />
@@ -89,10 +108,10 @@ export default function PageMenu() {
       <VideoModal />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add bullet list</span>} color="var(--pageBarColor)">
-      <Button type="primary" icon={<img src={addBulletListIcon} />} />
+      <Button type="primary" icon={<img src={addBulletListIcon} onClick={() => addList("unordered")}/>} />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add numbered list</span>} color="var(--pageBarColor)">
-      <Button type="primary" icon={<img src={addNumberListIcon} />} />
+      <Button type="primary" icon={<img src={addNumberListIcon} onClick={() => addList("ordered")} />} />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add help block</span>} color="var(--pageBarColor)">
       <Button type="primary" icon={<img src={addHelpBlockIcon} />} />

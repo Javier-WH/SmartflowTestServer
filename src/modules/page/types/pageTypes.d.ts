@@ -6,6 +6,8 @@ export interface PageItem {
   src?: string;
   styles: React.CSSProperties;
   mode: Mode;
+  listType?: "ordered" | "unordered";
+  listItems?: string[];
 }
 
 

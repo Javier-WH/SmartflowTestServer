@@ -1,3 +1,9 @@
+* {
+  direction: ltr
+}
+
+
+
 :root {
   
   --mainColor: hsla(205, 76%, 39%);

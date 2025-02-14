@@ -81,4 +81,6 @@
   border: none;
 }
 
-
+.listItem{
+ outline: none;
+}
