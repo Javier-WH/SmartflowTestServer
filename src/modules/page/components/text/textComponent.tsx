@@ -116,6 +116,16 @@ export default function TextComponent({ item }: { item: PageItem }) {
           const pageContentCopy = JSON.parse(JSON.stringify(pageContent));
           const itemIndex = pageContent.findIndex((pageItem) => pageItem.id === id);
 
+          if (pageContentCopy[itemIndex - 1]?.type === PageType.List) {
+            const elementData = pageContentCopy[itemIndex - 1];
+            const elementId = elementData.id;
+            const lastIdex = elementData.listItems.length - 1;
+            const focusedElement = document.getElementById(`${elementId}-${lastIdex}`);
+            focusedElement?.focus();
+            moveCursorToEnd(focusedElement as HTMLElement);
+            return
+          }
+
             // delete the previous element if it is not text
           if(pageContentCopy[itemIndex-1]?.type !== PageType.Text) {
             pageContentCopy.splice((itemIndex-1), 1);
@@ -268,6 +278,23 @@ export default function TextComponent({ item }: { item: PageItem }) {
       }
     }
     return nextTextItemIndex;
+  };
+
+  const moveCursorToEnd = (element: HTMLElement) => {
+    if (element) {
+      const range = document.createRange();
+      const selection = window.getSelection();
+
+      // Crear un rango que apunte al final del contenido del elemento
+      range.setStart(element, element.childNodes.length);
+      range.collapse(true);
+
+      // Establecer la selección al final del contenido del elemento
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
   };
 
 
