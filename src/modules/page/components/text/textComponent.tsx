@@ -122,7 +122,6 @@ export default function TextComponent({ item }: { item: PageItem }) {
           }
 
           // text behavior rules ///////////////////////////////
-
           // find the previous text item
           let previousTextItemIndex = -1;
           for (let i = itemIndex - 1; i >= 0; i--) {
