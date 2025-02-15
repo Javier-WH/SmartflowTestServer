@@ -1,8 +1,5 @@
 import { createContext, ReactNode, useState } from "react"
 
-
-
-
 export interface MainContextValues  {
   inPage: boolean,
   setInPage: React.Dispatch<React.SetStateAction<boolean>>

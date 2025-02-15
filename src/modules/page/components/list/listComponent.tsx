@@ -5,6 +5,7 @@ import bulletIcon from "../../menu/assets/svg/addBulletListIcon.svg"
 import numberIcon from "../../menu/assets/svg/addNumberedListIcon.svg"
 import { PageContext, PageContextValues } from "../../page";
 import { useContext, useEffect, useState } from "react";
+import { flushSync } from 'react-dom';
 import styles from "../../page.module.css"
 import { Mode } from "../../types/pageEnums";
 import { PageType } from "../../types/pageEnums";
@@ -14,7 +15,16 @@ import useFocusItem from "../../hooks/useFocusItem";
 export default function ListComponent({ item }: { item: PageItem }) {
   const { pageContent, setPageContent, setPageContentPromise } = useContext(PageContext) as PageContextValues;
   const [listContent, setListContent] = useState<string[]>([]);
-  const{ focusPrevItem, focusNextItem } = useFocusItem(item.id);
+  const { focusPrevItem, focusNextItem } = useFocusItem(item.id);
+
+  function setListContentPromise(newItems: string[]): Promise<void> {
+    return new Promise<void>((resolve) => {
+      flushSync(() => {
+        setListContent(newItems);
+      });
+      resolve();
+    });
+  }
 
   // Sincronizar con los items del contexto
   useEffect(() => {
@@ -25,11 +35,11 @@ export default function ListComponent({ item }: { item: PageItem }) {
     const index = listContent.length - 1;
     const id = `${item.id}-${index}`;
     const element = document.getElementById(id);
-    if (element) {
+    const lastPageItemId = pageContent[pageContent.length - 1]?.id;
+    if (element && lastPageItemId === item.id) {
       element.focus();
       moveCursorToEnd(element);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listContent]);
 
@@ -39,7 +49,6 @@ export default function ListComponent({ item }: { item: PageItem }) {
       pageItem.id === item.id ? { ...pageItem, listItems: listContent } : pageItem
     );
     setPageContent(updatedContent);
-
   };
 
   // Manejar cambios en el contenido de los items
@@ -64,9 +73,6 @@ export default function ListComponent({ item }: { item: PageItem }) {
 
   };
 
-
-
-
   const isCursorAtStart = (element: HTMLElement): boolean => {
     if (!element) return false;
     const selection = window.getSelection();
@@ -86,24 +92,25 @@ export default function ListComponent({ item }: { item: PageItem }) {
       if (listContent[listContent.length - 1] === "") {
         const listContentCopy = [...listContent];
         listContentCopy.pop();
-        setListContent(listContentCopy);
-        const pageContentCopy = [...pageContent];
-        if(pageContentCopy[pageContentCopy.length - 1].type !== PageType.Text){
-          const newTextItem: PageItem = {
-            id: uuidv4(),
-            type: PageType.Text,
-            text: "",
-            styles: {
-              width: "100%",
-              float: "none",
-              display: "block"
-            },
-            mode: Mode.Edit
-          };
-          pageContentCopy.push(newTextItem);
-        }
-        setPageContentPromise(pageContentCopy).then(() => {
-          focusNextItem()
+        setListContentPromise(listContentCopy).then(() => {
+          const pageContentCopy = [...pageContent];
+          if (pageContentCopy[pageContentCopy.length - 1].type !== PageType.Text) {
+            const newTextItem: PageItem = {
+              id: uuidv4(),
+              type: PageType.Text,
+              text: "",
+              styles: {
+                width: "100%",
+                float: "none",
+                display: "block"
+              },
+              mode: Mode.Edit
+            };
+            pageContentCopy.push(newTextItem);
+          }
+          setPageContentPromise(pageContentCopy).then(() => {
+            focusNextItem()
+          })
         })
         return
       }
@@ -126,17 +133,16 @@ export default function ListComponent({ item }: { item: PageItem }) {
         })
         return
       }
-
       deleteItem(index);
-      setTimeout(() => {
-        const nextElementId = `${item.id}-${index - 1}`;
-        const nextElement = document.getElementById(nextElementId) as HTMLElement;
-        if (nextElement) {
-          nextElement.focus();
-          moveCursorToEnd(nextElement);
-        }
-      }, 1);
-    } 
+
+      const nextElementId = `${item.id}-${index - 1}`;
+      const nextElement = document.getElementById(nextElementId) as HTMLElement;
+      if (nextElement) {
+        nextElement.focus();
+        moveCursorToEnd(nextElement);
+      }
+
+    }
   };
 
 

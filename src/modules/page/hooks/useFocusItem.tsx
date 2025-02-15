@@ -33,10 +33,13 @@ export default function useFocusItem(currentItemId: string) {
       const nextElement = document.getElementById(nextItem.id) as HTMLElement;
       if (nextElement) {
         nextElement.focus();
-        if (resolveNextFocusPromiseRef.current) {
-          resolveNextFocusPromiseRef.current(true);
-          resolveNextFocusPromiseRef.current = null;
-        }
+        setTimeout(() => {
+          if (resolveNextFocusPromiseRef.current) {
+            resolveNextFocusPromiseRef.current(true);
+            resolveNextFocusPromiseRef.current = null;
+            
+          }
+        }, 1);
       } else {
         // Elemento no encontrado en el DOM
         if (resolveNextFocusPromiseRef.current) {
@@ -68,10 +71,12 @@ export default function useFocusItem(currentItemId: string) {
       if (prevElement) {
         prevElement.focus();
         moveCursorToEnd(prevElement);
-        if (resolvePrevFocusPromiseRef.current) {
-          resolvePrevFocusPromiseRef.current(true);
-          resolvePrevFocusPromiseRef.current = null;
-        }
+        setTimeout(() => {
+          if (resolvePrevFocusPromiseRef.current) {
+            resolvePrevFocusPromiseRef.current(true);
+            resolvePrevFocusPromiseRef.current = null;
+          }
+        }, 1);
       } else {
         // Elemento no encontrado en el DOM
         if (resolvePrevFocusPromiseRef.current) {
@@ -101,8 +106,8 @@ export default function useFocusItem(currentItemId: string) {
 
   const focusPrevItem = () => {
     return new Promise<boolean>((resolve) => {
-      resolvePrevFocusPromiseRef.current = resolve;
       setShouldFocusPrev(true);
+      resolvePrevFocusPromiseRef.current = resolve;
     });
   };
 

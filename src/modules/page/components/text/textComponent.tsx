@@ -9,7 +9,7 @@ import useFocusItem from "../../hooks/useFocusItem";
 
 export default function TextComponent({ item }: { item: PageItem }) {
   const id = item.id;
-  const { pageContent, setPageContent } = useContext(PageContext) as PageContextValues;
+  const { pageContent, setPageContent, setPageContentPromise } = useContext(PageContext) as PageContextValues;
   const spanRef = useRef<HTMLSpanElement>(null);
   const [localText, setLocalText] = useState("");
   const { focusNextItem, focusPrevItem } = useFocusItem(id);
@@ -98,9 +98,10 @@ export default function TextComponent({ item }: { item: PageItem }) {
     } else if (e.key === "Backspace") {
       if (spanRef.current) {
         if (isCursorAtStart()) {
+          e.preventDefault();
           const pageContentCopy = JSON.parse(JSON.stringify(pageContent));
           const itemIndex = pageContent.findIndex((pageItem) => pageItem.id === id);
-          
+
           //focus on the last element if is a list
           if (pageContentCopy[itemIndex - 1]?.type === PageType.List) {
             const elementData = pageContentCopy[itemIndex - 1];
@@ -114,9 +115,9 @@ export default function TextComponent({ item }: { item: PageItem }) {
             return
           }
 
-            // delete the previous element if it is not text
-          if(pageContentCopy[itemIndex-1]?.type !== PageType.Text) {
-            pageContentCopy.splice((itemIndex-1), 1);
+          // delete the previous element if it is not text
+          if (pageContentCopy[itemIndex - 1]?.type !== PageType.Text) {
+            pageContentCopy.splice((itemIndex - 1), 1);
             setPageContent(pageContentCopy);
             return
           }
@@ -140,10 +141,9 @@ export default function TextComponent({ item }: { item: PageItem }) {
           else if (localText === "") {
             pageContentCopy.splice(itemIndex, 1);
           }
-          setPageContent(pageContentCopy);
 
-          // fix cursor position after deleting
-          setTimeout(() => {
+          setPageContentPromise(pageContentCopy).then(() => {
+            // fix cursor position after deleting
             const previousSpan = document.getElementById(pageContentCopy[previousTextItemIndex]?.id);
             if (previousSpan) {
               previousSpan.focus();
@@ -156,7 +156,7 @@ export default function TextComponent({ item }: { item: PageItem }) {
                 selection.addRange(range);
               }
             }
-          }, 1);
+          })
 
         }
       }
@@ -164,20 +164,20 @@ export default function TextComponent({ item }: { item: PageItem }) {
       const itemIndex = pageContent.findIndex((pageItem) => pageItem.id === id);
       const previousTextItemIndex = getPreviusTextItemIndex(itemIndex);
       const previusElement = document.getElementById(pageContent[previousTextItemIndex]?.id);
+
       const element = document.getElementById(id);
 
       if (element && previusElement) {
 
         if (element?.textContent?.trim() === "") {
-          previusElement.focus();
-          setTimeout(() => {
+          focusPrevItem().then(() => {
             const range = document.createRange();
             range.selectNodeContents(previusElement);
             range.collapse(false);
             const selection = window.getSelection();
             selection?.removeAllRanges();
             selection?.addRange(range);
-          }, 1);
+          })
           return;
         }
 
@@ -186,20 +186,17 @@ export default function TextComponent({ item }: { item: PageItem }) {
           const range = selection.getRangeAt(0);
           const cursorRect = range.getBoundingClientRect();
           const elementRect = element.getBoundingClientRect();
-
-          const tolerance = 5;
+          const tolerance = 7;
           if (Math.abs(cursorRect.top - elementRect.top) <= tolerance) {
-            console.log("El cursor está en la primera línea");
-            previusElement.focus();
-            setTimeout(() => {
+            focusPrevItem().then(() => {
               const range = document.createRange();
               range.selectNodeContents(previusElement);
               range.collapse(false);
               const selection = window.getSelection();
               selection?.removeAllRanges();
               selection?.addRange(range);
-            }, 1);
 
+            })
           }
         }
       }
@@ -212,15 +209,14 @@ export default function TextComponent({ item }: { item: PageItem }) {
       if (element && nextElement) {
 
         if (element?.textContent?.trim() === "") {
-          nextElement.focus();
-          setTimeout(() => {
+          focusNextItem().then(() => {
             const range = document.createRange();
             range.selectNodeContents(nextElement);
             range.collapse(true);
             const selection = window.getSelection();
             selection?.removeAllRanges();
-            selection?.addRange(range);
-          }, 1)
+            selection?.addRange(range);  
+          })
           return;
         }
 
@@ -232,17 +228,14 @@ export default function TextComponent({ item }: { item: PageItem }) {
 
           const tolerance = 4;
           if (Math.abs(cursorRect.bottom - elementRect.bottom) <= tolerance) {
-
-            nextElement.focus();
-            setTimeout(() => {
+            focusNextItem().then(() => {
               const range = document.createRange();
               range.selectNodeContents(nextElement);
               range.collapse(true);
               const selection = window.getSelection();
               selection?.removeAllRanges();
               selection?.addRange(range);
-            }, 1)
-
+            })
           }
         }
       }

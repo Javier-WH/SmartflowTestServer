@@ -34,7 +34,9 @@ export default function Page() {
   function setPageContentPromise(newItems: PageItem[]): Promise<void> {
     return new Promise<void>((resolve) => {
       setPageContent(() => {
-        resolve();
+        setTimeout(() => {
+          resolve();
+        }, 1);
         return newItems;
       });
     });
