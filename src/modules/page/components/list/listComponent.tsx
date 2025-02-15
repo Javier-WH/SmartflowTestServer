@@ -9,11 +9,12 @@ import styles from "../../page.module.css"
 import { Mode } from "../../types/pageEnums";
 import { PageType } from "../../types/pageEnums";
 import { v4 as uuidv4 } from 'uuid';
+import useFocusItem from "../../hooks/useFocusItem";
 
 export default function ListComponent({ item }: { item: PageItem }) {
-  const { pageContent, setPageContent } = useContext(PageContext) as PageContextValues;
+  const { pageContent, setPageContent, setPageContentPromise } = useContext(PageContext) as PageContextValues;
   const [listContent, setListContent] = useState<string[]>([]);
-
+  const{ focusPrevItem, focusNextItem } = useFocusItem(item.id);
 
   // Sincronizar con los items del contexto
   useEffect(() => {
@@ -29,7 +30,7 @@ export default function ListComponent({ item }: { item: PageItem }) {
       moveCursorToEnd(element);
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listContent]);
 
   // Actualizar contexto cuando se pierde el foco
@@ -82,10 +83,28 @@ export default function ListComponent({ item }: { item: PageItem }) {
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      if (listContent[listContent.length - 1] === ""){
+      if (listContent[listContent.length - 1] === "") {
         const listContentCopy = [...listContent];
         listContentCopy.pop();
         setListContent(listContentCopy);
+        const pageContentCopy = [...pageContent];
+        if(pageContentCopy[pageContentCopy.length - 1].type !== PageType.Text){
+          const newTextItem: PageItem = {
+            id: uuidv4(),
+            type: PageType.Text,
+            text: "",
+            styles: {
+              width: "100%",
+              float: "none",
+              display: "block"
+            },
+            mode: Mode.Edit
+          };
+          pageContentCopy.push(newTextItem);
+        }
+        setPageContentPromise(pageContentCopy).then(() => {
+          focusNextItem()
+        })
         return
       }
 
@@ -95,18 +114,16 @@ export default function ListComponent({ item }: { item: PageItem }) {
         const nextElement = document.getElementById(nextElementid);
         nextElement?.focus();
       }, 1);
+
     } else if (e.key === "Backspace" && isCursorAtStart(e.currentTarget as HTMLElement)) {
       e.preventDefault();
-      if (listContent.length === 1 && listContent[0] === ""){
+      if (listContent.length === 1 && listContent[0] === "") {
         const pageContentCopy = [...pageContent];
         const intemIndex = pageContentCopy.findIndex((pageItem: PageItem) => pageItem.id === item.id);
-        const previousElement = document.getElementById(pageContentCopy[intemIndex - 1].id) as HTMLElement;
-        pageContentCopy.splice(intemIndex, 1);
-        setPageContent(pageContentCopy);
-        setTimeout(() => {
-          previousElement.focus();
-          moveCursorToEnd(previousElement);
-        }, 1);
+        focusPrevItem().then(() => {
+          pageContentCopy.splice(intemIndex, 1);
+          setPageContent(pageContentCopy);
+        })
         return
       }
 
@@ -116,11 +133,13 @@ export default function ListComponent({ item }: { item: PageItem }) {
         const nextElement = document.getElementById(nextElementId) as HTMLElement;
         if (nextElement) {
           nextElement.focus();
-          moveCursorToEnd(nextElement); 
+          moveCursorToEnd(nextElement);
         }
       }, 1);
-    }
+    } 
   };
+
+
 
   const moveCursorToEnd = (element: HTMLElement) => {
     if (element) {
@@ -146,18 +165,18 @@ export default function ListComponent({ item }: { item: PageItem }) {
     setPageContent(pageContentCopy);
   }
 
-  const onChangeType = ({e, type}:{e: React.MouseEvent, type: "ordered" | "unordered"}) => {
+  const onChangeType = ({ e, type }: { e: React.MouseEvent, type: "ordered" | "unordered" }) => {
     e.stopPropagation();
     const pageContentCopy = [...pageContent];
     const index = pageContentCopy.findIndex((pageItem: PageItem) => pageItem.id === item.id);
     pageContentCopy[index].listType = type;
     setPageContent(pageContentCopy);
   }
-  
+
   const popContent = () => {
     return <div className={styles.intemPopover}>
       <Popover content={<span style={{ color: "white" }}>Change to {item.listType === "ordered" ? "Bullet list" : "Numbered list"}</span>} color="var(--folderTextColor)">
-        <Button icon={<img src={item.listType === "ordered" ? bulletIcon : numberIcon} />} onClick={e => onChangeType({e, type: item.listType === "ordered" ? "unordered" : "ordered"})} />
+        <Button icon={<img src={item.listType === "ordered" ? bulletIcon : numberIcon} />} onClick={e => onChangeType({ e, type: item.listType === "ordered" ? "unordered" : "ordered" })} />
       </Popover>
       <Popover content={<span style={{ color: "white" }}>Delete this list</span>} color="var(--folderTextColor)">
         <Button icon={<CiTrash />} onClick={onDelete} />
@@ -167,14 +186,14 @@ export default function ListComponent({ item }: { item: PageItem }) {
   }
 
   return (
-    <Popover  placement="topLeft" content={popContent()} color="var(--pageBarColor)"  >
-      <ul id={item.id} style={{ listStyleType: item.listType === "ordered" ? "decimal" : "disc", marginLeft: "20px"}}>
+    <Popover placement="topLeft" content={popContent()} color="var(--pageBarColor)"  >
+      <ul id={item.id} style={{ listStyleType: item.listType === "ordered" ? "decimal" : "disc", marginLeft: "20px" }}>
         {listContent.map((content, index) => (
           <li
             key={`${item.id}-${index}`}
             id={`${item.id}-${index}`}
             contentEditable={item.mode === Mode.Edit}
-            onClick={e =>  e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
             onBlur={updateContext}
             onKeyDown={(e) => handleKeyDown(e, index)}
             onInput={(e) => handleItemChange(index, e.currentTarget.textContent || "")}

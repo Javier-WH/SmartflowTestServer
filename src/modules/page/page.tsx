@@ -18,6 +18,7 @@ import ListComponent from "./components/list/listComponent.tsx";
 export interface PageContextValues {
   pageContent: PageItem[];
   setPageContent: Dispatch<SetStateAction<PageItem[]>>;
+  setPageContentPromise: (newItems: PageItem[]) => Promise<void>;
 }
 
 export const PageContext = createContext<PageContextValues | null>(null);
@@ -29,6 +30,15 @@ export default function Page() {
   const [title, setTitle] = useState("");
   const [pageContent, setPageContent] = useState<PageItem[]>([]);
 
+  
+  function setPageContentPromise(newItems: PageItem[]): Promise<void> {
+    return new Promise<void>((resolve) => {
+      setPageContent(() => {
+        resolve();
+        return newItems;
+      });
+    });
+  }
 
   useEffect(() => {
     setInPage(true)
@@ -38,7 +48,6 @@ export default function Page() {
   }, [setInPage])
 
   const handleClickOnPage = () => {
-
     const lastIdex = pageContent.length - 1
     if (pageContent.length === 0 || pageContent[lastIdex].type !== PageType.Text) {
       setPageContent([...pageContent, {
@@ -55,13 +64,11 @@ export default function Page() {
       return
     }
     document.getElementById(pageContent[lastIdex].id)?.focus();
-
-
   }
 
 
 
-  return <PageContext.Provider value={{ pageContent, setPageContent }} >
+  return <PageContext.Provider value={{ pageContent, setPageContent, setPageContentPromise }} >
     <div className={styles.pageMainContainer}>
       <div className={styles.pageMainButonsContainer} style={{ float: "right" }}>
         <button onClick={() => navigate(-1)}> <img src={homeIcon} /> {">"}</button>

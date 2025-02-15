@@ -47,6 +47,7 @@ export default function VideoComponent({ item }: { item: PageItem }) {
         title="YouTube video player" 
         style={{ objectFit: 'contain', margin: '0 auto' }}
         allowFullScreen
+        id={item.id}
         >
         </iframe>
     </Popover>

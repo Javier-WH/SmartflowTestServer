@@ -5,12 +5,14 @@ import { useEffect, useRef, useContext, useState } from "react";
 import styles from "../../page.module.css";
 import { PageContext, PageContextValues } from "../../page";
 import { v4 as uuidv4 } from 'uuid';
+import useFocusItem from "../../hooks/useFocusItem";
 
 export default function TextComponent({ item }: { item: PageItem }) {
   const id = item.id;
   const { pageContent, setPageContent } = useContext(PageContext) as PageContextValues;
   const spanRef = useRef<HTMLSpanElement>(null);
   const [localText, setLocalText] = useState("");
+  const { focusNextItem, focusPrevItem } = useFocusItem(id);
 
 
   useEffect(() => {
@@ -91,7 +93,7 @@ export default function TextComponent({ item }: { item: PageItem }) {
           setPageContent(pageContentCopy);
 
           // fix cursor position after entering
-          setTimeout(() => {
+          /*setTimeout(() => {
             const nextSpam = document.getElementById(newTextItem.id);
             if (nextSpam) {
               nextSpam.focus();
@@ -104,7 +106,8 @@ export default function TextComponent({ item }: { item: PageItem }) {
                 selection.addRange(range);
               }
             }
-          }, 1);
+          }, 1);*/
+          focusNextItem();
 
 
         }
@@ -123,6 +126,8 @@ export default function TextComponent({ item }: { item: PageItem }) {
             const focusedElement = document.getElementById(`${elementId}-${lastIdex}`);
             focusedElement?.focus();
             moveCursorToEnd(focusedElement as HTMLElement);
+            pageContentCopy.splice(itemIndex, 1);
+            setPageContent(pageContentCopy);
             return
           }
 
