@@ -57,7 +57,8 @@ export default function Page() {
         styles: {
           width: "100%",
           float: "none",
-          display: "block"
+          display: "block",
+          border: "1px solid black"
         },
         mode: Mode.Edit
       },])

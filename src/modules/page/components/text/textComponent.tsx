@@ -91,25 +91,7 @@ export default function TextComponent({ item }: { item: PageItem }) {
           }
           pageContentCopy.splice(itemIndex + 1, 0, newTextItem);
           setPageContent(pageContentCopy);
-
-          // fix cursor position after entering
-          /*setTimeout(() => {
-            const nextSpam = document.getElementById(newTextItem.id);
-            if (nextSpam) {
-              nextSpam.focus();
-              const range = document.createRange();
-              range.setStart(nextSpam.firstChild || nextSpam, 0);
-              range.collapse(true);
-              const selection = window.getSelection();
-              if (selection) {
-                selection.removeAllRanges();
-                selection.addRange(range);
-              }
-            }
-          }, 1);*/
           focusNextItem();
-
-
         }
       }
 
@@ -118,7 +100,8 @@ export default function TextComponent({ item }: { item: PageItem }) {
         if (isCursorAtStart()) {
           const pageContentCopy = JSON.parse(JSON.stringify(pageContent));
           const itemIndex = pageContent.findIndex((pageItem) => pageItem.id === id);
-
+          
+          //focus on the last element if is a list
           if (pageContentCopy[itemIndex - 1]?.type === PageType.List) {
             const elementData = pageContentCopy[itemIndex - 1];
             const elementId = elementData.id;
@@ -138,7 +121,9 @@ export default function TextComponent({ item }: { item: PageItem }) {
             return
           }
 
-            // text behavior rules
+          // text behavior rules ///////////////////////////////
+
+          // find the previous text item
           let previousTextItemIndex = -1;
           for (let i = itemIndex - 1; i >= 0; i--) {
             if (pageContent[i].type === PageType.Text) {
@@ -146,11 +131,13 @@ export default function TextComponent({ item }: { item: PageItem }) {
               break;
             }
           }
+          // if previous text item is a text item, concatenate the text
           if (previousTextItemIndex !== -1) {
             const newText = (pageContentCopy[previousTextItemIndex].text ?? "") + localText;
             pageContentCopy[previousTextItemIndex].text = newText;
             pageContentCopy.splice(itemIndex, 1);
           }
+          // if local text is empty, delete the item
           else if (localText === "") {
             pageContentCopy.splice(itemIndex, 1);
           }
