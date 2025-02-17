@@ -10,6 +10,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@ant-design/icons": "5.6.1",
         "@internationalized/date": "3.5.4",
         "@nextui-org/react": "2.3.6",
         "@supabase-cache-helpers/postgrest-swr": "1.7.5",
