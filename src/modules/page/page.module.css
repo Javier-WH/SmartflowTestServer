@@ -125,10 +125,11 @@
 
 .mcContainer{
   display: "flex"; 
-  flex-direction: "column"; 
+  flex-direction: "column";
   position: "relative";
   width: max-content;
   min-width: 300px;
+  margin-bottom: 50px;
 }
 
 .mcItem {

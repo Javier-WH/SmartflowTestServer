@@ -161,6 +161,19 @@ export default function PageMenu() {
       mode: Mode.Edit
     }
     pageContentCopy.push(newList);
+
+    const textItem: PageItem = {
+      id: uuidv4(),
+      type: PageType.Text,
+      text: "",
+      styles: {
+        width: "100%",
+        float: "none",
+        display: "block"
+      },
+      mode: Mode.Edit
+    }
+    pageContentCopy.push(textItem);
     setPageContent(pageContentCopy);
   }
 

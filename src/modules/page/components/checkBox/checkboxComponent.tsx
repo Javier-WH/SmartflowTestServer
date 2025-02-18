@@ -218,7 +218,7 @@ export default function ListComponent({ item }: { item: PageItem }) {
     <Popover placement="topLeft" content={popContent()} color="var(--pageBarColor)"  >
       <div id={item.id} style={{ display: "flex", flexDirection: "column" }}>
         {listContent.map((content, index) => (
-          <div style={{display: "flex", alignItems: "center", columnGap: "5px"}}>
+          <div key={`${item.id}-${index}`} style={{display: "flex", alignItems: "center", columnGap: "5px"}}>
             <Checkbox onBlur={updateContext} checked={checkedList[index]} onChange={e=> onChange(e, index)}></Checkbox>
             <span
               key={`${item.id}-${index}`}

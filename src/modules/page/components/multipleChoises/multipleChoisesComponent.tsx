@@ -13,22 +13,29 @@ import { v4 as uuidv4 } from 'uuid';
 import useFocusItem from "../../hooks/useFocusItem";
 import addCheckboxIcon from "../../menu/assets/svg/addCheckBoxIcon.svg"
 import addMultipleChoiceIcon from "../../menu/assets/svg/addMultipleChoisesIcon.svg"
+import { LuRows4, LuColumns4 } from "react-icons/lu";
 
 export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
   const { pageContent, setPageContent, setPageContentPromise } = useContext(PageContext) as PageContextValues;
   const [listContent, setListContent] = useState<string[]>([]);
   const [checkedList, setCheckedList] = useState<boolean[]>([]);
   const { focusPrevItem, focusNextItem } = useFocusItem(item.id);
+  const [itemKeys, setItemKeys] = useState<string[]>([]);
+  const [flexDirection, setFlexDirection] = useState<"column" | "row">("column");
+  const [questions, setQuestions] = useState<string>("");
 
-  function setListContentPromise(newItems: string[]): Promise<void> {
-    return new Promise<void>((resolve) => {
-      flushSync(() => {
-        setListContent(newItems);
-      });
-      resolve();
-    });
-  }
+  useEffect(() => {
+    if (item.listItems && itemKeys.length === 0) {
+      setItemKeys(item.listItems.map(() => uuidv4()));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item.listItems]);
 
+  useEffect(() => {
+    setListContent(item.listItems ?? []);
+    setCheckedList(item.checkedItems ?? []);
+    setQuestions(item.text ?? "");
+  }, [item.listItems, item.checkedItems, item.text]);
 
 
   // Sincronizar con los items del contexto
@@ -49,10 +56,19 @@ export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listContent]);
 
+  function setListContentPromise(newItems: string[]): Promise<void> {
+    return new Promise<void>((resolve) => {
+      flushSync(() => {
+        setListContent(newItems);
+      });
+      resolve();
+    });
+  }
+
   // Actualizar contexto cuando se pierde el foco
   const updateContext = () => {
     const updatedContent = pageContent.map(pageItem =>
-      pageItem.id === item.id ? { ...pageItem, listItems: listContent, checkedItems: checkedList } : pageItem
+      pageItem.id === item.id ? { ...pageItem, listItems: listContent, checkedItems: checkedList, text: questions } : pageItem
     );
 
     setPageContent(updatedContent);
@@ -60,7 +76,9 @@ export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
 
   // Manejar cambios en el contenido de los items
   const handleItemChange = (index: number, newText: string) => {
-    listContent[index] = newText
+    const newListContent = [...listContent]; // Crear copia del array
+    newListContent[index] = newText;
+    setListContent(newListContent); // Actualizar estado
   };
 
   // Agregar nuevo elemento al presionar Enter
@@ -73,8 +91,11 @@ export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
     newChecked.splice(index + 1, 0, false);
     setCheckedList(newChecked);
 
-    updateContext();
+    const newKeys = [...itemKeys];
+    newKeys.splice(index + 1, 0, uuidv4()); // Agregar nueva key
+    setItemKeys(newKeys);
 
+    updateContext();
   };
 
   // Eliminar elemento al presionar Backspace
@@ -202,6 +223,12 @@ export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
 
   const popContent = () => {
     return <div className={styles.intemPopover}>
+      <Popover content={<span style={{ color: "white" }}>Display as vertical list</span>} color="var(--folderTextColor)">
+        <Button type="primary" icon={<LuRows4 />} onClick={() => setFlexDirection("column")}/>
+      </Popover>
+      <Popover content={<span style={{ color: "white" }}>Display as horizontal list</span>} color="var(--folderTextColor)">
+        <Button type="primary" icon={<LuColumns4 />} onClick={() => setFlexDirection("row")} />
+      </Popover>
       <Popover content={<span style={{ color: "white" }}>Support one choice</span>} color="var(--folderTextColor)">
         <Button type="primary" icon={<img src={addMultipleChoiceIcon} />} onClick={() => onChangeCheckType("radio")} />
       </Popover>
@@ -252,58 +279,73 @@ export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
     }, 1)
   }
 
-
   return (
     <Popover content={popContent()} color="var(--pageBarColor)"  >
       <div id={item.id} className={styles.mcContainer} style={{ position: "relative" }}>
-        {listContent.map((content, index) => (
-          <div key={`${item.id}-${index}`}
-            style={{ display: "flex", alignItems: "center", columnGap: "5px", position: "relative" }}
-            className={styles.mcItem}
-          >
-            {
-              item.checkType === "checkbox"
-                ? <Checkbox
-                  style={{ pointerEvents: "none" }}
-                  onBlur={updateContext}
-                  checked={checkedList[index]}
-                  onChange={e => onChange(e, index)}>
-                </Checkbox>
-                : <input
-                  style={{ pointerEvents: "none" }}
-                  name={item.id}
-                  type="radio"
-                  onBlur={updateContext}
-                  checked={checkedList[index]}
-                  onClick={e => e.stopPropagation()}
-                  onChange={e => onChangeRadio(e, index)}></input>
-            }
-            <span
-              key={`${item.id}-${index}`}
-              id={`${item.id}-${index}`}
-              contentEditable={item.mode === Mode.Edit}
-              onClick={e => e.stopPropagation()}
-              onBlur={updateContext}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-              onInput={(e) => handleItemChange(index, e.currentTarget.textContent || "")}
-              suppressContentEditableWarning
-              className={styles.mcListItem}
+        <input
+          placeholder="Ask a question"
+          style={{ width: "100%", outline: "none", border: "none", backgroundColor: "transparent"}}
+          type="text"
+          readOnly={item.mode !== Mode.Edit}
+          onClick={e => e.stopPropagation()}
+          onBlur={updateContext}
+          value={questions}
+          onChange={(e) => setQuestions(e.target.value)}
+          />
+        <div style={{ display: "flex", flexDirection: flexDirection, rowGap: "1px", columnGap: "10px" }}>
+          {listContent.map((content, index) => (
+            <div
+              key={itemKeys[index]} 
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", columnGap: "5px", position: "relative", width: "100%" }}
+              className={styles.mcItem}
             >
-              {content}
-            </span>
-            <Button
-              shape="circle"
-              size="small"
-              icon={<RiCloseLargeLine />}
-              
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteItem(index);
-              }}
-              style={{ background: "hsla(209,23%,60%,70%)", color: "white", position: "absolute", right: "-11px", top: "50%", transform: "translateY(-50%)" }}
-            />
-          </div>
-        ))}
+              {
+                item.checkType === "checkbox"
+                  ? <Checkbox
+                    style={{ pointerEvents: "none" }}
+                    onBlur={updateContext}
+                    checked={checkedList[index]}
+                    onChange={e => onChange(e, index)}>
+                  </Checkbox>
+                  : <input
+                    style={{ pointerEvents: "none" }}
+                    name={item.id}
+                    type="radio"
+                    onBlur={updateContext}
+                    checked={checkedList[index]}
+                    onClick={e => e.stopPropagation()}
+                    onChange={e => onChangeRadio(e, index)}>
+                  </input>
+              }
+              <input
+                type="text"
+                key={`${item.id}-${index}`}
+                id={`${item.id}-${index}`}
+                readOnly={item.mode !== Mode.Edit}
+                onClick={e => e.stopPropagation()}
+                onBlur={updateContext}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                onChange={(e) => handleItemChange(index, e.target.value)}
+                className={styles.mcListItem}
+                value={content}
+                placeholder={`Option ${index + 1}`}
+                style={{ backgroundColor: "transparent" }}
+                autoFocus={index === listContent.length - 1}
+              />
+              <Button
+                shape="circle"
+                size="small"
+                icon={<RiCloseLargeLine />}
+
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteItem(index);
+                }}
+                style={{ background: "hsla(209,23%,60%,70%)", color: "white", position: "absolute", right: "-11px", top: "50%", transform: "translateY(-50%)" }}
+              />
+            </div>
+          ))}
+        </div>
         <div className={styles.mcItemPlusButton}
           onClick={() => {
             addNewItem(listContent.length - 1)
