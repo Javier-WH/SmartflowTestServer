@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { Button, Modal, Input } from 'antd';
+import { Button, Modal, Input, Popover } from 'antd';
 import addVideoIcon from "../assets/svg/addVideoIcon.svg"
 import { PageContext, PageContextValues } from '../../page';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,10 +8,10 @@ import { PageItem } from '../../types/pageTypes';
 
 const VideoModal: React.FC = () => {
 
-  const {pageContent, setPageContent} = useContext(PageContext) as PageContextValues
+  const { pageContent, setPageContent } = useContext(PageContext) as PageContextValues
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [videoUrl, setVideoUrl] = useState<string >('');
+  const [videoUrl, setVideoUrl] = useState<string>('');
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -34,7 +34,7 @@ const VideoModal: React.FC = () => {
       mode: Mode.Edit,
     }
     pageContentCopy.push(newVideoItem);
-    
+
     const newTextItem: PageItem = {
       id: uuidv4(),
       type: PageType.Text,
@@ -59,14 +59,14 @@ const VideoModal: React.FC = () => {
   return (
     <>
       <Button type="primary" icon={<img src={addVideoIcon} onClick={showModal} />} />
-      <Modal 
-        title="Add Video" 
-        open={isModalOpen} 
-        onOk={handleOk} 
+      <Modal
+        title="Add Video"
+        open={isModalOpen}
+        onOk={handleOk}
         onCancel={handleCancel}
         okText="Add"
-        >
-          <label htmlFor="">Enter video URL</label>
+      >
+        <label htmlFor="">Enter video URL</label>
         <Input style={{ direction: "ltr" }} value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="Enter video URL" />
       </Modal>
     </>

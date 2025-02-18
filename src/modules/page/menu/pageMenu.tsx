@@ -156,7 +156,7 @@ export default function PageMenu() {
       />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add video</span>} color="var(--pageBarColor)">
-      <VideoModal />
+     <div style={{ display: "flex", alignItems: "center" }}><VideoModal /></div> 
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add bullet list</span>} color="var(--pageBarColor)">
       <Button type="primary" icon={<img src={addBulletListIcon} onClick={() => addList("unordered")}/>} />
