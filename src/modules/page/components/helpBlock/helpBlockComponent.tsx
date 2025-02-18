@@ -132,7 +132,7 @@ export default function HelpBlockComponent({ item }: { item: PageItem }) {
           className={styles[color]}
           size="large"
           items={[{ key: '1', label: 
-          <Input onBlur={updateContext} value={title} onChange={e => setTitle(e.target.value)} onClick={e => e.stopPropagation()} style={inputStyle} />, 
+          <Input placeholder="A title for your help content" onBlur={updateContext} value={title} onChange={e => setTitle(e.target.value)} onClick={e => e.stopPropagation()} style={inputStyle} />, 
           children: 
           <TextArea onBlur={updateContext} value={content} onChange={e => setContent(e.target.value)} style={inputStyle} rows={4} />  }]}
           defaultActiveKey={['1']}
