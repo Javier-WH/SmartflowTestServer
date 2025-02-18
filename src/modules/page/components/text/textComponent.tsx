@@ -103,7 +103,7 @@ export default function TextComponent({ item }: { item: PageItem }) {
           const itemIndex = pageContent.findIndex((pageItem) => pageItem.id === id);
 
           //focus on the last element if is a list
-          if (pageContentCopy[itemIndex - 1]?.type === PageType.List) {
+          if (pageContentCopy[itemIndex - 1]?.type === PageType.List || pageContentCopy[itemIndex - 1]?.type === PageType.CheckBox) {
             const elementData = pageContentCopy[itemIndex - 1];
             const elementId = elementData.id;
             const lastIdex = elementData.listItems.length - 1;

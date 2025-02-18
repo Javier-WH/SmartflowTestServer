@@ -84,3 +84,29 @@
 .listItem{
  outline: none;
 }
+
+.collapseBlue,
+.collapseBlue * {
+  background-color: hsl(205, 79%, 92%)
+}
+
+
+.collapseYellow,
+.collapseYellow * {
+  background-color: hsl(48, 100%, 88%)
+}
+
+.collapseRed,
+.collapseRed * {
+  background-color: hsl(360, 100%, 87%)
+}
+
+.collapseGreen,
+.collapseGreen * {
+  background-color: hsl(154, 75%, 87%)
+}
+
+.collapseGray,
+.collapseGray * {
+  background-color: hsl(210, 36%, 96%)
+}

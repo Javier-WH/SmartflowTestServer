@@ -93,6 +93,57 @@ export default function PageMenu() {
     setPageContent(pageContentCopy);
   }
 
+  const addCheckBox = async () => {
+    const pageContentCopy = await JSON.parse(JSON.stringify(pageContent));
+    const newList: PageItem = {
+      id: uuidv4(),
+      type: PageType.CheckBox,
+      text: "",
+      listItems: ["  "],
+      checkedItems: [true],
+      styles: {
+        width: "100%",
+        float: "none",
+        display: "block"
+      },
+      mode: Mode.Edit
+    }
+    pageContentCopy.push(newList);
+    setPageContent(pageContentCopy);
+  }
+
+  const addHelpBlock = async () => {
+    const pageContentCopy = await JSON.parse(JSON.stringify(pageContent));
+    const newList: PageItem = {
+      id: uuidv4(),
+      type: PageType.HelpBlock,
+      text: "",
+      listItems: [""],
+      backgroundColor: 'blue',
+      styles: {
+        width: "100%",
+        float: "none",
+        display: "block"
+      },
+      mode: Mode.Edit
+    }
+    pageContentCopy.push(newList);
+    const textItem: PageItem = {
+      id: uuidv4(),
+      type: PageType.Text,
+      text: "",
+      styles: {
+        width: "100%",
+        float: "none",
+        display: "block"
+      },
+      mode: Mode.Edit
+    }
+    pageContentCopy.push(textItem);
+
+    setPageContent(pageContentCopy);
+  }
+
   return <div className={styles.buttonBar}>
     <Popover content={<span style={{ color: "white" }}>Add image</span>} color="var(--pageBarColor)">
       <Button type="primary" icon={<img src={addImageIcon} />} onClick={handleAddImage} />
@@ -114,10 +165,10 @@ export default function PageMenu() {
       <Button type="primary" icon={<img src={addNumberListIcon} onClick={() => addList("ordered")} />} />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add help block</span>} color="var(--pageBarColor)">
-      <Button type="primary" icon={<img src={addHelpBlockIcon} />} />
+      <Button type="primary" icon={<img src={addHelpBlockIcon} />} onClick={addHelpBlock} />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add checkbox</span>} color="var(--pageBarColor)">
-      <Button type="primary" icon={<img src={addCheckboxIcon} />} />
+      <Button type="primary" icon={<img src={addCheckboxIcon} onClick={() => addCheckBox()} />} />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add multiple choice input</span>} color="var(--pageBarColor)">
       <Button type="primary" icon={<img src={addMultipleChoiceIcon} />} />

@@ -12,6 +12,8 @@ import TextComponent from "./components/text/textComponent.tsx";
 import ImageComponent from "./components/image/imageComponent.tsx";
 import VideoComponent from "./components/video/videoComponent.tsx";
 import ListComponent from "./components/list/listComponent.tsx";
+import CheckboxComponent from "./components/checkBox/checkboxComponent.tsx";
+import HelpBlockComponent from "./components/helpBlock/helpBlockComponent.tsx";
 
 
 
@@ -87,6 +89,10 @@ export default function Page() {
               return <VideoComponent item={item} key={item.id} />
             }else if (item.type === PageType.List) {
               return <ListComponent item={item} key={item.id} />
+            }else if (item.type === PageType.CheckBox) {
+              return <CheckboxComponent item={item} key={item.id} />
+            }else if (item.type === PageType.HelpBlock) {
+              return <HelpBlockComponent item={item} key={item.id} />
             }
           })
         }

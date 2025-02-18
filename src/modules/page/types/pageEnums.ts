@@ -2,7 +2,9 @@ export enum PageType {
   Text = "text",
   Image = "image",
   Video = "video",
-  List = "list"
+  List = "list",
+  CheckBox = "checkbox",
+  HelpBlock = "helpBlock"
 }
 
 export enum Mode{

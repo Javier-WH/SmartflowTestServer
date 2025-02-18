@@ -8,6 +8,8 @@ export interface PageItem {
   mode: Mode;
   listType?: "ordered" | "unordered";
   listItems?: string[];
+  checkedItems?: boolean[];
+  backgroundColor?: "blue" | "yellow" | "red" | "green" | "gray"
 }
 
 
