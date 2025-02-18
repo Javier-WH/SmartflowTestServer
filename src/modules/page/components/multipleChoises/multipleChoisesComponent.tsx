@@ -2,6 +2,7 @@ import { PageItem } from "../../types/pageTypes";
 import { Button, Popover, Checkbox } from "antd"
 import type { CheckboxChangeEvent } from 'antd';
 import { CiTrash } from "react-icons/ci";
+import { RiCloseLargeLine } from "react-icons/ri";
 import { PageContext, PageContextValues } from "../../page";
 import { useContext, useEffect, useState } from "react";
 import { flushSync } from 'react-dom';
@@ -10,8 +11,10 @@ import { Mode } from "../../types/pageEnums";
 import { PageType } from "../../types/pageEnums";
 import { v4 as uuidv4 } from 'uuid';
 import useFocusItem from "../../hooks/useFocusItem";
+import addCheckboxIcon from "../../menu/assets/svg/addCheckBoxIcon.svg"
+import addMultipleChoiceIcon from "../../menu/assets/svg/addMultipleChoisesIcon.svg"
 
-export default function ListComponent({ item }: { item: PageItem }) {
+export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
   const { pageContent, setPageContent, setPageContentPromise } = useContext(PageContext) as PageContextValues;
   const [listContent, setListContent] = useState<string[]>([]);
   const [checkedList, setCheckedList] = useState<boolean[]>([]);
@@ -26,7 +29,7 @@ export default function ListComponent({ item }: { item: PageItem }) {
     });
   }
 
-  
+
 
   // Sincronizar con los items del contexto
   useEffect(() => {
@@ -48,7 +51,7 @@ export default function ListComponent({ item }: { item: PageItem }) {
 
   // Actualizar contexto cuando se pierde el foco
   const updateContext = () => {
-     const updatedContent = pageContent.map(pageItem =>
+    const updatedContent = pageContent.map(pageItem =>
       pageItem.id === item.id ? { ...pageItem, listItems: listContent, checkedItems: checkedList } : pageItem
     );
 
@@ -80,6 +83,15 @@ export default function ListComponent({ item }: { item: PageItem }) {
     listContent.splice(index, 1);
     updateContext();
 
+    if (listContent.length === 0 || (listContent.length === 1 && listContent[0] === "")) {
+      const pageContentCopy = [...pageContent];
+      const intemIndex = pageContentCopy.findIndex((pageItem: PageItem) => pageItem.id === item.id);
+      focusPrevItem().then(() => {
+        pageContentCopy.splice(intemIndex, 1);
+        setPageContent(pageContentCopy);
+      })
+      return
+    }
   };
 
   const isCursorAtStart = (element: HTMLElement): boolean => {
@@ -180,11 +192,23 @@ export default function ListComponent({ item }: { item: PageItem }) {
     setPageContent(pageContentCopy);
   }
 
+  const onChangeCheckType = (checkType: "checkbox" | "radio") => {
+    const pageContentCopy = [...pageContent];
+    const index = pageContentCopy.findIndex((pageItem: PageItem) => pageItem.id === item.id);
+    pageContentCopy[index].checkType = checkType;
+    setPageContent(pageContentCopy);
+  }
 
 
   const popContent = () => {
     return <div className={styles.intemPopover}>
-      <Popover content={<span style={{ color: "white" }}>Delete this checkbox</span>} color="var(--folderTextColor)">
+      <Popover content={<span style={{ color: "white" }}>Support one choice</span>} color="var(--folderTextColor)">
+        <Button type="primary" icon={<img src={addMultipleChoiceIcon} />} onClick={() => onChangeCheckType("radio")} />
+      </Popover>
+      <Popover content={<span style={{ color: "white" }}>Support multiple choices</span>} color="var(--folderTextColor)">
+        <Button type="primary" icon={<img src={addCheckboxIcon} />} onClick={() => onChangeCheckType("checkbox")} />
+      </Popover>
+      <Popover content={<span style={{ color: "white" }}>Delete multiple choice element</span>} color="var(--folderTextColor)">
         <Button icon={<CiTrash />} onClick={onDelete} />
       </Popover>
     </div>
@@ -194,6 +218,14 @@ export default function ListComponent({ item }: { item: PageItem }) {
   const onChange = (e: CheckboxChangeEvent, index: number) => {
     const checked = e.target.checked;
     const updatedCheckedList = [...checkedList];
+    updatedCheckedList[index] = checked;
+    setCheckedList(updatedCheckedList);
+    updateContext();
+  };
+
+  const onChangeRadio = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const checked = e.target.checked;
+    const updatedCheckedList = checkedList.map(() => false);
     updatedCheckedList[index] = checked;
     setCheckedList(updatedCheckedList);
     updateContext();
@@ -211,15 +243,41 @@ export default function ListComponent({ item }: { item: PageItem }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listContent]);
 
-
+  const handleClickAddButton = () => {
+    addNewItem(listContent.length - 1)
+    setTimeout(() => {
+      const nextElementid = `${item.id}-${listContent.length}`
+      const nextElement = document.getElementById(nextElementid);
+      nextElement?.focus();
+    }, 1)
+  }
 
 
   return (
-    <Popover placement="topLeft" content={popContent()} color="var(--pageBarColor)"  >
-      <div id={item.id} style={{ display: "flex", flexDirection: "column" }}>
+    <Popover content={popContent()} color="var(--pageBarColor)"  >
+      <div id={item.id} className={styles.mcContainer} style={{ position: "relative" }}>
         {listContent.map((content, index) => (
-          <div style={{display: "flex", alignItems: "center", columnGap: "5px"}}>
-            <Checkbox onBlur={updateContext} checked={checkedList[index]} onChange={e=> onChange(e, index)}></Checkbox>
+          <div key={`${item.id}-${index}`}
+            style={{ display: "flex", alignItems: "center", columnGap: "5px", position: "relative" }}
+            className={styles.mcItem}
+          >
+            {
+              item.checkType === "checkbox"
+                ? <Checkbox
+                  style={{ pointerEvents: "none" }}
+                  onBlur={updateContext}
+                  checked={checkedList[index]}
+                  onChange={e => onChange(e, index)}>
+                </Checkbox>
+                : <input
+                  style={{ pointerEvents: "none" }}
+                  name={item.id}
+                  type="radio"
+                  onBlur={updateContext}
+                  checked={checkedList[index]}
+                  onClick={e => e.stopPropagation()}
+                  onChange={e => onChangeRadio(e, index)}></input>
+            }
             <span
               key={`${item.id}-${index}`}
               id={`${item.id}-${index}`}
@@ -229,12 +287,28 @@ export default function ListComponent({ item }: { item: PageItem }) {
               onKeyDown={(e) => handleKeyDown(e, index)}
               onInput={(e) => handleItemChange(index, e.currentTarget.textContent || "")}
               suppressContentEditableWarning
-              className={styles.listItem}
+              className={styles.mcListItem}
             >
               {content}
             </span>
+            <Button
+              shape="circle"
+              size="small"
+              icon={<RiCloseLargeLine />}
+              
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteItem(index);
+              }}
+              style={{ background: "hsla(209,23%,60%,70%)", color: "white", position: "absolute", right: "-11px", top: "50%", transform: "translateY(-50%)" }}
+            />
           </div>
         ))}
+        <div className={styles.mcItemPlusButton}
+          onClick={() => {
+            addNewItem(listContent.length - 1)
+            setTimeout(handleClickAddButton);
+          }}>+</div>
       </div>
     </Popover>
   );

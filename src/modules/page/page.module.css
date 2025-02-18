@@ -42,11 +42,11 @@
   outline: none;
 }
 
-.textItem{
+.textItem {
   outline: none;
 }
 
-.buttonBar{
+.buttonBar {
   background-color: var(--pageBarColor);
   width: calc(var(--pageWidth) * 0.54);
   min-width: 378px;
@@ -59,15 +59,17 @@
   bottom: 2px;
 }
 
-.divider{
+.divider {
   font-weight: 100;
   height: 100%;
 }
+
 .buttonBar button {
   background-color: transparent;
 }
+
 .intemPopover {
-  display: flex ;
+  display: flex;
   align-items: center;
   justify-content: space-evenly;
   gap: 0px;
@@ -75,38 +77,85 @@
   color: white;
 }
 
-.intemPopover button{
+.intemPopover button {
   background-color: transparent;
   color: white;
   border: none;
 }
 
-.listItem{
- outline: none;
+.listItem {
+  outline: none;
+  width: 100%;
+}
+.mcListItem {
+  outline: none;
+  width: 100%;
+  position: relative;
+}
+.mcPlaceHolder::before {
+ content: "Hola Mundo";
+ color: gray;
 }
 
 .collapseBlue,
 .collapseBlue * {
-  background-color: hsl(205, 79%, 92%)
+  background-color: hsl(205, 79%, 92%);
 }
 
 
 .collapseYellow,
 .collapseYellow * {
-  background-color: hsl(48, 100%, 88%)
+  background-color: hsl(48, 100%, 88%);
 }
 
 .collapseRed,
 .collapseRed * {
-  background-color: hsl(360, 100%, 87%)
+  background-color: hsl(360, 100%, 87%);
 }
 
 .collapseGreen,
 .collapseGreen * {
-  background-color: hsl(154, 75%, 87%)
+  background-color: hsl(154, 75%, 87%);
 }
 
 .collapseGray,
 .collapseGray * {
-  background-color: hsl(210, 36%, 96%)
+  background-color: hsl(210, 36%, 96%);
 }
+
+.mcContainer{
+  display: "flex"; 
+  flex-direction: "column"; 
+  position: "relative";
+  width: max-content;
+  min-width: 300px;
+}
+
+.mcItem {
+  display: "flex" !important;
+  align-items: "center";
+  column-gap: "10px" !important;
+  background-color: var(--pageBarColor);
+  padding: 10px;
+  background: rgba(199, 228, 247, 0.986);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(98, 193, 255, 0.87);
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.mcItemPlusButton {
+  background: rgba(199, 228, 247, 0.986);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(98, 193, 255, 0.87);
+  color:rgba(98, 193, 255, 0.87);
+  cursor: pointer;
+  text-align: center;
+  font-size: 18px;
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+

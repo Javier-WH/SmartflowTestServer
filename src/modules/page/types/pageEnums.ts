@@ -4,7 +4,8 @@ export enum PageType {
   Video = "video",
   List = "list",
   CheckBox = "checkbox",
-  HelpBlock = "helpBlock"
+  HelpBlock = "helpBlock",
+  MultipleChoises = "multipleChoice"
 }
 
 export enum Mode{

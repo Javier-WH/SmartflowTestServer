@@ -9,6 +9,7 @@ export interface PageItem {
   listType?: "ordered" | "unordered";
   listItems?: string[];
   checkedItems?: boolean[];
+  checkType?: "radio" | "checkbox";
   backgroundColor?: "blue" | "yellow" | "red" | "green" | "gray"
 }
 

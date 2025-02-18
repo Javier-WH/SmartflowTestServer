@@ -14,6 +14,7 @@ import VideoComponent from "./components/video/videoComponent.tsx";
 import ListComponent from "./components/list/listComponent.tsx";
 import CheckboxComponent from "./components/checkBox/checkboxComponent.tsx";
 import HelpBlockComponent from "./components/helpBlock/helpBlockComponent.tsx";
+import MultipleChoisesComponent from "./components/multipleChoises/multipleChoisesComponent.tsx";
 
 
 
@@ -93,6 +94,8 @@ export default function Page() {
               return <CheckboxComponent item={item} key={item.id} />
             }else if (item.type === PageType.HelpBlock) {
               return <HelpBlockComponent item={item} key={item.id} />
+            }else if (item.type === PageType.MultipleChoises) {
+              return <MultipleChoisesComponent item={item} key={item.id} />
             }
           })
         }

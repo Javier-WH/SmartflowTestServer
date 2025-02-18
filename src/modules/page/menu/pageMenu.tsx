@@ -144,6 +144,26 @@ export default function PageMenu() {
     setPageContent(pageContentCopy);
   }
 
+  const addMultipleChoises = async () => {
+    const pageContentCopy = await JSON.parse(JSON.stringify(pageContent));
+    const newList: PageItem = {
+      id: uuidv4(),
+      type: PageType.MultipleChoises,
+      text: "",
+      listItems: [""],
+      checkedItems: [false],
+      checkType: "radio",
+      styles: {
+        width: "100%",
+        float: "none",
+        display: "block"
+      },
+      mode: Mode.Edit
+    }
+    pageContentCopy.push(newList);
+    setPageContent(pageContentCopy);
+  }
+
   return <div className={styles.buttonBar}>
     <Popover content={<span style={{ color: "white" }}>Add image</span>} color="var(--pageBarColor)">
       <Button type="primary" icon={<img src={addImageIcon} />} onClick={handleAddImage} />
@@ -171,7 +191,7 @@ export default function PageMenu() {
       <Button type="primary" icon={<img src={addCheckboxIcon} onClick={() => addCheckBox()} />} />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add multiple choice input</span>} color="var(--pageBarColor)">
-      <Button type="primary" icon={<img src={addMultipleChoiceIcon} />} />
+      <Button type="primary" icon={<img src={addMultipleChoiceIcon} />} onClick={addMultipleChoises} />
     </Popover>
     <Popover content={<span style={{ color: "white" }}>Add text input</span>} color="var(--pageBarColor)">
       <Button type="primary" icon={<img src={addTextInputIcon} />} />
