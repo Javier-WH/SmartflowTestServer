@@ -1,4 +1,5 @@
 import { PageType, Mode } from "./pageEnums";
+import { ListItem } from "../components/guidedCheckList/guidedCheckList";
 export interface PageItem {
   id: string;
   type: PageType;
@@ -8,6 +9,7 @@ export interface PageItem {
   mode: Mode;
   listType?: "ordered" | "unordered";
   listItems?: string[];
+  guidedCheckListItems?: ListItem[];
   checkedItems?: boolean[];
   checkType?: "radio" | "checkbox";
   backgroundColor?: "blue" | "yellow" | "red" | "green" | "gray"
