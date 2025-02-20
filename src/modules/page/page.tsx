@@ -15,6 +15,7 @@ import ListComponent from "./components/list/listComponent.tsx";
 import CheckboxComponent from "./components/checkBox/checkboxComponent.tsx";
 import HelpBlockComponent from "./components/helpBlock/helpBlockComponent.tsx";
 import MultipleChoisesComponent from "./components/multipleChoises/multipleChoisesComponent.tsx";
+import TextInputComponent from "./components/textInput/textInputComponent.tsx";
 
 
 
@@ -96,6 +97,8 @@ export default function Page() {
               return <HelpBlockComponent item={item} key={item.id} />
             }else if (item.type === PageType.MultipleChoises) {
               return <MultipleChoisesComponent item={item} key={item.id} />
+            }else if (item.type === PageType.TextInput) {
+              return <TextInputComponent item={item} key={item.id} />
             }
           })
         }
