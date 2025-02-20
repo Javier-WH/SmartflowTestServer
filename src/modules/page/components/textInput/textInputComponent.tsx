@@ -64,6 +64,7 @@ export default function TextInputComponent({ item }: { item: PageItem }) {
           onBlur={updateContext}
         />
         <TextArea 
+        className={styles.inputTextArea}
           rows={rows}
           readOnly = {item.mode === 'edit'}
           style={{borderRadius: "0px", resize: "none"}}

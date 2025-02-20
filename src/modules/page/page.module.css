@@ -162,4 +162,12 @@
 
 .textInputContainer *{
   direction: ltr !important;
+  box-shadow: none !important;
+  ;
+}
+.textInputContainer *:hover {
+  border: 1px solid lightgray;
+}
+.inputTextArea{
+  border: 1px solid lightgray;
 }
