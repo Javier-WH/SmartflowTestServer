@@ -9,8 +9,10 @@ export default function MainLayout() {
 
     return (
         <MainContextProvider>
-            <div className="flex flex-col h-screen w-screen mx-auto">
-                <NavBar />
+            <div className="flex flex-col h-screen" style={{ overflowX: "hidden" }}>
+                <div style={{ position: "sticky", top: 0, zIndex: 999 }}>
+                    <NavBar />
+                </div>
                 <div className="flex flex-grow bg-gray-250">
                     <main className=" ">
                         <Outlet />
