@@ -51,8 +51,6 @@ export default function TextInputComponent({ item }: { item: PageItem }) {
 
   }
 
-
-
   return <>
     <Popover content={popContent()} color="var(--pageBarColor)">
       <div className={styles.textInputContainer} onClick={e => e.stopPropagation()}>

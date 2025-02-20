@@ -9,7 +9,7 @@ import styles from "../../page.module.css"
 
 
 export default function HelpBlockComponent({ item }: { item: PageItem }) {
-  const { pageContent, setPageContent, setPageContentPromise } = useContext(PageContext) as PageContextValues;
+  const { pageContent, setPageContent } = useContext(PageContext) as PageContextValues;
   const [color, setColor] = useState('collapseBlue');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');

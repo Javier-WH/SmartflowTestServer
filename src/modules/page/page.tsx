@@ -16,6 +16,7 @@ import CheckboxComponent from "./components/checkBox/checkboxComponent.tsx";
 import HelpBlockComponent from "./components/helpBlock/helpBlockComponent.tsx";
 import MultipleChoisesComponent from "./components/multipleChoises/multipleChoisesComponent.tsx";
 import TextInputComponent from "./components/textInput/textInputComponent.tsx";
+import GuidedCheckList from "./components/guidedCheckList/guidedCheckList.tsx";
 
 
 
@@ -99,6 +100,8 @@ export default function Page() {
               return <MultipleChoisesComponent item={item} key={item.id} />
             }else if (item.type === PageType.TextInput) {
               return <TextInputComponent item={item} key={item.id} />
+            }else if (item.type === PageType.GuidedCheckList) {
+              return <GuidedCheckList item={item} key={item.id} />
             }
           })
         }

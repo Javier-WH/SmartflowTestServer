@@ -209,6 +209,40 @@ export default function PageMenu() {
   }
 
 
+  const addGuidedCheckList = async () => {
+    const pageContentCopy = await JSON.parse(JSON.stringify(pageContent));
+    const newList: PageItem = {
+      id: uuidv4(),
+      type: PageType.GuidedCheckList,
+      text: "",
+      listItems: [""],
+      checkedItems: [false],
+      styles: {
+        width: "100%",
+        float: "none",
+        display: "block"
+      },
+      mode: Mode.Edit
+    }
+    pageContentCopy.push(newList);
+    setPageContent(pageContentCopy);
+
+    const textItem: PageItem = {
+      id: uuidv4(),
+      type: PageType.Text,
+      text: "",
+      styles: {
+        width: "100%",
+        float: "none",
+        display: "block"
+      },
+      mode: Mode.Edit
+    }
+    pageContentCopy.push(textItem);
+    setPageContent(pageContentCopy);
+      
+  }
+
 return <div className={styles.buttonBar}>
   <Popover content={<span style={{ color: "white" }}>Add image</span>} color="var(--pageBarColor)">
     <Button type="primary" icon={<img src={addImageIcon} />} onClick={handleAddImage} />
@@ -242,7 +276,7 @@ return <div className={styles.buttonBar}>
     <Button type="primary" icon={<img src={addTextInputIcon} onClick={addInputText} />} />
   </Popover>
   <Popover content={<span style={{ color: "white" }}>Add guided checklist</span>} color="var(--pageBarColor)">
-    <Button type="primary" icon={<img src={addGuidedChecklistIcon} />} />
+    <Button type="primary" icon={<img src={addGuidedChecklistIcon} />}  onClick={addGuidedCheckList}/>
   </Popover>
 </div>;
 }

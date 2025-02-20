@@ -123,6 +123,10 @@
   background-color: hsl(210, 36%, 96%);
 }
 
+.collapseWhite,
+.collapseWhite * {
+  background-color: white;
+}
 .mcContainer{
   display: "flex"; 
   flex-direction: "column";
@@ -159,15 +163,41 @@
   left: 0;
   width: 100%;
 }
-
+.textItemContainer2,
 .textInputContainer *{
   direction: ltr !important;
   box-shadow: none !important;
-  ;
+
 }
-.textInputContainer *:hover {
-  border: 1px solid lightgray;
-}
+
 .inputTextArea{
   border: 1px solid lightgray;
+  cursor: not-allowed;
+}
+
+
+.inputGuidedCheckList{
+  background: transparent !important;
+  outline: none !important;
+  border: "1px solid trasparent" !important;
+}
+
+.inputGuidedCheckList:focus {
+  box-shadow: none !important;
+  outline: none !important;
+  border: "1px solid red" !important;
+}
+.textItemContainer{
+  width: 100%;
+  background-color: white;
+  position: relative;
+
+}
+.disableSelect{
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+.nextButton span{
+  background-color: transparent !important;
 }

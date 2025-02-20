@@ -6,7 +6,8 @@ export enum PageType {
   CheckBox = "checkbox",
   HelpBlock = "helpBlock",
   MultipleChoises = "multipleChoice",
-  TextInput = "textInput"
+  TextInput = "textInput",
+  GuidedCheckList = "guidedCheckList"
 }
 
 export enum Mode{
