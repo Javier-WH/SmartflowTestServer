@@ -1,3 +1,28 @@
+-- search query example
+SELECT *
+FROM public.files
+WHERE EXISTS (
+  SELECT 1
+  FROM jsonb_array_elements(
+    CASE 
+      WHEN jsonb_typeof(content) = 'array' THEN content 
+      ELSE '[]'::jsonb 
+    END
+  ) AS elem
+  WHERE elem->>'text' like '%dos%'
+);
+-- search query example
+SELECT *
+FROM public.files
+WHERE 
+  name like '%json%' OR
+  jsonb_typeof(content) = 'array'
+  AND EXISTS (
+    SELECT 1
+    FROM jsonb_array_elements(content) AS elem
+    WHERE elem->>'text' like '%json%'
+  );
+
 -- create folder table
 DROP TABLE IF EXISTS public.folders;
 create table public.folders (

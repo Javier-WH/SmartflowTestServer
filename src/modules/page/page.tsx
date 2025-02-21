@@ -50,7 +50,7 @@ export default function Page() {
           if (response.error) return
           const { content, name } = response.data;
           setTitle(name === 'untitled' ? '' : name);
-          const  parcedContent: PageItem[] = content ? JSON.parse(content) : [];
+          const  parcedContent: PageItem[] = content ? content : [];
           setPageContent(parcedContent);
         })
         .catch((error) => console.error(error))
@@ -74,8 +74,8 @@ export default function Page() {
     resolvers.forEach((resolve: () => void) => resolve());
     // update database
     if (id && ableToSave) {
-        const content = JSON.stringify(pageContent)
-        updateFileContent(id, content, title)
+        const fixedTitle = title === "" ? "untitled" : title;
+      updateFileContent(id, pageContent, fixedTitle)
         .then((response) => {
             if (response.error){
               console.error(response)

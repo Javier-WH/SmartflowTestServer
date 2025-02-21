@@ -1,6 +1,7 @@
 import supabase from '../../../lib/supabase';
 import { FileResponse } from "../types/file"
 import errorManager from '../errorManager/fileErrorManager';
+import { PageItem } from '@/modules/page/types/pageTypes';
 
 
 const getFiles = async (container: string | null): Promise<FileResponse> => {
@@ -53,7 +54,7 @@ const getFileContent = async (fileId: string): Promise<FileResponse> => {
   return { error: false, message: 'content retrieved successfully', data: response.data };
 }
 
-const updateFileContent = async (fileId: string, content: string, name: string): Promise<FileResponse> => {
+const updateFileContent = async (fileId: string, content:PageItem[] , name: string): Promise<FileResponse> => {
   const response = await supabase
     .from('files')
     .update({ 
