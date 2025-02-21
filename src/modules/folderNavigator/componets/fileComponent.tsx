@@ -3,15 +3,16 @@ import type { MenuProps } from 'antd';
 import { ContainerElement } from "../types/componets";
 import publishedIcon from '../assets/svg/publishedFile.svg'
 import unPublishedIcon from '../assets/svg/unPublishedFile.svg'
+import { useNavigate } from 'react-router-dom';
 import "./folderContainer.css"
 
 
 
 export function FileComponent({ file }: { file: ContainerElement }) {
 
-   
+   const navigate = useNavigate();
   const handleClick = (id: string) => {
-    console.log(id)
+    navigate(`/page/${id}`);
   }
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>, itemId: string, itemType: number) => {

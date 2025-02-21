@@ -23,10 +23,9 @@ create table public.files (
   name character varying(100) not null,
   container uuid null,
   created_at timestamp with time zone null default now(),
-  content text null,
+  content jsonb null,
   published boolean null default false,
   constraint files_pkey primary key (id),
-  constraint files_name_container_unique unique (name, container),
   constraint files_container_fkey foreign KEY (container) references folders (id) on delete CASCADE
 ) TABLESPACE pg_default;
 
@@ -407,9 +406,30 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--create function create file
 
-
-
+CREATE OR REPLACE FUNCTION create_file(
+  p_name varchar(100),
+  p_container uuid DEFAULT NULL
+) 
+RETURNS uuid AS $$
+DECLARE
+  new_id uuid;
+BEGIN
+  -- Insertar el registro manejando el caso especial para container
+  INSERT INTO public.files(name, container)
+  VALUES (
+    p_name,
+    CASE 
+      WHEN p_container IS NULL THEN NULL
+      ELSE p_container
+    END
+  )
+  RETURNING id INTO new_id;
+  
+  RETURN new_id;
+END;
+$$ LANGUAGE plpgsql;
 
 
 

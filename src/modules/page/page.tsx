@@ -2,10 +2,9 @@ import { MainContext, MainContextValues } from "../mainContext"
 import { createContext, useContext, useEffect, useRef, useState } from "react"
 import type { Dispatch, SetStateAction } from "react";
 import homeIcon from "../../assets/svg/homeIcon.svg"
-import { useNavigate } from "react-router-dom"
-import { v4 as uuidv4 } from 'uuid';
+import { useNavigate, useParams } from "react-router-dom";
 import type { PageItem } from "./types/pageTypes.d.ts"
-import { PageType, Mode } from "./types/pageEnums.ts"
+import { PageType } from "./types/pageEnums.ts"
 import PageMenu from "./menu/pageMenu.tsx";
 import styles from "./page.module.css"
 import TextComponent from "./components/text/textComponent.tsx";
@@ -18,6 +17,8 @@ import MultipleChoisesComponent from "./components/multipleChoises/multipleChois
 import TextInputComponent from "./components/textInput/textInputComponent.tsx";
 import GuidedCheckList from "./components/guidedCheckList/guidedCheckList.tsx";
 import { getRawTextComponent } from "./components/rawComponents/getRawComponents.ts";
+import useFilesManager from "../folderNavigator/hooks/useFileManager.ts";
+import { Spin } from "antd";
 
 
 
@@ -31,10 +32,32 @@ export const PageContext = createContext<PageContextValues | null>(null);
 
 export default function Page() {
   const { setInPage } = useContext(MainContext) as MainContextValues
+  const { id } = useParams();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [pageContent, setPageContent] = useState<PageItem[]>([]);
-  const pendingResolvers = useRef<(() => void)[]>([]); 
+  const pendingResolvers = useRef<(() => void)[]>([]);
+  const { getFileContent, updateFileContent } = useFilesManager();
+  const [ableToSave, setAbleToSave] = useState(false);
+
+
+  // update page content
+  useEffect(() => {
+    if (id) {
+      setAbleToSave(false)
+      getFileContent(id)
+        .then((response) => {
+          if (response.error) return
+          const { content, name } = response.data;
+          setTitle(name === 'untitled' ? '' : name);
+          const  parcedContent: PageItem[] = content ? JSON.parse(content) : [];
+          setPageContent(parcedContent);
+        })
+        .catch((error) => console.error(error))
+        .finally(() => setAbleToSave(true))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /// this is magic, dont touch it
   // this is used to manage asynconous page contente updates
@@ -49,10 +72,24 @@ export default function Page() {
     const resolvers = pendingResolvers.current;
     pendingResolvers.current = [];
     resolvers.forEach((resolve: () => void) => resolve());
+    // update database
+    if (id && ableToSave) {
+        const content = JSON.stringify(pageContent)
+        updateFileContent(id, content, title)
+        .then((response) => {
+            if (response.error){
+              console.error(response)
+              return
+            }
+        })
+        .catch((error) => console.error(error));
+    
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageContent]);
-/////
+  /////
 
-// handle nav bar style
+  // handle nav bar style
   useEffect(() => {
     setInPage(true)
     return () => {
@@ -66,9 +103,9 @@ export default function Page() {
     if (pageContent.length === 0 || pageContent[lastIdex].type !== PageType.Text) {
       const newTextContent = getRawTextComponent();
       setPageContentPromise([...pageContent, newTextContent])
-      .then(() => {
-        document.getElementById(newTextContent.id)?.focus();
-      })
+        .then(() => {
+          document.getElementById(newTextContent.id)?.focus();
+        })
     }
   }
 
@@ -81,7 +118,7 @@ export default function Page() {
         return
       }
       const firstContentID = pageContent[0].id;
-  
+
       if (pageContent[0].type === PageType.Text) {
         document.getElementById(firstContentID)?.focus();
         return
@@ -91,13 +128,19 @@ export default function Page() {
       const newTextContent: PageItem = getRawTextComponent();
       newContent.unshift(newTextContent);
       setPageContentPromise(newContent)
-      .then(() => {
-        document.getElementById(newTextContent.id)?.focus();
-      })
+        .then(() => {
+          document.getElementById(newTextContent.id)?.focus();
+        })
     }
 
   }
 
+  if (!ableToSave) {
+    return <div style={{ width: "100vw", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: "10px" }} >
+      <Spin size="large" />
+      <span style={{ color: "gray" }}>Loading...</span>
+    </div>
+  }
   return <PageContext.Provider value={{ pageContent, setPageContent, setPageContentPromise }} >
     <div className={styles.pageMainContainer}>
       <div className={styles.pageMainButonsContainer} style={{ float: "right" }}>

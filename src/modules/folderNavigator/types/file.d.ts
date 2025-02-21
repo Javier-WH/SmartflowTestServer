@@ -10,7 +10,7 @@ export interface File {
 export interface FileResponse {
   error: boolean;
   message: string;
-  data?: File[]
+  data?: File[] | Json | null;
 }
 
 export type getFilesResponse = (folderId: string | null) => Promise<FileResponse>

@@ -7,6 +7,7 @@ import { CaretDownOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { MainContext, MainContextValues } from '../mainContext';
+import useFilesManager from '../folderNavigator/hooks/useFileManager';
 
 import './navBar.css';
 import { useContext } from 'react';
@@ -15,6 +16,7 @@ export default function NavBar() {
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const { inPage } = useContext(MainContext) as MainContextValues
+  const { createFile } = useFilesManager();
 
 
   const userMenu: MenuProps['items'] = [
@@ -67,6 +69,19 @@ export default function NavBar() {
     }
   ];
 
+  const handleCreatePage = () => {
+    createFile('untitled')
+    .then((res) => {
+      if (res.error) {
+        message.error('Error creating page')
+       return
+      }
+      const id = res.data
+      navigate(`/page/${id}`)
+    })
+  }
+
+
 
   return <header className={`navbar-container ${inPage && 'navbar-page-size'}`}>
     <Dropdown menu={{ items: userMenu }} trigger={['click']}>
@@ -101,7 +116,7 @@ export default function NavBar() {
             <Dropdown.Button
               icon={<CaretDownOutlined />}
               menu={{ items: createMenu }}
-              onClick={() => navigate('/page')}
+              onClick={handleCreatePage}
               trigger={['click']}
               style={{ direction: 'ltr' }}
             >

@@ -1,5 +1,4 @@
 import { createBrowserRouter } from 'react-router-dom';
-
 import SignIn from './modules/auth/pages/SignIn';
 import SignUp from './modules/auth/pages/SignUp';
 import ForgotPassword from './modules/auth/pages/ForgotPassword';
@@ -29,8 +28,8 @@ const router = createBrowserRouter([
                 element: <Home />,
             },
             {
-                path: 'page',
-                element: <Page/>
+                path: 'page/:id',
+                element: <Page />
             },
         ],
     },
