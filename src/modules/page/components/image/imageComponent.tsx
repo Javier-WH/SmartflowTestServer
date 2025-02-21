@@ -5,9 +5,6 @@ import { PageContext, PageContextValues } from "../../page";
 import { useContext } from "react";
 import styles from "../../page.module.css"
 
-
-//import styles from "../../page.module.css"
-
 export default function ImageComponent({ item }: { item: PageItem }) {
 
   const {pageContent, setPageContent} = useContext(PageContext) as PageContextValues
@@ -51,7 +48,6 @@ export default function ImageComponent({ item }: { item: PageItem }) {
     </div>
 
   }
-
 
   return <>
     <Popover content={popContent()} color="var(--pageBarColor)">

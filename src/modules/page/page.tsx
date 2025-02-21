@@ -17,6 +17,7 @@ import HelpBlockComponent from "./components/helpBlock/helpBlockComponent.tsx";
 import MultipleChoisesComponent from "./components/multipleChoises/multipleChoisesComponent.tsx";
 import TextInputComponent from "./components/textInput/textInputComponent.tsx";
 import GuidedCheckList from "./components/guidedCheckList/guidedCheckList.tsx";
+import { getRawTextComponent } from "./components/rawComponents/getRawComponents.ts";
 
 
 
@@ -31,11 +32,9 @@ export const PageContext = createContext<PageContextValues | null>(null);
 export default function Page() {
   const { setInPage } = useContext(MainContext) as MainContextValues
   const navigate = useNavigate();
-
   const [title, setTitle] = useState("");
   const [pageContent, setPageContent] = useState<PageItem[]>([]);
 
-  
   function setPageContentPromise(newItems: PageItem[]): Promise<void> {
     return new Promise<void>((resolve) => {
       setPageContent(() => {
@@ -57,30 +56,51 @@ export default function Page() {
   const handleClickOnPage = () => {
     const lastIdex = pageContent.length - 1
     if (pageContent.length === 0 || pageContent[lastIdex].type !== PageType.Text) {
-      setPageContent([...pageContent, {
-        id: uuidv4(),
-        type: PageType.Text,
-        text: "",
-        styles: {
-          width: "100%",
-          float: "none",
-          display: "block",
-        },
-        mode: Mode.Edit
-      },])
-      return
+      const newTextContent = getRawTextComponent();
+      setPageContentPromise([...pageContent, newTextContent])
+      .then(() => {
+        document.getElementById(newTextContent.id)?.focus();
+      })
     }
-    document.getElementById(pageContent[lastIdex].id)?.focus();
   }
 
+  const handleKeyDownOnTitle = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (pageContent.length === 0) {
+        handleClickOnPage();
+        return
+      }
+      const firstContentID = pageContent[0].id;
+  
+      if (pageContent[0].type === PageType.Text) {
+        document.getElementById(firstContentID)?.focus();
+        return
+      }
 
+      const newContent = [...pageContent];
+      const newTextContent: PageItem = getRawTextComponent();
+      newContent.unshift(newTextContent);
+      setPageContentPromise(newContent)
+      .then(() => {
+        document.getElementById(newTextContent.id)?.focus();
+      })
+    }
+
+  }
 
   return <PageContext.Provider value={{ pageContent, setPageContent, setPageContentPromise }} >
     <div className={styles.pageMainContainer}>
       <div className={styles.pageMainButonsContainer} style={{ float: "right" }}>
         <button onClick={() => navigate(-1)}> <img src={homeIcon} /> {">"}</button>
       </div>
-      <input placeholder="Give your page a title" className={styles.title} type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <input
+        placeholder="Give your page a title"
+        className={styles.title} type="text"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        onKeyDown={handleKeyDownOnTitle}
+      />
       <div onClick={handleClickOnPage} className={styles.pageContentContainer} id="pageContentContainer">
         {
           pageContent.map((item) => {
@@ -88,19 +108,19 @@ export default function Page() {
               return <TextComponent item={item} key={item.id} />
             } else if (item.type === PageType.Image) {
               return <ImageComponent item={item} key={item.id} />
-            }else if (item.type === PageType.Video) {
+            } else if (item.type === PageType.Video) {
               return <VideoComponent item={item} key={item.id} />
-            }else if (item.type === PageType.List) {
+            } else if (item.type === PageType.List) {
               return <ListComponent item={item} key={item.id} />
-            }else if (item.type === PageType.CheckBox) {
+            } else if (item.type === PageType.CheckBox) {
               return <CheckboxComponent item={item} key={item.id} />
-            }else if (item.type === PageType.HelpBlock) {
+            } else if (item.type === PageType.HelpBlock) {
               return <HelpBlockComponent item={item} key={item.id} />
-            }else if (item.type === PageType.MultipleChoises) {
+            } else if (item.type === PageType.MultipleChoises) {
               return <MultipleChoisesComponent item={item} key={item.id} />
-            }else if (item.type === PageType.TextInput) {
+            } else if (item.type === PageType.TextInput) {
               return <TextInputComponent item={item} key={item.id} />
-            }else if (item.type === PageType.GuidedCheckList) {
+            } else if (item.type === PageType.GuidedCheckList) {
               return <GuidedCheckList item={item} key={item.id} />
             }
           })

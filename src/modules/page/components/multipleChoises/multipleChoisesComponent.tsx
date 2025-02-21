@@ -14,6 +14,7 @@ import useFocusItem from "../../hooks/useFocusItem";
 import addCheckboxIcon from "../../menu/assets/svg/addCheckBoxIcon.svg"
 import addMultipleChoiceIcon from "../../menu/assets/svg/addMultipleChoisesIcon.svg"
 import { LuRows4, LuColumns4 } from "react-icons/lu";
+import { getRawTextComponent } from "../rawComponents/getRawComponents";
 
 export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
   const { pageContent, setPageContent, setPageContentPromise } = useContext(PageContext) as PageContextValues;
@@ -137,17 +138,7 @@ export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
         setListContentPromise(listContentCopy).then(() => {
           const pageContentCopy = [...pageContent];
           if (pageContentCopy[pageContentCopy.length - 1].type !== PageType.Text) {
-            const newTextItem: PageItem = {
-              id: uuidv4(),
-              type: PageType.Text,
-              text: "",
-              styles: {
-                width: "100%",
-                float: "none",
-                display: "block"
-              },
-              mode: Mode.Edit
-            };
+            const newTextItem: PageItem = getRawTextComponent();
             pageContentCopy.push(newTextItem);
           }
           setPageContentPromise(pageContentCopy).then(() => {

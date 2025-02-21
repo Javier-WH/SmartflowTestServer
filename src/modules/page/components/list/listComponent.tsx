@@ -9,8 +9,8 @@ import { flushSync } from 'react-dom';
 import styles from "../../page.module.css"
 import { Mode } from "../../types/pageEnums";
 import { PageType } from "../../types/pageEnums";
-import { v4 as uuidv4 } from 'uuid';
 import useFocusItem from "../../hooks/useFocusItem";
+import { getRawTextComponent } from "../rawComponents/getRawComponents";
 
 export default function ListComponent({ item }: { item: PageItem }) {
   const { pageContent, setPageContent, setPageContentPromise } = useContext(PageContext) as PageContextValues;
@@ -95,17 +95,7 @@ export default function ListComponent({ item }: { item: PageItem }) {
         setListContentPromise(listContentCopy).then(() => {
           const pageContentCopy = [...pageContent];
           if (pageContentCopy[pageContentCopy.length - 1].type !== PageType.Text) {
-            const newTextItem: PageItem = {
-              id: uuidv4(),
-              type: PageType.Text,
-              text: "",
-              styles: {
-                width: "100%",
-                float: "none",
-                display: "block"
-              },
-              mode: Mode.Edit
-            };
+            const newTextItem: PageItem = getRawTextComponent();
             pageContentCopy.push(newTextItem);
           }
           setPageContentPromise(pageContentCopy).then(() => {
