@@ -1,5 +1,5 @@
 import { MainContext, MainContextValues } from "../mainContext"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useRef, useState } from "react"
 import type { Dispatch, SetStateAction } from "react";
 import homeIcon from "../../assets/svg/homeIcon.svg"
 import { useNavigate } from "react-router-dom"
@@ -34,18 +34,25 @@ export default function Page() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [pageContent, setPageContent] = useState<PageItem[]>([]);
+  const pendingResolvers = useRef<(() => void)[]>([]); 
 
+  /// this is magic, dont touch it
+  // this is used to manage asynconous page contente updates
   function setPageContentPromise(newItems: PageItem[]): Promise<void> {
     return new Promise<void>((resolve) => {
-      setPageContent(() => {
-        setTimeout(() => {
-          resolve();
-        }, 1);
-        return newItems;
-      });
+      pendingResolvers.current.push(resolve);
+      setPageContent(newItems);
     });
   }
 
+  useEffect(() => {
+    const resolvers = pendingResolvers.current;
+    pendingResolvers.current = [];
+    resolvers.forEach((resolve: () => void) => resolve());
+  }, [pageContent]);
+/////
+
+// handle nav bar style
   useEffect(() => {
     setInPage(true)
     return () => {
@@ -53,6 +60,7 @@ export default function Page() {
     }
   }, [setInPage])
 
+  // add a span text to the page que clicked on it
   const handleClickOnPage = () => {
     const lastIdex = pageContent.length - 1
     if (pageContent.length === 0 || pageContent[lastIdex].type !== PageType.Text) {
@@ -64,6 +72,7 @@ export default function Page() {
     }
   }
 
+  // this hadle when enter is pressed on the title input
   const handleKeyDownOnTitle = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
