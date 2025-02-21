@@ -10,7 +10,7 @@ import styles from "../../page.module.css"
 
 export default function HelpBlockComponent({ item }: { item: PageItem }) {
   const { pageContent, setPageContent } = useContext(PageContext) as PageContextValues;
-  const [color, setColor] = useState('collapseBlue');
+  const [color, setColor] = useState<'collapseBlue' | 'collapseYellow' | 'collapseRed' | 'collapseGreen' | 'collapseGray'>('collapseBlue');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
@@ -20,14 +20,19 @@ export default function HelpBlockComponent({ item }: { item: PageItem }) {
     if (item) {
       setTitle(item.text || '');
       setContent(item.listItems?.[0] || '');
+      setColor(item.backgroundColor || 'collapseBlue');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item.text, item.listItems]);
+  }, []);
 
+  useEffect(() => {
+    updateContext();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [color]);
 
   const updateContext = () => {
     const updatedContent = pageContent.map(pageItem =>
-      pageItem.id === item.id ? { ...pageItem, text: title, listItems: [content] } : pageItem
+      pageItem.id === item.id ? { ...pageItem, text: title, listItems: [content], backgroundColor: color } : pageItem
     );
     setPageContent(updatedContent);
   };

@@ -11,7 +11,7 @@ import { LuTextCursorInput } from "react-icons/lu";
 
 export default function TextInputComponent({ item }: { item: PageItem }) {
 
-  const { pageContent, setPageContent } = useContext(PageContext) as PageContextValues
+  const { pageContent, setPageContentPromise } = useContext(PageContext) as PageContextValues
   const [rows, setRows] = useState(5);
   const [questionValue, setQuestionValue] = useState("");
 
@@ -19,25 +19,28 @@ export default function TextInputComponent({ item }: { item: PageItem }) {
 
   useEffect(() => {
     setQuestionValue(item.text || "");
-  }, [item.text]);
+    setRows(item.rows || 5);
+  }, [item.text, item.rows]);
+
+ 
 
   const updateContext = () => {
     const updatedContent = pageContent.map(pageItem =>
-      pageItem.id === item.id ? { ...pageItem, text: questionValue } : pageItem
+      pageItem.id === item.id ? { ...pageItem, text: questionValue, rows } : pageItem
     );
-    setPageContent(updatedContent);
+    setPageContentPromise(updatedContent);
   };
 
   const onDelete = async() => {
     const pageContentCopy = await JSON.parse(JSON.stringify(pageContent));
     const index = pageContentCopy.findIndex((pageItem: PageItem) => pageItem.id === item.id);
     pageContentCopy.splice(index, 1);
-    setPageContent(pageContentCopy);
+    setPageContentPromise(pageContentCopy);
   }
 
 
   const popContent = () => {
-    return <div className={styles.intemPopover}>
+    return <div className={styles.intemPopover} onBlur={updateContext}>
       <Popover content={<span style={{ color: "white" }}>Single line input</span>} color="var(--folderTextColor)">
         <Button icon={<LuTextCursorInput />} onClick={() => setRows(1)} />
       </Popover>

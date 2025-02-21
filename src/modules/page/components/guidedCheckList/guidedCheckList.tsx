@@ -289,7 +289,14 @@ export default function GuidedCheckList({ item }: { item: PageItem }) {
   const _onListChange = (newList: readonly unknown[], _movedItem: unknown, _oldIndex: number, _newIndex: number) => {
     // Cast newList to ListItem[] to work with it correctly
     const typedNewList = newList as ListItem[];
-    setList(updatedIndexs(typedNewList));
+    setListPromise(updatedIndexs(typedNewList)).then(() => {
+      const pageContentCopy = [...pageContent];
+      const index = pageContentCopy.findIndex((pageItem: PageItem) => pageItem.id === item.id);
+      pageContentCopy[index].guidedCheckListItems = typedNewList;
+      pageContentCopy[index].text = title;
+      setPageContentPromise(pageContentCopy);
+    })
+
   };
 
   const handleTextChange = (id: string, newText: string) => {

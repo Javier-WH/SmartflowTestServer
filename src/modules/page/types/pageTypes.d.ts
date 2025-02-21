@@ -12,7 +12,9 @@ export interface PageItem {
   guidedCheckListItems?: ListItem[];
   checkedItems?: boolean[];
   checkType?: "radio" | "checkbox";
-  backgroundColor?: "blue" | "yellow" | "red" | "green" | "gray"
+  backgroundColor?: "collapseBlue" | "collapseYellow" | "collapseRed" | "collapseGreen" | "collapseGray"
+  direction?: "column" | "row";
+  rows?: number;
 }
 
 

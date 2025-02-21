@@ -32,18 +32,15 @@ export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item.listItems]);
 
-  useEffect(() => {
-    setListContent(item.listItems ?? []);
-    setCheckedList(item.checkedItems ?? []);
-    setQuestions(item.text ?? "");
-  }, [item.listItems, item.checkedItems, item.text]);
 
 
   // Sincronizar con los items del contexto
   useEffect(() => {
     setListContent(item.listItems ?? []);
     setCheckedList(item.checkedItems ?? []);
-  }, [item.listItems, item.checkedItems]);
+    setQuestions(item.text ?? "");
+    setFlexDirection(item.direction ?? "row");
+  }, [item.listItems, item.checkedItems, item.text, item.direction]);
 
   useEffect(() => {
     const index = listContent.length - 1;
@@ -211,14 +208,21 @@ export default function MultipleChoisesComponent({ item }: { item: PageItem }) {
     setPageContent(pageContentCopy);
   }
 
+  const onChangeDirection = (direction: "column" | "row") => {
+    const pageContentCopy = [...pageContent];
+    const index = pageContentCopy.findIndex((pageItem: PageItem) => pageItem.id === item.id);
+    pageContentCopy[index].direction = direction;
+    setPageContent(pageContentCopy);
+  }
+
 
   const popContent = () => {
     return <div className={styles.intemPopover}>
       <Popover content={<span style={{ color: "white" }}>Display as vertical list</span>} color="var(--folderTextColor)">
-        <Button type="primary" icon={<LuRows4 />} onClick={() => setFlexDirection("column")}/>
+        <Button type="primary" icon={<LuRows4 />} onClick={() => onChangeDirection("column")}/>
       </Popover>
       <Popover content={<span style={{ color: "white" }}>Display as horizontal list</span>} color="var(--folderTextColor)">
-        <Button type="primary" icon={<LuColumns4 />} onClick={() => setFlexDirection("row")} />
+        <Button type="primary" icon={<LuColumns4 />} onClick={() => onChangeDirection("row")} />
       </Popover>
       <Popover content={<span style={{ color: "white" }}>Support one choice</span>} color="var(--folderTextColor)">
         <Button type="primary" icon={<img src={addMultipleChoiceIcon} />} onClick={() => onChangeCheckType("radio")} />

@@ -74,7 +74,7 @@ export function getRawHelpBlockComponent() {
     type: PageType.HelpBlock,
     text: "",
     listItems: [""],
-    backgroundColor: 'blue',
+    backgroundColor: 'collapseBlue',
     styles: {
       width: "100%",
       float: "none",
@@ -93,6 +93,7 @@ export function getRawMultipleChoisesComponent() {
     listItems: [""],
     checkedItems: [false],
     checkType: "radio",
+    direction: "column",
     styles: {
       width: "100%",
       float: "none",
@@ -124,6 +125,7 @@ export function getRawGuidedCheckListComponent() {
     type: PageType.GuidedCheckList,
     text: "",
     listItems: [""],
+    rows: 5,
     checkedItems: [false],
     styles: {
       width: "100%",
