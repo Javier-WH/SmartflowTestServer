@@ -58,7 +58,7 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
   return <div style={{ display: "flex", flexDirection: "column" }}>
     <FolderNavigatorContext.Provider value={values}>
       <CreateOrUpdateFolderModal folder={modalFolder} setFolder={setModalFolder} setUpdateFolderRequest={setUpdateFolderRequest} groupDataByContainer={groupDataByContainer} />
-      <DeleteFolderModal folder={modalDeleteFolder} setFolder={setModalDeleteFolder} setUpdateFolderRequest={setUpdateFolderRequest} />
+      <DeleteFolderModal folder={modalDeleteFolder} setFolder={setModalDeleteFolder} setUpdateFolderRequest={setUpdateFolderRequest} groupDataByContainer ={groupDataByContainer}/>
       {children}
     </FolderNavigatorContext.Provider>
   </div>

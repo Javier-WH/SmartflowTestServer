@@ -66,16 +66,18 @@ const getFolders = async (container: string | null): Promise<FolderResponse> => 
 
 
 const deleteFolder = async (folderId: string): Promise<FolderResponse> => {
-  if (folderId == null) return { error: true, message: 'Folder not found' }
-  
-  const response = await supabase
-    .from('folders')
-    .delete()
-    .eq('id', folderId);
+  const { data, error } = await supabase
+    .rpc('borrar_carpeta', {
+      p_id: folderId
+    })
+    .select('*');
 
-  if (response.error) return errorManager(response.error)
-
-  return { error: false, message: 'Folder deleted successfully' };
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Folder deleted successfully', data };
+  }
 }
 
 const moveFolder = async (folderId: string, newContainerId: string | null): Promise<FolderResponse> => {

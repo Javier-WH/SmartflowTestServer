@@ -1,11 +1,21 @@
 import { Modal, Input, message } from "antd";
 import { useEffect, useState } from "react";
-import { Folder } from "../types/folder";
+import { Folder, FolderData, FolderResquest } from "../types/folder";
 import useFolderManager from "../hooks/useFolderManager";
 import "./createOrUpdateFolderModal.css"
 
 
-export default function DeleteFolderModal({ folder, setFolder, setUpdateFolderRequest }: { folder: Folder | null, setFolder: (folder: Folder | null) => void, setUpdateFolderRequest: (folder: FolderResquest | null) => void }) {
+export default function DeleteFolderModal({ 
+  folder, 
+  setFolder, 
+  setUpdateFolderRequest, 
+  groupDataByContainer  
+}: { 
+  folder: Folder | null, 
+  setFolder: (folder: Folder | null) => void, 
+  setUpdateFolderRequest: (folder: FolderResquest | null) => void,
+  groupDataByContainer: (request: { data: FolderData[] }) => FolderResquest
+}) {
 
   const { deleteFolder } = useFolderManager()
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -28,8 +38,15 @@ export default function DeleteFolderModal({ folder, setFolder, setUpdateFolderRe
   }
 
   const handleOk = async () => {
-    message.info('Click on ok');
-
+    if(!folder?.id) return
+    const request = await deleteFolder(folder.id)
+    if (request.error) {
+      message.error(request.message)
+      return
+    }
+    const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
+    setUpdateFolderRequest(gruppedByContainer);
+    setFolder(null);
   }
 
   return <Modal
