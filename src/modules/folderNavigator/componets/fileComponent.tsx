@@ -27,36 +27,18 @@ export function FileComponent({ file }: { file: ContainerElement }) {
   const menu: MenuProps['items'] = [
     {
       key: '1',
-      label: <div style={{ textAlign: 'left' }}> Open this file</div>,
-      onClick: () => message.info('Click on Open this file'),
-    },
-    {
-      key: '2',
-      label: <div style={{ textAlign: 'left' }}> Rename this file</div>,
-      onClick: () => message.info('Click on Rename this file'),
-    },
-    {
-      key: '3',
       label: <div style={{ textAlign: 'left' }}>Delete this file</div>,
       onClick: () => message.info('Click on Delete this file'),
     },
     {
-      key: '4',
+      key: '2',
       label: <div style={{ textAlign: 'left' }}>Move this file to root</div>,
       onClick: () => message.info('Click to move this file to root'),
-    },
-    {
-      type: 'divider',
-    },
-    {
-      key: '5',
-      label: <div style={{ textAlign: 'left' }}>Create a new file</div>,
-      onClick: () => message.info('Click on Create a new file'),
-    },
+    }
   ];
 
   return <div>
-    <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft" arrow>
+    <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
     <div
       style={{ display: 'flex', alignItems: 'center', gap: 10 }}
       onClick={() => handleClick(file.id)}
