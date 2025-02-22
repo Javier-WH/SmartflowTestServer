@@ -592,43 +592,246 @@ $$ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS borrar_carpeta;
 
-CREATE OR REPLACE FUNCTION borrar_carpeta(p_id UUID)
+CREATE OR REPLACE FUNCTION borrar_carpeta(p_folder_id UUID)
 RETURNS TABLE (
     itemId UUID,
     name VARCHAR,
     container_id UUID,
+    old_container_id UUID,
+    old_container_empty BOOLEAN,
     type integer,
     published boolean
 ) AS $$
 DECLARE
-    p_container_id UUID;  
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
 BEGIN
-    -- 1. Obtener el container id de la carpeta
-    SELECT container INTO STRICT p_container_id
+    -- 1. Obtener el contenedor actual de la carpeta
+    SELECT container INTO v_old_container_id
     FROM public.folders
-    WHERE id = p_id;
+    WHERE id = p_folder_id;
 
-    -- 2. Eliminar la carpeta
-     DELETE FROM public.folders WHERE id = p_id;
+    -- 2. Borrar la carpeta
+    DELETE FROM public.folders WHERE id = p_folder_id;
 
-    -- 3. Retornar el contenido del contenedor
+    -- 3. Comprobar si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+            UNION ALL
+            SELECT 1 FROM public.files WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar al menos una fila con los metadatos
     RETURN QUERY
+    WITH items AS (
+        -- Carpetas en el contenedor original
+        SELECT
+            f.id,
+            f.name,
+            f.container,
+            1 AS type,
+            FALSE AS published
+        FROM public.folders f
+        WHERE f.container IS NOT DISTINCT FROM v_old_container_id
+        UNION ALL
+        -- Archivos en el contenedor original
+        SELECT
+            a.id,
+            a.name,
+            a.container,
+            0 AS type,
+            a.published
+        FROM public.files a
+        WHERE a.container IS NOT DISTINCT FROM v_old_container_id
+    )
     SELECT
-        f.id AS itemId,
-        f.name AS name,
-        f.container AS container_id,
-        1 AS type,
-        FALSE AS published
-    FROM public.folders f
-    WHERE f.container IS NOT DISTINCT FROM p_container_id
+        i.id::UUID,
+        i.name::VARCHAR,
+        i.container::UUID,
+        v_old_container_id,
+        v_old_container_empty,
+        i.type::integer,
+        i.published::boolean
+    FROM items i
     UNION ALL
     SELECT
-        a.id AS itemId,
-        a.name AS name,
-        a.container AS container_id,
-        0 AS type,
-        a.published AS published
-    FROM public.files a
-    WHERE a.container IS NOT DISTINCT FROM p_container_id;
+        NULL,  -- itemId
+        NULL,  -- name
+        NULL,  -- container_id
+        v_old_container_id,
+        v_old_container_empty,
+        NULL,  -- type
+        NULL   -- published
+    WHERE NOT EXISTS (SELECT 1 FROM items);  -- Solo si no hay registros
+END;
+$$ LANGUAGE plpgsql;
+
+-- create function delete file
+DROP FUNCTION IF EXISTS borrar_archivo;
+
+CREATE OR REPLACE FUNCTION borrar_archivo(p_file_id UUID)
+RETURNS TABLE (
+    itemId UUID,
+    name VARCHAR,
+    container_id UUID,
+    old_container_id UUID,
+    old_container_empty BOOLEAN,
+    type integer,
+    published boolean
+) AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual del archivo
+    SELECT container INTO v_old_container_id
+    FROM public.files
+    WHERE id = p_file_id;
+
+    -- 2. Borrar la carpeta
+    DELETE FROM public.files WHERE id = p_file_id;
+
+    -- 3. Comprobar si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+            UNION ALL
+            SELECT 1 FROM public.files WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar al menos una fila con los metadatos
+    RETURN QUERY
+    WITH items AS (
+        -- Carpetas en el contenedor original
+        SELECT
+            f.id,
+            f.name,
+            f.container,
+            1 AS type,
+            FALSE AS published
+        FROM public.folders f
+        WHERE f.container IS NOT DISTINCT FROM v_old_container_id
+        UNION ALL
+        -- Archivos en el contenedor original
+        SELECT
+            a.id,
+            a.name,
+            a.container,
+            0 AS type,
+            a.published
+        FROM public.files a
+        WHERE a.container IS NOT DISTINCT FROM v_old_container_id
+    )
+    SELECT
+        i.id::UUID,
+        i.name::VARCHAR,
+        i.container::UUID,
+        v_old_container_id,
+        v_old_container_empty,
+        i.type::integer,
+        i.published::boolean
+    FROM items i
+    UNION ALL
+    SELECT
+        NULL,  -- itemId
+        NULL,  -- name
+        NULL,  -- container_id
+        v_old_container_id,
+        v_old_container_empty,
+        NULL,  -- type
+        NULL   -- published
+    WHERE NOT EXISTS (SELECT 1 FROM items);  -- Solo si no hay registros
+END;
+$$ LANGUAGE plpgsql;
+
+-- move file to root
+
+DROP FUNCTION IF EXISTS move_file_to_root;
+
+CREATE OR REPLACE FUNCTION move_file_to_root(p_file_id UUID)
+RETURNS TABLE (
+    itemId UUID,
+    name VARCHAR,
+    container_id UUID,
+    old_container_id UUID,
+    old_container_empty BOOLEAN,
+    type integer,
+    published boolean
+) AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual del archivo y almacenarlo en una variable
+    SELECT f.container INTO v_old_container_id
+    FROM public.files f
+    WHERE f.id = p_file_id;
+
+    -- 2. Mover el archivo al root
+    UPDATE public.files
+    SET container = NULL
+    WHERE id = p_file_id;
+
+    -- 3. Comprobar si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+            UNION ALL
+            SELECT 1 FROM public.files WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
+    RETURN QUERY
+    WITH combined AS (
+        SELECT
+            f.id AS itemId,
+            f.name AS name,
+            f.container AS container_id,
+            v_old_container_id AS old_container_id,
+            v_old_container_empty AS old_container_empty,
+            1 AS type,
+            FALSE AS published
+        FROM
+            public.folders f
+        WHERE
+            (v_old_container_id IS NULL AND f.container IS NULL)  -- Manejo de NULL
+            OR f.container = v_old_container_id                   -- Caso normal
+        UNION ALL
+        SELECT
+            a.id AS itemId,
+            a.name AS name,
+            a.container AS container_id,
+            v_old_container_id AS old_container_id,
+            v_old_container_empty AS old_container_empty,
+            0 AS type,
+            a.published AS published
+        FROM
+            public.files a
+        WHERE
+            (v_old_container_id IS NULL AND a.container IS NULL)  -- Manejo de NULL
+            OR a.container = v_old_container_id                   -- Caso normal
+    )
+    SELECT *
+    FROM combined
+    UNION ALL
+    SELECT
+        NULL AS itemId,
+        'No items found' AS name,
+        NULL AS container_id,
+        v_old_container_id AS old_container_id,
+        v_old_container_empty AS old_container_empty,
+        -1 AS type,  -- Tipo ficticio para indicar que no se encontraron elementos
+        FALSE AS published
+    WHERE NOT EXISTS (SELECT 1 FROM combined);
 END;
 $$ LANGUAGE plpgsql;

@@ -1,3 +1,4 @@
+import { File } from "./file";
 export interface Folder{
   id?: string;
   name: string;
@@ -44,6 +45,8 @@ export interface FolderNavigatorContextValues{
   updateFolderRequest: FolderResquest | null;
   setUpdateFolderRequest: React.Dispatch<React.SetStateAction<FolderResquest | null>>;
   groupDataByContainer: (request: { data: FolderData[] }) => FolderResquest;
+  modalDeleteFile: File | null;
+  setModalDeleteFile: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
 export type getFolderResponse = (folderId: string | null) => Promise<FolderResponse>

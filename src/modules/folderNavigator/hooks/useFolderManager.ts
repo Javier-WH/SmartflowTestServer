@@ -68,7 +68,7 @@ const getFolders = async (container: string | null): Promise<FolderResponse> => 
 const deleteFolder = async (folderId: string): Promise<FolderResponse> => {
   const { data, error } = await supabase
     .rpc('borrar_carpeta', {
-      p_id: folderId
+      p_folder_id: folderId
     })
     .select('*');
 

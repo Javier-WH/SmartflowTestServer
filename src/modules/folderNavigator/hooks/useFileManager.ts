@@ -67,12 +67,45 @@ const updateFileContent = async (fileId: string, content:PageItem[] , name: stri
 
 }
 
+const deleteFile = async (folderId: string): Promise<FileResponse> => {
+  const { data, error } = await supabase
+    .rpc('borrar_archivo', {
+      p_file_id: folderId
+    })
+    .select('*');
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'File deleted successfully', data };
+  }
+}
+
+const moveFileToRoot = async (fileId: string | null): Promise<FileResponse> => {
+  const { data, error } = await supabase
+    .rpc('move_file_to_root', {
+      p_file_id: fileId
+    });
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'File moved to root successfully', data };
+  }
+}
+
+
+
 export default function useFilesManager() {
   return {
     getFiles,
     moveFile,
     createFile,
     getFileContent,
-    updateFileContent
+    updateFileContent,
+    deleteFile,
+    moveFileToRoot
   }
 }

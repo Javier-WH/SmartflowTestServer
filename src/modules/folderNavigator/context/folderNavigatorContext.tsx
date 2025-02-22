@@ -2,7 +2,10 @@ import { createContext, ReactNode, useState } from "react"
 import { FolderNavigatorContextValues } from "../types/folder";
 import CreateOrUpdateFolderModal from "../modal/createOrUpdateFolderModal";
 import DeleteFolderModal from "../modal/deleteFolderModal";
+import DeleteFileModal from "../modal/deleteFileModal";
 import { Folder, FolderResquest, FolderData } from "../types/folder";
+import { File } from "../types/file";
+
 
 
 
@@ -16,6 +19,7 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
   const [modalFolder, setModalFolder] = useState<Folder | null>(null);
   const [modalDeleteFolder, setModalDeleteFolder] = useState<Folder | null>(null);
   const [updateFolderRequest, setUpdateFolderRequest] = useState<FolderResquest | null>(null);
+  const [modalDeleteFile, setModalDeleteFile] = useState<File | null>(null);
 
 
 
@@ -52,13 +56,16 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
     setModalDeleteFolder,
     updateFolderRequest, 
     setUpdateFolderRequest,
-    groupDataByContainer
+    groupDataByContainer,
+    modalDeleteFile, 
+    setModalDeleteFile
   }
 
   return <div style={{ display: "flex", flexDirection: "column" }}>
     <FolderNavigatorContext.Provider value={values}>
       <CreateOrUpdateFolderModal folder={modalFolder} setFolder={setModalFolder} setUpdateFolderRequest={setUpdateFolderRequest} groupDataByContainer={groupDataByContainer} />
       <DeleteFolderModal folder={modalDeleteFolder} setFolder={setModalDeleteFolder} setUpdateFolderRequest={setUpdateFolderRequest} groupDataByContainer ={groupDataByContainer}/>
+      <DeleteFileModal file={modalDeleteFile} setFile={setModalDeleteFile} setUpdateFolderRequest={setUpdateFolderRequest} groupDataByContainer={groupDataByContainer} /> 
       {children}
     </FolderNavigatorContext.Provider>
   </div>
