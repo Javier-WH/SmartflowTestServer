@@ -1,10 +1,11 @@
-import { createContext, ReactNode, useState } from "react"
+import { createContext, ReactNode, useState, useContext, useEffect } from "react"
 import { FolderNavigatorContextValues } from "../types/folder";
 import CreateOrUpdateFolderModal from "../modal/createOrUpdateFolderModal";
 import DeleteFolderModal from "../modal/deleteFolderModal";
 import DeleteFileModal from "../modal/deleteFileModal";
 import { Folder, FolderResquest, FolderData } from "../types/folder";
 import { File } from "../types/file";
+import { MainContext, MainContextValues } from "@/modules/mainContext";
 
 
 
@@ -15,6 +16,7 @@ export const FolderNavigatorContext = createContext<FolderNavigatorContextValues
 
 export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
+  const { newFolderRequest, setNewFolderRequest } = useContext(MainContext) as MainContextValues;
   const [Loading, setLoading] = useState<string | null>(null);
   const [modalFolder, setModalFolder] = useState<Folder | null>(null);
   const [modalDeleteFolder, setModalDeleteFolder] = useState<Folder | null>(null);
@@ -22,6 +24,16 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
   const [modalDeleteFile, setModalDeleteFile] = useState<File | null>(null);
 
 
+  useEffect(() => {
+    setModalFolder(newFolderRequest)
+  }, [newFolderRequest])
+
+  useEffect(() => { 
+    if (modalFolder === null) {
+      setNewFolderRequest(null)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modalFolder])
 
   const groupDataByContainer = (request: { data: FolderData[] }): FolderResquest => {
 

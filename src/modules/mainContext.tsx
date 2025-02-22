@@ -1,8 +1,11 @@
 import { createContext, ReactNode, useState } from "react"
+import { Folder } from "./folderNavigator/types/folder";
 
 export interface MainContextValues  {
   inPage: boolean,
-  setInPage: React.Dispatch<React.SetStateAction<boolean>>
+  setInPage: React.Dispatch<React.SetStateAction<boolean>>,
+  newFolderRequest: Folder | null,
+  setNewFolderRequest: React.Dispatch<React.SetStateAction<Folder | null>>
 }
 
 export const MainContext = createContext<MainContextValues | null>(null);
@@ -10,10 +13,13 @@ export const MainContext = createContext<MainContextValues | null>(null);
 export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const [inPage, setInPage] = useState(false);
+  const [newFolderRequest, setNewFolderRequest] = useState<Folder | null>(null);
 
   const values: MainContextValues = {
     inPage, 
-    setInPage
+    setInPage,
+    newFolderRequest, 
+    setNewFolderRequest
   }
 
   return <div style={{ display: "flex", flexDirection: "column" }}>

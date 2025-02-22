@@ -11,11 +11,12 @@ import useFilesManager from '../folderNavigator/hooks/useFileManager';
 
 import './navBar.css';
 import { useContext } from 'react';
+import { Folder } from '../folderNavigator/types/folder';
 
 export default function NavBar() {
   const { signOut } = useAuth();
   const navigate = useNavigate();
-  const { inPage } = useContext(MainContext) as MainContextValues
+  const { inPage, setNewFolderRequest} = useContext(MainContext) as MainContextValues
   const { createFile } = useFilesManager();
 
 
@@ -41,13 +42,8 @@ export default function NavBar() {
     {
       label: 'Create folder',
       key: '1',
-      onClick: () => message.info('Click on Create folder'),
-    },
-    {
-      label: 'Create link',
-      key: '2',
-      onClick: () => message.info('Click on Create link'),
-    },
+      onClick: () => handleCreateFolder(),
+    }
   ];
 
 
@@ -79,6 +75,14 @@ export default function NavBar() {
       const id = res.data
       navigate(`/page/${id}`)
     })
+  }
+
+  const handleCreateFolder =() => {
+    const newFolder: Folder = {
+      name: '',
+      container: '7a89a4e6-b484-4a5b-bf94-5277cb45ae9x'
+    }
+    setNewFolderRequest(newFolder)
   }
 
 
