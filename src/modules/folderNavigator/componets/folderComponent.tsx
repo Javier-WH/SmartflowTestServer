@@ -9,6 +9,7 @@ import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
 import { Folder, FolderNavigatorContextValues, FolderData} from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
+import { useNavigate } from 'react-router-dom';
 import "./folderContainer.css"
 
 
@@ -17,8 +18,9 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
 
   const { setModalFolder, setModalDeleteFolder, setUpdateFolderRequest, groupDataByContainer } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
 
+  const navigate = useNavigate()
   const { moveFolder, moveFolderToRoot } = useFolderManager()
-  const { moveFile } = useFilesManager()
+  const { moveFile, createFile } = useFilesManager()
   const [contentId, setContentId] = useState<string | null>(null)
 
   const toggleFolder = (id: string | null) => {
@@ -54,6 +56,18 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
 
   }
 
+  const handleCreateFile = () => {
+    createFile('untitled', folder.id)
+      .then((res) => {
+        if (res.error) {
+          message.error('Error creating page')
+          return
+        }
+        const id = res.data
+        navigate(`/page/${id}`)
+      })
+  }
+
   const handleMoveToRoot = async () => {
     const request = await moveFolderToRoot(folder.id)
     const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
@@ -87,7 +101,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     {
       key: '5',
       label: <div style={{ textAlign: 'left' }}>Create a new file</div>,
-      onClick: () => message.info('Click on Create a new file'),
+      onClick: () => handleCreateFile(),
     },
   ];
 

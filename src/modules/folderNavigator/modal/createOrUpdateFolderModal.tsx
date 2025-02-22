@@ -54,21 +54,42 @@ export default function CreateOrUpdateFolderModal({
       if(containerID?.length === 0) {
         const folderId = folder?.id ?? '';
         const request = await updateRootFolder(containerName, folderId);
-        if (request.error) return message.error(request.message)
+        if (request.error) {
+          if(request.message === 'uroboros'){
+            message.error('Already exists a folder with this name')
+            return
+          }
+          message.error(request.message)
+          return
+        } 
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
         setFolder(null);
         return
       }
       const request = await updateFolder(containerName, containerID);
-      if (request.error) return message.error(request.message)
+      if (request.error) {
+        if (request.message === 'uroboros') {
+          message.error('Already exists a folder with this name')
+          return
+        }
+        message.error(request.message)
+        return
+      } 
       const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
       setUpdateFolderRequest(gruppedByContainer);
       setFolder(null);
       return;
     }
     const request = await createFolder(containerName, containerID);
-    if (request.error) return message.error(request.message)
+    if (request.error) {
+      if (request.message === 'uroboros') {
+        message.error('Already exists a folder with this name')
+        return
+      }
+      message.error(request.message)
+      return
+    } 
     const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
     setUpdateFolderRequest(gruppedByContainer);
     setFolder(null);
