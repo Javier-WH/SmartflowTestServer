@@ -458,10 +458,9 @@ $$ LANGUAGE plpgsql;
 
 
 -- create function create folder
-
 DROP FUNCTION IF EXISTS crear_carpeta;
 
-CREATE OR REPLACE FUNCTION crear_carpeta(p_folderName VARCHAR, p_container_id UUID)
+CREATE FUNCTION crear_carpeta(p_folderName VARCHAR, p_container_id UUID)
 RETURNS TABLE (
     itemId UUID,
     name VARCHAR,
@@ -480,7 +479,7 @@ BEGIN
         f.id AS itemId,
         f.name AS name,
         f.container AS container_id,
-        1 AS type, 
+        1 AS type,  
         FALSE AS published
     FROM
         public.folders f
@@ -496,8 +495,54 @@ BEGIN
     FROM
         public.files a
     WHERE
-        a.container IS NOT DISTINCT FROM p_container_id;
+        a.container IS NOT DISTINCT FROM p_container_id;  
 END;
 $$ LANGUAGE plpgsql;
 
 
+-- create function update folder
+
+DROP FUNCTION IF EXISTS actualizar_carpeta;
+
+CREATE OR REPLACE FUNCTION actualizar_carpeta(p_folderName VARCHAR, p_id UUID)
+RETURNS TABLE (
+    itemId UUID,
+    name VARCHAR,
+    container_id UUID,
+    type integer,
+    published boolean
+) AS $$
+DECLARE
+    p_container_id UUID;  
+BEGIN
+    -- 1. Obtener el container id de la carpeta
+    SELECT container INTO p_container_id
+    FROM public.folders
+    WHERE id = p_id;
+
+    -- 2. Actualizar el nombre de la carpeta (sintaxis corregida)
+    UPDATE public.folders
+    SET name = p_folderName  
+    WHERE id = p_id;
+
+    -- 3. Retornar el contenido del contenedor
+    RETURN QUERY
+    SELECT
+        f.id AS itemId,
+        f.name AS name,
+        f.container AS container_id,
+        1 AS type,
+        FALSE AS published
+    FROM public.folders f
+    WHERE f.container IS NOT DISTINCT FROM p_container_id
+    UNION ALL
+    SELECT
+        a.id AS itemId,
+        a.name AS name,
+        a.container AS container_id,
+        0 AS type,
+        a.published AS published
+    FROM public.files a
+    WHERE a.container IS NOT DISTINCT FROM p_container_id;
+END;
+$$ LANGUAGE plpgsql;

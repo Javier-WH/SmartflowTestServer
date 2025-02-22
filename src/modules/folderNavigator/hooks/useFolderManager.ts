@@ -1,8 +1,8 @@
 import supabase from '../../../lib/supabase';
-import { Folder, FolderResponse } from "../types/folder"
+import {  FolderResponse } from "../types/folder"
 import errorManager from '../errorManager/folderErrorManager';
 
-const createFolder = async (folderName: string, containerId: string): Promise<FolderResponse> => {
+const createFolder = async (folderName: string, containerId: string | null): Promise<FolderResponse> => {
   const { data, error } = await supabase
     .rpc('crear_carpeta', {
       p_container_id: containerId,
@@ -18,16 +18,38 @@ const createFolder = async (folderName: string, containerId: string): Promise<Fo
   }
 }
 
-const updateFolderName = async (folder: Folder): Promise<FolderResponse> => {
+const updateFolder = async (folderName: string, folderId: string | null) => {
+  const { data, error } = await supabase
+    .rpc('actualizar_carpeta', {
+      p_foldername: folderName,
+      p_id: folderId
+    })
+    .select('*');
 
-  const response = await supabase.from('folders')
-  .update({ name: folder.name })
-  .eq('id', folder.id);
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Folder updated successfully', data };
+  }
+};
 
-  if (response.error) return errorManager(response.error)
+const updateRootFolder = async (folderName: string, folderId: string | null) => {
+  const { data, error } = await supabase
+    .rpc('actualizar_carpeta_root', {
+      p_foldername: folderName,
+      p_id: folderId
+    })
+    .select('*');
 
-  return { error: false, message: 'Folder name updated successfully' };
-}
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Folder updated successfully', data };
+  }
+};
+
 
 
 const getFolders = async (container: string | null): Promise<FolderResponse> => {
@@ -116,7 +138,8 @@ export default function useFolderManager() {
     createFolder,
     getFolders,
     moveFolder,
-    updateFolderName,
+    updateFolder,
+    updateRootFolder,
     deleteFolder,
     getFolderContent,
     getRootContent,
