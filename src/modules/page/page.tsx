@@ -41,6 +41,7 @@ export default function Page() {
   const [ableToSave, setAbleToSave] = useState(false);
 
 
+
   // update page content
   useEffect(() => {
     if (id) {
@@ -86,7 +87,7 @@ export default function Page() {
     
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageContent]);
+  }, [pageContent, title]);
   /////
 
   // handle nav bar style
