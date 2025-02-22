@@ -23,6 +23,16 @@ type FolderResquest = {
   [contenedor_id: string]: FolderRequestItem[];
 };
 
+export interface FolderData {
+  container_id: string;
+  itemid: string;
+  name: string;
+  old_container_empty: boolean;
+  old_container_id: string;
+  published: boolean;
+  type: number;
+}
+
 
 export interface FolderNavigatorContextValues{
   Loading: string | null;
@@ -32,7 +42,8 @@ export interface FolderNavigatorContextValues{
   modalDeleteFolder: Folder | null;
   setModalDeleteFolder: React.Dispatch<React.SetStateAction<Folder | null>>
   updateFolderRequest: FolderResquest | null;
-  setUpdateFolderRequest: React.Dispatch<React.SetStateAction<FolderResquest | null>>
+  setUpdateFolderRequest: React.Dispatch<React.SetStateAction<FolderResquest | null>>;
+  groupDataByContainer: (request: { data: FolderData[] }) => FolderResquest;
 }
 
 export type getFolderResponse = (folderId: string | null) => Promise<FolderResponse>

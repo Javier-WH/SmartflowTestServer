@@ -1,26 +1,46 @@
 import { Modal, Input, message } from "antd";
 import { useEffect, useState } from "react";
-import { Folder, FolderResquest } from "../types/folder";
+import { Folder, FolderResquest, FolderData } from "../types/folder";
 import useFolderManager from "../hooks/useFolderManager";
 import "./createOrUpdateFolderModal.css"
 
 
-export default function CreateOrUpdateFolderModal({ folder, setFolder, setUpdateFolderRequest }: { folder: Folder | null, setFolder: (folder: Folder | null) => void, setUpdateFolderRequest: (folder: FolderResquest | null) => void }) {
+export default function CreateOrUpdateFolderModal({ 
+  folder, 
+  setFolder, 
+  setUpdateFolderRequest,
+  groupDataByContainer
+}: { 
+  folder: Folder | null, 
+  setFolder: (folder: Folder | null) => void, 
+  setUpdateFolderRequest: (folder: FolderResquest | null) => void,
+  groupDataByContainer: (request: { data: FolderData[] }) => FolderResquest
+}) {
 
-  const { createFolder, updateFolderName } = useFolderManager()
+  const {createFolder} = useFolderManager()
   const [isModalOpen, setIsModalOpen] = useState(true);
-  const [name, setName] = useState('');
+  const [containerName, setcontainerName] = useState('');
+  const [containerID, setcontainerID] = useState<string>('');
+  const [update, setUpdate] = useState(false);
 
 
   useEffect(() => {
     if (folder) {
       setIsModalOpen(true);
-      if (folder.name) setName(folder.name);
+      if (folder.container) setcontainerID(folder.id || '');
+      if (folder.name) {
+        setcontainerName(folder.name);
+        setUpdate(true);
+      }else{
+        setcontainerName('');
+        setUpdate(false);
+      }
     } else {
       setIsModalOpen(false);
-      setName('');
+      setUpdate(false);
+      setcontainerName('');
+      setcontainerID('');
     }
-
   }, [folder]);
 
 
@@ -29,7 +49,15 @@ export default function CreateOrUpdateFolderModal({ folder, setFolder, setUpdate
   }
 
   const handleOk = async () => {
-    message.info('Click on ok');
+    if (update) {
+      message.info('Click on ok');
+      return;
+    }
+    const request = await createFolder(containerName, containerID);
+    if (request.error) return message.error(request.message)
+    const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
+    setUpdateFolderRequest(gruppedByContainer);
+    setFolder(null);
 
   }
 
@@ -40,12 +68,12 @@ export default function CreateOrUpdateFolderModal({ folder, setFolder, setUpdate
     onCancel={handleCancel}
     okText={folder?.name ? 'Rename' : 'Create'}
     className="createOrUpdateFolderModal"
-    okButtonProps={{ disabled: name.length === 0 }}
+    okButtonProps={{ disabled: containerName.length === 0 }}
   >
     <div>
       <div>
         <label htmlFor="">Folder Name</label>
-        <Input value={name} onChange={(e) => setName(e.target.value)} />
+        <Input value={containerName} onChange={(e) => setcontainerName(e.target.value)} />
       </div>
     </div>
   </Modal>

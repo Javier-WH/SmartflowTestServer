@@ -7,7 +7,7 @@ import openedFolder from '../assets/svg/opened_folder.svg'
 import closedFolder from '../assets/svg/closed_folder.svg'
 import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
-import { Folder, FolderNavigatorContextValues, FolderResquest} from '../types/folder';
+import { Folder, FolderNavigatorContextValues, FolderData} from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import "./folderContainer.css"
 
@@ -15,7 +15,7 @@ import "./folderContainer.css"
 
 export function FolderComponent({ folder, containerid }: { folder: ContainerElement, containerid: string | null }) {
 
-  const { setModalFolder, setModalDeleteFolder, setUpdateFolderRequest } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
+  const { setModalFolder, setModalDeleteFolder, setUpdateFolderRequest, groupDataByContainer } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
 
   const { moveFolder, moveFolderToRoot } = useFolderManager()
   const { moveFile } = useFilesManager()
@@ -147,7 +147,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
   
   };
 
- 
+ /*
   interface FolderData {
     container_id: string;
     itemid: string;
@@ -182,7 +182,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     
     return gruppedByContainer;
   }
-
+*/
 
   return <div>
     <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">

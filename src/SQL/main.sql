@@ -457,6 +457,47 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- create function create folder
 
+DROP FUNCTION IF EXISTS crear_carpeta;
+
+CREATE OR REPLACE FUNCTION crear_carpeta(p_folderName VARCHAR, p_container_id UUID)
+RETURNS TABLE (
+    itemId UUID,
+    name VARCHAR,
+    container_id UUID,
+    type integer,
+    published boolean
+) AS $$
+BEGIN
+    -- 1. Insertar la carpeta
+    INSERT INTO public.folders (name, container) 
+    VALUES (p_folderName, p_container_id);
+
+    -- 2. Retornar el contenido del contenedor
+    RETURN QUERY
+    SELECT
+        f.id AS itemId,
+        f.name AS name,
+        f.container AS container_id,
+        1 AS type, 
+        FALSE AS published
+    FROM
+        public.folders f
+    WHERE
+        f.container IS NOT DISTINCT FROM p_container_id  
+    UNION ALL
+    SELECT
+        a.id AS itemId,
+        a.name AS name,
+        a.container AS container_id,
+        0 AS type,
+        a.published AS published
+    FROM
+        public.files a
+    WHERE
+        a.container IS NOT DISTINCT FROM p_container_id;
+END;
+$$ LANGUAGE plpgsql;
 
 
