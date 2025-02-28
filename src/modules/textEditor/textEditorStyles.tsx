@@ -1,4 +1,4 @@
-const width = "700px"
+const width = "740px"
 
 const textContainerStyles: React.CSSProperties = {
   width: "100vw",
@@ -11,23 +11,41 @@ const textContainerStyles: React.CSSProperties = {
   top: 0,
   bottom: 0,
   overflowY: "auto",
+  paddingBottom: "80px",
 }
 const titleStyles: React.CSSProperties = {
   width,
   direction: "ltr",
-  position: "fixed",
-  zIndex: 1000,
-  border: "5px solid white",
+  border: "none",
   backgroundColor: "white",
   borderRadius: "0px",
-  fontSize: "2em",
+  fontSize: "40px",
   outline: "none",
   boxShadow: "none",
   fontWeight: 600,
+
 
 }
 const editorStyles: React.CSSProperties = {
   width,
 }
 
-export default { textContainerStyles, editorStyles, titleStyles }
+const container: React.CSSProperties = {
+
+}
+
+const homeButton: React.CSSProperties = {
+  width,
+  marginTop: "10px",
+  display: "flex",
+  alignItems: "center",
+  gap: "5px",
+  color: "gray",
+  fontWeight: 600,
+  fontFamily: "monospace",
+
+
+}
+
+
+export default { textContainerStyles, editorStyles, titleStyles, homeButton, container }
