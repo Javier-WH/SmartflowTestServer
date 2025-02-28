@@ -8,6 +8,7 @@ import Page from './modules/page/page'
 import { Navigate } from 'react-router-dom';
 import MainLayout from './modules/MainLayout';
 import PrivateRoute from './PrivateRoute';
+import TextEditor from './modules/textEditor/textEditor';
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
             {
                 path: 'page/:id',
                 element: <Page />
+            },
+            {
+                path: 'textEditor',
+                element: <TextEditor />
             },
         ],
     },

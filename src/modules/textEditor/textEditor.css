@@ -1,0 +1,21 @@
+  .ql-container.ql-snow {
+    border: none !important;
+  }
+
+  .ql-toolbar.ql-snow {
+    border: none !important;
+    border-bottom: 1px solid #ddd !important;
+  }
+
+  .ql-editor {
+    padding: 0 !important;
+  }
+
+  .ql-container:focus,
+  .ql-toolbar:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+
+  

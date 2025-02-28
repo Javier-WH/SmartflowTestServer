@@ -43,6 +43,11 @@ export default function NavBar() {
       label: 'Create folder',
       key: '1',
       onClick: () => handleCreateFolder(),
+    },
+    {
+      label: 'Text Editor',
+      key: '2',
+      onClick: () => handleTextEditor(),
     }
   ];
 
@@ -64,6 +69,12 @@ export default function NavBar() {
       onClick: () => message.info('Click on Share'),
     }
   ];
+
+  const handleTextEditor = () => {  
+
+    navigate("/textEditor")
+
+  }
 
   const handleCreatePage = () => {
     createFile('untitled')

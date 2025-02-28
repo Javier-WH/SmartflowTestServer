@@ -14,7 +14,7 @@ export default function MainLayout() {
                     <NavBar />
                 </div>
                 <div className="flex flex-grow bg-gray-250">
-                    <main className=" ">
+                    <main style={{ position: "relative" }}>
                         <Outlet />
                     </main>
                 </div>
