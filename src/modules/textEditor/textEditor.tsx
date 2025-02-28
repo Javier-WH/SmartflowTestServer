@@ -66,6 +66,7 @@ export default function TextEditor() {
     'align',
     'bold', 'italic', 'underline', 'strike', 'blockquote',
     'list', 'bullet',
+    'color', 'background',
     'link', 'image', 'video',
   ];
 
