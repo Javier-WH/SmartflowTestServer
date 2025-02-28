@@ -1,32 +1,55 @@
+import { MainContext, MainContextValues } from "../mainContext"
 import { Input } from 'antd';
-import { useState } from 'react';
-import ReactQuill, { Quill } from 'react-quill'; // Import Quill here
+import { useContext, useEffect, useState } from 'react';
+import ReactQuill, { Quill } from 'react-quill';
 import styles from './textEditorStyles.tsx'
 import 'react-quill/dist/quill.snow.css';
+//import ImageResize from 'quill-image-resize-module-react';
+import ResizeModule from "@botom/quill-resize-module";
 import './textEditor.css'
-import { ImageResize } from 'quill-image-resize-module';
-import 'quill-image-resize-module-react/dist/quill-image-resize-module.snow.css'; // Import styles for image resize
+
+
+//Quill.register('modules/imageResize', ImageResize);
+Quill.register("modules/resize", ResizeModule);
 
 export default function TextEditor() {
-  Quill.register('modules/imageResize', ImageResize);
+  const { setInPage } = useContext(MainContext) as MainContextValues
   const [contenido, setContenido] = useState('');
   const [title, setTitle] = useState('');
+
+  // handle nav bar style
+  useEffect(() => {
+    setInPage(true)
+    return () => {
+      setInPage(false)
+    }
+  }, [setInPage])
 
   const modulos = {
     toolbar: [
       //[{ header: [1, 2, 3, false] }],
-      [{ font: [] }], 
+      [{ font: [] }],
       [{ size: ['small', false, 'large', 'huge'] }],
       [{ align: [] }],
-      ['bold', 'italic', 'underline', 'strike' ],
+      ['bold', 'italic', 'underline', 'strike'],
       [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link', 'image'],
+      [{ color: [] }, { background: [] }], 
+      ['link', 'image', 'video'],
       ['clean'],
     ],
-    imageResize: { // Add imageResize module configuration
-      parchment: Quill.import('parchment'),
-      modules: ['Resize', 'DisplaySize'] // You can configure sub-modules here if needed
-    },
+    resize: {
+      toolbar: {
+
+      },
+      locale: {
+        // change them depending on your language
+        altTip: "Hold down the alt key to zoom",
+        floatLeft: "Left",
+        floatRight: "Right",
+        center: "Center",
+        restore: "Restore",
+      },
+    }
   };
 
   const formatos = [
@@ -36,25 +59,26 @@ export default function TextEditor() {
     'align',
     'bold', 'italic', 'underline', 'strike', 'blockquote',
     'list', 'bullet',
-    'link', 'image'
+    'link', 'image', 'video',
   ];
 
   return <div style={styles.textContainerStyles} >
-    <Input 
+    <Input
       style={styles.titleStyles}
-      value={title} 
-      onChange={(e) => setTitle(e.target.value)} 
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      placeholder="Give your page a title"
     />
     <ReactQuill
-      theme="snow" 
+      theme="snow"
       value={contenido}
       onChange={setContenido}
       modules={modulos}
       formats={formatos}
       placeholder="Escribe algo..."
       style={styles.editorStyles}
-      />
-    </div>
+    />
+  </div>
 
 }
 
