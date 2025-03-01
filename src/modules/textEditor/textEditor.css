@@ -55,6 +55,15 @@
     color: white;
   }
 
+  .ql-picker-item{
+    padding: 5px !important;
+  }
+
+  .ql-picker-item:hover {
+    color: var(--currentColor) !important;
+    background-color: var(--pageBarColor) !important;
+  }
+
   .ql-selected {
     color: rgb(94, 161, 68) !important;
   }
@@ -219,3 +228,5 @@
 .ql-font-serif {
   font-family: 'Serif', serif;
 }
+
+
