@@ -59,11 +59,12 @@
     color: rgb(94, 161, 68) !important;
   }
 
-  .ql-snow .ql-color-picker .ql-picker-options,
-  .ql-snow .ql-icon-picker .ql-picker-options {
+  .ql-snow .ql-color-picker .ql-picker-options {
     left: 0 !important;
     width: 200px !important;
   }
+
+  .ql-snow .ql-icon-picker .ql-picker-options {}
 
   .ql-toolbar {
     position: relative;
@@ -74,3 +75,147 @@
     position: relative;
     z-index: 1;
   }
+
+  /* font size */
+
+  .ql-size-10px {
+    font-size: 10px;
+  }
+
+  .ql-size-12px {
+    font-size: 12px;
+  }
+
+  .ql-size-14px {
+    font-size: 14px;
+  }
+
+  .ql-size-16px {
+    font-size: 16px;
+  }
+
+  .ql-size-18px {
+    font-size: 18px;
+  }
+
+  .ql-size-20px {
+    font-size: 20px;
+  }
+
+  .ql-size-22px {
+    font-size: 22px;
+  }
+
+  .ql-size-24px {
+    font-size: 24px;
+  }
+
+  .ql-size-26px {
+    font-size: 26px;
+  }
+
+  .ql-size-28px {
+    font-size: 28px;
+  }
+
+  .ql-size-18px {
+    font-size: 30px;
+  }
+
+  .ql-size-32px {
+    font-size: 32px;
+  }
+
+  .ql-size-34px {
+    font-size: 32px;
+  }
+
+  .ql-size-36px {
+    font-size: 32px;
+  }
+
+  .ql-size-38px {
+    font-size: 32px;
+  }
+
+  .ql-size-40px {
+    font-size: 32px;
+  }
+
+  .ql-size-42px {
+    font-size: 32px;
+  }
+
+  .ql-size-44px {
+    font-size: 32px;
+  }
+
+  .ql-size-46px {
+    font-size: 32px;
+  }
+
+  .ql-size-48px {
+    font-size: 48px;
+  }
+
+  /*font type*/
+
+.ql-font-arial {
+  font-family: 'Arial', sans-serif;
+}
+
+.ql-font-times-new-roman {
+  font-family: 'Times New Roman', serif;
+}
+
+.ql-font-courier-new {
+  font-family: 'Courier New', monospace;
+}
+
+.ql-font-comic-sans-ms {
+  font-family: 'Comic Sans MS', cursive;
+}
+
+.ql-font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
+
+.ql-font-georgia {
+  font-family: 'Georgia', serif;
+}
+
+.ql-font-verdana {
+  font-family: 'Verdana', sans-serif;
+}
+
+.ql-font-open-sans {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.ql-font-lato {
+  font-family: 'Lato', sans-serif;
+}
+
+.ql-font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.ql-font-impact {
+  font-family: 'Impact', sans-serif;
+}
+
+.ql-font-fantasy {
+  font-family: 'Fantasy', sans-serif;
+}
+
+.ql-font-cursive {
+  font-family: 'Cursive', cursive;
+}
+
+.ql-font-monospace {
+  font-family: 'Monospace', monospace;
+}
+
+.ql-font-serif {
+  font-family: 'Serif', serif;
+}
