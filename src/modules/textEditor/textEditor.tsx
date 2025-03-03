@@ -10,8 +10,10 @@ import { useNavigate } from "react-router-dom";
 import CustomToolbar from "./components/toolbar/CustonToolbar.tsx";
 import options from "./components/utils/options.ts";
 import insertHelpBlock from "./components/helpBlock/insertHelpBlock.ts";
+import HelpBlockBlot from "./components/blots/HelpBlockBlot.ts";
 import './textEditor.css';
 
+Quill.register('formats/help-block', HelpBlockBlot);
 
 // Registro del módulo de resize
 Quill.register("modules/resize", ResizeModule);
@@ -54,7 +56,7 @@ export default function TextEditor() {
     toolbar: {
       container: "#toolbar",
       handlers: {
-        helpBlock: insertHelpBlock,
+        helpBlock: insertHelpBlock
       },
     },
     resize: {

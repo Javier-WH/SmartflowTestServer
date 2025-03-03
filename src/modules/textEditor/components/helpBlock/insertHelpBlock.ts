@@ -1,9 +1,24 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function insertHelpBlock(this: { quill: any }) {
+type QuillInstance = {
+  getSelection: () => { index: number };
+  insertEmbed: (index: number, blotName: string, content: string) => void;
+  setSelection: (index: number) => void;
+};
 
-  const quill = this.quill;
-  const cursorPosition = quill.getSelection().index;
-  const customHTML = '<div>Aqui va el help block</div>'; 
-  quill.clipboard.dangerouslyPasteHTML(cursorPosition, customHTML);
-  quill.setSelection(cursorPosition + 1);
+export default function insertHelpBlock(this: { quill: QuillInstance }) {
+  const selection = this.quill.getSelection();
+  if (!selection) return;
+
+  const position = selection.index;
+  
+
+  this.quill.insertEmbed(
+    position,
+    'help-block',
+    `<details>
+      <summary> Some details </summary>
+      <p> More info about the details. </p>
+    </details>`
+  );
+
+  this.quill.setSelection(position + 1);
 }
