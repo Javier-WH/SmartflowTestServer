@@ -58,9 +58,9 @@ export default function CustomToolbar() {
       <button className="ql-image"></button>
       <button className="ql-video"></button>
 
-      <button className="ql-helpBlock">
+      {/*<button className="ql-helpBlock">
         <img src={HelpBlockComponent} alt="" />
-      </button>
+      </button>*/}
     </div>
   ));
 }

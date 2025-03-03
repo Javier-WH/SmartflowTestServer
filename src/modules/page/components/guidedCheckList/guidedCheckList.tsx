@@ -1,4 +1,4 @@
-//import DraggableList from "react-draggable-list";
+import DraggableList from "react-draggable-list";
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { PageItem } from "../../types/pageTypes";
 import { GoGrabber } from "react-icons/go";

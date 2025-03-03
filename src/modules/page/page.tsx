@@ -15,7 +15,7 @@ import CheckboxComponent from "./components/checkBox/checkboxComponent.tsx";
 import HelpBlockComponent from "./components/helpBlock/helpBlockComponent.tsx";
 import MultipleChoisesComponent from "./components/multipleChoises/multipleChoisesComponent.tsx";
 import TextInputComponent from "./components/textInput/textInputComponent.tsx";
-//import GuidedCheckList from "./components/guidedCheckList/guidedCheckList.tsx";
+import GuidedCheckList from "./components/guidedCheckList/guidedCheckList.tsx";
 import { getRawTextComponent } from "./components/rawComponents/getRawComponents.ts";
 import useFilesManager from "../folderNavigator/hooks/useFileManager.ts";
 import { Spin } from "antd";
@@ -174,8 +174,8 @@ export default function Page() {
             } else if (item.type === PageType.TextInput) {
               return <TextInputComponent item={item} key={item.id} />
             } else if (item.type === PageType.GuidedCheckList) {
-              //return <GuidedCheckList item={item} key={item.id} />
-              console.log("GuidedCheckList is disabled for now")
+              return <GuidedCheckList item={item} key={item.id} />
+              //console.log("GuidedCheckList is disabled for now")
             }
           })
         }
