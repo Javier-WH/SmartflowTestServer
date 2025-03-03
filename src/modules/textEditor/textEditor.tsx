@@ -64,7 +64,6 @@ export default function TextEditor() {
     if (id && ableToSave) {
       updateFileContent(id, contenido, title);
     }
-    console.log(contenido);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contenido, title]);
 
