@@ -1,6 +1,6 @@
 type QuillInstance = {
   getSelection: () => { index: number };
-  insertEmbed: (index: number, blotName: string, content: string) => void;
+  insertEmbed: (index: number, blotName: string, content: { title: string; content: string }) => void;
   setSelection: (index: number) => void;
 };
 
@@ -14,10 +14,10 @@ export default function insertHelpBlock(this: { quill: QuillInstance }) {
   this.quill.insertEmbed(
     position,
     'help-block',
-    `<details>
-      <summary> Some details </summary>
-      <p> More info about the details. </p>
-    </details>`
+    {
+      title: 'Título del collapsible',
+      content: '<p>Contenido del collapsible...</p>'
+    }
   );
 
   this.quill.setSelection(position + 1);
