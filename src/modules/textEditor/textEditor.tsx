@@ -66,7 +66,7 @@ export default function TextEditor() {
     }
     console.log(contenido);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contenido]);
+  }, [contenido, title]);
 
   // handle nav bar style
   useEffect(() => {
