@@ -33,7 +33,7 @@ const router = createBrowserRouter([
                 element: <Page />
             },
             {
-                path: 'textEditor',
+                path: 'textEditor/:id',
                 element: <TextEditor />
             },
         ],

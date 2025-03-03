@@ -64,7 +64,12 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
           return
         }
         const id = res.data
-        navigate(`/page/${id}`)
+        const pageType = import.meta.env.VITE_PAGE_TYPE;
+        if (pageType === 'quill') {
+          navigate(`/textEditor/${id}`);
+        } else {
+          navigate(`/page/${id}`)
+        }
       })
   }
 

@@ -2,6 +2,8 @@ import supabase from '../../../lib/supabase';
 import {  FolderResponse } from "../types/folder"
 import errorManager from '../errorManager/folderErrorManager';
 
+const pageType = import.meta.env.VITE_PAGE_TYPE;
+
 const createFolder = async (folderName: string, containerId: string | null): Promise<FolderResponse> => {
   const { data, error } = await supabase
     .rpc('crear_carpeta', {
@@ -95,32 +97,6 @@ const moveFolder = async (folderId: string, newContainerId: string | null): Prom
   }
 }
 
-const getFolderContent = async (folderId: string | null): Promise<FolderResponse> => {
-  const { data, error } = await supabase
-    .rpc('getfoldercontent', {
-      p_folder_id: folderId
-    });
-
-  if (error) {
-    console.log(error);
-    return errorManager(error)
-  } else {
-    return { error: false, message: 'Folder content retrieved successfully', data };
-  }
-}
-
-const getRootContent = async (): Promise<FolderResponse> => {
-  const { data, error } = await supabase
-    .rpc('getrootcontent');
-
-  if (error) {
-    console.log(error);
-    return errorManager(error)
-  } else {
-    return { error: false, message: 'Folder content retrieved successfully', data };
-  }
-}
-
 const moveFolderToRoot = async (folderId: string | null): Promise<FolderResponse> => {
   const { data, error } = await supabase
     .rpc('move_folder_to_root', {
@@ -134,6 +110,40 @@ const moveFolderToRoot = async (folderId: string | null): Promise<FolderResponse
     return { error: false, message: 'Folder moved to root successfully', data };
   }
 }
+
+const getFolderContent = async (folderId: string | null): Promise<FolderResponse> => {
+
+  const functionName = pageType === 'quill' ? 'getfoldercontentquill' : 'getfoldercontent';
+
+  const { data, error } = await supabase
+    .rpc(functionName, {
+      p_folder_id: folderId
+    });
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Folder content retrieved successfully', data };
+  }
+}
+
+const getRootContent = async (): Promise<FolderResponse> => {
+
+  const functionName = pageType === 'quill' ? 'getrootcontentquill' : 'getrootcontent';
+
+  const { data, error } = await supabase
+    .rpc(functionName);
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Folder content retrieved successfully', data };
+  }
+}
+
+
 
 export default function useFolderManager() {
   return {

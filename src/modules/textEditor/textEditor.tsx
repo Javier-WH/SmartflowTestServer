@@ -4,13 +4,14 @@ import { Input } from 'antd';
 import { useContext, useEffect, useState, useRef } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import styles from './textEditorStyles.tsx';
-import 'react-quill/dist/quill.snow.css';
 import ResizeModule from "@botom/quill-resize-module";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CustomToolbar from "./components/toolbar/CustonToolbar.tsx";
 import options from "./components/utils/options.ts";
 import insertHelpBlock from "./components/helpBlock/insertHelpBlock.ts";
 import HelpBlockBlot from "./components/blots/HelpBlockBlot.ts";
+import useFilesManager from "../folderNavigator/hooks/useFileManager.ts";
+import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 
 Quill.register('formats/help-block', HelpBlockBlot);
@@ -34,7 +35,38 @@ export default function TextEditor() {
   const quillRef = useRef<ReactQuill>(null);
   const [contenido, setContenido] = useState('');
   const [title, setTitle] = useState('');
+  const [ableToSave, setAbleToSave] = useState(false);
   const navigate = useNavigate();
+  const { updateFileContent, getFileContent } = useFilesManager();
+  const { id } = useParams();
+
+
+  // if a content in database is found, when the page is loaded, the content is loaded
+  useEffect(() => {
+    if (id) {
+      setAbleToSave(false)
+      getFileContent(id)
+        .then((response) => {
+          if (response.error) return
+          const { content, name } = response.data;
+          setTitle(name === 'untitled' ? '' : name);
+          setContenido(content ? content : '');
+        })
+        .catch((error) => console.error(error))
+        .finally(() => setAbleToSave(true))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  // this useEffect is to update the dataBase
+  useEffect(() => {
+    if (id && ableToSave) {
+      updateFileContent(id, contenido, title);
+    }
+    console.log(contenido);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contenido]);
 
   // handle nav bar style
   useEffect(() => {
@@ -84,7 +116,7 @@ export default function TextEditor() {
           placeholder="Give your page a title"
           onKeyDown={handleTitleKeyDown}
         />
-     
+
         <CustomToolbar />
         <ReactQuill
           ref={quillRef}

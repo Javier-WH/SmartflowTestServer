@@ -43,11 +43,6 @@ export default function NavBar() {
       label: 'Create folder',
       key: '1',
       onClick: () => handleCreateFolder(),
-    },
-    {
-      label: 'Text Editor',
-      key: '2',
-      onClick: () => handleTextEditor(),
     }
   ];
 
@@ -70,11 +65,7 @@ export default function NavBar() {
     }
   ];
 
-  const handleTextEditor = () => {  
 
-    navigate("/textEditor")
-
-  }
 
   const handleCreatePage = () => {
     createFile('untitled')
@@ -84,7 +75,12 @@ export default function NavBar() {
        return
       }
       const id = res.data
-      navigate(`/page/${id}`)
+      const pageType = import.meta.env.VITE_PAGE_TYPE;
+      if (pageType === 'quill') {
+        navigate(`/textEditor/${id}`);
+      }else{
+        navigate(`/page/${id}`)
+      }
     })
   }
 

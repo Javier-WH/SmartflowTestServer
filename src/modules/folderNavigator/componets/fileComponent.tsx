@@ -10,7 +10,7 @@ import { File } from '../types/file';
 import "./folderContainer.css"
 import { FolderData, FolderNavigatorContextValues } from '../types/folder';
 import useFilesManager from '../hooks/useFileManager';
-
+const pageType = import.meta.env.VITE_PAGE_TYPE;
 
 
 export function FileComponent({ file }: { file: ContainerElement }) {
@@ -19,6 +19,10 @@ export function FileComponent({ file }: { file: ContainerElement }) {
   const { moveFileToRoot } = useFilesManager();
   const navigate = useNavigate();
   const handleClick = (id: string) => {
+    if (pageType === 'quill'){
+      navigate(`/textEditor/${id}`);
+      return
+    }
     navigate(`/page/${id}`);
   }
 
