@@ -1,6 +1,5 @@
-import { Input, MenuProps, message } from 'antd';
+import { MenuProps, message } from 'antd';
 import useAuth from '@/modules/auth/hooks/useAuth';
-import { IoSearchSharp } from "react-icons/io5";
 import Logo from '../../assets/svg/logo.svg';
 import UserPlaceHolder from '../../assets/svg/userPlaceHolder.svg'
 import { CaretDownOutlined } from '@ant-design/icons';
@@ -8,6 +7,7 @@ import { Dropdown } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { MainContext, MainContextValues } from '../mainContext';
 import useFilesManager from '../folderNavigator/hooks/useFileManager';
+import SearchInput from '../search/searchInput';
 
 import './navBar.css';
 import { useContext } from 'react';
@@ -105,7 +105,7 @@ export default function NavBar() {
     <div className="title-container">
       <Link to='/home' className="logo-container">
         <img src={Logo} alt="" />
-        <Input suffix={<IoSearchSharp />} size='large' />
+        <SearchInput />
       </Link>
       {!inPage && <div className="navbar-title">Kepen</div>}
     </div>

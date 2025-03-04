@@ -61,6 +61,7 @@ const getFileContent = async (fileId: string): Promise<FileResponse> => {
 
 const updateFileContent = async (fileId: string, content:PageItem[] | string , name: string): Promise<FileResponse> => {
   const tableName = pageType === 'quill' ? 'filesquill' : 'files';
+  if (name === '') name = 'untitled';
   const response = await supabase
     .from(tableName)
     .update({ 
@@ -107,6 +108,20 @@ const moveFileToRoot = async (fileId: string | null): Promise<FileResponse> => {
   }
 }
 
+const searchFiles = async (text: string): Promise<FileResponse> => {
+  const functionName = pageType === 'quill' ? 'partial_search_filesquill' : 'partial_search_files';
+  const { data, error } = await supabase
+    .rpc(functionName, {
+      search_term: text
+    });
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Files found successfully', data };
+  }
+}
 
 
 
@@ -118,6 +133,7 @@ export default function useFilesManager() {
     getFileContent,
     updateFileContent,
     deleteFile,
-    moveFileToRoot
+    moveFileToRoot,
+    searchFiles
   }
 }

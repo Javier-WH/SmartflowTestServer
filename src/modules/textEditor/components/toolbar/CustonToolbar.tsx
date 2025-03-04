@@ -1,4 +1,4 @@
-import HelpBlockComponent from "../../assets/svg/addHelpBlockIcon.svg";
+//import HelpBlockComponent from "../../assets/svg/addHelpBlockIcon.svg";
 
 
 export default function CustomToolbar() {
