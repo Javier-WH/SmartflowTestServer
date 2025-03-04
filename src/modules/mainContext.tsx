@@ -1,5 +1,5 @@
-import { createContext, ReactNode, useState } from "react"
-import { Folder } from "./folderNavigator/types/folder";
+import { createContext, type ReactNode, useState } from "react"
+import type { Folder } from "./folderNavigator/types/folder";
 
 export interface MainContextValues  {
   inPage: boolean,
@@ -22,10 +22,10 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     setNewFolderRequest
   }
 
-  return <div style={{ display: "flex", flexDirection: "column" }}>
-    <MainContext.Provider value={values}>
-      {children}
-    </MainContext.Provider>
-  </div>
+  return (
+      <MainContext.Provider value={values}>
+        {children}
+      </MainContext.Provider>
+  )
 
 }

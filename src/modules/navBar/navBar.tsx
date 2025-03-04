@@ -5,7 +5,7 @@ import Logo from '../../assets/svg/logo.svg';
 import UserPlaceHolder from '../../assets/svg/userPlaceHolder.svg'
 import { CaretDownOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MainContext, MainContextValues } from '../mainContext';
 import useFilesManager from '../folderNavigator/hooks/useFileManager';
 
@@ -103,10 +103,10 @@ export default function NavBar() {
 
 
     <div className="title-container">
-      <div className="logo-container">
+      <Link to='/home' className="logo-container">
         <img src={Logo} alt="" />
         <Input suffix={<IoSearchSharp />} size='large' />
-      </div>
+      </Link>
       {!inPage && <div className="navbar-title">Kepen</div>}
     </div>
 

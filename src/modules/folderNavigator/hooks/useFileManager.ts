@@ -51,7 +51,7 @@ const getFileContent = async (fileId: string): Promise<FileResponse> => {
   const tableName = pageType === 'quill' ? 'filesquill' : 'files';
   const response = await supabase
     .from(tableName)
-    .select('content, name')
+    .select('content, name, updated_at')
     .eq('id', fileId)
     .single();
 
@@ -67,7 +67,9 @@ const updateFileContent = async (fileId: string, content:PageItem[] | string , n
       name,
       content 
     })
-    .eq('id', fileId);
+    .eq('id', fileId)
+    .select('content, name, updated_at')
+    .single();
   if (response.error) return errorManager(response.error)
   return { error: false, message: 'content updated successfully', data: response.data };
 

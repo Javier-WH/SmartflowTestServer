@@ -1,20 +1,14 @@
 const width = "740px"
 
 const textContainerStyles: React.CSSProperties = {
-  width: "100vw",
+  width: "100%",
+  flexGrow: 1,
   display: "flex",
   flexDirection: "column",
-  justifyContent: "start",
   alignItems: "center",
-  backgroundColor: "white",
-  position: "absolute",
-  top: 0,
-  bottom: 0,
-  overflowY: "auto",
-  paddingBottom: "80px",
 }
+
 const titleStyles: React.CSSProperties = {
-  width,
   direction: "ltr",
   border: "none",
   backgroundColor: "white",
@@ -23,15 +17,13 @@ const titleStyles: React.CSSProperties = {
   outline: "none",
   boxShadow: "none",
   fontWeight: 600,
-
-
 }
 const editorStyles: React.CSSProperties = {
   width,
+  height: '100%',
 }
 
 const container: React.CSSProperties = {
-
 }
 
 const homeButton: React.CSSProperties = {
@@ -43,8 +35,7 @@ const homeButton: React.CSSProperties = {
   color: "gray",
   fontWeight: 600,
   fontFamily: "monospace",
-
-
+  marginBottom: "10px",
 }
 
 
