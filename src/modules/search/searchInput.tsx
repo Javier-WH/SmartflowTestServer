@@ -32,7 +32,7 @@ export default function SearchInput() {
     value={searchValue} 
     onChange={(e) => setSearchValue(e.target.value)}
     />
-    <SearchBox data={searchResults} />
+    <SearchBox data={searchResults} word={searchValue}/>
   </div>
 
 }

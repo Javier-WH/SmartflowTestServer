@@ -13,7 +13,7 @@ import useFilesManager from '../folderNavigator/hooks/useFileManager.ts';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 import homeIcon from '../../assets/svg/homeIcon.svg';
-import { useDebouncedCallback } from 'use-debounce';
+//import { useDebouncedCallback } from 'use-debounce';
 
 Quill.register('formats/help-block', HelpBlockBlot);
 
@@ -35,7 +35,7 @@ export default function TextEditor() {
     const navigate = useNavigate();
 
     const { setInPage } = useContext(MainContext) as MainContextValues;
-    const [contenido, setContenido] = useState('holaaa');
+    const [contenido, setContenido] = useState('');
     const [title, setTitle] = useState('');
     const [ableToSave, setAbleToSave] = useState(false);
     const [updatedAt, setUpdatedAt] = useState(0);
@@ -62,7 +62,7 @@ export default function TextEditor() {
                 .finally(() => setAbleToSave(true));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, getFileContent]);
+    }, []);
 
     // this useEffect is to update the dataBase
     useEffect(() => {
@@ -77,16 +77,17 @@ export default function TextEditor() {
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [contenido, title, ableToSave, id, updateFileContent]);
+    }, [contenido, title]);
 
     // handle nav bar style
     useEffect(() => {
         setInPage(true);
-        
+
         return () => {
             setInPage(false);
         };
-    }, [setInPage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
@@ -96,9 +97,9 @@ export default function TextEditor() {
         }
     };
 
-    const handleEditorChange = useDebouncedCallback((value: string) => {
+    const handleEditorChange = (value: string) => {
         setContenido(value);
-    }, 5000);
+    };
 
     const modulos = {
         toolbar: {

@@ -835,3 +835,49 @@ BEGIN
     WHERE NOT EXISTS (SELECT 1 FROM combined);
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- full text search quill
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+ALTER TABLE public.filesquill 
+ADD COLUMN searchable_text text GENERATED ALWAYS AS (
+  coalesce(name, '') || ' ' || coalesce(regexp_replace(content, '<[^>]+>', '', 'gi'), '')
+) STORED;
+
+CREATE INDEX idx_filesquill_trgm_search ON public.filesquill USING GIN (searchable_text gin_trgm_ops);
+
+CREATE OR REPLACE FUNCTION public.partial_search_filesquill(
+  search_term text
+)
+RETURNS TABLE (
+  id uuid,
+  name varchar,
+  content text,
+  container uuid,
+  created_at timestamptz,
+  updated_at timestamptz,
+  similarity_score float4
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    f.id,
+    f.name,
+    f.content,
+    f.container,
+    f.created_at,
+    f.updated_at,
+    similarity(f.searchable_text, search_term) AS similarity_score
+  FROM
+    public.filesquill f
+  WHERE
+    f.searchable_text ILIKE '%' || search_term || '%'
+  ORDER BY
+    similarity_score DESC,
+    f.updated_at DESC
+  LIMIT 100;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
