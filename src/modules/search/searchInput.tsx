@@ -25,12 +25,15 @@ export default function SearchInput() {
   }, [searchValue])
 
 
+
   return <div style={{ width: '100%', position: 'relative'}}>
     <Input
-    suffix={<IoSearchSharp />} 
-    size='large' 
-    value={searchValue} 
-    onChange={(e) => setSearchValue(e.target.value)}
+
+      suffix={<IoSearchSharp />} 
+      size='large' 
+      value={searchValue} 
+      onChange={(e) => setSearchValue(e.target.value)}
+      
     />
     <SearchBox data={searchResults} word={searchValue}/>
   </div>

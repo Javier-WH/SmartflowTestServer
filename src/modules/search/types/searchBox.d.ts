@@ -6,5 +6,6 @@ export interface SearchBoxInterface  {
   content: string;
   created_at: string;
   updated_at: string;
-  similarity_score: number
+  similarity_score: number,
+  type: 1 | 0
 }
