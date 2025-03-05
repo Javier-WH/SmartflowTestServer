@@ -62,7 +62,7 @@ export default function TextEditor() {
                 .finally(() => setAbleToSave(true));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [id]);
 
     // this useEffect is to update the dataBase
     useEffect(() => {
@@ -124,7 +124,7 @@ export default function TextEditor() {
             <div className="flex flex-col h-full w-full max-w-3xl">
                 <div className="mt-8">
                     <div className="flex items-center">
-                        <button type="button" style={styles.homeButton} onClick={() => navigate(-1)}>
+                        <button type="button" style={styles.homeButton} onClick={() => navigate('/home')}>
                             <img src={homeIcon} alt="" /> {'>'}
                         </button>
                         {updatedAt ? (

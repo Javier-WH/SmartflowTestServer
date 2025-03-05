@@ -1,13 +1,25 @@
 import type { SearchBoxInterface } from "../types/searchBox"
 import unPublishedFile from '../../folderNavigator/assets/svg/unPublishedFile.svg'
 import folderIcon from '../../folderNavigator/assets/svg/closed_folder.svg'
+import { useNavigate } from "react-router-dom";
 
-export default function SearchBox({ data, word }: { data: SearchBoxInterface[], word: string }) {
+export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInterface[], word: string, closeBox: () => void }) {
   const hasResults = data.length > 0 && word.length > 0;
+  const navigate = useNavigate();
+
 
   const handleClick = (id: string, type: number) =>{
-      console.log({id, type})
-  
+    
+    if (type === 1){
+      const pageType = import.meta.env.VITE_PAGE_TYPE;
+      if (pageType === 'quill') {
+        navigate(`/textEditor/${id}`);
+      } else {
+        navigate(`/page/${id}`)
+      }
+    }
+    
+    closeBox()
   }
 
   return <div id="searchBox" style={{
@@ -61,61 +73,55 @@ export default function SearchBox({ data, word }: { data: SearchBoxInterface[], 
 }
 
 function getSelectedText(searchWord: string, htmlString: string): string | null {
-  if (!searchWord) return null;
+  if (!searchWord) return null
 
-  // Configurar el parser y excluir tags no deseados
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlString, 'text/html');
-  const excludedTags = new Set(['IMG', 'IFRAME', 'SCRIPT', 'STYLE', 'NOSCRIPT']);
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(htmlString, 'text/html')
+  const excludedTags = new Set(['IMG', 'IFRAME', 'SCRIPT', 'STYLE', 'NOSCRIPT'])
 
-  // Crear un TreeWalker para buscar en los nodos de texto
   const treeWalker = doc.createTreeWalker(
     doc.body,
     NodeFilter.SHOW_TEXT,
     {
       acceptNode(node) {
-        let parent = node.parentElement;
+        let parent = node.parentElement
         while (parent) {
-          if (excludedTags.has(parent.tagName)) {
-            return NodeFilter.FILTER_REJECT;
-          }
-          parent = parent.parentElement;
+          if (excludedTags.has(parent.tagName)) return NodeFilter.FILTER_REJECT
+          parent = parent.parentElement
         }
-        return NodeFilter.FILTER_ACCEPT;
+        return NodeFilter.FILTER_ACCEPT
       }
     }
-  );
+  )
 
-  // Buscar la primera coincidencia
   while (treeWalker.nextNode()) {
-    const textNode = treeWalker.currentNode as Text;
-    const textContent = textNode.textContent || '';
-    const lowerContent = textContent.toLowerCase();
-    const lowerSearch = searchWord.toLowerCase();
-    const matchIndex = lowerContent.indexOf(lowerSearch);
+    const textNode = treeWalker.currentNode as Text
+    const textContent = textNode.textContent || ''
+    const lowerContent = textContent.toLowerCase()
+    const matchIndex = lowerContent.indexOf(searchWord.toLowerCase())
 
     if (matchIndex !== -1) {
-      // Encontramos una coincidencia, procesar
-      const parentElement = textNode.parentElement!;
+      const parent = textNode.parentElement!
 
-      // Crear nuevo contenido con el texto resaltado
-      const before = textContent.slice(0, matchIndex);
-      const match = textContent.slice(matchIndex, matchIndex + searchWord.length);
-      const after = textContent.slice(matchIndex + searchWord.length);
+      // clone and clean styles
+      const cleanParent = parent.cloneNode(false) as HTMLElement
+      cleanParent.style.cssText = 'font-size:inherit; line-height:inherit; margin:0; padding:0;'
 
-      // Reemplazar el nodo de texto original
-      const fragment = document.createDocumentFragment();
+      
+      const fragment = document.createDocumentFragment()
       fragment.append(
-        document.createTextNode(before),
-        Object.assign(document.createElement('strong'), { textContent: match }),
-        document.createTextNode(after)
-      );
+        document.createTextNode(textContent.slice(0, matchIndex)),
+        Object.assign(document.createElement('strong'), {
+          textContent: textContent.slice(matchIndex, matchIndex + searchWord.length),
+          style: 'font-size:inherit;'
+        }),
+        document.createTextNode(textContent.slice(matchIndex + searchWord.length))
+      )
 
-      parentElement.replaceChild(fragment, textNode);
-
-      return parentElement.outerHTML;
+      cleanParent.appendChild(fragment)
+      return cleanParent.outerHTML
     }
   }
 
-  return null;
+  return null
 }

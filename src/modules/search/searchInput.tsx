@@ -13,7 +13,7 @@ export default function SearchInput() {
 
   useEffect(() => {
     if (searchValue.length === 0 || searchValue === '') {
-      setSearchResults([])
+      closeBox()
       return
     }
 
@@ -24,18 +24,37 @@ export default function SearchInput() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue])
 
+  useEffect(() => {
+    const keyEvent = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeBox()
+      }
+    }
+
+    window.addEventListener('keydown', keyEvent)
+    return () => {
+      window.removeEventListener('keydown', keyEvent)
+    }
+  },[])
+
+
+
+  const closeBox = () => {
+    setSearchResults([])
+    setSearchValue('')
+  }
+
 
 
   return <div style={{ width: '100%', position: 'relative'}}>
     <Input
-
       suffix={<IoSearchSharp />} 
       size='large' 
       value={searchValue} 
       onChange={(e) => setSearchValue(e.target.value)}
       
     />
-    <SearchBox data={searchResults} word={searchValue}/>
+    <SearchBox data={searchResults} word={searchValue} closeBox= {closeBox}/>
   </div>
 
 }

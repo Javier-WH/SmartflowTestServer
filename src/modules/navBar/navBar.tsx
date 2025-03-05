@@ -103,10 +103,12 @@ export default function NavBar() {
 
 
     <div className="title-container">
-      <Link to='/home' className="logo-container">
-        <img src={Logo} alt="" />
+      <div className="logo-container" style={{display: 'flex', alignItems: 'center', width: '100%', maxWidth: '600px', gap: '10px'}}>
+        <Link to='/home' >
+          <img src={Logo} alt="" />
+        </Link>
         <SearchInput />
-      </Link>
+      </div>
       {!inPage && <div className="navbar-title">Kepen</div>}
     </div>
 
