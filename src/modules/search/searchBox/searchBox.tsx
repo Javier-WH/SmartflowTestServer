@@ -2,14 +2,22 @@ import type { SearchBoxInterface } from "../types/searchBox"
 import unPublishedFile from '../../folderNavigator/assets/svg/unPublishedFile.svg'
 import folderIcon from '../../folderNavigator/assets/svg/closed_folder.svg'
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import useFolderManager from "@/modules/folderNavigator/hooks/useFolderManager";
+import { MainContext, MainContextValues } from "@/modules/mainContext";
+import groupDataByContainer from "../../folderNavigator/context/utils/groupDataByContainer";
+import { message } from "antd";
+import { FolderData } from "@/modules/folderNavigator/types/folder";
 
 export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInterface[], word: string, closeBox: () => void }) {
+
+  const { setUpdateFolderRequestFromMain } = useContext(MainContext) as MainContextValues
+  const { getHierarchyFolderContent } = useFolderManager()
   const hasResults = data.length > 0 && word.length > 0;
   const navigate = useNavigate();
 
 
   const handleClick = (id: string, type: number) =>{
-    
     if (type === 1){
       const pageType = import.meta.env.VITE_PAGE_TYPE;
       if (pageType === 'quill') {
@@ -17,6 +25,22 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
       } else {
         navigate(`/page/${id}`)
       }
+    }else if (type === 0){
+      getHierarchyFolderContent(id)
+      .then((response) => {
+        if (response.error) {
+          console.log(response.error)
+          message.error(response.message)
+          return
+        }
+        if (response.data) {
+          const gruppedByContainer = groupDataByContainer({ data: response.data });
+          setUpdateFolderRequestFromMain(gruppedByContainer);
+          console.log(gruppedByContainer);
+        }
+     
+      })
+   
     }
     
     closeBox()

@@ -143,6 +143,23 @@ const getRootContent = async (): Promise<FolderResponse> => {
   }
 }
 
+const getHierarchyFolderContent = async (folderId: string | null): Promise<FolderResponse> => {
+
+  const functionName = pageType === 'quill' ? 'gethierarchyfoldercontent' : 'gethierarchyfoldercontent';
+
+  const { data, error } = await supabase
+    .rpc(functionName, {
+      p_folder_id: folderId
+    });
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Folder content retrieved successfully', data };
+  }
+}
+
 
 
 export default function useFolderManager() {
@@ -155,6 +172,7 @@ export default function useFolderManager() {
     deleteFolder,
     getFolderContent,
     getRootContent,
-    moveFolderToRoot
+    moveFolderToRoot,
+    getHierarchyFolderContent
   }
 }
