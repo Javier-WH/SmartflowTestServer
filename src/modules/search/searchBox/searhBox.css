@@ -1,0 +1,26 @@
+@keyframes borderColorChange {
+  0% {
+    border-color: rgb(38, 0, 255);
+  }
+
+  25% {
+    border-color: rgb(137, 128, 189);
+  }
+
+  50% {
+    border-color: rgb(38, 0, 255);
+  }
+
+  75% {
+    border-color: rgb(5, 95, 136);
+  }
+
+  100% {
+    border-color: rgb(137, 128, 189);
+  }
+}
+
+.highlighted-folder {
+  border: 2px solid red;
+  animation: borderColorChange 2s infinite;
+}

@@ -4,7 +4,7 @@ import folderIcon from '../../folderNavigator/assets/svg/closed_folder.svg'
 import { useNavigate } from "react-router-dom";
 import useFolderManager from "@/modules/folderNavigator/hooks/useFolderManager";
 import groupDataByContainer from "../../folderNavigator/context/utils/groupDataByContainer";
-
+import './searhBox.css'
 
 
 export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInterface[], word: string, closeBox: () => void }) {
@@ -48,6 +48,8 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
         if (response.error) {
           console.error(response.error);
           //message.error(response.message);
+          highlightFolder(id);
+          closeBox();
           return;
         }
 
@@ -70,6 +72,7 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
                 try {
                   // wait for the next element to be rendered
                   await waitFor(() => document.getElementById(nextKey) !== null, 5000, 50);
+
                 } catch (error) {
                   console.error(`Timeout waiting for to be rendered ${nextKey}:`, error);
                 }
@@ -77,6 +80,7 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
             }
           }
         }
+        highlightFolder(id);
       } catch (error) {
         console.error("Error while getting folder content:", error);
       }
@@ -85,6 +89,14 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
     closeBox();
   };
 
+  const highlightFolder = async(id: string) => {
+    await waitFor(() => document.getElementById(id) !== null, 5000, 50);
+    document.getElementById(id)?.classList.add("highlighted-folder");
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+      document.getElementById(id)?.classList.remove("highlighted-folder");
+    }, 3000);
+  }
 
   return <div id="searchBox" style={{
     position: 'absolute',
