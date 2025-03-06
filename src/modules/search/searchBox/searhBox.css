@@ -20,7 +20,40 @@
   }
 }
 
+@keyframes textColorChange {
+  0% {
+    color: rgb(38, 0, 255);
+  }
+
+  25% {
+    color: rgb(137, 128, 189);
+  }
+
+  50% {
+    color: rgb(38, 0, 255);
+  }
+
+  75% {
+    color: rgb(5, 95, 136);
+  }
+
+  100% {
+    color: rgb(137, 128, 189);
+  }
+}
+
 .highlighted-folder {
   border: 2px solid red;
-  animation: borderColorChange 2s infinite;
+  animation: borderColorChange 1s infinite;
+  position: "relative";
+}
+
+.highlighted-folder::after{
+  content: "🔍 Folder found" ;
+  position: absolute;
+  left: 110%;
+  display: flex;
+  width: 200px;
+  font-size: 12px;
+  animation: textColorChange 1s infinite;
 }
