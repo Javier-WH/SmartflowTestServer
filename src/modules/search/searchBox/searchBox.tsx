@@ -95,7 +95,7 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setTimeout(() => {
       document.getElementById(id)?.classList.remove("highlighted-folder");
-    }, 3000);
+    }, 3500);
   }
 
   return <div id="searchBox" style={{
