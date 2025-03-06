@@ -13,11 +13,11 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
   const hasResults = data.length > 0 && word.length > 0;
   const navigate = useNavigate();
 
-  // Función waitFor: espera a que se cumpla la condición (por ejemplo, que el elemento exista en el DOM).
+  // Función waitFor: waits for a condition to be met or a timeout
   function waitFor(
     conditionFn: () => boolean,
-    timeout = 5000, // tiempo máximo de espera en milisegundos
-    interval = 50   // intervalo entre comprobaciones en milisegundos
+    timeout = 5000, // maximum time to wait in milliseconds
+    interval = 50   // interval in milliseconds
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       const startTime = Date.now();
@@ -25,7 +25,7 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
         if (conditionFn()) {
           resolve();
         } else if (Date.now() - startTime > timeout) {
-          reject(new Error("Timeout: La condición no se cumplió"));
+          reject(new Error("Timeout: condition not met"));
         } else {
           setTimeout(check, interval);
         }
@@ -56,29 +56,29 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
           const keys = Object.keys(gruppedByContainer);
    
           for (const [index, key] of keys.entries()) {
-            // Obtenemos el elemento actual.
+            // get tue current element
             const element = document.getElementById(key);
             if (element) {
-              // Ejecutamos el click sobre el elemento actual.
+              // Click on the element
              if(!element.classList.contains("opened")){
                element.click();
              }
 
-              // Verificamos si existe un siguiente elemento en el array.
+              // verify if the next element exists
               const nextKey = keys[index + 1];
               if (nextKey !== undefined) {
                 try {
-                  // Esperamos a que el siguiente elemento exista en el DOM.
+                  // wait for the next element to be rendered
                   await waitFor(() => document.getElementById(nextKey) !== null, 5000, 50);
                 } catch (error) {
-                  console.error(`Timeout esperando que se renderice el elemento con id ${nextKey}:`, error);
+                  console.error(`Timeout waiting for to be rendered ${nextKey}:`, error);
                 }
               }
             }
           }
         }
       } catch (error) {
-        console.error("Error obteniendo el contenido de la carpeta:", error);
+        console.error("Error while getting folder content:", error);
       }
     }
 
