@@ -2,49 +2,89 @@ import type { SearchBoxInterface } from "../types/searchBox"
 import unPublishedFile from '../../folderNavigator/assets/svg/unPublishedFile.svg'
 import folderIcon from '../../folderNavigator/assets/svg/closed_folder.svg'
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
 import useFolderManager from "@/modules/folderNavigator/hooks/useFolderManager";
-import { MainContext, MainContextValues } from "@/modules/mainContext";
 import groupDataByContainer from "../../folderNavigator/context/utils/groupDataByContainer";
-import { message } from "antd";
-import { FolderData } from "@/modules/folderNavigator/types/folder";
+
+
 
 export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInterface[], word: string, closeBox: () => void }) {
 
-  const { setUpdateFolderRequestFromMain } = useContext(MainContext) as MainContextValues
   const { getHierarchyFolderContent } = useFolderManager()
   const hasResults = data.length > 0 && word.length > 0;
   const navigate = useNavigate();
 
+  // Función waitFor: espera a que se cumpla la condición (por ejemplo, que el elemento exista en el DOM).
+  function waitFor(
+    conditionFn: () => boolean,
+    timeout = 5000, // tiempo máximo de espera en milisegundos
+    interval = 50   // intervalo entre comprobaciones en milisegundos
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const startTime = Date.now();
+      const check = () => {
+        if (conditionFn()) {
+          resolve();
+        } else if (Date.now() - startTime > timeout) {
+          reject(new Error("Timeout: La condición no se cumplió"));
+        } else {
+          setTimeout(check, interval);
+        }
+      };
+      check();
+    });
+  }
 
-  const handleClick = (id: string, type: number) =>{
-    if (type === 1){
+  const handleClick = async (id: string, type: number) => {
+    if (type === 1) {
       const pageType = import.meta.env.VITE_PAGE_TYPE;
-      if (pageType === 'quill') {
+      if (pageType === "quill") {
         navigate(`/textEditor/${id}`);
       } else {
-        navigate(`/page/${id}`)
+        navigate(`/page/${id}`);
       }
-    }else if (type === 0){
-      getHierarchyFolderContent(id)
-      .then((response) => {
+    } else if (type === 0) {
+      try {
+        const response = await getHierarchyFolderContent(id);
         if (response.error) {
-          console.log(response.error)
-          message.error(response.message)
-          return
+          console.error(response.error);
+          //message.error(response.message);
+          return;
         }
+
         if (response.data) {
           const gruppedByContainer = groupDataByContainer({ data: response.data });
-          setUpdateFolderRequestFromMain(gruppedByContainer);
-          console.log(gruppedByContainer);
-        }
-     
-      })
+          const keys = Object.keys(gruppedByContainer);
    
+          for (const [index, key] of keys.entries()) {
+            // Obtenemos el elemento actual.
+            const element = document.getElementById(key);
+            if (element) {
+              // Ejecutamos el click sobre el elemento actual.
+             if(!element.classList.contains("opened")){
+               element.click();
+             }
+
+              // Verificamos si existe un siguiente elemento en el array.
+              const nextKey = keys[index + 1];
+              if (nextKey !== undefined) {
+                try {
+                  // Esperamos a que el siguiente elemento exista en el DOM.
+                  await waitFor(() => document.getElementById(nextKey) !== null, 5000, 50);
+                } catch (error) {
+                  console.error(`Timeout esperando que se renderice el elemento con id ${nextKey}:`, error);
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error obteniendo el contenido de la carpeta:", error);
+      }
     }
-    
-    closeBox()
-  }
+
+    closeBox();
+  };
+
 
   return <div id="searchBox" style={{
     position: 'absolute',
@@ -131,7 +171,7 @@ function getSelectedText(searchWord: string, htmlString: string): string | null 
       const cleanParent = parent.cloneNode(false) as HTMLElement
       cleanParent.style.cssText = 'font-size:inherit; line-height:inherit; margin:0; padding:0;'
 
-      
+
       const fragment = document.createDocumentFragment()
       fragment.append(
         document.createTextNode(textContent.slice(0, matchIndex)),

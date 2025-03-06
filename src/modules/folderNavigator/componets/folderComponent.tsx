@@ -24,6 +24,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
   const [contentId, setContentId] = useState<string | null>(null)
 
   const toggleFolder = (id: string | null) => {
+ 
     if (!id) return
     if (!contentId) {
       setContentId(id)
@@ -166,13 +167,14 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
   };
 
  
+
   return <div>
     <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
       <div
         id={folder.id}
         style={{ display: 'flex', alignItems: 'center', gap: 10 }}
         onClick={() => toggleFolder(folder.id ?? null)}
-        className="folder"
+        className={`folder ${contentId === null ? '' : 'opened'}`}
         draggable
         onDragStart={(event) => handleDragStart(event, folder.id, folder.type)}
         onDragOver={handleDragOver}
@@ -187,7 +189,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
       {
         contentId &&
         <div className="folder-container">
-          <FolderContainer folderId={contentId} setContentId={setContentId} />
+          <FolderContainer folderId={contentId} />
         </div>
       }
     </div>

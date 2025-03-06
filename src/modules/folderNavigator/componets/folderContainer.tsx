@@ -18,6 +18,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
   const [content, setContent] = useState<ContainerElement[] | null>([])
 
 
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
  
 
@@ -76,6 +77,8 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
     }
 
     if (!updateFolderRequest) return
+   
+
     const keys = Object.keys(updateFolderRequest)
     if (!keys.includes(folderId ?? "")) {
       return
@@ -93,7 +96,6 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
       }
     })
     setContent(newFolders)
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateFolderRequest])
 
