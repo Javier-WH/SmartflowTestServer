@@ -9,6 +9,7 @@ import './searhBox.css'
 
 export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInterface[], word: string, closeBox: () => void }) {
 
+
   const { getHierarchyFolderContent } = useFolderManager()
   const hasResults = data.length > 0 && word.length > 0;
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
       }
     } else if (type === 0) {
       try {
+        //navigate('/home')
         const response = await getHierarchyFolderContent(id);
         if (response.error) {
           console.error(response.error);

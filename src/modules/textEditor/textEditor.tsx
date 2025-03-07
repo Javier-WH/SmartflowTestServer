@@ -1,31 +1,38 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MainContext, type MainContextValues } from '../mainContext';
 import { Input, type InputRef } from 'antd';
 import { useContext, useEffect, useState, useRef } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import styles from './textEditorStyles.tsx';
-import ResizeModule from '@botom/quill-resize-module';
 import { useNavigate, useParams } from 'react-router-dom';
+import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
 import options from './components/utils/options.ts';
 import insertHelpBlock from './components/helpBlock/insertHelpBlock.ts';
 import HelpBlockBlot from './components/blots/HelpBlockBlot.ts';
 import useFilesManager from '../folderNavigator/hooks/useFileManager.ts';
+import CustomImage from './components/utils/CustonImage.ts';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 import homeIcon from '../../assets/svg/homeIcon.svg';
 //import { useDebouncedCallback } from 'use-debounce';
 
+
+
 Quill.register('formats/help-block', HelpBlockBlot);
 
-// Registro del módulo de resize
+// Override the image blot in order to prevent a bug related to the width and height of images
+Quill.register(CustomImage, true);
+
+// register image resize module
 Quill.register('modules/resize', ResizeModule);
 
-// Registrar los tamaños personalizados
+// Register custom font sizes
 const Size = Quill.import('attributors/style/size');
 Size.whitelist = options.fontSizeList;
 Quill.register(Size, true);
 
-// Registro de fuentes personalizadas
+// Register custom fonts
 const Font = Quill.import('formats/font');
 Font.whitelist = options.fontList;
 Quill.register(Font, true);
@@ -45,6 +52,41 @@ export default function TextEditor() {
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
 
+
+
+    // this useEfect check every image loaded in the editor and add the width, height and style attributes at page load
+    useEffect(() => {
+        if (quillRef.current) {
+            const editor = quillRef.current.getEditor();
+            // add a matcher for images
+            editor.clipboard.addMatcher('IMG', function (node, delta) {
+                // get the width, height and style attributes 
+                const widthAttr = node.getAttribute('width');
+                const heightAttr = node.getAttribute('height');
+                const styleAttr = node.getAttribute('style');
+                //  update the delta
+                delta.ops = delta.ops && delta.ops.map(op => {
+                    if (op.insert && op.insert.image && typeof op.insert.image === 'string') {
+                        return {
+                            insert: {
+                                image: {
+                                    src: op.insert.image,
+                                    width: widthAttr,
+                                    height: heightAttr,
+                                    style: styleAttr
+                                },
+                            },
+                        };
+                    }
+                    return op;
+                });
+                return delta;
+            });
+        }
+    }, []);
+
+
+
     // if a content in database is found, when the page is loaded, the content is loaded
     useEffect(() => {
         if (id) {
@@ -52,7 +94,7 @@ export default function TextEditor() {
             getFileContent(id)
                 .then(response => {
                     if (response.error) return;
-                    console.log({ data: response.data });
+                    //console.log({ data: response.data });
                     const { content, name, updated_at } = response.data;
                     setTitle(name === 'untitled' ? '' : name);
                     setContenido(content ? content : '');
@@ -66,9 +108,12 @@ export default function TextEditor() {
 
     // this useEffect is to update the dataBase
     useEffect(() => {
-        if (id && ableToSave) {
-            updateFileContent(id, contenido, title).then((response) => {
-                console.log("[LS] -> src/modules/textEditor/textEditor.tsx:70 -> response: ", response)
+        if (id && ableToSave && quillRef.current) {
+            const editor = quillRef.current.getEditor();
+            const htmlContent = editor.root.innerHTML;
+            // save htmlContent istead of content, prevent a bug related to images sizes and styles
+            updateFileContent(id, htmlContent, title).then((response) => {
+                //console.log("[LS] -> src/modules/textEditor/textEditor.tsx:70 -> response: ", response)
                 if (response.error) {
                     console.error(response);
                     return;
@@ -86,7 +131,7 @@ export default function TextEditor() {
         return () => {
             setInPage(false);
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
