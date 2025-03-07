@@ -12,6 +12,7 @@ import insertHelpBlock from './components/helpBlock/insertHelpBlock.ts';
 import HelpBlockBlot from './components/blots/HelpBlockBlot.ts';
 import useFilesManager from '../folderNavigator/hooks/useFileManager.ts';
 import CustomImage from './components/utils/CustonImage.ts';
+import CustomVideo from './components/utils/CustonVideo.ts';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 import homeIcon from '../../assets/svg/homeIcon.svg';
@@ -23,6 +24,7 @@ Quill.register('formats/help-block', HelpBlockBlot);
 
 // Override the image blot in order to prevent a bug related to the width and height of images
 Quill.register(CustomImage, true);
+Quill.register(CustomVideo, true);
 
 // register image resize module
 Quill.register('modules/resize', ResizeModule);
@@ -76,6 +78,34 @@ export default function TextEditor() {
                                     style: styleAttr
                                 },
                             },
+                        };
+                    }
+                    return op;
+                });
+                return delta;
+            });
+        
+            // add a matcher for videos
+            // this do the same as the image matcher but for videos
+            editor.clipboard.addMatcher('IFRAME', function (node, delta) {
+                const styleAttr = node.getAttribute('style');
+                const widthAttr = node.getAttribute('width');
+                const heightAttr = node.getAttribute('height');
+                delta.ops = delta.ops && delta.ops.map(op => {
+                    if (
+                        op.insert &&
+                        op.insert.video &&
+                        typeof op.insert.video === 'string'
+                    ) {
+                        return {
+                            insert: {
+                                video: {
+                                    src: op.insert.video,
+                                    width: widthAttr,
+                                    height: heightAttr,
+                                    style: styleAttr,
+                                }
+                            }
                         };
                     }
                     return op;
