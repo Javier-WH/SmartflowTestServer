@@ -24,10 +24,19 @@
     box-shadow: none !important;
   }
 
+  /*video and image toolbar*/
   .toolbar {
     z-index: 1001;
-    margin-top: 50%;
+    background-color: var(--pageBarColor) !important;
+    color: white !important;
   }
+
+  .group a{
+    color: white !important;
+    font-size: 11px !important;
+  }
+
+  /**/
 
   /*iconos*/
   .ql-snow .ql-stroke {
@@ -230,4 +239,6 @@
 }
 
 
-
+.ql-editor img {
+  margin: 10px 0;
+}

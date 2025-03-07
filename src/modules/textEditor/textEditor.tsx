@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MainContext, type MainContextValues } from '../mainContext';
 import { Input, type InputRef } from 'antd';
 import { useContext, useEffect, useState, useRef } from 'react';
@@ -19,7 +19,7 @@ import homeIcon from '../../assets/svg/homeIcon.svg';
 //import { useDebouncedCallback } from 'use-debounce';
 
 
-
+// this is our custom blot
 Quill.register('formats/help-block', HelpBlockBlot);
 
 // Override the image blot in order to prevent a bug related to the width and height of images
@@ -56,7 +56,8 @@ export default function TextEditor() {
 
 
 
-    // this useEfect check every image loaded in the editor and add the width, height and style attributes at page load
+    // this useEfect check every image and video loaded in the editor and add the width, height and style attributes found in the page load
+    // this is done to prevent a bug related to the width, height and styles of images
     useEffect(() => {
         if (quillRef.current) {
             const editor = quillRef.current.getEditor();
@@ -86,7 +87,7 @@ export default function TextEditor() {
             });
         
             // add a matcher for videos
-            // this do the same as the image matcher but for videos
+            // this do the same as the image matcher but for videos (iframes)
             editor.clipboard.addMatcher('IFRAME', function (node, delta) {
                 const styleAttr = node.getAttribute('style');
                 const widthAttr = node.getAttribute('width');
@@ -124,7 +125,6 @@ export default function TextEditor() {
             getFileContent(id)
                 .then(response => {
                     if (response.error) return;
-                    //console.log({ data: response.data });
                     const { content, name, updated_at } = response.data;
                     setTitle(name === 'untitled' ? '' : name);
                     setContenido(content ? content : '');
@@ -151,7 +151,6 @@ export default function TextEditor() {
                 setUpdatedAt(response.data.updated_at);
             });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [contenido, title]);
 
     // handle nav bar style
@@ -161,7 +160,6 @@ export default function TextEditor() {
         return () => {
             setInPage(false);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
