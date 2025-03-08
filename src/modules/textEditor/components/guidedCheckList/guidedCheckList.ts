@@ -4,7 +4,7 @@ type QuillInstance = {
   setSelection: (index: number) => void;
 };
 
-export default function insertHelpBlock(this: { quill: QuillInstance }) {
+export default function insertGuidedCheckList(this: { quill: QuillInstance }) {
   const selection = this.quill.getSelection();
   if (!selection) return;
 
@@ -13,7 +13,7 @@ export default function insertHelpBlock(this: { quill: QuillInstance }) {
 
   this.quill.insertEmbed(
     position,
-    'help-block',
+    'guided-checklist-block',
     {
       title: 'Título del collapsible',
       content: '<p>Contenido del collapsible...</p>'

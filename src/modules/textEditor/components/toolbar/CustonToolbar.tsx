@@ -1,4 +1,4 @@
-//import HelpBlockComponent from "../../assets/svg/addHelpBlockIcon.svg";
+import GuidedCheckListIcon from "../../assets/svg/addGuidedCheckList.svg";
 
 
 export default function CustomToolbar() {
@@ -58,9 +58,9 @@ export default function CustomToolbar() {
       <button className="ql-image"></button>
       <button className="ql-video"></button>
 
-      {/*<button className="ql-helpBlock">
-        <img src={HelpBlockComponent} alt="" />
-      </button>*/}
+      {<button className="ql-guided-checklist-block">
+        <img src={GuidedCheckListIcon} alt="" />
+      </button>}
     </div>
   ));
 }

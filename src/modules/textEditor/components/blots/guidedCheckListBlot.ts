@@ -3,10 +3,10 @@ import {Quill} from 'react-quill';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const BlockEmbed: any = Quill.import('blots/block/embed');
 
-class HelpBlockBlot extends BlockEmbed {
-  static blotName = 'help-block';
-  static tagName = 'collapsible-component';
-  static className = 'help-block';
+class GuidedCheckListBlot extends BlockEmbed {
+  static blotName = 'guided-checklist-block';
+  static tagName = 'guided-checklist-component';
+  static className = 'guided-checklist-block';
 
   static create(value: { title: string; content: string }) {
     const node = super.create();
@@ -28,11 +28,11 @@ class HelpBlockBlot extends BlockEmbed {
   }
 }
 
-export default HelpBlockBlot;
+export default GuidedCheckListBlot;
 
 
 
-class CollapsableHelpBlock extends HTMLElement {
+class GuidedCheckListBlock extends HTMLElement {
   private isOpen: boolean = false;
   private collapseElement: HTMLElement;
 
@@ -71,6 +71,8 @@ class CollapsableHelpBlock extends HTMLElement {
     button.addEventListener('click', () => this.toggle());
   }
 
+
+
   // 2. Añade el método toggle al componente
   toggle() {
     this.isOpen = !this.isOpen;
@@ -81,4 +83,6 @@ class CollapsableHelpBlock extends HTMLElement {
   }
 }
 
-customElements.define('collapsible-component', CollapsableHelpBlock);
+if (!customElements.get('guided-checklist-component')) {
+  customElements.define('guided-checklist-component', GuidedCheckListBlock);
+}

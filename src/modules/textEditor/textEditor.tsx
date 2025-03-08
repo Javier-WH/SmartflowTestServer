@@ -8,19 +8,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
 import options from './components/utils/options.ts';
-import insertHelpBlock from './components/helpBlock/insertHelpBlock.ts';
-import HelpBlockBlot from './components/blots/HelpBlockBlot.ts';
+import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.ts';
 import useFilesManager from '../folderNavigator/hooks/useFileManager.ts';
 import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 import homeIcon from '../../assets/svg/homeIcon.svg';
+import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 //import { useDebouncedCallback } from 'use-debounce';
 
 
 // this is our custom blot
-Quill.register('formats/help-block', HelpBlockBlot);
+Quill.register('formats/guided-checklist-block', GuidedCheckListBlot);
 
 // Override the image and video (iframe) blot in order to prevent a bug related to the width and height of images and videos
 Quill.register(CustomImage, true);
@@ -181,7 +181,7 @@ export default function TextEditor() {
         toolbar: {
             container: '#toolbar',
             handlers: {
-                helpBlock: insertHelpBlock,
+                'guided-checklist-block': insertGuidedCheckList,
             },
         },
         resize: {
