@@ -22,7 +22,7 @@ import homeIcon from '../../assets/svg/homeIcon.svg';
 // this is our custom blot
 Quill.register('formats/help-block', HelpBlockBlot);
 
-// Override the image blot in order to prevent a bug related to the width and height of images
+// Override the image and video (iframe) blot in order to prevent a bug related to the width and height of images and videos
 Quill.register(CustomImage, true);
 Quill.register(CustomVideo, true);
 
@@ -41,9 +41,11 @@ Quill.register(Font, true);
 
 export default function TextEditor() {
     const { id } = useParams();
+    
     const navigate = useNavigate();
 
     const { setInPage } = useContext(MainContext) as MainContextValues;
+
     const [contenido, setContenido] = useState('');
     const [title, setTitle] = useState('');
     const [ableToSave, setAbleToSave] = useState(false);
@@ -142,7 +144,8 @@ export default function TextEditor() {
             const editor = quillRef.current.getEditor();
             const htmlContent = editor.root.innerHTML;
             // save htmlContent istead of content, prevent a bug related to images sizes and styles
-            updateFileContent(id, htmlContent, title).then((response) => {
+            updateFileContent(id, htmlContent, title)
+            .then((response) => {
                 //console.log("[LS] -> src/modules/textEditor/textEditor.tsx:70 -> response: ", response)
                 if (response.error) {
                     console.error(response);
