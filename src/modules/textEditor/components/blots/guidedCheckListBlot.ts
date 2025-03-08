@@ -76,6 +76,9 @@ class GuidedCheckListBlock extends HTMLElement {
         list-style: none;
         cursor: move;
         user-select: none;
+        min-height: 40px;      /* Altura mínima de 40px, se expande si hay más contenido */
+        line-height: 40px;
+        box-sizing: border-box !important;
       }
       
       .list-item.drag-sort-active {
@@ -83,13 +86,30 @@ class GuidedCheckListBlock extends HTMLElement {
         color: transparent;
         border: 1px solid #4ca1af;
       } 
-      </style>`
+
+    .active, .collapsible:hover {
+      background-color: #ccc;
+    }
+
+
+    .content {
+      padding: 0 18px;
+      display: none;
+      overflow: hidden;
+      background-color: #f1f1f1;
+    } 
+  </style>`
 
 
     const shadowComponet = `    
       <div class="guided-checklist-block-container">
           <ul class="drag-sort-enable">
-            <li class="list-item">Etiqueta 1</li>
+            <li class="list-item">
+              <button type="button" class="collapsible">Open Collapsible</button>
+              <div class="content">
+              <p>Lorem ipsum...</p>
+              </div>
+            </li>
             <li class="list-item">Etiqueta 2</li>
             <li class="list-item">Etiqueta 3</li>
             <li class="list-item">Etiqueta 4</li>
@@ -102,7 +122,22 @@ class GuidedCheckListBlock extends HTMLElement {
     shadow.innerHTML = shadowStyles + shadowComponet.replace(/>\s+</g, '><').trim();
     this.listElement = shadow.querySelector('.drag-sort-enable')!;
     this.enableDragSort();
-    
+   
+    const coll = shadow.querySelectorAll(".collapsible");
+
+
+    for (let i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function (this: HTMLElement) {
+        this.classList.toggle("active");
+        const content = this.nextElementSibling as HTMLElement;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
+
   }
 
 
