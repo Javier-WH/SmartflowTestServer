@@ -58,9 +58,9 @@ export default function CustomToolbar() {
       <button className="ql-image"></button>
       <button className="ql-video"></button>
 
-      {/*<button className="ql-guided-checklist-block">
+      {<button className="ql-guided-checklist-block">
         <img src={GuidedCheckListIcon} alt="" />
-      </button>*/}
+      </button>}
     </div>
   ));
 }

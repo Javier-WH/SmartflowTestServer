@@ -15,12 +15,12 @@ import CustomVideo from './components/utils/CustonVideo.ts';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 import homeIcon from '../../assets/svg/homeIcon.svg';
-import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
+//import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 //import { useDebouncedCallback } from 'use-debounce';
 
 
 // this is our custom blot
-Quill.register('formats/guided-checklist-block', GuidedCheckListBlot);
+//Quill.register('formats/guided-checklist-block', GuidedCheckListBlot);
 
 
 // Override the image and video (iframe) blot in order to prevent a bug related to the width and height of images and videos
@@ -182,7 +182,7 @@ export default function TextEditor() {
         toolbar: {
             container: '#toolbar',
             handlers: {
-                'guided-checklist-block': insertGuidedCheckList.bind(this),
+                //'guided-checklist-block': insertGuidedCheckList.bind(this),
             },
         },
         resize: {

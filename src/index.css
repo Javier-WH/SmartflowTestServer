@@ -41,4 +41,11 @@ nav > * {
     border-style: solid;
 }
 
+.ant-pagination-item-link{
+    rotate: 180deg;
+}
+
+.ant-input-number{
+    width: 100% !important;
+}
 
