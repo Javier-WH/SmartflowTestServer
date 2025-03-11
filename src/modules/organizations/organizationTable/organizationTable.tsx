@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Tag } from 'antd';
 import styles from "../styles/organizations.module.css"
 import { MdEdit, MdDelete } from "react-icons/md";
 import { FaRegHandshake } from "react-icons/fa";
@@ -42,6 +42,7 @@ export default function OrganizationTable({
   onChange,
   loading
 }: OrganizationTableProps) {
+  
   return <>
     <Table<TableOrganizationDataType>
       dataSource={dataSource}
@@ -50,7 +51,7 @@ export default function OrganizationTable({
         ...pagination,
         position: ["topLeft"],
    
-        showTotal: (total) => `Total ${total} organizaciones`,
+        showTotal: (total) => <Tag color="blue" style={{direction: "ltr"}}>{`${total} organizations found`}</Tag>,
         className: styles.pagination
       }}
       onChange={onChange}

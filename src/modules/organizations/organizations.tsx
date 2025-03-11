@@ -62,12 +62,12 @@ export default function Organizations() {
       <div className={styles.searchContainer}>
         <div>
           <h5>Search</h5>
-          <Input value={nameFilterInputValue} onChange={(e) => setNameFilterInputValue(e.target.value)} style={{ minWidth: "300px" }} placeholder="Buscar organizaciones" />
+          <Input value={nameFilterInputValue} onChange={(e) => setNameFilterInputValue(e.target.value)} style={{ minWidth: "300px" }} placeholder="Search organization by name" />
           <Button onClick={handleNameFilterChange}>Search</Button>
         </div>
         <div>
           <h5>Results per page</h5>
-          <InputNumber placeholder="Resultados por página" value={pageSizeInputValue} onChange={(value) => value !== null && setPageSizeInputValue(value)} />
+          <InputNumber placeholder="Results per page" value={pageSizeInputValue} onChange={(value) => value !== null && setPageSizeInputValue(value)} />
           <Button onClick={handlePageSizeChange}>{">"}</Button>
         </div>
       </div>
