@@ -22,6 +22,7 @@ import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 // this is our custom blot
 Quill.register('formats/guided-checklist-block', GuidedCheckListBlot);
 
+
 // Override the image and video (iframe) blot in order to prevent a bug related to the width and height of images and videos
 Quill.register(CustomImage, true);
 Quill.register(CustomVideo, true);
@@ -181,7 +182,7 @@ export default function TextEditor() {
         toolbar: {
             container: '#toolbar',
             handlers: {
-                'guided-checklist-block': insertGuidedCheckList,
+                'guided-checklist-block': insertGuidedCheckList.bind(this),
             },
         },
         resize: {

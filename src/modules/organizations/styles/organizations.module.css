@@ -1,0 +1,26 @@
+.organizationContainer {
+  height: calc(100vh - var(--navBarHeight));
+}
+
+.actions{
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  justify-content: space-evenly;
+  max-width: 100px;
+}
+
+.actions div {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.actions div:hover{
+ scale: 1.6;
+}
+
+.editIcon:hover {
+  fill: rgb(0, 26, 255);
+}
+.deleteIcon:hover {
+  fill: red;
+}

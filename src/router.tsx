@@ -9,6 +9,7 @@ import { Navigate } from 'react-router-dom';
 import MainLayout from './modules/MainLayout';
 import PrivateRoute from './PrivateRoute';
 import TextEditor from './modules/textEditor/textEditor';
+import Organizations from './modules/organizations/organizations';
 
 const router = createBrowserRouter([
     {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
             {
                 path: 'textEditor/:id',
                 element: <TextEditor />
+            },
+            {
+                path: 'organizations',
+                element: <Organizations />
             },
         ],
     },

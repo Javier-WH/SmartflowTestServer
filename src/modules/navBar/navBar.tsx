@@ -23,8 +23,8 @@ export default function NavBar() {
   const userMenu: MenuProps['items'] = [
     {
       key: '1',
-      label: "Team menbers",
-      onClick: () => message.info('Click on Team menbers'),
+      label: "Organizations",
+      onClick: () => navigate('/organizations'),
     },
     {
       key: '2',
