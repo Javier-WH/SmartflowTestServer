@@ -5,6 +5,7 @@ import { ContainerElement } from "../types/componets";
 import useFolderManager from "../hooks/useFolderManager";
 import { FolderComponent } from "./folderComponent";
 import { FileComponent } from "./fileComponent";
+import { AuthContext, AuthContextType } from "@/modules/auth/context/auth";
 import { FolderNavigatorContext } from "../context/folderNavigatorContext";
 import { FolderNavigatorContextValues } from "../types/folder";
 
@@ -13,6 +14,7 @@ import { FolderNavigatorContextValues } from "../types/folder";
 export default function FolderContainer({ folderId }: { folderId: string | null }) {
 
   const { Loading, setLoading, updateFolderRequest } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
+  const { user } = useContext(AuthContext) as AuthContextType
   const { getFolderContent, getRootContent } = useFolderManager()
   
   const [content, setContent] = useState<ContainerElement[] | null>([])
@@ -42,7 +44,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
         }
       })
       setContent(newContent)
-      setLoading(null)
+      setLoading("x")
 
     }
     getContent()
@@ -51,7 +53,12 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
 
 
   async function getRoot() {
-    const response = await getRootContent()
+    // turn on for filter by user id
+    const turnOnFilter = false
+    const response = await getRootContent(turnOnFilter ? user?.id : undefined)
+
+   
+    console.log(response)
     if (response.error) {
       message.error(response.message)
       return

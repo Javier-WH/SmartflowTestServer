@@ -1,9 +1,15 @@
-import { Modal, Input, message } from "antd";
+import { Modal, Input, message, Select } from "antd";
 import { useEffect, useState } from "react";
 import { Folder, FolderResquest, FolderData } from "../types/folder";
 import useFolderManager from "../hooks/useFolderManager";
+import useOrganizations from "@/modules/organizations/hook/useOrganizations";
 import "./createOrUpdateFolderModal.css"
 
+
+interface OrganizationOption {
+  value: string;
+  label: string;
+}
 
 export default function CreateOrUpdateFolderModal({ 
   folder, 
@@ -22,7 +28,35 @@ export default function CreateOrUpdateFolderModal({
   const [containerName, setcontainerName] = useState('');
   const [containerID, setcontainerID] = useState<string | null>(null);
   const [update, setUpdate] = useState(false);
+  const [organizations, setOrganizations] = useState<OrganizationOption[]>([])
+  const [selectedOrganization, setSelectedOrganization] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const { getOrganizations } = useOrganizations();
+  
 
+
+  //obtener las orgasnizaciones
+  useEffect(() => {
+    const searchOrganizations = async () => {
+
+      const response = await getOrganizations(1, 10, searchTerm);
+      if (!response.error && response.data) {
+        const orgOptions = response.data.map(org => ({
+          value: org.id,
+          label: org.name
+        }));
+        setOrganizations(orgOptions);
+      }
+
+    };
+
+    const debounceSearch = setTimeout(() => {
+      searchOrganizations();
+    }, 300);
+
+    return () => clearTimeout(debounceSearch);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm]);
 
   useEffect(() => {
     if (folder) {
@@ -81,7 +115,7 @@ export default function CreateOrUpdateFolderModal({
       setFolder(null);
       return;
     }
-    const request = await createFolder(containerName, containerID);
+    const request = await createFolder(containerName, containerID, selectedOrganization);
     if (request.error) {
       if (request.message === 'uroboros') {
         message.error('Already exists a folder with this name')
@@ -96,6 +130,10 @@ export default function CreateOrUpdateFolderModal({
 
   }
 
+
+
+
+
   return <Modal
     title={folder?.name ? 'Rename Folder' : 'Create Folder'}
     open={isModalOpen}
@@ -109,6 +147,18 @@ export default function CreateOrUpdateFolderModal({
       <div>
         <label htmlFor="">Folder Name</label>
         <Input value={containerName} onChange={(e) => setcontainerName(e.target.value)} />
+        <label htmlFor="">Organization</label>
+        <Select
+          showSearch
+          onChange={setSelectedOrganization}
+          onSearch={setSearchTerm}
+          style={{ width: '100%' }}
+          placeholder="Search to Select"
+          optionFilterProp="label"
+          filterOption={false} 
+          options={organizations}
+
+        />
       </div>
     </div>
   </Modal>

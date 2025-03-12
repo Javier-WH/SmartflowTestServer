@@ -4,11 +4,12 @@ import errorManager from '../errorManager/folderErrorManager';
 
 const pageType = import.meta.env.VITE_PAGE_TYPE;
 
-const createFolder = async (folderName: string, containerId: string | null): Promise<FolderResponse> => {
+const createFolder = async (folderName: string, containerId: string | null, p_organization_id: string): Promise<FolderResponse> => {
   const { data, error } = await supabase
     .rpc('crear_carpeta', {
       p_container_id: containerId,
-      p_foldername: folderName
+      p_foldername: folderName, 
+      p_organization_id
     })
     .select('*');
 
@@ -128,18 +129,33 @@ const getFolderContent = async (folderId: string | null): Promise<FolderResponse
   }
 }
 
-const getRootContent = async (): Promise<FolderResponse> => {
+const getRootContent = async (userID?: string): Promise<FolderResponse> => {
+  if(userID){
+    const { data, error } = await supabase
+      .rpc('getrootcontentquillfiltered', {
+        p_user_id: userID
+      });
 
-  const functionName = pageType === 'quill' ? 'getrootcontentquill' : 'getrootcontent';
+    if (error) {
+      console.log(error);
+      return errorManager(error)
+    } else {
+      return { error: false, message: 'Folder content retrieved successfully', data };
+    }
 
-  const { data, error } = await supabase
+  }else{
+
+    const functionName = pageType === 'quill' ? 'getrootcontentquill' : 'getrootcontent';
+    
+    const { data, error } = await supabase
     .rpc(functionName);
-
-  if (error) {
-    console.log(error);
-    return errorManager(error)
-  } else {
-    return { error: false, message: 'Folder content retrieved successfully', data };
+    
+    if (error) {
+      console.log(error);
+      return errorManager(error)
+    } else {
+      return { error: false, message: 'Folder content retrieved successfully', data };
+    }
   }
 }
 
