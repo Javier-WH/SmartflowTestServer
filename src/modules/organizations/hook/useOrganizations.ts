@@ -104,20 +104,6 @@ export default function useOrganizations(user_id?: string, search?: string) {
     };
 
     /**
-     * Deletes an organization by its ID.
-     *
-     * @param {string} id - The ID of the organization to delete.
-     * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
-     */
-    const deleteOrganization = async (id: string): Promise<OrganizationActionResponse> => {
-        const response = await supabase.from('organizations').delete().eq('id', id);
-
-        if (response.error) return errorManager(response.error);
-
-        return { error: false, message: 'Organization deleted successfully', data: response.data };
-    };
-
-    /**
      * Updates an organization with the provided data.
      *
      * @param {string} id - The ID of the organization to update.
@@ -216,6 +202,83 @@ export default function useOrganizations(user_id?: string, search?: string) {
         return { error: false, message: 'You have left the organization', data: response.data };
     };
 
+    /**
+     * Invites a user to join an organization via email.
+     *
+     * @param {string} organizationId - The ID of the organization to invite to.
+     * @param {string} email - The email of the user to invite.
+     * @param {string} inviterUserId - The ID of the user sending the invitation.
+     * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
+     */
+    const inviteUserToOrganization = async (
+        organizationId: string,
+        email: string,
+        inviterUserId: string
+    ): Promise<OrganizationActionResponse> => {
+        // First, check if the organization exists and the inviter is the creator
+        const orgResponse = await supabase
+            .from('organizations')
+            .select('*')
+            .eq('id', organizationId)
+            .eq('user_id', inviterUserId)
+            .single();
+
+        if (orgResponse.error) {
+            return {
+                error: true,
+                message: 'You do not have permission to invite users to this organization',
+                data: null
+            };
+        }
+
+        // Create an invitation record
+        const invitationResponse = await supabase
+            .from('organization_invitations')
+            .insert({
+                organization_id: organizationId,
+                email: email.toLowerCase().trim(),
+                invited_by: inviterUserId,
+                status: 'pending',
+            })
+            .select();
+
+        if (invitationResponse.error) {
+            // Check if it's a unique constraint error (invitation already exists)
+            if (invitationResponse.error.code === '23505') {
+                return {
+                    error: true,
+                    message: 'An invitation has already been sent to this email',
+                    data: null
+                };
+            }
+            return errorManager(invitationResponse.error);
+        }
+
+        // Here you would typically trigger an email sending function
+        // This could be done via a Supabase Edge Function, a webhook, or another service
+        
+        // For now, we'll just return success
+        return {
+            error: false,
+            message: `Invitation sent to ${email}`,
+            data: invitationResponse.data,
+        };
+    };
+
+    /**
+     * Deletes an organization by its ID.
+     *
+     * @param {string} id - The ID of the organization to delete.
+     * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
+     */
+    const deleteOrganizationById = async (id: string): Promise<OrganizationActionResponse> => {
+        const response = await supabase.from('organizations').delete().eq('id', id);
+
+        if (response.error) return errorManager(response.error);
+
+        return { error: false, message: 'Organization deleted successfully', data: response.data };
+    };
+
     return {
         data: organizations,
         isLoading,
@@ -224,10 +287,11 @@ export default function useOrganizations(user_id?: string, search?: string) {
         mutate,
         getOrganizations,
         createOrganization,
-        deleteOrganization,
+        deleteOrganization: deleteOrganizationById,
         updateOrganization,
         getUserRolls,
         joinOrganization,
         leaveOrganization,
+        inviteUserToOrganization,
     };
 }

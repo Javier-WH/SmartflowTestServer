@@ -1,79 +1,20 @@
 import { useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-    Card,
-    CardBody,
-    CardFooter,
-    Spinner,
-    Button,
-    Input,
-    Divider,
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Dropdown,
-    DropdownTrigger,
-    DropdownMenu,
-    DropdownItem,
-    useDisclosure,
-    Textarea,
-} from '@nextui-org/react';
-import {
-    PlusOutlined,
-    TeamOutlined,
-    SearchOutlined,
-    MoreOutlined,
-    EditOutlined,
-    DeleteOutlined,
-    LogoutOutlined,
-} from '@ant-design/icons';
+import { Spinner, Button, Input, useDisclosure } from '@nextui-org/react';
+import { PlusOutlined, TeamOutlined, SearchOutlined } from '@ant-design/icons';
 import useOrganizations from './hook/useOrganizations';
 import useAuth from '../auth/hooks/useAuth';
-
-// Define the Organization type based on the API response
-interface Organization {
-    id: string;
-    name: string;
-    description: string;
-    slug: string;
-    open: boolean;
-    created_at: string;
-    user_id: string;
-    is_creator?: boolean;
-    is_member?: boolean;
-}
-
-interface OrganizationFormData {
-    id?: string;
-    name: string;
-    description: string;
-    slug?: string;
-}
+import type { Organization, OrganizationFormData } from './types/organizations';
+import CreateOrganizationModal from './components/CreateOrganizationModal';
+import OrganizationCard from './components/organization-card';
 
 export default function Organizations() {
     const navigate = useNavigate();
     const { user } = useAuth();
-    const {
-        data: organizations,
-        isLoading,
-        error,
-        updateOrganization,
-        deleteOrganization,
-        createOrganization,
-        leaveOrganization,
-        mutate,
-    } = useOrganizations(user?.id);
+    const { data: organizations, isLoading, error, createOrganization, mutate } = useOrganizations(user?.id);
     const [searchTerm, setSearchTerm] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState('');
-
-    // Modal states
-    const { isOpen: isCreateModalOpen, onOpen: onCreateModalOpen, onClose: onCreateModalClose } = useDisclosure();
-    const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
-    const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
-    const { isOpen: isLeaveModalOpen, onOpen: onLeaveModalOpen, onClose: onLeaveModalClose } = useDisclosure();
 
     // Form data state
     const [formData, setFormData] = useState<OrganizationFormData>({
@@ -81,59 +22,13 @@ export default function Organizations() {
         description: '',
     });
 
-    // Selected organization for edit/delete
-    const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
+    // Modal states using useDisclosure
+    const { isOpen: isCreateModalOpen, onOpen: onCreateModalOpen, onClose: onCreateModalClose } = useDisclosure();
 
     // Filter organizations based on search term
     const filteredOrganizations = organizations?.filter((org: Organization) =>
         org.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-
-    // Handle card click to navigate to organization home
-    const handleCardClick = (organizationSlug: string) => {
-        navigate(`/${organizationSlug}/home`);
-    };
-
-    // Handle create new organization
-    const handleCreateOrganization = () => {
-        setFormData({ name: '', description: '' });
-        onCreateModalOpen();
-    };
-
-    // Handle edit organization
-    const handleEditOrganization = (org: Organization, e: React.MouseEvent<HTMLElement>) => {
-        e.stopPropagation(); // Prevent card click
-        setSelectedOrganization(org);
-        setFormData({
-            id: org.id,
-            name: org.name,
-            description: org.description || '',
-        });
-        onEditModalOpen();
-    };
-
-    // Handle delete organization
-    const handleDeleteOrganization = (org: Organization, e: React.MouseEvent<HTMLElement>) => {
-        e.stopPropagation(); // Prevent card click
-        setSelectedOrganization(org);
-        onDeleteModalOpen();
-    };
-
-    // Handle leave organization
-    const handleLeaveOrganization = (org: Organization, e: React.MouseEvent<HTMLElement>) => {
-        e.stopPropagation(); // Prevent card click
-        setSelectedOrganization(org);
-        onLeaveModalOpen();
-    };
-
-    // Handle form input change
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
 
     // Handle create form submit
     const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -175,93 +70,23 @@ export default function Organizations() {
         }
     };
 
-    // Handle edit form submit
-    const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    // Handle form input change
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
-        if (!formData.name.trim()) {
-            setFormError('Organization name is required');
-            return;
-        }
-
-        if (!formData.id) {
-            setFormError('Organization ID is missing');
-            return;
-        }
-
-        setIsSubmitting(true);
+    // Handle create organization button click
+    const handleCreateOrganization = () => {
+        setFormData({
+            name: '',
+            description: '',
+        });
         setFormError('');
-
-        try {
-            const response = await updateOrganization(formData.id, {
-                name: formData.name.trim(),
-                description: formData.description.trim(),
-            });
-
-            if (response.error) {
-                setFormError(response.message);
-                return;
-            }
-
-            // Refresh organizations list
-            mutate();
-            onEditModalClose();
-        } catch (error) {
-            setFormError('An unexpected error occurred');
-            console.error(error);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    // Handle delete confirm
-    const handleDeleteConfirm = async () => {
-        if (!selectedOrganization) return;
-
-        setIsSubmitting(true);
-
-        try {
-            const response = await deleteOrganization(selectedOrganization.id);
-
-            if (response.error) {
-                setFormError(response.message);
-                return;
-            }
-
-            // Refresh organizations list
-            mutate();
-            onDeleteModalClose();
-        } catch (error) {
-            setFormError('An unexpected error occurred');
-            console.error(error);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    // Handle leave confirm
-    const handleLeaveConfirm = async () => {
-        if (!selectedOrganization || !user?.id) return;
-        
-        setIsSubmitting(true);
-        
-        try {
-            const response = await leaveOrganization(selectedOrganization.id, user.id);
-            
-            if (response.error) {
-                setFormError(response.message);
-                return;
-            }
-            
-            // Refresh organizations list
-            mutate();
-            onLeaveModalClose();
-        } catch (error) {
-            setFormError('An unexpected error occurred');
-            console.error(error);
-        } finally {
-            setIsSubmitting(false);
-        }
+        onCreateModalOpen();
     };
 
     if (isLoading) {
@@ -321,235 +146,20 @@ export default function Organizations() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredOrganizations?.map((org: Organization) => (
-                        <Card
-                            key={org.id}
-                            isPressable
-                            isHoverable
-                            onClick={() => handleCardClick(org.slug)}
-                            className="border-2 hover:border-primary transition-all duration-200"
-                        >
-                            <CardBody className="p-5">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <div className="bg-primary/10 p-3 rounded-full">
-                                            <TeamOutlined
-                                                style={{ fontSize: '24px', color: 'var(--nextui-colors-primary)' }}
-                                            />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-medium">{org.name}</h3>
-                                            {org.is_creator && (
-                                                <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
-                                                    Creator
-                                                </span>
-                                            )}
-                                            {org.is_member && !org.is_creator && (
-                                                <span className="text-xs bg-success/20 text-success px-2 py-1 rounded-full">
-                                                    Member
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Three dots menu */}
-                                    {(org.is_creator || org.is_member) && (
-                                        <Dropdown>
-                                            <DropdownTrigger>
-                                                <Button isIconOnly variant="light" onClick={e => e.stopPropagation()}>
-                                                    <MoreOutlined />
-                                                </Button>
-                                            </DropdownTrigger>
-                                            <DropdownMenu aria-label="Organization actions">
-                                                {org.is_creator ? (
-                                                    <>
-                                                        <DropdownItem
-                                                            key="edit"
-                                                            startContent={<EditOutlined />}
-                                                            onClick={(e: React.MouseEvent<HTMLElement>) =>
-                                                                handleEditOrganization(org, e)
-                                                            }
-                                                        >
-                                                            Edit
-                                                        </DropdownItem>
-                                                        <DropdownItem
-                                                            key="delete"
-                                                            className="text-danger"
-                                                            color="danger"
-                                                            startContent={<DeleteOutlined />}
-                                                            onClick={(e: React.MouseEvent<HTMLElement>) =>
-                                                                handleDeleteOrganization(org, e)
-                                                            }
-                                                        >
-                                                            Delete
-                                                        </DropdownItem>
-                                                    </>
-                                                ) : org.is_member ? (
-                                                    <DropdownItem
-                                                        key="leave"
-                                                        className="text-warning"
-                                                        color="warning"
-                                                        startContent={<LogoutOutlined />}
-                                                        onClick={(e: React.MouseEvent<HTMLElement>) =>
-                                                            handleLeaveOrganization(org, e)
-                                                        }
-                                                    >
-                                                        Leave Organization
-                                                    </DropdownItem>
-                                                ) : (
-                                                    <DropdownItem key="no-actions" isDisabled>
-                                                        No actions available
-                                                    </DropdownItem>
-                                                )}
-                                            </DropdownMenu>
-                                        </Dropdown>
-                                    )}
-                                </div>
-                                {org.description && (
-                                    <>
-                                        <Divider className="my-3" />
-                                        <p className="text-sm text-gray-600 line-clamp-2">{org.description}</p>
-                                    </>
-                                )}
-                            </CardBody>
-                            <CardFooter className="bg-default-50 border-t-1 p-3">
-                                <p className="text-xs text-gray-500">Click to view organization</p>
-                            </CardFooter>
-                        </Card>
+                        <OrganizationCard key={org.id} organization={org} />
                     ))}
                 </div>
             )}
 
-            {/* Create Organization Modal */}
-            <Modal isOpen={isCreateModalOpen} onClose={onCreateModalClose}>
-                <ModalContent>
-                    {onClose => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">Create New Organization</ModalHeader>
-                            <form onSubmit={handleCreateSubmit}>
-                                <ModalBody>
-                                    <Input
-                                        label="Organization Name"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        autoFocus
-                                        isRequired
-                                    />
-                                    <Textarea
-                                        label="Description"
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleInputChange}
-                                        placeholder="Describe your organization (optional)"
-                                    />
-                                    {formError && <p className="text-danger text-sm">{formError}</p>}
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button variant="flat" onPress={onClose}>
-                                        Cancel
-                                    </Button>
-                                    <Button type="submit" color="primary" isLoading={isSubmitting}>
-                                        Create
-                                    </Button>
-                                </ModalFooter>
-                            </form>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
-
-            {/* Edit Organization Modal */}
-            <Modal isOpen={isEditModalOpen} onClose={onEditModalClose}>
-                <ModalContent>
-                    {onClose => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">Edit Organization</ModalHeader>
-                            <form onSubmit={handleEditSubmit}>
-                                <ModalBody>
-                                    <Input
-                                        label="Organization Name"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        autoFocus
-                                        isRequired
-                                    />
-                                    <Textarea
-                                        label="Description"
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleInputChange}
-                                        placeholder="Describe your organization (optional)"
-                                    />
-                                    {formError && <p className="text-danger text-sm">{formError}</p>}
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button variant="flat" onPress={onClose}>
-                                        Cancel
-                                    </Button>
-                                    <Button type="submit" color="primary" isLoading={isSubmitting}>
-                                        Save Changes
-                                    </Button>
-                                </ModalFooter>
-                            </form>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
-
-            {/* Delete Organization Modal */}
-            <Modal isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}>
-                <ModalContent>
-                    {onClose => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">Delete Organization</ModalHeader>
-                            <ModalBody>
-                                <p>
-                                    Are you sure you want to delete <strong>{selectedOrganization?.name}</strong>?
-                                </p>
-                                <p className="text-sm text-gray-500 mt-2">This action cannot be undone.</p>
-                                {formError && <p className="text-danger text-sm mt-2">{formError}</p>}
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button variant="flat" onPress={onClose}>
-                                    Cancel
-                                </Button>
-                                <Button color="danger" onPress={handleDeleteConfirm} isLoading={isSubmitting}>
-                                    Delete
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
-
-            {/* Leave Organization Modal */}
-            <Modal isOpen={isLeaveModalOpen} onClose={onLeaveModalClose}>
-                <ModalContent>
-                    {onClose => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">Leave Organization</ModalHeader>
-                            <ModalBody>
-                                <p>
-                                    Are you sure you want to leave <strong>{selectedOrganization?.name}</strong>?
-                                </p>
-                                <p className="text-sm text-gray-500 mt-2">
-                                    You will need to be invited again to rejoin this organization.
-                                </p>
-                                {formError && <p className="text-danger text-sm mt-2">{formError}</p>}
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button variant="flat" onPress={onClose}>
-                                    Cancel
-                                </Button>
-                                <Button color="warning" onPress={handleLeaveConfirm} isLoading={isSubmitting}>
-                                    Leave
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            <CreateOrganizationModal
+                isOpen={isCreateModalOpen}
+                onClose={onCreateModalClose}
+                formData={formData}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleCreateSubmit}
+                isSubmitting={isSubmitting}
+                formError={formError}
+            />
         </section>
     );
 }
