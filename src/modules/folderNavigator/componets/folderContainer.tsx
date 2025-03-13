@@ -104,7 +104,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
     }
 
     return (
-        <div className="bg-white">
+        <div>
             {content?.map(item => {
                 return (
                     <div key={item.id} className="w-full mb-1 cursor-pointer">

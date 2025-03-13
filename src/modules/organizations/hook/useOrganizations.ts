@@ -9,7 +9,7 @@ export interface UpdateOrganizationData {
     slug?: string;
 }
 
-export default function useOrganizations(user_id?: string) {
+export default function useOrganizations(user_id?: string, search?: string) {
     const {
         data: organizations,
         isLoading,
@@ -18,10 +18,10 @@ export default function useOrganizations(user_id?: string) {
         mutate,
     } = useQuery(
         user_id
-            ? supabase.rpc('get_user_organizations', { p_user_id: user_id })
+            ? supabase.rpc('get_user_organizations', { p_user_id: user_id, ...(search && { p_name: search }) })
             : null,
     );
-    
+
     /**
      * Retrieves a list of organizations, with optional filtering by name and user_id.
      *
@@ -41,7 +41,7 @@ export default function useOrganizations(user_id?: string) {
             p_user_id: userID,
             p_name: name && name.trim().length > 0 ? name.trim() : null,
             p_page: page,
-            p_page_size: pageSize
+            p_page_size: pageSize,
         });
 
         if (response.error) return errorManager(response.error);

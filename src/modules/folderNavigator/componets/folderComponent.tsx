@@ -1,13 +1,13 @@
 import { Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
-import { ContainerElement } from '../types/componets';
+import type { ContainerElement } from '../types/componets';
 import FolderContainer from './folderContainer';
 import { useState, useContext } from 'react';
 import openedFolder from '../assets/svg/opened_folder.svg';
 import closedFolder from '../assets/svg/closed_folder.svg';
 import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
-import { Folder, FolderNavigatorContextValues, FolderData } from '../types/folder';
+import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useNavigate } from 'react-router-dom';
 import './folderContainer.css';
@@ -157,13 +157,14 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     };
 
     return (
-        <div className="bg-white">
+        <div className="hover:bg-primary-50">
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
+                {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
                 <div
                     id={folder.id}
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => toggleFolder(folder.id ?? null)}
-                    className={`folder ${contentId === null ? '' : 'opened'} w-full`}
+                    className={`folder ${contentId === null ? '' : 'opened'}`}
                     draggable
                     onDragStart={event => handleDragStart(event, folder.id, folder.type)}
                     onDragOver={handleDragOver}
@@ -179,9 +180,9 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
                     <span className="folder-name">{folder.name}</span>
                 </div>
             </Dropdown>
-            <div className="ml-5 bg-white">
+            <div className="ml-5">
                 {contentId && (
-                    <div className="folder-container">
+                    <div>
                         <FolderContainer folderId={contentId} />
                     </div>
                 )}
