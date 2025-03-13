@@ -1,5 +1,4 @@
 import { useState, type ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Spinner, Button, Input, useDisclosure } from '@nextui-org/react';
 import { PlusOutlined, TeamOutlined, SearchOutlined } from '@ant-design/icons';
 import useOrganizations from './hook/useOrganizations';
@@ -9,8 +8,7 @@ import CreateOrganizationModal from './components/CreateOrganizationModal';
 import OrganizationCard from './components/organization-card';
 
 export default function Organizations() {
-    const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, signOut } = useAuth();
     const { data: organizations, isLoading, error, createOrganization, mutate } = useOrganizations(user?.id);
     const [searchTerm, setSearchTerm] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -109,57 +107,64 @@ export default function Organizations() {
     }
 
     return (
-        <section className="py-8 max-w-7xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-                <h1 className="text-2xl font-semibold">Your Organizations</h1>
-                <Button color="primary" startContent={<PlusOutlined />} onClick={handleCreateOrganization}>
-                    Create Organization
+        <div>
+            <header className="flex justify-end px-8 bg-white w-full py-4 fixed top-0">
+                <Button color="primary" onClick={signOut}>
+                    Cerrar sesión
                 </Button>
-            </div>
+            </header>
+            <section className="py-8 max-w-7xl mx-auto mt-16">
+                <div className="flex justify-between items-center mb-8">
+                    <h1 className="text-2xl font-semibold">Your Organizations</h1>
+                    <Button color="primary" startContent={<PlusOutlined />} onClick={handleCreateOrganization}>
+                        Create Organization
+                    </Button>
+                </div>
 
-            <div className="mb-6 max-w-md">
-                <Input
-                    placeholder="Search organizations..."
-                    value={searchTerm}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-                    startContent={<SearchOutlined className="text-gray-400" />}
-                    isClearable
+                <div className="mb-6 max-w-md">
+                    <Input
+                        placeholder="Search organizations..."
+                        value={searchTerm}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                        startContent={<SearchOutlined className="text-gray-400" />}
+                        isClearable
+                    />
+                </div>
+
+                {filteredOrganizations?.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-16 px-4 border-2 border-dashed rounded-lg">
+                        <TeamOutlined style={{ fontSize: '48px', color: '#888' }} />
+                        <p className="mt-4 text-lg text-gray-600">
+                            {searchTerm ? 'No organizations found matching your search' : 'No organizations found'}
+                        </p>
+                        {searchTerm ? (
+                            <Button color="primary" variant="light" onClick={() => setSearchTerm('')} className="mt-2">
+                                Clear Search
+                            </Button>
+                        ) : (
+                            <Button color="primary" className="mt-4" onClick={handleCreateOrganization}>
+                                Create Your First Organization
+                            </Button>
+                        )}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredOrganizations?.map((org: Organization) => (
+                            <OrganizationCard key={org.id} organization={org} />
+                        ))}
+                    </div>
+                )}
+
+                <CreateOrganizationModal
+                    isOpen={isCreateModalOpen}
+                    onClose={onCreateModalClose}
+                    formData={formData}
+                    handleInputChange={handleInputChange}
+                    handleSubmit={handleCreateSubmit}
+                    isSubmitting={isSubmitting}
+                    formError={formError}
                 />
-            </div>
-
-            {filteredOrganizations?.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 px-4 border-2 border-dashed rounded-lg">
-                    <TeamOutlined style={{ fontSize: '48px', color: '#888' }} />
-                    <p className="mt-4 text-lg text-gray-600">
-                        {searchTerm ? 'No organizations found matching your search' : 'No organizations found'}
-                    </p>
-                    {searchTerm ? (
-                        <Button color="primary" variant="light" onClick={() => setSearchTerm('')} className="mt-2">
-                            Clear Search
-                        </Button>
-                    ) : (
-                        <Button color="primary" className="mt-4" onClick={handleCreateOrganization}>
-                            Create Your First Organization
-                        </Button>
-                    )}
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredOrganizations?.map((org: Organization) => (
-                        <OrganizationCard key={org.id} organization={org} />
-                    ))}
-                </div>
-            )}
-
-            <CreateOrganizationModal
-                isOpen={isCreateModalOpen}
-                onClose={onCreateModalClose}
-                formData={formData}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleCreateSubmit}
-                isSubmitting={isSubmitting}
-                formError={formError}
-            />
-        </section>
+            </section>
+        </div>
     );
 }

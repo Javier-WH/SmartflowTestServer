@@ -82,7 +82,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
         const response = await supabase
             .from('organizations')
             .insert({ user_id, name, description, slug })
-            .select()
+            .select('*, organizations_users(*)')
             .single();
 
         if (response.error) return errorManager(response.error);
@@ -93,7 +93,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
                 {
                     user_id,
                     organization_id: response.data.id,
-                    roll_id: 'admin',
+                    roll_id: '320ef7c2-615e-43e3-a855-7577577ce33d',
                 },
             ])
             .select('*');
@@ -185,10 +185,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
      * @param {string} userId - The ID of the user leaving the organization.
      * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
      */
-    const leaveOrganization = async (
-        organizationId: string,
-        userId: string,
-    ): Promise<OrganizationActionResponse> => {
+    const leaveOrganization = async (organizationId: string, userId: string): Promise<OrganizationActionResponse> => {
         // Delete the organization_members record for this user and organization
         const response = await supabase
             .from('organizations_users')
@@ -213,7 +210,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
     const inviteUserToOrganization = async (
         organizationId: string,
         email: string,
-        inviterUserId: string
+        inviterUserId: string,
     ): Promise<OrganizationActionResponse> => {
         // First, check if the organization exists and the inviter is the creator
         const orgResponse = await supabase
@@ -227,7 +224,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
             return {
                 error: true,
                 message: 'You do not have permission to invite users to this organization',
-                data: null
+                data: null,
             };
         }
 
@@ -248,7 +245,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
                 return {
                     error: true,
                     message: 'An invitation has already been sent to this email',
-                    data: null
+                    data: null,
                 };
             }
             return errorManager(invitationResponse.error);
@@ -256,7 +253,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
 
         // Here you would typically trigger an email sending function
         // This could be done via a Supabase Edge Function, a webhook, or another service
-        
+
         // For now, we'll just return success
         return {
             error: false,

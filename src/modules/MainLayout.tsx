@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 // import Chat from './chat/chat';
 import { MainContextProvider } from './mainContext';
 import { Spinner } from '@nextui-org/react';
@@ -8,7 +8,7 @@ import useAuth from './auth/hooks/useAuth';
 export default function MainLayout() {
     const { user } = useAuth();
 
-    const { data: organizations, isLoading } = useOrganizations(user?.id);
+    const { isLoading } = useOrganizations(user?.id);
 
     if (isLoading) {
         return (
@@ -16,10 +16,6 @@ export default function MainLayout() {
                 <Spinner />
             </div>
         );
-    }
-
-    if (organizations.length === 0) {
-        return <Navigate to="/org/new" />;
     }
 
     return (

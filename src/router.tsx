@@ -35,6 +35,10 @@ const router = createBrowserRouter([
                 element: <Organizations />,
             },
             {
+                path: 'organizations',
+                element: <Organizations />,
+            },
+            {
                 path: 'page/:id',
                 element: <Page />,
             },
