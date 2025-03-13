@@ -9,6 +9,13 @@ export interface UpdateOrganizationData {
     slug?: string;
 }
 
+// Define a consistent response type for all functions
+interface OrganizationActionResponse {
+    error: boolean;
+    message: string;
+    data?: unknown;
+}
+
 export default function useOrganizations(user_id?: string, search?: string) {
     const {
         data: organizations,
@@ -59,18 +66,22 @@ export default function useOrganizations(user_id?: string, search?: string) {
 
     /**
      * Creates a new organization.
-     * @param name The name of the organization.
-     * @param description The description of the organization.
-     * @param slug The slug of the organization.
-     * @returns A Promise that resolves to an object with an `error` property
-     * (boolean indicating if the function succeeded) and a `message` property (string
-     * describing the outcome of the operation). If the operation was successful, the
-     * object will also contain a `data` property with the newly created organization.
+     *
+     * @param {string} name - The name of the organization.
+     * @param {string} description - The description of the organization.
+     * @param {string} slug - The slug of the organization.
+     * @param {string} user_id - The ID of the user creating the organization.
+     * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
      */
-    const createOrganization = async (name: string, description: string, slug: string, userId: string) => {
+    const createOrganization = async (
+        name: string,
+        description: string,
+        slug: string,
+        user_id: string,
+    ): Promise<OrganizationActionResponse> => {
         const response = await supabase
             .from('organizations')
-            .insert({ user_id: userId, name, description, slug })
+            .insert({ user_id, name, description, slug })
             .select()
             .single();
 
@@ -80,7 +91,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
             .from('organizations_users')
             .insert([
                 {
-                    user_id: userId,
+                    user_id,
                     organization_id: response.data.id,
                     roll_id: 'admin',
                 },
@@ -94,13 +105,11 @@ export default function useOrganizations(user_id?: string, search?: string) {
 
     /**
      * Deletes an organization by its ID.
-     * @param id The ID of the organization to delete.
-     * @returns A Promise that resolves to an object with an `error` property
-     * (boolean indicating if the function succeeded) and a `message` property (string
-     * describing the outcome of the operation). If the operation was successful, the
-     * object will also contain a `data` property with the deleted organization.
+     *
+     * @param {string} id - The ID of the organization to delete.
+     * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
      */
-    const deleteOrganization = async (id: string) => {
+    const deleteOrganization = async (id: string): Promise<OrganizationActionResponse> => {
         const response = await supabase.from('organizations').delete().eq('id', id);
 
         if (response.error) return errorManager(response.error);
@@ -109,16 +118,17 @@ export default function useOrganizations(user_id?: string, search?: string) {
     };
 
     /**
-     * Updates an organization by its ID.
-     * @param id The ID of the organization to update.
-     * @param updateData An object containing the fields to update, this use the UpdateOrganizationData interface.
-     * @returns A Promise that resolves to an object with an `error` property
-     * (boolean indicating if the function succeeded) and a `message` property (string
-     * describing the outcome of the operation). If the operation was successful, the
-     * object will also contain a `data` property with the updated organization.
+     * Updates an organization with the provided data.
+     *
+     * @param {string} id - The ID of the organization to update.
+     * @param {OrganizationUpdateData} data - The data to update the organization with.
+     * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
      */
-    const updateOrganization = async (id: string, updateData: UpdateOrganizationData) => {
-        if (Object.keys(updateData).length === 0) {
+    const updateOrganization = async (
+        id: string,
+        data: UpdateOrganizationData,
+    ): Promise<OrganizationActionResponse> => {
+        if (Object.keys(data).length === 0) {
             return {
                 error: true,
                 message: 'At least one field must be provided for update',
@@ -126,10 +136,11 @@ export default function useOrganizations(user_id?: string, search?: string) {
             };
         }
 
-        const response = await supabase.from('organizations').update(updateData).eq('id', id).select();
+        const response = await supabase.from('organizations').update(data).eq('id', id).select();
 
         if (response.error) return errorManager(response.error);
 
+        mutate();
         return {
             error: false,
             message: 'Organization updated successfully',
@@ -182,26 +193,27 @@ export default function useOrganizations(user_id?: string, search?: string) {
     };
 
     /**
-     * Removes a user from an organization.
+     * Allows a user to leave an organization they are a member of.
      *
-     * @param userId - The ID of the user to remove.
-     * @param organizationId - The ID of the organization to leave.
-     * @returns A Promise that resolves to an object with an `error` property
-     * (boolean indicating if the function succeeded) and a `message` property (string
-     * describing the outcome of the operation). If the operation was successful, the
-     * object will also contain a `data` property with the removed record.
+     * @param {string} organizationId - The ID of the organization to leave.
+     * @param {string} userId - The ID of the user leaving the organization.
+     * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
      */
-
-    const leaveOrganization = async (userId: string, organizationId: string): Promise<OrganizationsResponse> => {
+    const leaveOrganization = async (
+        organizationId: string,
+        userId: string,
+    ): Promise<OrganizationActionResponse> => {
+        // Delete the organization_members record for this user and organization
         const response = await supabase
             .from('organizations_users')
             .delete()
-            .eq('user_id', userId)
             .eq('organization_id', organizationId)
-            .select('*');
+            .eq('user_id', userId);
 
         if (response.error) return errorManager(response.error);
-        return { error: false, message: 'User removed from organization', data: response.data };
+
+        mutate();
+        return { error: false, message: 'You have left the organization', data: response.data };
     };
 
     return {

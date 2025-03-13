@@ -27,6 +27,7 @@ import {
     MoreOutlined,
     EditOutlined,
     DeleteOutlined,
+    LogoutOutlined,
 } from '@ant-design/icons';
 import useOrganizations from './hook/useOrganizations';
 import useAuth from '../auth/hooks/useAuth';
@@ -61,6 +62,7 @@ export default function Organizations() {
         updateOrganization,
         deleteOrganization,
         createOrganization,
+        leaveOrganization,
         mutate,
     } = useOrganizations(user?.id);
     const [searchTerm, setSearchTerm] = useState('');
@@ -71,6 +73,7 @@ export default function Organizations() {
     const { isOpen: isCreateModalOpen, onOpen: onCreateModalOpen, onClose: onCreateModalClose } = useDisclosure();
     const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
     const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
+    const { isOpen: isLeaveModalOpen, onOpen: onLeaveModalOpen, onClose: onLeaveModalClose } = useDisclosure();
 
     // Form data state
     const [formData, setFormData] = useState<OrganizationFormData>({
@@ -114,6 +117,13 @@ export default function Organizations() {
         e.stopPropagation(); // Prevent card click
         setSelectedOrganization(org);
         onDeleteModalOpen();
+    };
+
+    // Handle leave organization
+    const handleLeaveOrganization = (org: Organization, e: React.MouseEvent<HTMLElement>) => {
+        e.stopPropagation(); // Prevent card click
+        setSelectedOrganization(org);
+        onLeaveModalOpen();
     };
 
     // Handle form input change
@@ -229,6 +239,31 @@ export default function Organizations() {
         }
     };
 
+    // Handle leave confirm
+    const handleLeaveConfirm = async () => {
+        if (!selectedOrganization || !user?.id) return;
+        
+        setIsSubmitting(true);
+        
+        try {
+            const response = await leaveOrganization(selectedOrganization.id, user.id);
+            
+            if (response.error) {
+                setFormError(response.message);
+                return;
+            }
+            
+            // Refresh organizations list
+            mutate();
+            onLeaveModalClose();
+        } catch (error) {
+            setFormError('An unexpected error occurred');
+            console.error(error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-[calc(100vh-120px)]">
@@ -317,7 +352,7 @@ export default function Organizations() {
                                     </div>
 
                                     {/* Three dots menu */}
-                                    {org.is_creator && (
+                                    {(org.is_creator || org.is_member) && (
                                         <Dropdown>
                                             <DropdownTrigger>
                                                 <Button isIconOnly variant="light" onClick={e => e.stopPropagation()}>
@@ -325,26 +360,46 @@ export default function Organizations() {
                                                 </Button>
                                             </DropdownTrigger>
                                             <DropdownMenu aria-label="Organization actions">
-                                                <DropdownItem
-                                                    key="edit"
-                                                    startContent={<EditOutlined />}
-                                                    onClick={(e: React.MouseEvent<HTMLElement>) =>
-                                                        handleEditOrganization(org, e)
-                                                    }
-                                                >
-                                                    Edit
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    key="delete"
-                                                    className="text-danger"
-                                                    color="danger"
-                                                    startContent={<DeleteOutlined />}
-                                                    onClick={(e: React.MouseEvent<HTMLElement>) =>
-                                                        handleDeleteOrganization(org, e)
-                                                    }
-                                                >
-                                                    Delete
-                                                </DropdownItem>
+                                                {org.is_creator ? (
+                                                    <>
+                                                        <DropdownItem
+                                                            key="edit"
+                                                            startContent={<EditOutlined />}
+                                                            onClick={(e: React.MouseEvent<HTMLElement>) =>
+                                                                handleEditOrganization(org, e)
+                                                            }
+                                                        >
+                                                            Edit
+                                                        </DropdownItem>
+                                                        <DropdownItem
+                                                            key="delete"
+                                                            className="text-danger"
+                                                            color="danger"
+                                                            startContent={<DeleteOutlined />}
+                                                            onClick={(e: React.MouseEvent<HTMLElement>) =>
+                                                                handleDeleteOrganization(org, e)
+                                                            }
+                                                        >
+                                                            Delete
+                                                        </DropdownItem>
+                                                    </>
+                                                ) : org.is_member ? (
+                                                    <DropdownItem
+                                                        key="leave"
+                                                        className="text-warning"
+                                                        color="warning"
+                                                        startContent={<LogoutOutlined />}
+                                                        onClick={(e: React.MouseEvent<HTMLElement>) =>
+                                                            handleLeaveOrganization(org, e)
+                                                        }
+                                                    >
+                                                        Leave Organization
+                                                    </DropdownItem>
+                                                ) : (
+                                                    <DropdownItem key="no-actions" isDisabled>
+                                                        No actions available
+                                                    </DropdownItem>
+                                                )}
                                             </DropdownMenu>
                                         </Dropdown>
                                     )}
@@ -461,6 +516,34 @@ export default function Organizations() {
                                 </Button>
                                 <Button color="danger" onPress={handleDeleteConfirm} isLoading={isSubmitting}>
                                     Delete
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+
+            {/* Leave Organization Modal */}
+            <Modal isOpen={isLeaveModalOpen} onClose={onLeaveModalClose}>
+                <ModalContent>
+                    {onClose => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Leave Organization</ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    Are you sure you want to leave <strong>{selectedOrganization?.name}</strong>?
+                                </p>
+                                <p className="text-sm text-gray-500 mt-2">
+                                    You will need to be invited again to rejoin this organization.
+                                </p>
+                                {formError && <p className="text-danger text-sm mt-2">{formError}</p>}
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button variant="flat" onPress={onClose}>
+                                    Cancel
+                                </Button>
+                                <Button color="warning" onPress={handleLeaveConfirm} isLoading={isSubmitting}>
+                                    Leave
                                 </Button>
                             </ModalFooter>
                         </>
