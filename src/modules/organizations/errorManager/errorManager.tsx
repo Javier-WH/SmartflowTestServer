@@ -1,16 +1,16 @@
-import { PostgrestError } from "@supabase/supabase-js";
-import { OrganizationsResponse } from "../types/organizations";
+import type { PostgrestError } from "@supabase/supabase-js";
+import type { OrganizationsResponse } from "../types/organizations";
 
 const errorManager = (error: PostgrestError): OrganizationsResponse  => {
 
   switch(error.code){
     case '23505':
-      return { error: true, message: 'A folder with the same name already exists in this location. Please choose a different name.' };
+      return { error: true, message: 'An organization with the same slug already exists in this location. Please choose a different name.' };
     case '22P02':
       // set error to false for now to prevent a bug
-      return { error: false, message: 'The container folder name is invalid. Please check the folder name and try again.' };
+      return { error: false, message: 'The organization name is invalid. Please check the organization name and try again.' };
     case '23503':
-      return { error: true, message: 'The specified container does not exist. Please verify the container ID.' };
+      return { error: true, message: 'The specified organization does not exist. Please verify the organization ID.' };
     case '22001':
       return { error: true, message: 'The data provided is too long for one or more fields. Please shorten the input and try again.' };
     case '23502':

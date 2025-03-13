@@ -1,17 +1,34 @@
-import { Outlet } from 'react-router-dom';
-import NavBar from './navBar/navBar';
-import Chat from './chat/chat';
+import { Navigate, Outlet } from 'react-router-dom';
+// import Chat from './chat/chat';
 import { MainContextProvider } from './mainContext';
+import { Spinner } from '@nextui-org/react';
+import useOrganizations from './organizations/hook/useOrganizations';
+import useAuth from './auth/hooks/useAuth';
 
 export default function MainLayout() {
+    const { user } = useAuth();
+
+    const { data: organizations, isLoading } = useOrganizations(user?.id);
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Spinner />
+            </div>
+        );
+    }
+
+    if (organizations.length === 0) {
+        return <Navigate to="/org/new" />;
+    }
+
     return (
         <MainContextProvider>
             <div className="flex flex-col h-full w-full">
-                <NavBar />
                 <main className="grow">
                     <Outlet />
                 </main>
-                <Chat />
+                {/* <Chat /> */}
             </div>
         </MainContextProvider>
     );

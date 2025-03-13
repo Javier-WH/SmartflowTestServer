@@ -1,138 +1,121 @@
-import { useEffect, useState, useContext } from "react";
-import { message, Spin, Tag } from "antd";
-import { FolderRequestItem } from "../types/folder";
-import { ContainerElement } from "../types/componets";
-import useFolderManager from "../hooks/useFolderManager";
-import { FolderComponent } from "./folderComponent";
-import { FileComponent } from "./fileComponent";
-import { AuthContext, AuthContextType } from "@/modules/auth/context/auth";
-import { FolderNavigatorContext } from "../context/folderNavigatorContext";
-import { FolderNavigatorContextValues } from "../types/folder";
-
-
+import { useEffect, useState, useContext } from 'react';
+import { message, Spin, Tag } from 'antd';
+import { FolderRequestItem } from '../types/folder';
+import { ContainerElement } from '../types/componets';
+import useFolderManager from '../hooks/useFolderManager';
+import { FolderComponent } from './folderComponent';
+import { FileComponent } from './fileComponent';
+import { AuthContext, AuthContextType } from '@/modules/auth/context/auth';
+import { FolderNavigatorContext } from '../context/folderNavigatorContext';
+import { FolderNavigatorContextValues } from '../types/folder';
 
 export default function FolderContainer({ folderId }: { folderId: string | null }) {
+    const { Loading, setLoading, updateFolderRequest } = useContext(
+        FolderNavigatorContext,
+    ) as FolderNavigatorContextValues;
+    const { user } = useContext(AuthContext) as AuthContextType;
+    const { getFolderContent, getRootContent } = useFolderManager();
 
-  const { Loading, setLoading, updateFolderRequest } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues
-  const { user } = useContext(AuthContext) as AuthContextType
-  const { getFolderContent, getRootContent } = useFolderManager()
-  
-  const [content, setContent] = useState<ContainerElement[] | null>([])
+    const [content, setContent] = useState<ContainerElement[] | null>([]);
 
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
- 
-
-  useEffect(() => {
-    async function getContent() {
-      setLoading(folderId)
-      const response = await getFolderContent(folderId)
-      if (response.error) {
-        message.error(response.message)
-        return
-      }
-      
-      const newData = response.data ?? []
-      const newContent = newData.map((item: ContainerElement) => {
-        return {
-          id: item.id ?? "",
-          type: item.type,
-          name: item.name,
-          container: null,
-          published: item.published
-        }
-      })
-      setContent(newContent)
-      setLoading("x")
-
-    }
-    getContent()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [folderId])
 
+    useEffect(() => {
+        async function getContent() {
+            setLoading(folderId);
+            const response = await getFolderContent(folderId);
+            if (response.error) {
+                message.error(response.message);
+                return;
+            }
 
-  async function getRoot() {
-    // turn on for filter by user id
-    const turnOnFilter = false
-    const response = await getRootContent(turnOnFilter ? user?.id : undefined)
+            const newData = response.data ?? [];
+            const newContent = newData.map((item: ContainerElement) => {
+                return {
+                    id: item.id ?? '',
+                    type: item.type,
+                    name: item.name,
+                    container: null,
+                    published: item.published,
+                };
+            });
+            setContent(newContent);
+            setLoading('x');
+        }
+        getContent();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [folderId]);
 
-   
-    console.log(response)
-    if (response.error) {
-      message.error(response.message)
-      return
+    async function getRoot() {
+        // turn on for filter by user id
+        const turnOnFilter = false;
+        const response = await getRootContent(turnOnFilter ? user?.id : undefined);
+
+        console.log(response);
+        if (response.error) {
+            message.error(response.message);
+            return;
+        }
+        const newItems = response.data?.map((item: ContainerElement) => {
+            return {
+                id: item.id ?? '',
+                type: item.type as 0 | 1,
+                name: item.name,
+                container: null,
+                published: item.published,
+            };
+        });
+        //console.log(newItems)
+        setContent(newItems ?? []);
     }
-    const newItems = response.data?.map((item: ContainerElement) => {
-      return {
-        id: item.id ?? "",
-        type: item.type as 0 | 1,
-        name: item.name,
-        container: null,
-        published: item.published
-      }
-    })
-    //console.log(newItems)
-    setContent(newItems ?? [])
-  }
 
-  // on move folder
-  useEffect(() => {
-    //console.log(updateFolderRequest)
-    if(!folderId) {
-      getRoot()
+    // on move folder
+    useEffect(() => {
+        //console.log(updateFolderRequest)
+        if (!folderId) {
+            getRoot();
+        }
+
+        if (!updateFolderRequest) return;
+
+        const keys = Object.keys(updateFolderRequest);
+        if (!keys.includes(folderId ?? '')) {
+            return;
+        }
+
+        const newData = updateFolderRequest[folderId ?? ''];
+
+        const newFolders = newData.map((item: FolderRequestItem) => {
+            return {
+                id: item.id ?? '',
+                type: item.type as 0 | 1,
+                name: item.name,
+                container: null,
+                published: item.published,
+            };
+        });
+        setContent(newFolders);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [updateFolderRequest]);
+
+    if (content?.length === 0) {
+        if (Loading === folderId) return <Spin />;
+        return null;
     }
 
-    if (!updateFolderRequest) return
-   
-
-    const keys = Object.keys(updateFolderRequest)
-    if (!keys.includes(folderId ?? "")) {
-      return
-    }
-
-    const newData = updateFolderRequest[folderId ?? ""]
-
-    const newFolders = newData.map((item: FolderRequestItem) => {
-      return {
-        id: item.id ?? "",
-        type: item.type as 0 | 1,
-        name: item.name,
-        container: null,
-        published: item.published
-      }
-    })
-    setContent(newFolders)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateFolderRequest])
-
-
-  if (content?.length === 0) {
-    if (Loading === folderId) return <Spin />
-    return <Tag >Empty Folder</Tag>
-  }
-  
-
-  return <div style={{display:"inline-block"}}>
-
-    {
-      content?.map((item) => {
-        return <div
-          key={item.id}
-          style={{
-            maxWidth: '250px'
-          }}
-        >
-          {
-            item.type === 1
-              ? <FolderComponent folder={item} containerid={folderId} />
-              : <FileComponent file={item} />
-
-          }
-
+    return (
+        <div className="bg-white">
+            {content?.map(item => {
+                return (
+                    <div key={item.id} className="w-full mb-1 cursor-pointer">
+                        {item.type === 1 ? (
+                            <FolderComponent folder={item} containerid={folderId} />
+                        ) : (
+                            <FileComponent file={item} />
+                        )}
+                    </div>
+                );
+            })}
         </div>
-      })
-    }
-  </div>
-
+    );
 }

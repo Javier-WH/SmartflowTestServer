@@ -4,12 +4,13 @@ import SignUp from './modules/auth/pages/SignUp';
 import ForgotPassword from './modules/auth/pages/ForgotPassword';
 import ResetPassword from './modules/auth/pages/ResetPassword';
 import Home from './modules/home/pages/Home';
-import Page from './modules/page/page'
+import Page from './modules/page/page';
 import { Navigate } from 'react-router-dom';
 import MainLayout from './modules/MainLayout';
 import PrivateRoute from './PrivateRoute';
 import TextEditor from './modules/textEditor/textEditor';
 import Organizations from './modules/organizations/organizations';
+import JoinOrganization from './modules/onboarding/join-org';
 
 const router = createBrowserRouter([
     {
@@ -26,22 +27,26 @@ const router = createBrowserRouter([
                 element: <Navigate to="/home" />,
             },
             {
-                path: 'home',
+                path: ':organization_id/home',
                 element: <Home />,
             },
             {
+                path: 'home',
+                element: <Organizations />,
+            },
+            {
                 path: 'page/:id',
-                element: <Page />
+                element: <Page />,
             },
             {
                 path: 'textEditor/:id',
-                element: <TextEditor />
-            },
-            {
-                path: 'organizations',
-                element: <Organizations />
+                element: <TextEditor />,
             },
         ],
+    },
+    {
+        path: '/org/new',
+        element: <JoinOrganization />,
     },
     {
         path: '/auth',

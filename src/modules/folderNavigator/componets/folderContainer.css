@@ -1,65 +1,55 @@
-.folder{
-  height: 40px;
-  max-width: 250px;
-  cursor: pointer;
-  position: relative;
-  border: 2px solid transparent;
-  /*transition: border-color 0.2s;*/
-  
+.folder {
+    height: 40px;
+    cursor: pointer;
+    position: relative;
+    border: 2px solid transparent;
+    /*transition: border-color 0.2s;*/
 }
-.folder-name{
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 250px;
-  pointer-events: none;
-
+.folder-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    pointer-events: none;
 }
-.folder::before{
-  content: ' ';
-  position: absolute;
-  border-bottom: var(--folder-decoration-lines);
-  /*border-left: 2px solid white;*/
-  width: 9px;
-  height: 20px;
-  left: -10px;
-  top: -1px;
-
+.folder::before {
+    content: " ";
+    position: absolute;
+    border-bottom: var(--folder-decoration-lines);
+    /*border-left: 2px solid white;*/
+    width: 9px;
+    height: 20px;
+    left: -10px;
+    top: -1px;
 }
-.main-folder-container{
-  max-height: calc(90vh - var(--navBarHeight));
-  overflow: auto;
-  padding-left: 10px;
+.main-folder-container {
+    max-height: calc(90vh - var(--navBarHeight));
+    padding-left: 10px;
 }
 
-.folder-container{
-  position: relative;
-  background-color: white;
-  max-width: 750px;
-
+.folder-container {
+    position: relative;
+    background-color: white;
 }
 
 .folder-container::before {
-  position: absolute;
-  content: " ";
-  background-color: white;
-  height: 100%;
-  width: 30px;
-  left: -20px;
-  top: -0.4px;
-
-} 
-.folder-container::before{
-  position: absolute;
-  content: " ";
-  border-left: var(--folder-decoration-lines);
-  height: 100%;
-  left: -10px;
+    position: absolute;
+    content: " ";
+    background-color: white;
+    height: 100%;
+    width: 30px;
+    left: -20px;
+    top: -0.4px;
 }
-
-
+.folder-container::before {
+    position: absolute;
+    content: " ";
+    border-left: var(--folder-decoration-lines);
+    height: 100%;
+    left: -10px;
+}
 
 /* illuminate the folder when it's being dragged over */
 .folder.drag-over {
-  border-color: hsl(205, 65%, 55%);
+    border-color: hsl(205, 65%, 55%);
 }
