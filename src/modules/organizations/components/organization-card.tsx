@@ -69,7 +69,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
     // Handle edit organization
     const handleEditOrganization = (org: Organization, e: React.MouseEvent<HTMLElement>) => {
         e.stopPropagation();
-        setFormData({ name: org.name, description: org.description || '' });
+        setFormData({ id: org.id, name: org.name, description: org.description || '' });
         onEditModalOpen();
     };
 
