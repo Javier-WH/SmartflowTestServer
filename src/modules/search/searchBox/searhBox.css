@@ -51,7 +51,7 @@
 .highlighted-folder::after{
   content: "🔍 Folder found" ;
   position: absolute;
-  left: 110%;
+  right: 0;
   display: flex;
   width: 200px;
   font-size: 12px;
