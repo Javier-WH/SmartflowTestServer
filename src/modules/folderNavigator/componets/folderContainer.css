@@ -6,9 +6,9 @@
     /*transition: border-color 0.2s;*/
 }
 
-.folder:hover {
+/*.folder:hover {
     border: 2px solid var(--mainColor);
-}
+}*/
 .folder-name {
     white-space: nowrap;
     overflow: hidden;

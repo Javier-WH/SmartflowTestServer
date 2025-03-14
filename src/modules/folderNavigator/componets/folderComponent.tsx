@@ -176,14 +176,14 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
 
 
     return (
-        <div className="hover:bg-primary-50">
+        <div >
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
                 {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
                 <div
                     id={folder.id}
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => toggleFolder(folder.id ?? null)}
-                    className={`folder ${contentId === null ? '' : 'opened'}`}
+                    className={`hover:bg-primary-50  folder  ${contentId === null ? '' : 'opened'}`}
                     draggable
                     onDragStart={event => handleDragStart(event, folder.id, folder.type)}
                     onDragOver={handleDragOver}
