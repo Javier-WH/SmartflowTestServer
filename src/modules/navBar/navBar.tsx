@@ -45,23 +45,7 @@ export default function NavBar() {
         },
     ];
 
-    const beowseMenu: MenuProps['items'] = [
-        {
-            label: 'Browse',
-            key: '1',
-            onClick: () => message.info('Click on Browse'),
-        },
-        {
-            label: 'Manage',
-            key: '2',
-            onClick: () => message.info('Click on Manage'),
-        },
-        {
-            label: 'Share',
-            key: '3',
-            onClick: () => message.info('Click on Share'),
-        },
-    ];
+
 
     const handleCreatePage = () => {
         createFile('untitled').then(res => {
@@ -109,14 +93,6 @@ export default function NavBar() {
 
             {!inPage ? (
                 <div className="flex justify-between items-center navbar-buttons px-8 py-2 mt-10">
-                    {/* <div className="brouse-container"> */}
-                    {/*     <Dropdown menu={{ items: beowseMenu }} trigger={['click']}> */}
-                    {/*         <a onClick={e => e.preventDefault()}> */}
-                    {/*             Brouse */}
-                    {/*             <CaretDownOutlined /> */}
-                    {/*         </a> */}
-                    {/*     </Dropdown> */}
-                    {/* </div> */}
                     {!inPage && <div className="navbar-title">Kepen</div>}
 
                     <div className="create-container">

@@ -7,13 +7,13 @@ const pageType = import.meta.env.VITE_PAGE_TYPE;
 const createFolder = async (
     folderName: string,
     containerId: string | null,
-    p_organization_id: string,
+    slug: string,
 ): Promise<FolderResponse> => {
     const { data, error } = await supabase
         .rpc('crear_carpeta', {
             p_container_id: containerId,
             p_foldername: folderName,
-            p_organization_id,
+            p_slug: slug,
         })
         .select('*');
 
@@ -60,8 +60,7 @@ const updateRootFolder = async (folderName: string, folderId: string | null) => 
 const getFolders = async (container: string | null): Promise<FolderResponse> => {
     const response = await supabase
         .from('folders')
-        .select('*')
-        [container === null || container === undefined ? 'is' : 'eq']('container', container);
+        .select('*')[container === null || container === undefined ? 'is' : 'eq']('container', container);
 
     if (response.error) return errorManager(response.error);
 
@@ -110,11 +109,12 @@ const moveFolderToRoot = async (folderId: string | null): Promise<FolderResponse
     return { error: false, message: 'Folder moved to root successfully', data };
 };
 
-const getFolderContent = async (folderId: string | null): Promise<FolderResponse> => {
+const getFolderContent = async (folderId: string | null, slug: string): Promise<FolderResponse> => {
     const functionName = pageType === 'quill' ? 'getfoldercontentquill' : 'getfoldercontent';
 
     const { data, error } = await supabase.rpc(functionName, {
         p_folder_id: folderId,
+        p_slug: slug,
     });
 
     if (error) {
@@ -125,29 +125,27 @@ const getFolderContent = async (folderId: string | null): Promise<FolderResponse
     return { error: false, message: 'Folder content retrieved successfully', data };
 };
 
-const getRootContent = async (userID?: string): Promise<FolderResponse> => {
-    if (userID) {
-        const { data, error } = await supabase.rpc('getrootcontentquillfiltered', {
-            p_user_id: userID,
-        });
+const getRootContent = async (slug: string): Promise<FolderResponse> => {
 
-        if (error) {
-            console.log(error);
-            return errorManager(error);
-        }
-
-        return { error: false, message: 'Folder content retrieved successfully', data };
-    }
-
-    const functionName = pageType === 'quill' ? 'getrootcontentquill' : 'getrootcontent';
-
-    const { data, error } = await supabase.rpc(functionName);
+    const { data, error } = await supabase.rpc('getrootcontentquillfiltered', {
+        p_slug: slug,
+    });
 
     if (error) {
         console.log(error);
         return errorManager(error);
     }
 
+    return { error: false, message: 'Folder content retrieved successfully', data };
+};
+
+const getAllRootContent = async (): Promise<FolderResponse> => {
+    const functionName = pageType === 'quill' ? 'getrootcontentquill' : 'getrootcontent';
+    const { data, error } = await supabase.rpc(functionName);
+    if (error) {
+        console.log(error);
+        return errorManager(error);
+    }
     return { error: false, message: 'Folder content retrieved successfully', data };
 };
 
@@ -178,5 +176,6 @@ export default function useFolderManager() {
         getRootContent,
         moveFolderToRoot,
         getHierarchyFolderContent,
+        getAllRootContent
     };
 }

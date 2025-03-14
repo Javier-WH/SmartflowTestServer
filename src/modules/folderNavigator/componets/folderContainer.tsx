@@ -1,21 +1,22 @@
 import { useEffect, useState, useContext } from 'react';
-import { message, Spin, Tag } from 'antd';
+import { message, Spin } from 'antd';
 import { FolderRequestItem } from '../types/folder';
 import { ContainerElement } from '../types/componets';
 import useFolderManager from '../hooks/useFolderManager';
 import { FolderComponent } from './folderComponent';
 import { FileComponent } from './fileComponent';
-import { AuthContext, AuthContextType } from '@/modules/auth/context/auth';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { FolderNavigatorContextValues } from '../types/folder';
+import { useParams } from 'react-router-dom';
 
 export default function FolderContainer({ folderId }: { folderId: string | null }) {
+
+    const { organization_id:slug } = useParams();
     const { Loading, setLoading, updateFolderRequest } = useContext(
         FolderNavigatorContext,
     ) as FolderNavigatorContextValues;
-    const { user } = useContext(AuthContext) as AuthContextType;
-    const { getFolderContent, getRootContent } = useFolderManager();
 
+    const { getFolderContent, getRootContent } = useFolderManager();
     const [content, setContent] = useState<ContainerElement[] | null>([]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -23,7 +24,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
     useEffect(() => {
         async function getContent() {
             setLoading(folderId);
-            const response = await getFolderContent(folderId);
+            const response = await getFolderContent(folderId, slug);
             if (response.error) {
                 message.error(response.message);
                 return;
@@ -47,11 +48,9 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
     }, [folderId]);
 
     async function getRoot() {
-        // turn on for filter by user id
-        const turnOnFilter = false;
-        const response = await getRootContent(turnOnFilter ? user?.id : undefined);
+        if(!slug) return
+        const response = await getRootContent(slug);
 
-        console.log(response);
         if (response.error) {
             message.error(response.message);
             return;
@@ -71,11 +70,13 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
 
     // on move folder
     useEffect(() => {
-        //console.log(updateFolderRequest)
+        if(!slug) return
+
         if (!folderId) {
             getRoot();
+            return;
         }
-
+    
         if (!updateFolderRequest) return;
 
         const keys = Object.keys(updateFolderRequest);
@@ -96,7 +97,9 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
         });
         setContent(newFolders);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [updateFolderRequest]);
+    }, [updateFolderRequest, slug]);
+
+
 
     if (content?.length === 0) {
         if (Loading === folderId) return <Spin />;

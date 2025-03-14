@@ -1,10 +1,10 @@
-import { Modal, Input, message, Select } from 'antd';
+import { Modal, Input, message } from 'antd';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Folder, FolderResquest, FolderData } from '../types/folder';
 import useFolderManager from '../hooks/useFolderManager';
-import useOrganizations from '@/modules/organizations/hook/useOrganizations';
 import './createOrUpdateFolderModal.css';
-import useAuth from '@/modules/auth/hooks/useAuth';
+
 
 export default function CreateOrUpdateFolderModal({
     folder,
@@ -21,12 +21,11 @@ export default function CreateOrUpdateFolderModal({
     const [containerName, setcontainerName] = useState('');
     const [containerID, setcontainerID] = useState<string | null>(null);
     const [update, setUpdate] = useState(false);
-    const [selectedOrganization, setSelectedOrganization] = useState<string>('');
-    const [searchTerm, setSearchTerm] = useState('');
 
-    const { user } = useAuth();
+    const { organization_id: slug} = useParams();
 
-    const { data: organizations } = useOrganizations(user?.id, searchTerm);
+
+
 
     useEffect(() => {
         if (folder) {
@@ -50,6 +49,11 @@ export default function CreateOrUpdateFolderModal({
     };
 
     const handleOk = async () => {
+        if (!slug){
+            message.error('Organization not found');
+            return
+        }
+
         if (update) {
             if (containerID?.length === 0) {
                 const folderId = folder?.id ?? '';
@@ -81,7 +85,8 @@ export default function CreateOrUpdateFolderModal({
             setFolder(null);
             return;
         }
-        const request = await createFolder(containerName, containerID, selectedOrganization);
+
+        const request = await createFolder(containerName, containerID, slug ?? '');
         if (request.error) {
             if (request.message === 'uroboros') {
                 message.error('Already exists a folder with this name');
@@ -109,17 +114,6 @@ export default function CreateOrUpdateFolderModal({
                 <div>
                     <label htmlFor="">Folder Name</label>
                     <Input value={containerName} onChange={e => setcontainerName(e.target.value)} />
-                    <label htmlFor="">Organization</label>
-                    <Select
-                        showSearch
-                        onChange={setSelectedOrganization}
-                        onSearch={setSearchTerm}
-                        style={{ width: '100%' }}
-                        placeholder="Search to Select"
-                        optionFilterProp="label"
-                        filterOption={false}
-                        options={organizations}
-                    />
                 </div>
             </div>
         </Modal>

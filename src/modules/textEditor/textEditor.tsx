@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
 import options from './components/utils/options.ts';
-import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.ts';
+//import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.ts';
 import useFilesManager from '../folderNavigator/hooks/useFileManager.ts';
 import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
@@ -201,7 +201,7 @@ export default function TextEditor() {
             <div className="flex flex-col h-full w-full max-w-3xl">
                 <div className="mt-8">
                     <div className="flex items-center">
-                        <button type="button" style={styles.homeButton} onClick={() => navigate('/home')}>
+                        <button type="button" style={styles.homeButton} onClick={() => navigate(-1)}>
                             <img src={homeIcon} alt="" /> {'>'}
                         </button>
                         {updatedAt ? (
