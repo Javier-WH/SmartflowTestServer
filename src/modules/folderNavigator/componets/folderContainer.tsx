@@ -23,6 +23,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
 
     useEffect(() => {
         async function getContent() {
+            if (!slug) return
             setLoading(folderId);
             const response = await getFolderContent(folderId, slug);
             if (response.error) {

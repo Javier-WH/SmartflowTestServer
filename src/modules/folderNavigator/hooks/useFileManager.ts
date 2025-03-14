@@ -109,11 +109,12 @@ const moveFileToRoot = async (fileId: string | null): Promise<FileResponse> => {
   }
 }
 
-const searchFiles = async (text: string): Promise<FileResponse> => {
+const searchFiles = async (text: string, slug: string): Promise<FileResponse> => {
   const functionName = pageType === 'quill' ? 'partial_search_filesquill' : 'partial_search_files';
   const { data, error } = await supabase
     .rpc(functionName, {
-      search_term: text
+      search_term: text,
+      p_slug: slug
     });
 
   if (error) {
