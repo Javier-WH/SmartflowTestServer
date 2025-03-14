@@ -6,9 +6,7 @@
     /*transition: border-color 0.2s;*/
 }
 
-/*.folder:hover {
-    border: 2px solid var(--mainColor);
-}*/
+
 .folder-name {
     white-space: nowrap;
     overflow: hidden;
@@ -35,17 +33,17 @@
     scale: 1.5;
 }
 
-
-.folder::before {
-    content: " ";
-    position: absolute;
-    border-bottom: var(--folder-decoration-lines);
-    /*border-left: 2px solid white;*/
-    width: 9px;
-    height: 20px;
-    left: -10px;
-    top: -1px;
-}
+/* .folder::before { */
+/*     content: " "; */
+/*     position: absolute; */
+/*     border-bottom: var(--folder-decoration-lines); */
+/*     /*border-left: 2px solid white;*/ * 
+/
+/*     width: 9px; */
+/*     height: 20px; */
+/*     left: -10px; */
+/*     top: -1px; */
+/* } */
 .main-folder-container {
     max-height: calc(90vh - var(--navBarHeight));
     padding-left: 10px;

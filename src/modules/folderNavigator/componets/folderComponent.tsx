@@ -10,7 +10,7 @@ import useFilesManager from '../hooks/useFileManager';
 import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MdFolder } from "react-icons/md";
+import { MdFolder } from 'react-icons/md';
 import './folderContainer.css';
 
 export function FolderComponent({ folder, containerid }: { folder: ContainerElement; containerid: string | null }) {
@@ -28,7 +28,6 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     useEffect(() => {
         setFilesCount(folder?.filesnumber ?? '0');
     }, [folder.filesnumber]);
-
 
     const toggleFolder = (id: string | null) => {
         if (!id) return;
@@ -60,9 +59,9 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     };
 
     const handleCreateFile = () => {
-        if(!slug) {
+        if (!slug) {
             message.error('Cant find organization');
-            return
+            return;
         }
         createFile('untitled', folder.id, slug).then(res => {
             if (res.error) {
@@ -85,7 +84,6 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         const request = await moveFolderToRoot(folder.id);
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
-      
     };
 
     const menu: MenuProps['items'] = [
@@ -168,12 +166,11 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         if (request.data) {
             const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
             setUpdateFolderRequest(gruppedByContainer);
-            if (!contentId){
+            if (!contentId) {
                 toggleFolder(folder.id ?? null);
             }
         }
     };
-
 
     return (
         <div >
@@ -183,7 +180,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
                     id={folder.id}
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => toggleFolder(folder.id ?? null)}
-                    className={`hover:bg-primary-50  folder  ${contentId === null ? '' : 'opened'}`}
+                    className={`hover:bg-primary-50 folder ${contentId === null ? '' : 'opened'}`}
                     draggable
                     onDragStart={event => handleDragStart(event, folder.id, folder.type)}
                     onDragOver={handleDragOver}
