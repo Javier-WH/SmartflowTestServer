@@ -7,7 +7,7 @@
 }
 
 .folder:hover {
-    border: 1px solid var(--mainColor);
+    border: 2px solid var(--mainColor);
 }
 .folder-name {
     white-space: nowrap;
