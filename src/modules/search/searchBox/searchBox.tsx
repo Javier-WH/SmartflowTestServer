@@ -1,10 +1,11 @@
 import type { SearchBoxInterface } from "../types/searchBox"
 import unPublishedFile from '../../folderNavigator/assets/svg/unPublishedFile.svg'
 import folderIcon from '../../folderNavigator/assets/svg/closed_folder.svg'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useFolderManager from "@/modules/folderNavigator/hooks/useFolderManager";
 import groupDataByContainer from "../../folderNavigator/context/utils/groupDataByContainer";
 import './searhBox.css'
+import { message } from "antd";
 
 
 export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInterface[], word: string, closeBox: () => void }) {
@@ -12,6 +13,7 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
 
   const { getHierarchyFolderContent } = useFolderManager()
   const hasResults = data.length > 0 && word.length > 0;
+  const { organization_id: slug } = useParams();
   const navigate = useNavigate();
 
   // Función waitFor: waits for a condition to be met or a timeout
@@ -36,6 +38,10 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
   }
 
   const handleClick = async (id: string, type: number) => {
+    if (!slug) {
+      message.error("Cant find organization");
+      return;
+    }
     if (type === 1) {
       const pageType = import.meta.env.VITE_PAGE_TYPE;
       if (pageType === "quill") {
@@ -46,9 +52,9 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
     } else if (type === 0) {
       try {
         //navigate('/home')
-        const response = await getHierarchyFolderContent(id);
+        const response = await getHierarchyFolderContent(id, slug);
+        console.log(response)
         if (response.error) {
-          console.error(response.error);
           //message.error(response.message);
           highlightFolder(id);
           closeBox();

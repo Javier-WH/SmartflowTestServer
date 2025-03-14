@@ -149,11 +149,11 @@ const getAllRootContent = async (): Promise<FolderResponse> => {
     return { error: false, message: 'Folder content retrieved successfully', data };
 };
 
-const getHierarchyFolderContent = async (folderId: string | null): Promise<FolderResponse> => {
+const getHierarchyFolderContent = async (folderId: string | null, p_slug: string): Promise<FolderResponse> => {
     const functionName = pageType === 'quill' ? 'gethierarchyfoldercontent' : 'gethierarchyfoldercontent';
-
     const { data, error } = await supabase.rpc(functionName, {
         p_folder_id: folderId,
+        p_slug
     });
 
     if (error) {
