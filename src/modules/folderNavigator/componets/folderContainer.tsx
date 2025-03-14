@@ -30,7 +30,7 @@ export default function FolderContainer({ folderId, setFilesCount }: { folderId:
                 message.error(response.message);
                 return;
             }
-
+      
             const newData = response.data ?? [];
             const newContent = newData.map((item: ContainerElement) => {
                 return {

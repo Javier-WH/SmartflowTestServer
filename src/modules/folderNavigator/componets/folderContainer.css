@@ -5,6 +5,10 @@
     border: 2px solid transparent;
     /*transition: border-color 0.2s;*/
 }
+
+.folder:hover {
+    border: 1px solid var(--mainColor);
+}
 .folder-name {
     white-space: nowrap;
     overflow: hidden;

@@ -174,6 +174,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         }
     };
 
+
     return (
         <div className="hover:bg-primary-50">
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
