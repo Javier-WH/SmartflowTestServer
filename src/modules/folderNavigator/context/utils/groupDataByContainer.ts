@@ -3,7 +3,7 @@
  const groupDataByContainer = (request: { data: FolderData[] }): FolderResquest => {
 
   const gruppedByContainer = request?.data?.reduce((acumulador: FolderResquest, _folder: FolderData) => {
-    const { container_id, itemid, name, old_container_empty, old_container_id, published, type } = _folder;
+    const { container_id, itemid, name, old_container_empty, old_container_id, published, type, filesnumber } = _folder;
     if (!acumulador[container_id]) {
       acumulador[container_id] = [];
     }
@@ -17,6 +17,7 @@
       type,
       name,
       published,
+      filesnumber
     });
     return acumulador;
   }, {});

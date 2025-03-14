@@ -16,8 +16,9 @@ export interface FolderRequestItem {
   id: string;
   name: string;
   container?: string;
-  published?: boolean
-  type: number
+  published?: boolean;
+  type: number;
+  filesnumber?: string
 }
 
 type FolderResquest = {
@@ -32,6 +33,7 @@ export interface FolderData {
   old_container_id: string;
   published: boolean;
   type: number;
+  filesnumber?: string
 }
 
 

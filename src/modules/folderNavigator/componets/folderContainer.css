@@ -12,6 +12,26 @@
     max-width: 250px;
     pointer-events: none;
 }
+
+.folder-count-container {
+    display: flex;
+    align-items: center;
+    column-gap: 7px;
+    position: absolute;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    pointer-events: none;
+    right: 10px;
+    color: gray;
+    font-size: 13px;
+}
+.folder-count-container svg {
+    scale: 1.5;
+}
+
+
 .folder::before {
     content: " ";
     position: absolute;

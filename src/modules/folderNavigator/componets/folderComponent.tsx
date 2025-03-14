@@ -2,7 +2,7 @@ import { Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
 import type { ContainerElement } from '../types/componets';
 import FolderContainer from './folderContainer';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import openedFolder from '../assets/svg/opened_folder.svg';
 import closedFolder from '../assets/svg/closed_folder.svg';
 import useFolderManager from '../hooks/useFolderManager';
@@ -10,6 +10,7 @@ import useFilesManager from '../hooks/useFileManager';
 import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useNavigate, useParams } from 'react-router-dom';
+import { MdFolder } from "react-icons/md";
 import './folderContainer.css';
 
 export function FolderComponent({ folder, containerid }: { folder: ContainerElement; containerid: string | null }) {
@@ -22,6 +23,12 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     const { moveFile, createFile } = useFilesManager();
     const [contentId, setContentId] = useState<string | null>(null);
     const { organization_id: slug } = useParams();
+    const [filesCount, setFilesCount] = useState<string | number>('0');
+
+    useEffect(() => {
+        setFilesCount(folder?.filesnumber ?? '0');
+    }, [folder.filesnumber]);
+
 
     const toggleFolder = (id: string | null) => {
         if (!id) return;
@@ -72,10 +79,13 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         });
     };
 
+    //d43ab1e4-3d79-4ab4-ac90-a8f04d0cee6f
+
     const handleMoveToRoot = async () => {
         const request = await moveFolderToRoot(folder.id);
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
+      
     };
 
     const menu: MenuProps['items'] = [
@@ -158,6 +168,9 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         if (request.data) {
             const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
             setUpdateFolderRequest(gruppedByContainer);
+            if (!contentId){
+                toggleFolder(folder.id ?? null);
+            }
         }
     };
 
@@ -183,12 +196,16 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
                         width={30}
                     />
                     <span className="folder-name">{folder.name}</span>
+                    <div className="folder-count-container">
+                        <span className="folder-count">{`${filesCount} ${filesCount === '1' ? 'page' : 'pages'} `}</span>
+                        <MdFolder />
+                    </div>
                 </div>
             </Dropdown>
             <div className="ml-5">
                 {contentId && (
                     <div>
-                        <FolderContainer folderId={contentId} />
+                        <FolderContainer folderId={contentId} setFilesCount={setFilesCount} />
                     </div>
                 )}
             </div>
