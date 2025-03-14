@@ -16,6 +16,7 @@
 
   .ql-editor {
     padding: 0 !important;
+    font-size: 16px !important;/* Tamaño predeterminado */
   }
 
   .ql-container:focus,
