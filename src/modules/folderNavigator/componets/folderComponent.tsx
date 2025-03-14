@@ -9,7 +9,7 @@ import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
 import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './folderContainer.css';
 
 export function FolderComponent({ folder, containerid }: { folder: ContainerElement; containerid: string | null }) {
@@ -21,6 +21,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     const { moveFolder, moveFolderToRoot } = useFolderManager();
     const { moveFile, createFile } = useFilesManager();
     const [contentId, setContentId] = useState<string | null>(null);
+    const { organization_id: slug } = useParams();
 
     const toggleFolder = (id: string | null) => {
         if (!id) return;
@@ -52,7 +53,11 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     };
 
     const handleCreateFile = () => {
-        createFile('untitled', folder.id).then(res => {
+        if(!slug) {
+            message.error('Cant find organization');
+            return
+        }
+        createFile('untitled', folder.id, slug).then(res => {
             if (res.error) {
                 message.error('Error creating page');
                 return;

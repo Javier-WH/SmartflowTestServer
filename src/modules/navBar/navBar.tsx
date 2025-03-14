@@ -4,13 +4,13 @@ import Logo from '../../assets/svg/logo.svg';
 import UserPlaceHolder from '../../assets/svg/userPlaceHolder.svg';
 import { CaretDownOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { MainContext, type MainContextValues } from '../mainContext';
 import useFilesManager from '../folderNavigator/hooks/useFileManager';
 import SearchInput from '../search/searchInput';
-
 import './navBar.css';
 import { useContext } from 'react';
+
 import type { Folder } from '../folderNavigator/types/folder';
 
 export default function NavBar() {
@@ -18,6 +18,7 @@ export default function NavBar() {
     const navigate = useNavigate();
     const { inPage, setNewFolderRequest } = useContext(MainContext) as MainContextValues;
     const { createFile } = useFilesManager();
+    const { organization_id: slug } = useParams();
 
     const userMenu: MenuProps['items'] = [
         {
@@ -48,7 +49,11 @@ export default function NavBar() {
 
 
     const handleCreatePage = () => {
-        createFile('untitled').then(res => {
+        if (!slug) {
+            message.error('Cant find organization');
+            return
+        }
+        createFile('untitled', null, slug).then(res => {
             if (res.error) {
                 message.error('Error creating page');
                 return;

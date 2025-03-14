@@ -30,7 +30,7 @@ const moveFile = async (fileId: string, newContainerId: string | null): Promise<
   }
 }
 
-const createFile = async (fileName: string, containerId: string | null = null): Promise<FileResponse> => {
+const createFile = async (fileName: string, containerId: string | null = null, slug: string): Promise<FileResponse> => {
 
   const functionName = pageType === 'quill' ? 'create_file_quill' : 'create_file';
 
@@ -38,6 +38,7 @@ const createFile = async (fileName: string, containerId: string | null = null): 
     .rpc(functionName, {
       p_name: fileName,
       p_container: containerId,
+      p_slug: slug
     });
   if (error) {
     console.log(error);
