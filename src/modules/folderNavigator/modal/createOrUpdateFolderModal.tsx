@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal, Input, message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Folder, FolderResquest, FolderData } from '../types/folder';
 import useFolderManager from '../hooks/useFolderManager';
@@ -21,7 +22,7 @@ export default function CreateOrUpdateFolderModal({
     const [containerName, setcontainerName] = useState('');
     const [containerID, setcontainerID] = useState<string | null>(null);
     const [update, setUpdate] = useState(false);
-
+    const inputRef = useRef<any | null>(null);
     const { organization_id: slug} = useParams();
 
 
@@ -42,6 +43,10 @@ export default function CreateOrUpdateFolderModal({
             setcontainerName('');
             setcontainerID('');
         }
+
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 100);
     }, [folder]);
 
     const handleCancel = () => {
@@ -113,7 +118,7 @@ export default function CreateOrUpdateFolderModal({
             <div>
                 <div>
                     <label htmlFor="">Folder Name</label>
-                    <Input value={containerName} onChange={e => setcontainerName(e.target.value)} />
+                    <Input ref={inputRef} value={containerName} onChange={e => setcontainerName(e.target.value)} />
                 </div>
             </div>
         </Modal>

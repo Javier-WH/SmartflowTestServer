@@ -9,7 +9,8 @@ import { MainContext, type MainContextValues } from '../mainContext';
 import useFilesManager from '../folderNavigator/hooks/useFileManager';
 import SearchInput from '../search/searchInput';
 import './navBar.css';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import useGetOrganizationData from './hooks/useOrganizationData';
 
 import type { Folder } from '../folderNavigator/types/folder';
 
@@ -19,6 +20,19 @@ export default function NavBar() {
     const { inPage, setNewFolderRequest } = useContext(MainContext) as MainContextValues;
     const { createFile } = useFilesManager();
     const { organization_id: slug } = useParams();
+    const {getOrganizationBasicData} = useGetOrganizationData();
+    const [organizationName, setOrganizationName] = useState<string>('');
+
+    //get organization name
+    useEffect(() => {
+        if (!slug) return;
+        getOrganizationBasicData(slug)
+        .then(res => {
+            setOrganizationName(res?.data[0]?.name ?? 'Unknown');
+        })
+        .catch(err => console.log(err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [slug])
 
     const userMenu: MenuProps['items'] = [
         {
@@ -98,7 +112,7 @@ export default function NavBar() {
 
             {!inPage ? (
                 <div className="flex justify-between items-center navbar-buttons px-8 py-2 mt-10">
-                    {!inPage && <div className="navbar-title">Kepen</div>}
+                    {!inPage && <div className="navbar-title">{organizationName}</div>}
 
                     <div className="create-container">
                         <Dropdown.Button

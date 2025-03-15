@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal, Input, message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { FolderData, FolderResquest } from '../types/folder';
 import { File } from '../types/file';
 import useFilesManager from '../hooks/useFileManager';
@@ -20,13 +21,18 @@ export default function DeleteFolderModal({
 }) {
     const { deleteFile } = useFilesManager();
     const [deleteText, setDeleteText] = useState('');
+    const inputRef = useRef<any | null>(null);
 
     useEffect(() => {
         setDeleteText('');
+        setTimeout(() => {
+            inputRef.current?.focus();   
+        }, 100);
     }, [file]);
 
     const handleCancel = () => {
         setFile(null);
+        inputRef.current?.focus();
     };
 
     const handleOk = async () => {
@@ -55,7 +61,7 @@ export default function DeleteFolderModal({
             <div>
                 <div>
                     <label htmlFor="">Type "delete" to confirm</label>
-                    <Input value={deleteText} onChange={e => setDeleteText(e.target.value)} autoFocus />
+                    <Input ref={inputRef} value={deleteText} onChange={e => setDeleteText(e.target.value)} />
                 </div>
             </div>
         </Modal>
