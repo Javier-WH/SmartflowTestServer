@@ -9,7 +9,7 @@ import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { FolderNavigatorContextValues } from '../types/folder';
 import { useParams } from 'react-router-dom';
 
-export default function FolderContainer({ folderId, setFilesCount }: { folderId: string | null, setFilesCount: (number: number) => void}) {
+export default function FolderContainer({ folderId }: { folderId: string | null}) {
 
     const { organization_id:slug } = useParams();
     const { Loading, setLoading, updateFolderRequest } = useContext(
@@ -100,13 +100,7 @@ export default function FolderContainer({ folderId, setFilesCount }: { folderId:
                 filesnumber: item.filesnumber
             };
         });
-        const totalFiles = newFolders.reduce((acumulador: number, item) => {
-            if (item.type === 0) {
-                return acumulador + 1;
-            }
-            return acumulador;
-        }, 0)
-        setFilesCount(totalFiles)
+      
         setContent(newFolders);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updateFolderRequest, slug]);

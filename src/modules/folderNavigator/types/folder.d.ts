@@ -49,6 +49,8 @@ export interface FolderNavigatorContextValues{
   groupDataByContainer: (request: { data: FolderData[] }) => FolderResquest;
   modalDeleteFile: File | null;
   setModalDeleteFile: React.Dispatch<React.SetStateAction<File | null>>;
+  fileCountUpdateRequest: boolean,
+  setFileCountUpdateRequest: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export type getFolderResponse = (folderId: string | null) => Promise<FolderResponse>

@@ -19,6 +19,7 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
     const [modalDeleteFolder, setModalDeleteFolder] = useState<Folder | null>(null);
     const [updateFolderRequest, setUpdateFolderRequest] = useState<FolderResquest | null>(null);
     const [modalDeleteFile, setModalDeleteFile] = useState<File | null>(null);
+    const [fileCountUpdateRequest, setFileCountUpdateRequest] = useState<boolean>(false);
 
     useEffect(() => {
         setUpdateFolderRequest(updateFolderRequestFromMain);
@@ -47,6 +48,8 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
         groupDataByContainer,
         modalDeleteFile,
         setModalDeleteFile,
+        fileCountUpdateRequest, 
+        setFileCountUpdateRequest
     };
 
     return (

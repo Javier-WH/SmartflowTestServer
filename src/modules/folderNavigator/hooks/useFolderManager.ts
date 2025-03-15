@@ -163,6 +163,22 @@ const getHierarchyFolderContent = async (folderId: string | null, p_slug: string
 
     return { error: false, message: 'Folder content retrieved successfully', data };
 };
+const getFilesCount = async (folderId: string): Promise<FolderResponse> => {
+
+    const { data, error } = await supabase.rpc('getfilescount', {
+        p_folder_id: folderId
+    });
+
+    if (error) {
+        console.log(error);
+        return errorManager(error);
+    }
+
+    return { error: false, message: 'Files count in folder retrieved successfully', data };
+};
+
+
+
 
 export default function useFolderManager() {
     return {
@@ -176,6 +192,7 @@ export default function useFolderManager() {
         getRootContent,
         moveFolderToRoot,
         getHierarchyFolderContent,
-        getAllRootContent
+        getAllRootContent,
+        getFilesCount
     };
 }

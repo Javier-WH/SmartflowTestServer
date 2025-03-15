@@ -14,20 +14,35 @@ import { MdFolder } from 'react-icons/md';
 import './folderContainer.css';
 
 export function FolderComponent({ folder, containerid }: { folder: ContainerElement; containerid: string | null }) {
-    const { setModalFolder, setModalDeleteFolder, setUpdateFolderRequest, groupDataByContainer } = useContext(
-        FolderNavigatorContext,
-    ) as FolderNavigatorContextValues;
+    const { setModalFolder, setModalDeleteFolder, setUpdateFolderRequest, groupDataByContainer, fileCountUpdateRequest,
+        setFileCountUpdateRequest } = useContext(
+            FolderNavigatorContext,
+        ) as FolderNavigatorContextValues;
 
     const navigate = useNavigate();
-    const { moveFolder, moveFolderToRoot } = useFolderManager();
+    const { moveFolder, moveFolderToRoot, getFilesCount } = useFolderManager();
     const { moveFile, createFile } = useFilesManager();
     const [contentId, setContentId] = useState<string | null>(null);
     const { organization_id: slug } = useParams();
     const [filesCount, setFilesCount] = useState<string | number>('0');
 
+
+    // updates the number of files when a file is moved
+    useEffect(() => {
+        if (!fileCountUpdateRequest) return;
+        getFilesCount(folder.id)
+            .then((res) => setFilesCount(res.data?.[0]?.filesnumber))
+            .catch((err) => console.log(err))
+            .finally(() => setFileCountUpdateRequest(false));
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fileCountUpdateRequest]);
+
+
     useEffect(() => {
         setFilesCount(folder?.filesnumber ?? '0');
-    }, [folder.filesnumber]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const toggleFolder = (id: string | null) => {
         if (!id) return;
@@ -141,7 +156,6 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     const handleDrop = async (event: React.DragEvent<HTMLDivElement>, targetItemId: string, targetType: number) => {
         event.preventDefault();
         const target = event.target as HTMLDivElement;
-
         // styles for drag and drop
         if (target.classList.contains('folder')) {
             target.classList.remove('drag-over');
@@ -169,11 +183,14 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
             if (!contentId) {
                 toggleFolder(folder.id ?? null);
             }
+            setFileCountUpdateRequest(true);
         }
     };
 
+  
+
     return (
-        <div >
+        <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
                 {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
                 <div
@@ -203,7 +220,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
             <div className="ml-5">
                 {contentId && (
                     <div>
-                        <FolderContainer folderId={contentId} setFilesCount={setFilesCount} />
+                        <FolderContainer folderId={contentId} />
                     </div>
                 )}
             </div>

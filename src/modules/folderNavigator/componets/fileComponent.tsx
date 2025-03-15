@@ -13,7 +13,7 @@ import useFilesManager from '../hooks/useFileManager';
 const pageType = import.meta.env.VITE_PAGE_TYPE;
 
 export function FileComponent({ file }: { file: ContainerElement }) {
-    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest } = useContext(
+    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest, setFileCountUpdateRequest } = useContext(
         FolderNavigatorContext,
     ) as FolderNavigatorContextValues;
     const { moveFileToRoot } = useFilesManager();
@@ -30,7 +30,6 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         event.dataTransfer.setData('id', itemId);
         event.dataTransfer.setData('type', itemType.toString());
     };
-    const onDragEnd = () => {};
 
     const handleDelete = async () => {
         const newFile: File = {
@@ -74,7 +73,6 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                     className="hover:bg-primary-50 p-2"
                     draggable
                     onDragStart={event => handleDragStart(event, file.id, file.type)}
-                    onDragEnd={onDragEnd}
                 >
                     <img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />
                     <span>{file.name}</span>
