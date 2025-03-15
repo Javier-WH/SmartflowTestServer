@@ -49,6 +49,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         }
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
+        setFileCountUpdateRequest(true);
     };
 
     const menu: MenuProps['items'] = [

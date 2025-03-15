@@ -10,11 +10,13 @@ export default function DeleteFolderModal({
     setFile,
     setUpdateFolderRequest,
     groupDataByContainer,
+    setFileCountUpdateRequest
 }: {
     file: File | null;
     setFile: (file: File | null) => void;
     setUpdateFolderRequest: (folder: FolderResquest | null) => void;
     groupDataByContainer: (request: { data: FolderData[] }) => FolderResquest;
+    setFileCountUpdateRequest: (opt: boolean) => void;
 }) {
     const { deleteFile } = useFilesManager();
     const [deleteText, setDeleteText] = useState('');
@@ -36,6 +38,7 @@ export default function DeleteFolderModal({
         }
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
+        setFileCountUpdateRequest(true);
         setFile(null);
     };
 

@@ -99,6 +99,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         const request = await moveFolderToRoot(folder.id);
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
+        setFileCountUpdateRequest(true);
     };
 
     const menu: MenuProps['items'] = [

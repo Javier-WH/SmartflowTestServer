@@ -66,12 +66,14 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
                     setFolder={setModalDeleteFolder}
                     setUpdateFolderRequest={setUpdateFolderRequest}
                     groupDataByContainer={groupDataByContainer}
+                    setFileCountUpdateRequest={setFileCountUpdateRequest}
                 />
                 <DeleteFileModal
                     file={modalDeleteFile}
                     setFile={setModalDeleteFile}
                     setUpdateFolderRequest={setUpdateFolderRequest}
                     groupDataByContainer={groupDataByContainer}
+                    setFileCountUpdateRequest={setFileCountUpdateRequest}
                 />
                 {children}
             </FolderNavigatorContext.Provider>
