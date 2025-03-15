@@ -1,0 +1,35 @@
+.disable-select {
+  user-select: none;
+}
+
+.drag-handle {
+  cursor: grab;
+  position: absolute;
+  left: -25px;
+  top: 35%;
+}
+
+.guided-checklist {
+  background: hsla(209, 34%, 30%, 5%);
+  padding: 16px;
+  width: 100%;
+}
+
+.title-input {
+  border: none !important;
+  background: transparent !important;
+  font-size: 1.2rem !important;
+  margin-bottom: 16px;
+}
+
+.item-index {
+  background: hsla(209, 23%, 60%, 70%);
+  color: white;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 8px;
+}

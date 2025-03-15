@@ -1,24 +1,20 @@
-type QuillInstance = {
-  getSelection: () => { index: number };
-  insertEmbed: (index: number, blotName: string, content: { title: string; content: string }) => void;
-  setSelection: (index: number) => void;
-};
 
-export default function insertGuidedCheckList(this: { quill: QuillInstance }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const insertGuidedCheckList = function (this: { quill: any }) {
   const selection = this.quill.getSelection();
   if (!selection) return;
 
-  const position = selection.index;
-  
+  const initialItem = {
+    id: crypto.randomUUID(),
+    text: "",
+    guidande: "",
+    index: 0
+  };
 
-  this.quill.insertEmbed(
-    position,
-    'guided-checklist-block',
-    {
-      title: 'Título del collapsible',
-      content: '<p>Contenido del collapsible...</p>'
-    }
-  );
+  this.quill.insertEmbed(selection.index, 'guided-checklist', {
+    title: "Nueva lista",
+    items: JSON.stringify([initialItem])
+  });
+};
 
-  this.quill.setSelection(position + 1);
-}
+export default insertGuidedCheckList;
