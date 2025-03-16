@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ListItem } from '@/modules/page/components/guidedCheckList/guidedCheckList';
 import { Quill } from 'react-quill';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -9,13 +10,13 @@ class GuidedCheckListBlot extends BlockEmbed {
   static tagName = 'guided-checklist';
   static className = 'guided-checklist-block';
 
-  static create(value: { title: string; items: any[] }) {
+  static create(value: { title: string; items: ListItem[] }) {
     const node = super.create();
-
-    // Asegúrate de pasar los valores correctos al componente web
+    
+    // Guardar los datos como atributos de forma estructurada
     node.setAttribute('title', value.title);
     node.setAttribute('items', JSON.stringify(value.items));
-
+    
     return node;
   }
 

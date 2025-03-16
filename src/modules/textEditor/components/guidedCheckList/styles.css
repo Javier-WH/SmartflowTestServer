@@ -33,3 +33,16 @@
   border-radius: 50%;
   margin-right: 8px;
 }
+
+.guided-checklist {
+    user-select: none;
+    -webkit-user-select: none;
+}
+.guided-checklist *:not(input):not(textarea) {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.drag-handle {
+  scale: 1.5;
+}

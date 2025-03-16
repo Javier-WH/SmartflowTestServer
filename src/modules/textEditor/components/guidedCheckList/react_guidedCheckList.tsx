@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import DraggableList from "react-draggable-list";
 import { GoGrabber } from "react-icons/go";
 import { Input, Collapse, Button } from "antd";
@@ -7,7 +7,7 @@ import { RightOutlined } from "@ant-design/icons";
 import reactToWebComponent from "react-to-webcomponent";
 import "antd/dist/reset.css";
 import "./styles.css"; 
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 
 // Definir tipos
 interface ListItem {
@@ -26,6 +26,7 @@ interface ItemProps {
     onDeleteItem: (id: string) => void;
     onAddItem: (id: string) => void;
     onCollapseChange: (id: string) => void;
+    onNextItem: (id: string) => void;
     activeItemId: string | null;
   };
 }
@@ -36,7 +37,7 @@ class Item extends React.Component<ItemProps> {
     const { item, dragHandleProps, commonProps } = this.props;
   
     return (
-      <div className="disable-select" style={{ display: "flex", position: "relative" }}>
+      <div className="disable-select" style={{ display: "flex", position: "relative" }} contentEditable={false}>
         <Collapse
           ghost
           expandIconPosition="end"
@@ -72,10 +73,11 @@ class Item extends React.Component<ItemProps> {
             }
           >
             <Input.TextArea
+              style={{ resize: "none" }}
               value={item.guidande}
               onChange={(e) => commonProps.onGuidandeChange(item.id, e.target.value)}
             />
-            <Button onClick={() => commonProps.onAddItem(item.id)}>Next</Button>
+            <Button onClick={() => commonProps.onNextItem(item.id)}>Next</Button>
           </Collapse.Panel>
         </Collapse>
 
@@ -88,6 +90,7 @@ class Item extends React.Component<ItemProps> {
 }
 
 // Componente principal convertido
+// eslint-disable-next-line react-refresh/only-export-components
 const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string }) => {
   const [list, setList] = useState<ListItem[]>(JSON.parse(items || "[]"));
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
@@ -116,17 +119,24 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     onCollapseChange: (id: string) => {
       setActiveItemId(activeItemId === id ? null : id);
     },
+    onNextItem: (currentId: string) => {
+      const currentIndex = list.findIndex(item => item.id === currentId);
+      if (currentIndex < list.length - 1) {
+        const nextItemId = list[currentIndex + 1].id;
+        setActiveItemId(nextItemId);
+      } 
+    },
     activeItemId,
   };
 
   return (
-    <div className="guided-checklist">
+    <div contentEditable={false} className="guided-checklist">
       <Input
         className="title-input"
         value={title}
       />
 
-      <div ref={containerRef}>
+      <div contentEditable={false} ref={containerRef}>
         <DraggableList
           itemKey="id"
           template={Item}
@@ -137,7 +147,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
         />
       </div>
 
-      <Button onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)}>
+      <Button contentEditable={false} onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)}>
         +
       </Button>
     </div>
