@@ -62,6 +62,9 @@ export default function TextEditor() {
 
 
 
+
+
+
     // this useEfect check every image and video loaded in the editor and add the width, height and style attributes found in the page load
     // this is done to prevent a bug related to the width, height and styles of images
     useEffect(() => {

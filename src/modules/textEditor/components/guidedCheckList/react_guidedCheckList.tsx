@@ -96,6 +96,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleListChange = (newList: readonly unknown[], _movedItem: unknown, _oldIndex: number, _newIndex: number) => {
     setList(newList.map((item, index) => ({ ...(item as ListItem), index })));
@@ -134,6 +135,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
       <Input
         className="title-input"
         value={title}
+        placeholder="Add a title"
       />
 
       <div contentEditable={false} ref={containerRef}>
