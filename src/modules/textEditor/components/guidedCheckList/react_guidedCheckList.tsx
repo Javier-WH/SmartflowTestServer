@@ -34,7 +34,7 @@ interface ItemProps {
 class Item extends React.Component<ItemProps> {
   render() {
     const { item, dragHandleProps, commonProps } = this.props;
-
+  
     return (
       <div className="disable-select" style={{ display: "flex", position: "relative" }}>
         <Collapse
@@ -124,7 +124,6 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
       <Input
         className="title-input"
         value={title}
-        onChange={(e) => {/* Implementar si es necesario */ }}
       />
 
       <div ref={containerRef}>

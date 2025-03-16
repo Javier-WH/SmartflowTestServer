@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { MainContext, type MainContextValues } from '../mainContext';
 import { Input, type InputRef } from 'antd';
 import { useContext, useEffect, useState, useRef } from 'react';
@@ -184,7 +185,7 @@ export default function TextEditor() {
         toolbar: {
             container: '#toolbar',
             handlers: {
-                'GuidedCheckList': insertGuidedCheckList
+                'guided-checklist': insertGuidedCheckList
             },
         },
         resize: {

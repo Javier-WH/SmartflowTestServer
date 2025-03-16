@@ -1,20 +1,20 @@
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const insertGuidedCheckList = function (this: { quill: any }) {
   const selection = this.quill.getSelection();
   if (!selection) return;
 
+  // Valores iniciales sin diálogo
   const initialItem = {
     id: crypto.randomUUID(),
-    text: "",
+    text: "Nuevo elemento", // Texto predeterminado
     guidande: "",
     index: 0
   };
 
   this.quill.insertEmbed(selection.index, 'guided-checklist', {
     title: "Nueva lista",
-    items: JSON.stringify([initialItem])
+    items: [initialItem] // Pasa el array directamente
   });
 };
-
 export default insertGuidedCheckList;
