@@ -92,7 +92,10 @@ class Item extends React.Component<ItemProps> {
 // Componente principal convertido
 // eslint-disable-next-line react-refresh/only-export-components
 const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string }) => {
-  const [list, setList] = useState<ListItem[]>(JSON.parse(items || "[]"));
+  console.log({ title, items })
+  const [list, setList] = useState<ListItem[]>(
+    items ? JSON.parse(items) : [{ id: crypto.randomUUID(), index: 0, text: "", guidande: "" }]
+  );
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
