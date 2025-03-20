@@ -9,13 +9,13 @@ const insertGuidedCheckList = function (this: { quill: any }) {
   const initialItem = {
     id: crypto.randomUUID(),
     index: 0,
-    text: "texto de prueba",
-    guidande: "guia de prueba XD"
+    text: "",
+    guidande: ""
   };
 
   // Insertar con estructura correcta y serialización
   this.quill.insertEmbed(selection.index, 'guided-checklist', {
-    title: "Nueva lista",
+    title: "",
     items: [initialItem] 
   });
 };

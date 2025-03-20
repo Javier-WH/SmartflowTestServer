@@ -59,6 +59,7 @@ class Item extends React.Component<ItemProps> {
               <div style={{ display: "flex", alignItems: "center" }}>
                 <span className="item-index">{item.index + 1}</span>
                 <Input
+                  placeholder="What's the first step?"
                   value={item.text}
                   onChange={(e) => commonProps.onTextChange(item.id, e.target.value)}
                   onKeyDown={(e) => {
@@ -75,6 +76,7 @@ class Item extends React.Component<ItemProps> {
             }
           >
             <Input.TextArea
+              placeholder="Add a guidande (if is needed!)"
               style={{ resize: "none" }}
               value={item.guidande}
               onChange={(e) => commonProps.onGuidandeChange(item.id, e.target.value)}
