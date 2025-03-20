@@ -16,7 +16,8 @@ const insertGuidedCheckList = function (this: { quill: any }) {
   // Insertar con estructura correcta y serialización
   this.quill.insertEmbed(selection.index, 'guided-checklist', {
     title: "Nueva lista",
-    items: [initialItem] // Serializar correctamente
+    items: [initialItem] 
   });
 };
+
 export default insertGuidedCheckList;

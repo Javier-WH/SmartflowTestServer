@@ -60,7 +60,19 @@ export default function TextEditor() {
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
 
-
+    useEffect(() => {
+        if (id) {
+            getFileContent(id).then(response => {
+                const editor = quillRef.current?.getEditor();
+                if (editor && response.data.content) {
+                    // Limpiar editor antes de cargar nuevo contenido
+                    editor.setContents([]);
+                    // Cargar el contenido HTML directamente
+                    editor.root.innerHTML = response.data.content;
+                }
+            });
+        }
+    }, []);
 
 
 

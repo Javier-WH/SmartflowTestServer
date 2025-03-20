@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from "react";
 import DraggableList from "react-draggable-list";
@@ -31,7 +32,7 @@ interface ItemProps {
   };
 }
 
-// Componente Item ajustado
+
 class Item extends React.Component<ItemProps> {
   render() {
     const { item, dragHandleProps, commonProps } = this.props;
@@ -92,21 +93,42 @@ class Item extends React.Component<ItemProps> {
 // Componente principal convertido
 // eslint-disable-next-line react-refresh/only-export-components
 const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string }) => {
-
-  /*const [list, setList] = useState<ListItem[]>(
-    JSON.parse(items || '[]')
-  );*/
-
-
   const [internalTitle, setInternalTitle] = useState(title || '');
+  const [list, setList] = useState<ListItem[]>([]);
+  const componentRef = useRef<HTMLElement>();
 
   // Estado para la lista con efecto de actualización
-  const [list, setList] = useState<ListItem[]>(() => {
+  /*const [list, setList] = useState<ListItem[]>(() => {
     try {
       return items ? JSON.parse(items) : [{ id: crypto.randomUUID(), index: 0, text: "", guidande: "" }];
     } catch (e) {
       return [{ id: crypto.randomUUID(), index: 0, text: "", guidande: "" }];
     }
+  });*/
+
+
+  useEffect(() => {
+    try {
+      const initialItems = items ? JSON.parse(items) : [];
+      setList(initialItems.length > 0 ? initialItems : [createNewItem()]);
+    } catch (e) {
+      setList([createNewItem()]);
+    }
+  }, []);
+
+  // Actualizar atributos cuando cambia el estado
+  useEffect(() => {
+    if (componentRef.current) {
+      componentRef.current.setAttribute('title', internalTitle);
+      componentRef.current.setAttribute('items', JSON.stringify(list));
+    }
+  }, [internalTitle, list]);
+
+  const createNewItem = () => ({
+    id: crypto.randomUUID(),
+    index: list.length,
+    text: "",
+    guidande: ""
   });
 
   // Efecto para actualizar la lista cuando cambia 'items'
@@ -164,7 +186,9 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   };
 
   return (
-    <div contentEditable={false} className="guided-checklist">
+    <div contentEditable={false} className="guided-checklist" ref={(el) => {
+      if (el) componentRef.current = el.closest('guided-checklist') as HTMLElement | undefined;
+    }}>
       <Input
         className="title-input"
         value={internalTitle}
