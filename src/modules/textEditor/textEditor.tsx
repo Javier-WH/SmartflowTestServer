@@ -45,7 +45,7 @@ Quill.register(Font, true);
 
 export default function TextEditor() {
     const { id } = useParams();
-    
+
     const navigate = useNavigate();
 
     const { setInPage } = useContext(MainContext) as MainContextValues;
@@ -61,7 +61,7 @@ export default function TextEditor() {
     const inputRef = useRef<InputRef>(null);
 
     // guided check list update from database
-    useEffect(() => {
+    /*useEffect(() => {
         if (id) {
             getFileContent(id).then(response => {
                 const editor = quillRef.current?.getEditor();
@@ -73,7 +73,7 @@ export default function TextEditor() {
                 }
             });
         }
-    }, [id]);
+    }, [id]);*/
 
 
 
@@ -106,7 +106,7 @@ export default function TextEditor() {
                 });
                 return delta;
             });
-        
+
             // add a matcher for videos
             // this do the same as the image matcher but for videos (iframes)
             editor.clipboard.addMatcher('IFRAME', function (node, delta) {
@@ -149,6 +149,11 @@ export default function TextEditor() {
                     const { content, name, updated_at } = response.data;
                     setTitle(name === 'untitled' ? '' : name);
                     setContenido(content ? content : '');
+                    const editor = quillRef.current?.getEditor();
+                    if (editor) {
+                        editor.root.innerHTML = content;
+                    }
+
                     setUpdatedAt(updated_at);
                 })
                 .catch(error => console.error(error))
@@ -164,14 +169,14 @@ export default function TextEditor() {
             const htmlContent = editor.root.innerHTML;
             // save htmlContent istead of content, prevent a bug related to images sizes and styles
             updateFileContent(id, htmlContent, title)
-            .then((response) => {
-                //console.log("[LS] -> src/modules/textEditor/textEditor.tsx:70 -> response: ", response)
-                if (response.error) {
-                    console.error(response);
-                    return;
-                }
-                setUpdatedAt(response.data.updated_at);
-            });
+                .then((response) => {
+                    //console.log("[LS] -> src/modules/textEditor/textEditor.tsx:70 -> response: ", response)
+                    if (response.error) {
+                        console.error(response);
+                        return;
+                    }
+                    setUpdatedAt(response.data.updated_at);
+                });
         }
     }, [contenido, title]);
 
@@ -242,6 +247,7 @@ export default function TextEditor() {
                         onKeyDown={handleTitleKeyDown}
                     />
                 </div>
+
                 <div className="flex flex-col grow bg-white">
                     <div className="flex justify-center w-full grow relative">
                         <CustomToolbar />
@@ -256,7 +262,9 @@ export default function TextEditor() {
                         placeholder=""
                         className="h-full"
                     />
+
                 </div>
+
             </div>
         </div>
     );
