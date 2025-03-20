@@ -59,15 +59,14 @@ export default function TextEditor() {
 
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
+
+    // guided check list update from database
     useEffect(() => {
         if (id) {
             getFileContent(id).then(response => {
                 const editor = quillRef.current?.getEditor();
                 if (editor && response.data.content) {
-                    // Cargar contenido SIN forzar actualizaciones
                     editor.root.innerHTML = response.data.content;
-
-                    // Deshabilitar actualizaciones temporales
                     setTimeout(() => {
                         editor.enable();
                     }, 100);
@@ -75,7 +74,6 @@ export default function TextEditor() {
             });
         }
     }, [id]);
-
 
 
 

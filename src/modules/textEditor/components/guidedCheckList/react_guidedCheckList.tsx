@@ -61,6 +61,7 @@ class Item extends React.Component<ItemProps> {
                 <Input
                   placeholder="What's the first step?"
                   value={item.text}
+                  onClick={(e) => e.stopPropagation()}
                   onChange={(e) => commonProps.onTextChange(item.id, e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -93,7 +94,7 @@ class Item extends React.Component<ItemProps> {
   }
 }
 
-// Componente principal convertido
+
 // eslint-disable-next-line react-refresh/only-export-components
 const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string }) => {
   const [internalTitle, setInternalTitle] = useState(title || '');
@@ -105,7 +106,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   useEffect(() => {
     if (!initialized.current) {
       try {
-        // Cargar valores INICIALES del archivo
+        //load initial values
         const initialTitle = title || '';
         const initialItems = items ? JSON.parse(items) : [createNewItem()];
 
@@ -125,7 +126,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     }
   }, []);
 
-  // Actualizar atributos cuando cambia el estado
+  // update component attributes
   useEffect(() => {
     if (componentRef.current) {
       componentRef.current.setAttribute('title', internalTitle);
@@ -221,9 +222,9 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   );
 };
 
-// Convertir a Web Component
+
 customElements.define('guided-checklist', reactToWebComponent(GuidedCheckListWC, React, ReactDOM, {
-  props: { // Especificar props a observar
+  props: { 
     title: 'string',
     items: 'string'
   }
