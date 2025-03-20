@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import DraggableList from "react-draggable-list";
 import { GoGrabber } from "react-icons/go";
 import { Input, Collapse, Button } from "antd";
@@ -96,23 +97,29 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   const [internalTitle, setInternalTitle] = useState(title || '');
   const [list, setList] = useState<ListItem[]>([]);
   const componentRef = useRef<HTMLElement>();
-
-  // Estado para la lista con efecto de actualización
-  /*const [list, setList] = useState<ListItem[]>(() => {
-    try {
-      return items ? JSON.parse(items) : [{ id: crypto.randomUUID(), index: 0, text: "", guidande: "" }];
-    } catch (e) {
-      return [{ id: crypto.randomUUID(), index: 0, text: "", guidande: "" }];
-    }
-  });*/
+  const initialized = useRef(false);
 
 
   useEffect(() => {
-    try {
-      const initialItems = items ? JSON.parse(items) : [];
-      setList(initialItems.length > 0 ? initialItems : [createNewItem()]);
-    } catch (e) {
-      setList([createNewItem()]);
+    if (!initialized.current) {
+      try {
+        // Cargar valores INICIALES del archivo
+        const initialTitle = title || '';
+        const initialItems = items ? JSON.parse(items) : [createNewItem()];
+
+        setInternalTitle(initialTitle);
+
+        const stabilizedItems = initialItems.map((item: ListItem, index: number) => ({
+          ...item,
+          id: item.id || crypto.randomUUID(),
+          index
+        }));
+
+        setList(stabilizedItems);
+      } catch (e) {
+        setList([createNewItem()]);
+      }
+      initialized.current = true;
     }
   }, []);
 
@@ -132,7 +139,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   });
 
   // Efecto para actualizar la lista cuando cambia 'items'
-  useEffect(() => {
+  /*useEffect(() => {
     try {
       if (items) {
         setList(JSON.parse(items));
@@ -145,7 +152,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   // Efecto para actualizar el título interno
   useEffect(() => {
     setInternalTitle(title || '');
-  }, [title]);
+  }, [title]);*/
 
 
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
@@ -153,9 +160,23 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
 
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleListChange = (newList: readonly unknown[], _movedItem: unknown, _oldIndex: number, _newIndex: number) => {
-    setList(newList.map((item, index) => ({ ...(item as ListItem), index })));
-  };
+  const handleListChange = useCallback((
+    newList: readonly unknown[],
+    _movedItem: unknown,
+    _oldIndex: number,
+    _newIndex: number
+  ) => {
+    setList(prev => {
+      const updatedList = newList.map((item, index) => ({
+        ...(item as ListItem),
+        index
+      }));
+      
+      return JSON.stringify(prev) === JSON.stringify(updatedList) 
+        ? prev 
+        : updatedList;
+    });
+  }, []);
 
   const commonProps = {
     onTextChange: (id: string, text: string) => {

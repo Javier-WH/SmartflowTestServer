@@ -14,10 +14,14 @@ export default class GuidedCheckListBlot extends BlockEmbed {
   static blotName = 'guided-checklist';
   static tagName = 'guided-checklist';
 
-  static create(values: { title: string; items: ListItem[] }) {
+  static create(values: { title: string; items: ListItem }) {
     const node = super.create();
-    node.setAttribute('title', values.title);
-    node.setAttribute('items', JSON.stringify(values.items));
+    // Forzar actualización solo si no existe
+    if (!node.getAttribute('data-initialized')) {
+      node.setAttribute('title', values.title);
+      node.setAttribute('items', values.items);
+      node.setAttribute('data-initialized', 'true');
+    }
     return node;
   }
 
