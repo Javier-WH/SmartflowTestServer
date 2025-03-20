@@ -79,7 +79,7 @@ class Item extends React.Component<ItemProps> {
               value={item.guidande}
               onChange={(e) => commonProps.onGuidandeChange(item.id, e.target.value)}
             />
-            <Button onClick={() => commonProps.onNextItem(item.id)}>Next</Button>
+            <Button className="collapse-next-button" onClick={() => commonProps.onNextItem(item.id)}>Next</Button>
           </Collapse.Panel>
         </Collapse>
 
@@ -137,22 +137,6 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     text: "",
     guidande: ""
   });
-
-  // Efecto para actualizar la lista cuando cambia 'items'
-  /*useEffect(() => {
-    try {
-      if (items) {
-        setList(JSON.parse(items));
-      }
-    } catch (e) {
-      console.error("Error parsing items:", e);
-    }
-  }, [items]);
-
-  // Efecto para actualizar el título interno
-  useEffect(() => {
-    setInternalTitle(title || '');
-  }, [title]);*/
 
 
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
@@ -214,7 +198,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
         className="title-input"
         value={internalTitle}
         onChange={(e) => setInternalTitle(e.target.value)}
-        placeholder="Add a title"
+        placeholder="Optional title"
       />
 
       <div contentEditable={false} ref={containerRef}>
@@ -228,7 +212,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
         />
       </div>
 
-      <Button contentEditable={false} onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)}>
+      <Button className="add-item-button" contentEditable={false} onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)}>
         +
       </Button>
     </div>
