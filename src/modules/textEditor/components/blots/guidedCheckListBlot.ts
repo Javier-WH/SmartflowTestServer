@@ -11,6 +11,7 @@ export default class GuidedCheckListBlot extends BlockEmbed {
   static className = 'guided-checklist-block';
 
   static create(value: { title: string; items: ListItem[] }) {
+
     const node = super.create();
 
     // Guardar datos como atributos

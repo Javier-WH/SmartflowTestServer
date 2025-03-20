@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DraggableList from "react-draggable-list";
 import { GoGrabber } from "react-icons/go";
 import { Input, Collapse, Button } from "antd";
@@ -92,10 +92,40 @@ class Item extends React.Component<ItemProps> {
 // Componente principal convertido
 // eslint-disable-next-line react-refresh/only-export-components
 const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string }) => {
-  console.log({ title, items })
-  const [list, setList] = useState<ListItem[]>(
-    items ? JSON.parse(items) : [{ id: crypto.randomUUID(), index: 0, text: "", guidande: "" }]
-  );
+
+  /*const [list, setList] = useState<ListItem[]>(
+    JSON.parse(items || '[]')
+  );*/
+
+
+  const [internalTitle, setInternalTitle] = useState(title || '');
+
+  // Estado para la lista con efecto de actualización
+  const [list, setList] = useState<ListItem[]>(() => {
+    try {
+      return items ? JSON.parse(items) : [{ id: crypto.randomUUID(), index: 0, text: "", guidande: "" }];
+    } catch (e) {
+      return [{ id: crypto.randomUUID(), index: 0, text: "", guidande: "" }];
+    }
+  });
+
+  // Efecto para actualizar la lista cuando cambia 'items'
+  useEffect(() => {
+    try {
+      if (items) {
+        setList(JSON.parse(items));
+      }
+    } catch (e) {
+      console.error("Error parsing items:", e);
+    }
+  }, [items]);
+
+  // Efecto para actualizar el título interno
+  useEffect(() => {
+    setInternalTitle(title || '');
+  }, [title]);
+
+
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -137,7 +167,8 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     <div contentEditable={false} className="guided-checklist">
       <Input
         className="title-input"
-        value={title}
+        value={internalTitle}
+        onChange={(e) => setInternalTitle(e.target.value)}
         placeholder="Add a title"
       />
 
@@ -160,4 +191,9 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
 };
 
 // Convertir a Web Component
-customElements.define('guided-checklist', reactToWebComponent(GuidedCheckListWC, React, ReactDOM));
+customElements.define('guided-checklist', reactToWebComponent(GuidedCheckListWC, React, ReactDOM, {
+  props: { // Especificar props a observar
+    title: 'string',
+    items: 'string'
+  }
+}));
