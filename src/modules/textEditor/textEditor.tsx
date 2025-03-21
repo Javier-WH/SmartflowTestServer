@@ -8,6 +8,7 @@ import styles from './textEditorStyles.tsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
+import CustomToolbarGuidedCheckList from './components/toolbar/CustonToolbarGuidedCheckList.tsx';
 import options from './components/utils/options.ts';
 import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.ts';
 import useFilesManager from '../folderNavigator/hooks/useFileManager.ts';
@@ -54,27 +55,10 @@ export default function TextEditor() {
     const [title, setTitle] = useState('');
     const [ableToSave, setAbleToSave] = useState(false);
     const [updatedAt, setUpdatedAt] = useState(0);
-
     const { updateFileContent, getFileContent } = useFilesManager();
 
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
-
-    // guided check list update from database
-    /*useEffect(() => {
-        if (id) {
-            getFileContent(id).then(response => {
-                const editor = quillRef.current?.getEditor();
-                if (editor && response.data.content) {
-                    editor.root.innerHTML = response.data.content;
-                    setTimeout(() => {
-                        editor.enable();
-                    }, 100);
-                }
-            });
-        }
-    }, [id]);*/
-
 
 
     // this useEfect check every image and video loaded in the editor and add the width, height and style attributes found in the page load
@@ -250,7 +234,13 @@ export default function TextEditor() {
 
                 <div className="flex flex-col grow bg-white">
                     <div className="flex justify-center w-full grow relative">
+
+
+                        <CustomToolbarGuidedCheckList />
+
                         <CustomToolbar />
+
+
                     </div>
                     <ReactQuill
                         ref={quillRef}

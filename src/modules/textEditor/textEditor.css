@@ -3,7 +3,8 @@
 
   }
 
-  .ql-toolbar.ql-snow {
+
+  #toolbar.ql-toolbar.ql-snow {
     border: none !important;
     border-bottom: 1px solid #ddd !important;
     position: fixed;
@@ -13,10 +14,19 @@
 
   }
 
+ #toolbar-guided-checklist.ql-toolbar.ql-snow {
+  border: none !important;
+  border-bottom: 1px solid #ddd !important;
+  position: fixed;
+  z-index: 1000;
+  background-color: var(--pageBarColor);
 
+
+}
   .ql-editor {
     padding: 0 !important;
-    font-size: 16px !important;/* Tamaño predeterminado */
+    font-size: 16px !important;
+    /* Tamaño predeterminado */
   }
 
   .ql-container:focus,
@@ -32,7 +42,7 @@
     color: white !important;
   }
 
-  .group a{
+  .group a {
     color: white !important;
     font-size: 11px !important;
   }
@@ -65,7 +75,7 @@
     color: white;
   }
 
-  .ql-picker-item{
+  .ql-picker-item {
     padding: 5px !important;
   }
 
@@ -179,67 +189,67 @@
 
   /*font type*/
 
-.ql-font-arial {
-  font-family: 'Arial', sans-serif;
-}
+  .ql-font-arial {
+    font-family: 'Arial', sans-serif;
+  }
 
-.ql-font-times-new-roman {
-  font-family: 'Times New Roman', serif;
-}
+  .ql-font-times-new-roman {
+    font-family: 'Times New Roman', serif;
+  }
 
-.ql-font-courier-new {
-  font-family: 'Courier New', monospace;
-}
+  .ql-font-courier-new {
+    font-family: 'Courier New', monospace;
+  }
 
-.ql-font-comic-sans-ms {
-  font-family: 'Comic Sans MS', cursive;
-}
+  .ql-font-comic-sans-ms {
+    font-family: 'Comic Sans MS', cursive;
+  }
 
-.ql-font-roboto {
-  font-family: 'Roboto', sans-serif;
-}
+  .ql-font-roboto {
+    font-family: 'Roboto', sans-serif;
+  }
 
-.ql-font-georgia {
-  font-family: 'Georgia', serif;
-}
+  .ql-font-georgia {
+    font-family: 'Georgia', serif;
+  }
 
-.ql-font-verdana {
-  font-family: 'Verdana', sans-serif;
-}
+  .ql-font-verdana {
+    font-family: 'Verdana', sans-serif;
+  }
 
-.ql-font-open-sans {
-  font-family: 'Open Sans', sans-serif;
-}
+  .ql-font-open-sans {
+    font-family: 'Open Sans', sans-serif;
+  }
 
-.ql-font-lato {
-  font-family: 'Lato', sans-serif;
-}
+  .ql-font-lato {
+    font-family: 'Lato', sans-serif;
+  }
 
-.ql-font-montserrat {
-  font-family: 'Montserrat', sans-serif;
-}
+  .ql-font-montserrat {
+    font-family: 'Montserrat', sans-serif;
+  }
 
-.ql-font-impact {
-  font-family: 'Impact', sans-serif;
-}
+  .ql-font-impact {
+    font-family: 'Impact', sans-serif;
+  }
 
-.ql-font-fantasy {
-  font-family: 'Fantasy', sans-serif;
-}
+  .ql-font-fantasy {
+    font-family: 'Fantasy', sans-serif;
+  }
 
-.ql-font-cursive {
-  font-family: 'Cursive', cursive;
-}
+  .ql-font-cursive {
+    font-family: 'Cursive', cursive;
+  }
 
-.ql-font-monospace {
-  font-family: 'Monospace', monospace;
-}
+  .ql-font-monospace {
+    font-family: 'Monospace', monospace;
+  }
 
-.ql-font-serif {
-  font-family: 'Serif', serif;
-}
+  .ql-font-serif {
+    font-family: 'Serif', serif;
+  }
 
 
-.ql-editor img {
-  margin: 10px 0;
-}
+  .ql-editor img {
+    margin: 10px 0;
+  }

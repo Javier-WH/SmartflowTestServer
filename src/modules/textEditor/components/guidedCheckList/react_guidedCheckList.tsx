@@ -10,6 +10,7 @@ import reactToWebComponent from "react-to-webcomponent";
 import "antd/dist/reset.css";
 import "./styles.css"; 
 import ReactDOM from "react-dom/client";
+import Guidance from "./guidance";
 
 // Definir tipos
 interface ListItem {
@@ -35,6 +36,7 @@ interface ItemProps {
 
 
 class Item extends React.Component<ItemProps> {
+
   render() {
     const { item, dragHandleProps, commonProps } = this.props;
   
@@ -76,12 +78,8 @@ class Item extends React.Component<ItemProps> {
               </div>
             }
           >
-            <Input.TextArea
-              placeholder="Add a guidande (if is needed!)"
-              style={{ resize: "none" }}
-              value={item.guidande}
-              onChange={(e) => commonProps.onGuidandeChange(item.id, e.target.value)}
-            />
+            <Guidance saveData = {commonProps.onGuidandeChange} value={item.guidande} id={item.id}/>
+        
             <Button className="collapse-next-button" onClick={() => commonProps.onNextItem(item.id)}>Next</Button>
           </Collapse.Panel>
         </Collapse>
@@ -93,6 +91,8 @@ class Item extends React.Component<ItemProps> {
     );
   }
 }
+
+
 
 
 // eslint-disable-next-line react-refresh/only-export-components
