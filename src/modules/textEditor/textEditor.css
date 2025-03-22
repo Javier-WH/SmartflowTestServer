@@ -8,21 +8,22 @@
     border: none !important;
     border-bottom: 1px solid #ddd !important;
     position: fixed;
-    z-index: 1000;
+    z-index: 1000 !important;
     background-color: var(--pageBarColor);
     bottom: 20px;
 
   }
 
- #toolbar-guided-checklist.ql-toolbar.ql-snow {
-  border: none !important;
-  border-bottom: 1px solid #ddd !important;
-  position: fixed;
-  z-index: 1000;
-  background-color: var(--pageBarColor);
+  :not(#toolbar).ql-toolbar.ql-snow {
+    border: none !important;
+    border-bottom: 1px solid #ddd !important;
+    position: fixed;
+    z-index: 2000 !important;
+    background-color: var(--pageBarColor);
+    bottom: 20px;
+    margin-left: 50px;
+  }
 
-
-}
   .ql-editor {
     padding: 0 !important;
     font-size: 16px !important;

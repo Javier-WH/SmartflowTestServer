@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef } from "react";
 import Quill from "quill";
-
-import "quill/dist/quill.snow.css";
+import "quill/dist/quill.snow.css"; // Asegúrate de importar el CSS del tema snow
 
 export default function Guidance({ saveData, value, id }: {
   saveData: (id: string, data: string) => void;
@@ -11,68 +10,66 @@ export default function Guidance({ saveData, value, id }: {
 }) {
   const editorRef = useRef<Quill | null>(null);
   const quillRef = useRef<HTMLDivElement | null>(null);
-  const toolbarRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (quillRef.current && !editorRef.current) {
-
       const options = {
-        theme: 'snow',
-        modules: {
-          toolbar: {
-            container: '#toolbar-guided-checklist',
-            handlers: {
-              // Handlers personalizados (opcional)
-            }
-          },
-          imageResize: {} 
-        },
-        formats: [
-          'header',
-          'font',
-          'size',
-          'align',
-          'bold',
-          'italic',
-          'underline',
-          'strike',
-          'blockquote',
-          'list',
-          'bullet',
-          'color',
-          'background',
-          'link',
-          'image',
-          'video',
-          'style'
-        ]
-      };
+  theme: 'snow',
+  modules: {
+    toolbar: {
+      container: [
+        [{ 'size': [] }],  
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
+        [{ 'align': [] }],
+        [{ 'color': [] }, { 'background': [] }],
+        ['link', 'image', 'video'],
+        ['clean']
+      ],
+      handlers: {
+        // Handlers personalizados si es necesario
+      }
+    },
+    imageResize: {}
+  },
+  formats: [
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'size',  
+    'align',
+    'color',
+    'background',
+    'link',
+    'image',
+    'video',
+    'list',
+    'bullet',
+    'check'
+  ]
+};
 
 
-      // 4. Inicializar Quill
-      editorRef.current = new Quill(quillRef.current, options, );
 
-      // 5. Configurar contenido inicial
+      // Inicializar Quill
+      editorRef.current = new Quill(quillRef.current, options);
+
+      // Configurar contenido inicial
       if (value) {
         editorRef.current.clipboard.dangerouslyPasteHTML(value);
       }
 
-      // 6. Configurar evento de cambios
+      // Configurar evento de cambios
       editorRef.current.on('text-change', () => {
         const content = editorRef.current?.root.innerHTML || '';
         saveData(id, content);
       });
-
-    
     }
 
-    // Cleanup
     return () => {
       if (editorRef.current) {
         editorRef.current = null;
-      }
-      if (toolbarRef.current) {
-        toolbarRef.current.remove();
       }
     };
   }, []);
@@ -86,7 +83,7 @@ export default function Guidance({ saveData, value, id }: {
 
   return (
     <div className="quill-editor-container">
-      <div ref={quillRef} style={{ height: "200px" }} />
+      <div className="collapse-editor" ref={quillRef} style={{ height: "200px" }} />
     </div>
   );
 }

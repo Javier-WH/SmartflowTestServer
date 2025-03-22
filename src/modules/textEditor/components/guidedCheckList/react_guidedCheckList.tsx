@@ -56,6 +56,7 @@ class Item extends React.Component<ItemProps> {
           onChange={() => commonProps.onCollapseChange(item.id)}
         >
           <Collapse.Panel
+
             key={item.id}
             header={
               <div style={{ display: "flex", alignItems: "center" }}>

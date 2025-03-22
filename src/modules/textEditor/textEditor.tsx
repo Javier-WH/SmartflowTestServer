@@ -50,15 +50,16 @@ export default function TextEditor() {
     const navigate = useNavigate();
 
     const { setInPage } = useContext(MainContext) as MainContextValues;
-
     const [contenido, setContenido] = useState('');
     const [title, setTitle] = useState('');
+    const [showToolbar, setShowToolbar] = useState(true);
     const [ableToSave, setAbleToSave] = useState(false);
     const [updatedAt, setUpdatedAt] = useState(0);
     const { updateFileContent, getFileContent } = useFilesManager();
-
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
+
+
 
 
     // this useEfect check every image and video loaded in the editor and add the width, height and style attributes found in the page load
@@ -203,6 +204,29 @@ export default function TextEditor() {
         },
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+    const handleChangeSelection = () => {
+        const activeElement = document.activeElement;
+        const editorRoot = quillRef.current?.getEditor().root;
+        const toolbarContainer = document.getElementById('toolbar-guided-checklist'); 
+
+        const isToolbarElement = toolbarContainer?.contains(activeElement);
+
+        if (editorRoot && activeElement && !isToolbarElement) {
+            const isCollapseEditorFocused = editorRoot.contains(activeElement) &&
+                (activeElement.classList.contains('collapse-editor') ||
+                    activeElement.closest('.collapse-editor'));
+
+            //console.log('¿Collapse-editor en foco?', isCollapseEditorFocused);
+
+            if (isCollapseEditorFocused) {
+                setShowToolbar(false);
+            } else {
+                setShowToolbar(true);
+            }
+        }
+    };
+
     return (
         <div className="flex flex-col items-center h-full bg-white">
             <div className="flex flex-col h-full w-full max-w-3xl">
@@ -234,14 +258,10 @@ export default function TextEditor() {
 
                 <div className="flex flex-col grow bg-white">
                     <div className="flex justify-center w-full grow relative">
-
-
-                        <CustomToolbarGuidedCheckList />
-
-                        <CustomToolbar />
-
-
+                        <CustomToolbar show={showToolbar} />
+                        {/*<CustomToolbarGuidedCheckList show={!showToolbar} />*/}
                     </div>
+
                     <ReactQuill
                         ref={quillRef}
                         theme="snow"
@@ -251,6 +271,7 @@ export default function TextEditor() {
                         formats={options.formats}
                         placeholder=""
                         className="h-full"
+                        onChangeSelection={handleChangeSelection}
                     />
 
                 </div>
