@@ -30,7 +30,7 @@ export default function Guidance({ saveData, value, id }: {
         // Handlers personalizados si es necesario
       }
     },
-    imageResize: {}
+
   },
   formats: [
     'bold',
@@ -44,9 +44,7 @@ export default function Guidance({ saveData, value, id }: {
     'link',
     'image',
     'video',
-    'list',
-    'bullet',
-    'check'
+    'list'
   ]
 };
 
