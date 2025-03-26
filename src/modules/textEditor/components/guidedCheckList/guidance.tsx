@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef } from "react";
 import Quill from "quill";
@@ -23,12 +24,12 @@ const fontList = [
 ]
 
 
-const Size = Quill.import('attributors/style/size');
+const Size = Quill.import('attributors/style/size') as any;
 Size.whitelist = fontSizeList;
 Quill.register(Size, true);
 
 // Register custom fonts
-const Font = Quill.import('formats/font');
+const Font = Quill.import('formats/font') as any;
 Font.whitelist = fontList;
 Quill.register(Font, true);
 
@@ -40,7 +41,7 @@ export default function Guidance({ saveData, value, id }: {
   const editorRef = useRef<Quill | null>(null);
   const quillRef = useRef<HTMLDivElement | null>(null);
 
-  const toolbarId = `toolbar-guided-checklist-${id}`;
+  const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
 
   useEffect(() => {
     if (quillRef.current && !editorRef.current) {
