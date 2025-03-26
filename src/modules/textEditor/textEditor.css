@@ -4,24 +4,18 @@
   }
 
 
-  #toolbar.ql-toolbar.ql-snow {
+ .ql-toolbar.ql-snow {
     border: none !important;
     border-bottom: 1px solid #ddd !important;
     position: fixed;
-    z-index: 1000 !important;
     background-color: var(--pageBarColor);
     bottom: 20px;
 
   }
 
   :not(#toolbar).ql-toolbar.ql-snow {
-    border: none !important;
-    border-bottom: 1px solid #ddd !important;
-    position: fixed;
-    z-index: 2000 !important;
-    background-color: var(--pageBarColor);
-    bottom: 20px;
-    margin-left: 50px;
+    margin-left: -20px;
+
   }
 
   .ql-editor {
@@ -254,3 +248,4 @@
   .ql-editor img {
     margin: 10px 0;
   }
+

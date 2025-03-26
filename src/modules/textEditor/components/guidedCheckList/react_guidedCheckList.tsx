@@ -56,10 +56,9 @@ class Item extends React.Component<ItemProps> {
           onChange={() => commonProps.onCollapseChange(item.id)}
         >
           <Collapse.Panel
-
             key={item.id}
             header={
-              <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center"}}>
                 <span className="item-index">{item.index + 1}</span>
                 <Input
                   placeholder="What's the first step?"
@@ -79,8 +78,8 @@ class Item extends React.Component<ItemProps> {
               </div>
             }
           >
+
             <Guidance saveData = {commonProps.onGuidandeChange} value={item.guidande} id={item.id}/>
-        
             <Button className="collapse-next-button" onClick={() => commonProps.onNextItem(item.id)}>Next</Button>
           </Collapse.Panel>
         </Collapse>

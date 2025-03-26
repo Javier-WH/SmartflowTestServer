@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef } from "react";
 import Quill from "quill";
-import "quill/dist/quill.snow.css"; // Asegúrate de importar el CSS del tema snow
+import "quill/dist/quill.snow.css";
+import CustomToolbar from "../toolbar/CustonToolbar";
 
 export default function Guidance({ saveData, value, id }: {
   saveData: (id: string, data: string) => void;
@@ -11,44 +12,41 @@ export default function Guidance({ saveData, value, id }: {
   const editorRef = useRef<Quill | null>(null);
   const quillRef = useRef<HTMLDivElement | null>(null);
 
+  const toolbarId = `toolbar-guided-checklist-${id}`;
+
   useEffect(() => {
     if (quillRef.current && !editorRef.current) {
       const options = {
-  theme: 'snow',
-  modules: {
-    toolbar: {
-      container: [
-        [{ 'size': [] }],  
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
-        [{ 'align': [] }],
-        [{ 'color': [] }, { 'background': [] }],
-        ['link', 'image', 'video'],
-        ['clean']
-      ],
-      handlers: {
-        // Handlers personalizados si es necesario
-      }
-    },
+        theme: 'snow',
+        modules: {
+          toolbar: {
+            container: `#${toolbarId}`,
+            handlers: {
+              
+            }
+          },
 
-  },
-  formats: [
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'size',  
-    'align',
-    'color',
-    'background',
-    'link',
-    'image',
-    'video',
-    'list'
-  ]
-};
-
-
+        },
+        formats: [
+          'header',
+          'font',
+          'size',
+          'align',
+          'bold',
+          'italic',
+          'underline',
+          'strike',
+          'blockquote',
+          'list',
+          'bullet',
+          'color',
+          'background',
+          'link',
+          'image',
+          'video',
+          'style',
+        ]
+      };
 
       // Inicializar Quill
       editorRef.current = new Quill(quillRef.current, options);
@@ -64,7 +62,7 @@ export default function Guidance({ saveData, value, id }: {
         saveData(id, content);
       });
     }
-
+    
     return () => {
       if (editorRef.current) {
         editorRef.current = null;
@@ -79,9 +77,14 @@ export default function Guidance({ saveData, value, id }: {
     }
   }, [value]);
 
-  return (
+  return <>
+    <div className="flex justify-center w-full grow relative">
+      <CustomToolbar name={toolbarId} clean={true} />
+    </div>
     <div className="quill-editor-container">
       <div className="collapse-editor" ref={quillRef} style={{ height: "200px" }} />
     </div>
-  );
+ 
+  </>
+  
 }

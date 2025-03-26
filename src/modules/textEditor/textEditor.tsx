@@ -228,7 +228,7 @@ export default function TextEditor() {
     };
 
     return (
-        <div className="flex flex-col items-center h-full bg-white">
+        <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white">
             <div className="flex flex-col h-full w-full max-w-3xl">
                 <div className="mt-8">
                     <div className="flex items-center">
@@ -258,8 +258,7 @@ export default function TextEditor() {
 
                 <div className="flex flex-col grow bg-white">
                     <div className="flex justify-center w-full grow relative">
-                        <CustomToolbar show={showToolbar} />
-                        {/*<CustomToolbarGuidedCheckList show={!showToolbar} />*/}
+                        <CustomToolbar show={showToolbar} name="toolbar" />
                     </div>
 
                     <ReactQuill
