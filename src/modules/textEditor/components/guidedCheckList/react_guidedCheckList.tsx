@@ -60,7 +60,7 @@ class Item extends React.Component<ItemProps> {
               <div style={{ display: "flex", alignItems: "center"}}>
                 <span className="item-index">{item.index + 1}</span>
                 <Input
-                  placeholder="What's the first step?"
+                  placeholder={`What's the ${item.index === 0 ? "first" : "next"} step?`}
                   value={item.text}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) => commonProps.onTextChange(item.id, e.target.value)}
