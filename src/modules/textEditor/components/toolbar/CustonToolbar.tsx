@@ -4,7 +4,7 @@ import GuidedCheckListIcon from "../../assets/svg/addGuidedCheckList.svg";
 export default function CustomToolbar({show = true, name, clean = false}: {show?: boolean, name: string, clean?:boolean}) {
 
   return ((
-    <div id={name} style={{display: show ? 'block' : 'none'}}>
+    <div id={name}  style={{display: show ? 'block' : 'none'}}>
       <select className="ql-font" style={{ width: "180px" }}>
         <option value="arial" selected>Arial</option>
         <option value="times-new-roman">Times New Roman</option>

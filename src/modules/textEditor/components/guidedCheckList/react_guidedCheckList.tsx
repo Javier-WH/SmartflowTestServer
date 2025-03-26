@@ -39,9 +39,8 @@ class Item extends React.Component<ItemProps> {
 
   render() {
     const { item, dragHandleProps, commonProps } = this.props;
-  
     return (
-      <div className="disable-select" style={{ display: "flex", position: "relative" }} contentEditable={false}>
+      <div id={item.id} className="disable-select" style={{ display: "flex"}} contentEditable={false}>
         <Collapse
           ghost
           expandIconPosition="end"
@@ -102,6 +101,15 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   const componentRef = useRef<HTMLElement>();
   const initialized = useRef(false);
 
+  useEffect(() => {
+    if (list.length === 0) return;
+    const baseZIndex = 1000;
+    const items = document.querySelectorAll('.guided-checklist > div > div > div');
+    items.forEach((item, index) => {
+      (item as HTMLElement).style.zIndex = (baseZIndex - index).toString();
+    });
+  
+  }, [list, list.length]);
 
   useEffect(() => {
     if (!initialized.current) {

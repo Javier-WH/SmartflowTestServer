@@ -48,6 +48,11 @@ export default function Guidance({ saveData, value, id }: {
         ]
       };
 
+      const toolbarContainer = document.getElementById("toolbar-guided-checklist");
+      if(toolbarContainer){
+        toolbarContainer.innerHTML = "<CustomToolbar name={toolbarId} clean={true} />";
+      }
+
       // Inicializar Quill
       editorRef.current = new Quill(quillRef.current, options);
 
@@ -62,7 +67,8 @@ export default function Guidance({ saveData, value, id }: {
         saveData(id, content);
       });
     }
-    
+
+        
     return () => {
       if (editorRef.current) {
         editorRef.current = null;

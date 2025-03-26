@@ -63,8 +63,7 @@ class Item extends React.Component<ItemProps> {
     return (
       <div className={styles.disableSelect}
         style={{
-          display: "flex",
-          position: "relative",
+          display: "flex"
         }}>
 
         <Collapse

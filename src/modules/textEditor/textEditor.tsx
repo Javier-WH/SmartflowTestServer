@@ -217,8 +217,6 @@ export default function TextEditor() {
                 (activeElement.classList.contains('collapse-editor') ||
                     activeElement.closest('.collapse-editor'));
 
-            //console.log('¿Collapse-editor en foco?', isCollapseEditorFocused);
-
             if (isCollapseEditorFocused) {
                 setShowToolbar(false);
             } else {

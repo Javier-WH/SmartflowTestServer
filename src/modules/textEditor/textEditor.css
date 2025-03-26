@@ -8,6 +8,7 @@
     border: none !important;
     border-bottom: 1px solid #ddd !important;
     position: fixed;
+    z-index: 10000 !important;
     background-color: var(--pageBarColor);
     bottom: 20px;
 
@@ -249,3 +250,6 @@
     margin: 10px 0;
   }
 
+.guided-checklist > div > div > div{
+  /*background-color: pink;*/
+}
