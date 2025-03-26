@@ -47,6 +47,7 @@ export default function Guidance({ saveData, value, id }: {
     if (quillRef.current && !editorRef.current) {
       const options = {
         theme: 'snow',
+        placeholder: 'Add a guidance (if needed!)',
         modules: {
           toolbar: {
             container: `#${toolbarId}`,
@@ -82,6 +83,7 @@ export default function Guidance({ saveData, value, id }: {
 
       // Inicializar Quill
       editorRef.current = new Quill(quillRef.current, options);
+      
 
       // Configurar contenido inicial
       if (value) {
