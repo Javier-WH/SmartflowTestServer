@@ -8,7 +8,6 @@ import styles from './textEditorStyles.tsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
-import CustomToolbarGuidedCheckList from './components/toolbar/CustonToolbarGuidedCheckList.tsx';
 import options from './components/utils/options.ts';
 import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.ts';
 import useFilesManager from '../folderNavigator/hooks/useFileManager.ts';
@@ -24,7 +23,6 @@ import './components/guidedCheckList/react_guidedCheckList.tsx'
 
 // this is our custom blot
 Quill.register('formats/guided-checklist', GuidedCheckListBlot); // Mismo nombre que el blot
-
 
 
 // Override the image and video (iframe) blot in order to prevent a bug related to the width and height of images and videos

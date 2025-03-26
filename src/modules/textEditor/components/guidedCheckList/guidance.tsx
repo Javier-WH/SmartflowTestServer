@@ -3,6 +3,34 @@ import { useEffect, useRef } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import CustomToolbar from "../toolbar/CustonToolbar";
+const fontSizeList = ['10px', '12px', '14px', '16px', '18px', '20px', '22px', '24px', '26px', '28px', '30px', '32px', '34px', '36px', '38px', '40px', '42px', '44px', '46px', '48px']
+const fontList = [
+  'arial',
+  'times-new-roman',
+  'courier-new',
+  'comic-sans-ms',
+  'roboto',
+  'georgia',
+  'verdana',
+  'open-sans',
+  'lato',
+  'montserrat',
+  'impact',
+  'fantasy',
+  'cursive',
+  'monospace',
+  'serif',
+]
+
+
+const Size = Quill.import('attributors/style/size');
+Size.whitelist = fontSizeList;
+Quill.register(Size, true);
+
+// Register custom fonts
+const Font = Quill.import('formats/font');
+Font.whitelist = fontList;
+Quill.register(Font, true);
 
 export default function Guidance({ saveData, value, id }: {
   saveData: (id: string, data: string) => void;
@@ -38,13 +66,11 @@ export default function Guidance({ saveData, value, id }: {
           'strike',
           'blockquote',
           'list',
-          'bullet',
           'color',
           'background',
           'link',
           'image',
           'video',
-          'style',
         ]
       };
 
