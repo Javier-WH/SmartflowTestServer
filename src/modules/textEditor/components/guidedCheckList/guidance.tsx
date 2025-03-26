@@ -91,7 +91,7 @@ export default function Guidance({ saveData, value, id }: {
       }
 
       // Configurar evento de cambios
-      editorRef.current.on('text-change', () => {
+      editorRef.current.on('blur', () => {
         const content = editorRef.current?.root.innerHTML || '';
         saveData(id, content);
       });

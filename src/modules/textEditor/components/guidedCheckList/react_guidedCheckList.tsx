@@ -108,7 +108,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     items.forEach((item, index) => {
       (item as HTMLElement).style.zIndex = (baseZIndex - index).toString();
     });
-  
+
   }, [list, list.length]);
 
   useEffect(() => {
