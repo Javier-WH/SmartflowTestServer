@@ -81,17 +81,17 @@ export default function Guidance({ saveData, value, id }: {
         toolbarContainer.innerHTML = "<CustomToolbar name={toolbarId} clean={true} />";
       }
 
-      // Inicializar Quill
+      // create the editor
       editorRef.current = new Quill(quillRef.current, options);
       
 
-      // Configurar contenido inicial
+      // load initial data
       if (value) {
         editorRef.current.clipboard.dangerouslyPasteHTML(value);
       }
 
-      // Configurar evento de cambios
-      editorRef.current.on('blur', () => {
+      // save on blur
+      editorRef.current.on('text-change', () => {
         const content = editorRef.current?.root.innerHTML || '';
         saveData(id, content);
       });
@@ -105,7 +105,7 @@ export default function Guidance({ saveData, value, id }: {
     };
   }, []);
 
-  // Sincronización con cambios externos
+  // external changes sync
   useEffect(() => {
     if (editorRef.current && value !== editorRef.current.root.innerHTML) {
       editorRef.current.clipboard.dangerouslyPasteHTML(value);
