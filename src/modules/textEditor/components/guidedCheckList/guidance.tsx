@@ -76,10 +76,7 @@ export default function Guidance({ saveData, value, id }: {
         ]
       };
 
-      const toolbarContainer = document.getElementById("toolbar-guided-checklist");
-      if(toolbarContainer){
-        toolbarContainer.innerHTML = "<CustomToolbar name={toolbarId} clean={true} />";
-      }
+   
 
       // create the editor
       editorRef.current = new Quill(quillRef.current, options);

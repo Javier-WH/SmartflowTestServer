@@ -39,6 +39,7 @@ class Item extends React.Component<ItemProps> {
 
   render() {
     const { item, dragHandleProps, commonProps } = this.props;
+    
     return (
       <div id={item.id} className="disable-select" style={{ display: "flex"}} contentEditable={false}>
         <Collapse
@@ -100,6 +101,9 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   const [list, setList] = useState<ListItem[]>([]);
   const componentRef = useRef<HTMLElement>();
   const initialized = useRef(false);
+  const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     if (list.length === 0) return;
@@ -150,9 +154,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   });
 
 
-  const [activeItemId, setActiveItemId] = useState<string | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
+ 
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleListChange = useCallback((
@@ -161,6 +163,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     _oldIndex: number,
     _newIndex: number
   ) => {
+  
     setList(prev => {
       const updatedList = newList.map((item, index) => ({
         ...(item as ListItem),
@@ -173,7 +176,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     });
   }, []);
 
-  const commonProps = {
+  /*const commonProps = {
     onTextChange: (id: string, text: string) => {
       setList(list.map(item => item.id === id ? { ...item, text } : item));
     },
@@ -197,6 +200,55 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
         const nextItemId = list[currentIndex + 1].id;
         setActiveItemId(nextItemId);
       } 
+    },
+    activeItemId,
+  };*/
+
+  const commonProps = {
+    onTextChange: (id: string, text: string) => {
+      setList(currentList =>
+        currentList.map(item =>
+          item.id === id ? { ...item, text } : item
+        )
+      );
+    },
+    onGuidandeChange: (id: string, guidande: string) => {
+      setList(currentList =>
+        currentList.map(item =>
+          item.id === id ? { ...item, guidande } : item
+        )
+      );
+    },
+    onDeleteItem: (id: string) => {
+      setList(currentList =>
+        currentList.filter(item => item.id !== id)
+      );
+    },
+    onAddItem: (id: string) => {
+      setList(currentList => {
+        const index = currentList.findIndex(item => item.id === id);
+        const newItem = {
+          id: crypto.randomUUID(),
+          index: currentList.length,
+          text: "",
+          guidande: ""
+        };
+        return [
+          ...currentList.slice(0, index + 1),
+          newItem,
+          ...currentList.slice(index + 1)
+        ];
+      });
+    },
+    onCollapseChange: (id: string) => {
+      setActiveItemId(activeItemId === id ? null : id);
+    },
+    onNextItem: (currentId: string) => {
+      const currentIndex = list.findIndex(item => item.id === currentId);
+      if (currentIndex < list.length - 1) {
+        const nextItemId = list[currentIndex + 1].id;
+        setActiveItemId(nextItemId);
+      }
     },
     activeItemId,
   };
