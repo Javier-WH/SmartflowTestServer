@@ -3,7 +3,9 @@
 import { useEffect, useRef } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
+import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from "../toolbar/CustonToolbar";
+
 const fontSizeList = ['10px', '12px', '14px', '16px', '18px', '20px', '22px', '24px', '26px', '28px', '30px', '32px', '34px', '36px', '38px', '40px', '42px', '44px', '46px', '48px']
 const fontList = [
   'arial',
@@ -40,8 +42,13 @@ export default function Guidance({ saveData, value, id }: {
 }) {
   const editorRef = useRef<Quill | null>(null);
   const quillRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null); 
 
   const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
+
+  useEffect(() => {
+    Quill.register('modules/resize', ResizeModule);
+  }, []);
 
   useEffect(() => {
     if (quillRef.current && !editorRef.current) {
@@ -54,6 +61,15 @@ export default function Guidance({ saveData, value, id }: {
             handlers: {
               
             }
+          },
+          resize: {
+            toolbar: {},
+            locale: {
+              floatLeft: 'Left',
+              floatRight: 'Right',
+              center: 'Center',
+              restore: 'Restore',
+            },
           },
 
         },
@@ -113,7 +129,7 @@ export default function Guidance({ saveData, value, id }: {
     <div className="flex justify-center w-full grow relative">
       <CustomToolbar name={toolbarId} clean={true} />
     </div>
-    <div className="quill-editor-container">
+    <div className="quill-editor-container" ref={containerRef}>
       <div className="collapse-editor" ref={quillRef} style={{ height: "200px" }} />
     </div>
  

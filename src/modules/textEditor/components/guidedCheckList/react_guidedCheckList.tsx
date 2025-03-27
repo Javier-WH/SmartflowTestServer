@@ -176,33 +176,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     });
   }, []);
 
-  /*const commonProps = {
-    onTextChange: (id: string, text: string) => {
-      setList(list.map(item => item.id === id ? { ...item, text } : item));
-    },
-    onGuidandeChange: (id: string, guidande: string) => {
-      setList(list.map(item => item.id === id ? { ...item, guidande } : item));
-    },
-    onDeleteItem: (id: string) => {
-      setList(list.filter(item => item.id !== id));
-    },
-    onAddItem: (id: string) => {
-      const index = list.findIndex(item => item.id === id);
-      const newItem = { id: crypto.randomUUID(), index: list.length, text: "", guidande: "" };
-      setList([...list.slice(0, index + 1), newItem, ...list.slice(index + 1)]);
-    },
-    onCollapseChange: (id: string) => {
-      setActiveItemId(activeItemId === id ? null : id);
-    },
-    onNextItem: (currentId: string) => {
-      const currentIndex = list.findIndex(item => item.id === currentId);
-      if (currentIndex < list.length - 1) {
-        const nextItemId = list[currentIndex + 1].id;
-        setActiveItemId(nextItemId);
-      } 
-    },
-    activeItemId,
-  };*/
+
 
   const commonProps = {
     onTextChange: (id: string, text: string) => {
