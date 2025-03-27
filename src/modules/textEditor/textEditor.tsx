@@ -132,10 +132,10 @@ export default function TextEditor() {
                     const { content, name, updated_at } = response.data;
                     setTitle(name === 'untitled' ? '' : name);
                     setContenido(content ? content : '');
-                    const editor = quillRef.current?.getEditor();
+                    /*const editor = quillRef.current?.getEditor();
                     if (editor) {
                         editor.root.innerHTML = content;
-                    }
+                    }*/
 
                     setUpdatedAt(updated_at);
                 })
