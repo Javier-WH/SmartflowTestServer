@@ -3,7 +3,7 @@
 
 const insertGuidedCheckList = function (this: { quill: any }) {
   const selection = this.quill.getSelection();
-  if (!selection) return;
+  if (!selection || !this.quill.root.isConnected) return;
 
   const initialItem = {
     id: crypto.randomUUID(),

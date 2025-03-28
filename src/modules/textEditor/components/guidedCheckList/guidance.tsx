@@ -50,6 +50,8 @@ export default function Guidance({ saveData, value, id }: {
     Quill.register('modules/resize', ResizeModule);
   }, []);
 
+  
+
   useEffect(() => {
     if (quillRef.current && !editorRef.current) {
       const options = {

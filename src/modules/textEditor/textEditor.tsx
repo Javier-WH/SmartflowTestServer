@@ -224,12 +224,17 @@ export default function TextEditor() {
         }
     };
 
+
+
+
     return (
         <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white">
             <div className="flex flex-col h-full w-full max-w-3xl">
                 <div className="mt-8">
                     <div className="flex items-center">
-                        <button type="button" style={styles.homeButton} onClick={() => setTimeout(() => navigate(-1), 0)} >
+                        <button type="button" style={styles.homeButton} 
+                            onClick={() => navigate(-1)} 
+                        >
                             <img src={homeIcon} alt="" /> {'>'}
                         </button>
                         {updatedAt ? (

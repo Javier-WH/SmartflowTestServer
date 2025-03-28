@@ -43,6 +43,8 @@ export default class GuidedCheckListBlot extends BlockEmbed {
       super.format(name, value);
     }
   }
+
+  
 }
 
 
