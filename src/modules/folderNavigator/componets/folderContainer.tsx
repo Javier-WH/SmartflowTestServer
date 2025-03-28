@@ -75,12 +75,12 @@ export default function FolderContainer({ folderId }: { folderId: string | null}
     // on move folder
     useEffect(() => {
         if(!slug) return
-
+        
+        //console.log({ slug, folderId, updateFolderRequest })
         if (!folderId) {
             getRoot();
             return;
         }
-    
         if (!updateFolderRequest) return;
 
         const keys = Object.keys(updateFolderRequest);

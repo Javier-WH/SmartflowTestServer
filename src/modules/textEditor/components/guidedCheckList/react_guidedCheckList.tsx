@@ -4,13 +4,14 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import DraggableList from "react-draggable-list";
 import { GoGrabber } from "react-icons/go";
-import { Input, Collapse, Button } from "antd";
+import { Input, Collapse, Button, Spin } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 import reactToWebComponent from "react-to-webcomponent";
 import "antd/dist/reset.css";
 import "./styles.css"; 
 import ReactDOM from "react-dom/client";
 import Guidance from "./guidance";
+
 
 // Definir tipos
 interface ListItem {
@@ -54,35 +55,38 @@ class Item extends React.Component<ItemProps> {
           )}
           activeKey={commonProps.activeItemId === item.id ? [item.id] : []}
           onChange={() => commonProps.onCollapseChange(item.id)}
-        >
-          <Collapse.Panel
-            key={item.id}
-            header={
-              <div style={{ display: "flex", alignItems: "center"}}>
-                <span className="item-index">{item.index + 1}</span>
-                <Input
-                  placeholder={`What's the ${item.index === 0 ? "first" : "next"} step?`}
-                  value={item.text}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => commonProps.onTextChange(item.id, e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      commonProps.onAddItem(item.id);
-                    }
-                    if (e.key === "Backspace" && item.text === "") {
-                      commonProps.onDeleteItem(item.id);
-                    }
-                  }}
-                />
-              </div>
+          items={[ 
+            {
+              key: item.id,
+              label: (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span className="item-index">{item.index + 1}</span>
+                  <Input
+                    placeholder={`What's the ${item.index === 0 ? "first" : "next"} step?`}
+                    value={item.text}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => commonProps.onTextChange(item.id, e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        commonProps.onAddItem(item.id);
+                      }
+                      if (e.key === "Backspace" && item.text === "") {
+                        commonProps.onDeleteItem(item.id);
+                      }
+                    }}
+                  />
+                </div>
+              ),
+              children: ( 
+                <>
+                  <Guidance saveData={commonProps.onGuidandeChange} value={item.guidande} id={item.id} />
+                  <Button className="collapse-next-button" onClick={() => commonProps.onNextItem(item.id)}>Next</Button>
+                </>
+              )
             }
-          >
-
-            <Guidance saveData = {commonProps.onGuidandeChange} value={item.guidande} id={item.id}/>
-            <Button className="collapse-next-button" onClick={() => commonProps.onNextItem(item.id)}>Next</Button>
-          </Collapse.Panel>
-        </Collapse>
+          ]}
+        />
 
         <div className="drag-handle" {...dragHandleProps}>
           <GoGrabber />
@@ -103,8 +107,34 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   const initialized = useRef(false);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
 
+  // this force update the component when the items prop changes and fix a bug that randomly ignores que initial values on load page
+  useEffect(() => {
+    const loadData = () => {
+      try {
+        const initialTitle = title || '';
+        const initialItems = items ? JSON.parse(items) : [createNewItem()];
+
+        setInternalTitle(initialTitle);
+        setList(initialItems.map((item: ListItem, index: number) => ({
+          ...item,
+          id: item.id || crypto.randomUUID(),
+          index
+        })));
+      } catch (e) {
+        setList([createNewItem()]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [items, title]); 
+
+
+// update z-index
   useEffect(() => {
     if (list.length === 0) return;
     const baseZIndex = 1000;
@@ -227,6 +257,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     activeItemId,
   };
 
+  if (isLoading) return <div style={{ width: '100%', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spin /></div>;
   return (
     <div contentEditable={false} className="guided-checklist" ref={(el) => {
       if (el) componentRef.current = el.closest('guided-checklist') as HTMLElement | undefined;

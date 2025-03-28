@@ -4,13 +4,15 @@ import folderIcon from '../../folderNavigator/assets/svg/closed_folder.svg'
 import { useNavigate, useParams } from "react-router-dom";
 import useFolderManager from "@/modules/folderNavigator/hooks/useFolderManager";
 import groupDataByContainer from "../../folderNavigator/context/utils/groupDataByContainer";
+import { MainContext, type MainContextValues } from "@/modules/mainContext";
 import './searhBox.css'
 import { message } from "antd";
+import { useContext } from "react";
 
 
 export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInterface[], word: string, closeBox: () => void }) {
 
-
+  const {setUpdateFolderRequestFromMain} = useContext(MainContext) as MainContextValues
   const { getHierarchyFolderContent } = useFolderManager()
   const hasResults = data.length > 0 && word.length > 0;
   const { organization_id: slug } = useParams();
@@ -53,7 +55,7 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
       try {
         //navigate('/home')
         const response = await getHierarchyFolderContent(id, slug);
-        console.log(response)
+
         if (response.error) {
           //message.error(response.message);
           highlightFolder(id);
@@ -63,8 +65,11 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
 
         if (response.data) {
           const gruppedByContainer = groupDataByContainer({ data: response.data });
+          
+          /*console.log(gruppedByContainer)
+          setUpdateFolderRequestFromMain(gruppedByContainer);
+        return*/
           const keys = Object.keys(gruppedByContainer);
-   
           for (const [index, key] of keys.entries()) {
             // get tue current element
             const element = document.getElementById(key);

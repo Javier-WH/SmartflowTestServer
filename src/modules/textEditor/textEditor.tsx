@@ -124,6 +124,7 @@ export default function TextEditor() {
 
     // if a content in database is found, when the page is loaded, the content is loaded
     useEffect(() => {
+        
         if (id) {
             setAbleToSave(false);
             getFileContent(id)
@@ -228,7 +229,7 @@ export default function TextEditor() {
             <div className="flex flex-col h-full w-full max-w-3xl">
                 <div className="mt-8">
                     <div className="flex items-center">
-                        <button type="button" style={styles.homeButton} onClick={() => navigate(-1)}>
+                        <button type="button" style={styles.homeButton} onClick={() => setTimeout(() => navigate(-1), 0)} >
                             <img src={homeIcon} alt="" /> {'>'}
                         </button>
                         {updatedAt ? (

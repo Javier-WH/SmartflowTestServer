@@ -4,9 +4,9 @@ import GuidedCheckListIcon from "../../assets/svg/addGuidedCheckList.svg";
 export default function CustomToolbar({show = true, name, clean = false}: {show?: boolean, name: string, clean?:boolean}) {
 
   return ((
-    <div id={name}  style={{display: show ? 'block' : 'none'}}>
+    <div id={name} style={{ display: show ? 'block' : 'none' }} defaultValue="arial">
       <select className="ql-font" style={{ width: "180px" }}>
-        <option value="arial" selected>Arial</option>
+        <option value="arial">Arial</option>
         <option value="times-new-roman">Times New Roman</option>
         <option value="courier-new">Courier New</option>
         <option value="comic-sans-ms">Comic Sans MS</option>
@@ -22,11 +22,11 @@ export default function CustomToolbar({show = true, name, clean = false}: {show?
         <option value="monospace">Monospace</option>
         <option value="serif">Serif</option>
       </select>
-      <select className="ql-size" style={{ width: "50px" }}>
+      <select className="ql-size" style={{ width: "50px" }} defaultValue="16px">
         <option value="10px">10</option>
         <option value="12px">12</option>
         <option value="14px">14</option>
-        <option value="16px" selected>16</option>
+        <option value="16px">16</option>
         <option value="18px">18</option>
         <option value="20px">20</option>
         <option value="22px">22</option>
