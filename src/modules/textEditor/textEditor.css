@@ -256,9 +256,9 @@
   .ql-editor img {
     margin: 10px 0;
   }
-
+.ql-tooltip,
   .ql-editing {     
     left: 0 !important;
     z-index: 10000 !important;
-    
+
   }
