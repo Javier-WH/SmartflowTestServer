@@ -259,4 +259,6 @@
 
   .ql-editing {     
     left: 0 !important;
+    z-index: 10000 !important;
+    
   }
