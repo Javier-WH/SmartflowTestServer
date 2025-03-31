@@ -50,7 +50,9 @@ export default function Guidance({ saveData, value, id }: {
     Quill.register('modules/resize', ResizeModule);
   }, []);
 
-  
+  const handlePaste = (e: ClipboardEvent) => {
+    e.stopPropagation();
+  };
 
   useEffect(() => {
     if (quillRef.current && !editorRef.current) {
@@ -98,7 +100,12 @@ export default function Guidance({ saveData, value, id }: {
 
       // create the editor
       editorRef.current = new Quill(quillRef.current, options);
-      
+
+
+      const editorRoot = editorRef.current.root;
+   
+
+      editorRoot.addEventListener('paste', handlePaste);
 
       // load initial data
       if (value) {
@@ -114,6 +121,10 @@ export default function Guidance({ saveData, value, id }: {
 
         
     return () => {
+      const editorRoot = editorRef.current?.root;
+      if (editorRoot) {
+        editorRoot.removeEventListener('paste', handlePaste);
+      }
       if (editorRef.current) {
         editorRef.current = null;
       }
@@ -131,7 +142,7 @@ export default function Guidance({ saveData, value, id }: {
     <div className="flex justify-center w-full grow relative">
       <CustomToolbar name={toolbarId} clean={true} />
     </div>
-    <div className="quill-editor-container" ref={containerRef}>
+    <div className="quill-editor-container" ref={containerRef} onPaste={(e) => e.stopPropagation()} >
       <div className="collapse-editor" ref={quillRef} style={{ height: "200px" }} />
     </div>
  

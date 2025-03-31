@@ -38,6 +38,13 @@
     color: white !important;
   }
 
+  .quill-editor-container .toolbar {
+   display: flex !important;
+   flex-direction: column;
+
+  
+  }
+
   .group a {
     color: white !important;
     font-size: 11px !important;
@@ -248,4 +255,8 @@
 
   .ql-editor img {
     margin: 10px 0;
+  }
+
+  .ql-editing {     
+    left: 0 !important;
   }

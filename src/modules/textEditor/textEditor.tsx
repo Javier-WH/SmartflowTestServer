@@ -18,7 +18,7 @@ import './textEditor.css';
 import homeIcon from '../../assets/svg/homeIcon.svg';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import './components/guidedCheckList/react_guidedCheckList.tsx'
-//import { useDebouncedCallback } from 'use-debounce';
+import { useDebouncedCallback } from 'use-debounce';
 
 
 // this is our custom blot
@@ -146,21 +146,29 @@ export default function TextEditor() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
-    // this useEffect is to update the dataBase
-    useEffect(() => {
-        if (id && ableToSave && quillRef.current) {
-            const editor = quillRef.current.getEditor();
-            const htmlContent = editor.root.innerHTML;
+    const debouncedUpdate = useDebouncedCallback(
+        async (id: string, htmlContent: string, title: string) => {
             // save htmlContent istead of content, prevent a bug related to images sizes and styles
             updateFileContent(id, htmlContent, title)
                 .then((response) => {
-                    //console.log("[LS] -> src/modules/textEditor/textEditor.tsx:70 -> response: ", response)
+                    console.log("[LS] -> src/modules/textEditor/textEditor.tsx:70 -> response: ", response)
                     if (response.error) {
                         console.error(response);
                         return;
                     }
                     setUpdatedAt(response.data.updated_at);
                 });
+        },
+        500,
+        { leading: false, trailing: true } 
+    );
+
+    // this useEffect is to update the dataBase
+    useEffect(() => {
+        if (id && ableToSave && quillRef.current) {
+            const editor = quillRef.current.getEditor();
+            const htmlContent = editor.root.innerHTML;
+            debouncedUpdate(id, htmlContent, title);
         }
     }, [contenido, title]);
 
