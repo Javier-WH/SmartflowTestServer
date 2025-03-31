@@ -5,6 +5,7 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from "../toolbar/CustonToolbar";
+import Delta from 'quill-delta';
 
 const fontSizeList = ['10px', '12px', '14px', '16px', '18px', '20px', '22px', '24px', '26px', '28px', '30px', '32px', '34px', '36px', '38px', '40px', '42px', '44px', '46px', '48px']
 const fontList = [
@@ -42,7 +43,7 @@ export default function Guidance({ saveData, value, id }: {
 }) {
   const editorRef = useRef<Quill | null>(null);
   const quillRef = useRef<HTMLDivElement | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null); 
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
 
@@ -54,6 +55,8 @@ export default function Guidance({ saveData, value, id }: {
     e.stopPropagation();
   };
 
+
+
   useEffect(() => {
     if (quillRef.current && !editorRef.current) {
       const options = {
@@ -63,7 +66,7 @@ export default function Guidance({ saveData, value, id }: {
           toolbar: {
             container: `#${toolbarId}`,
             handlers: {
-              
+
             }
           },
           resize: {
@@ -96,35 +99,73 @@ export default function Guidance({ saveData, value, id }: {
         ]
       };
 
-   
+
 
       // create the editor
       editorRef.current = new Quill(quillRef.current, options);
 
 
+      // Matcher modificado para imágenes
+      editorRef.current.clipboard.addMatcher('IMG', (node: Node) => {
+        if (node.nodeType === 1) { // Solo elementos HTML
+          const element = node as HTMLElement;
+          return new Delta().insert({
+            image: {
+              src: element.getAttribute('src') || '',
+              width: element.getAttribute('width'),
+              height: element.getAttribute('height'),
+              style: element.getAttribute('style')
+            }
+          });
+        }
+        return new Delta();
+      });
+
+
+
       const editorRoot = editorRef.current.root;
-   
 
       editorRoot.addEventListener('paste', handlePaste);
 
       // load initial data
       if (value) {
         editorRef.current.clipboard.dangerouslyPasteHTML(value);
+        //const delta = editorRef.current.clipboard.convert({ html: value });
+        //editorRef.current.setContents(delta);
       }
 
-      // save on blur
+      if (value) {
+        const delta = editorRef.current.clipboard.convert({ html: value });
+        editorRef.current.setContents(delta);
+        editorRef.current.root.innerHTML = value; // Forzar actualización visual
+      }
+
+      
       editorRef.current.on('text-change', () => {
         const content = editorRef.current?.root.innerHTML || '';
         saveData(id, content);
       });
     }
 
-        
+    // this prevent a bug when image resize
+    const forceSaveOnImageResize = (e: MouseEvent) => {
+      if (!e.target) return;
+      if (e.target instanceof HTMLElement) {
+        if (e.target.classList.contains('btn')) {
+          const content = editorRef.current?.root.innerHTML || '';
+          saveData(id, content);
+        }
+      }
+    };
+    window.addEventListener('click', forceSaveOnImageResize);
+
+
     return () => {
       const editorRoot = editorRef.current?.root;
       if (editorRoot) {
         editorRoot.removeEventListener('paste', handlePaste);
       }
+      window.removeEventListener('click', forceSaveOnImageResize);
       if (editorRef.current) {
         editorRef.current = null;
       }
@@ -145,7 +186,7 @@ export default function Guidance({ saveData, value, id }: {
     <div className="quill-editor-container" ref={containerRef} onPaste={(e) => e.stopPropagation()} >
       <div className="collapse-editor" ref={quillRef} style={{ height: "200px" }} />
     </div>
- 
+
   </>
-  
+
 }
