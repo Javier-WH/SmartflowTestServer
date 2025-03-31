@@ -256,9 +256,14 @@
   .ql-editor img {
     margin: 10px 0;
   }
-.ql-tooltip,
+  .ql-tooltip,
   .ql-editing {     
     left: 0 !important;
     z-index: 10000 !important;
+  }
 
+  .ant-collapse-content #editor-resizer{
+    width: 0px !important;
+    height: 0px !important;
+    left: 50% !important;
   }
