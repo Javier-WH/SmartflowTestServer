@@ -181,11 +181,26 @@ export default function TextEditor() {
         };
     }, []);
 
+
     const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            // Focuses on the Quill editor
-            quillRef.current?.getEditor().root.focus();
+            const editor = quillRef.current?.getEditor();
+            if (!editor) return;
+            const contents = editor.getContents();
+
+            // Check if the first element is a checklist
+            const hasChecklistFirst = contents.ops?.[0]?.insert?.['guided-checklist'];
+
+            // Insert a new line at the start if the first element is a checklist
+            if (hasChecklistFirst) {
+                editor.insertText(0, '\n', 'user');
+            }
+
+            // Set the cursor at the start
+            editor.focus();
+            editor.setSelection(0, 0);
+          
         }
     };
 
