@@ -272,3 +272,7 @@
   .ql-guided-checklist img{
     margin: 0px !important;
   }
+
+  a {
+    cursor: pointer !important;
+  }

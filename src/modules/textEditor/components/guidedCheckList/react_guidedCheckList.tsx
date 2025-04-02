@@ -8,9 +8,10 @@ import { Input, Collapse, Button, Spin } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 import reactToWebComponent from "react-to-webcomponent";
 import "antd/dist/reset.css";
-import "./styles.css"; 
+import "./styles.css";
 import ReactDOM from "react-dom/client";
 import Guidance from "./guidance";
+import { BiCollapseVertical } from "react-icons/bi";
 
 
 // Definir tipos
@@ -40,9 +41,9 @@ class Item extends React.Component<ItemProps> {
 
   render() {
     const { item, dragHandleProps, commonProps } = this.props;
-    
+
     return (
-      <div id={item.id} className="disable-select" style={{ display: "flex"}} contentEditable={false}>
+      <div id={item.id} className="disable-select" style={{ display: "flex" }} contentEditable={false}>
         <Collapse
           ghost
           expandIconPosition="end"
@@ -55,7 +56,7 @@ class Item extends React.Component<ItemProps> {
           )}
           activeKey={commonProps.activeItemId === item.id ? [item.id] : []}
           onChange={() => commonProps.onCollapseChange(item.id)}
-          items={[ 
+          items={[
             {
               key: item.id,
               label: (
@@ -75,11 +76,11 @@ class Item extends React.Component<ItemProps> {
                         commonProps.onDeleteItem(item.id);
                       }
                     }}
-                    onPaste={(e) => {e.stopPropagation()}}
+                    onPaste={(e) => { e.stopPropagation() }}
                   />
                 </div>
               ),
-              children: ( 
+              children: (
                 <>
                   <Guidance saveData={commonProps.onGuidandeChange} value={item.guidande} id={item.id} />
                   <Button className="collapse-next-button" onClick={() => commonProps.onNextItem(item.id)}>Next</Button>
@@ -132,10 +133,10 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     };
 
     loadData();
-  }, [items, title]); 
+  }, [items, title]);
 
 
-// update z-index
+  // update z-index
   useEffect(() => {
     if (list.length === 0) return;
     const baseZIndex = 1000;
@@ -185,7 +186,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   });
 
 
- 
+
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleListChange = useCallback((
@@ -194,15 +195,15 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     _oldIndex: number,
     _newIndex: number
   ) => {
-  
+
     setList(prev => {
       const updatedList = newList.map((item, index) => ({
         ...(item as ListItem),
         index
       }));
-      
-      return JSON.stringify(prev) === JSON.stringify(updatedList) 
-        ? prev 
+
+      return JSON.stringify(prev) === JSON.stringify(updatedList)
+        ? prev
         : updatedList;
     });
   }, []);
@@ -263,13 +264,18 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     <div contentEditable={false} className="guided-checklist" ref={(el) => {
       if (el) componentRef.current = el.closest('guided-checklist') as HTMLElement | undefined;
     }}>
-      <Input
-        className="title-input"
-        value={internalTitle}
-        onChange={(e) => setInternalTitle(e.target.value)}
-        placeholder="Optional title"
-        onPaste={(e) => e.stopPropagation()}
-      />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto", alignItems: "center" }}>
+        <Input
+          className="title-input"
+          value={internalTitle}
+          onChange={(e) => setInternalTitle(e.target.value)}
+          placeholder="Optional title"
+          onPaste={(e) => e.stopPropagation()}
+        />
+        <div style={{ cursor: "pointer" }} onClick={() => setActiveItemId(null)}>
+          <BiCollapseVertical />
+        </div>
+      </div>
 
       <div contentEditable={false} ref={containerRef}>
         <DraggableList
@@ -291,7 +297,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
 
 
 customElements.define('guided-checklist', reactToWebComponent(GuidedCheckListWC, React, ReactDOM, {
-  props: { 
+  props: {
     title: 'string',
     items: 'string'
   }
