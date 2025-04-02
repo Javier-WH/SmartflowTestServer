@@ -248,6 +248,49 @@ export default function TextEditor() {
     };
 
 
+    //paste image handler
+
+    const handlePaste = (e: ClipboardEvent) => {
+        const editor = quillRef.current?.getEditor();
+        if (!editor) return;
+
+        const items = e.clipboardData?.items;
+        if (!items) return;
+
+        // search for image in clipboard
+        for (const item of items) {
+            if (item.type.startsWith('image')) {
+                e.preventDefault();
+                const file = item.getAsFile();
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (loadEvent) => {
+                    const imageUrl = loadEvent.target?.result;
+                    if (typeof imageUrl === 'string') {
+                        const range = editor.getSelection(true);
+                        editor.insertEmbed(range?.index || 0, 'image', imageUrl);
+                    }
+                };
+                reader.readAsDataURL(file);
+                return;
+            }
+        }
+    };
+
+  
+    // add paste event listener
+    useEffect(() => {
+        if (quillRef.current) {
+            const editor = quillRef.current.getEditor();
+            const container = editor.root;
+            container.addEventListener('paste', handlePaste);
+            return () => {
+                container.removeEventListener('paste', handlePaste);
+            };
+        }
+    }, []);
+
 
 
     return (
