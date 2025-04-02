@@ -1,7 +1,7 @@
 import GuidedCheckListIcon from "../../assets/svg/addGuidedCheckList.svg";
 
 
-export default function CustomToolbar({show = true, name, clean = false}: {show?: boolean, name: string, clean?:boolean}) {
+export default function CustomToolbar({ show = true, name, clean = false }: { show?: boolean, name: string, clean?: boolean }) {
 
   return ((
     <div id={name} style={{ display: show ? 'block' : 'none' }} defaultValue="arial">
@@ -57,14 +57,10 @@ export default function CustomToolbar({show = true, name, clean = false}: {show?
       <button className="ql-link"></button>
       <button className="ql-image"></button>
       <button className="ql-video"></button>
-      {
-        !clean
-       ?<button className="ql-guided-checklist">
+      <button className="ql-clean"></button>
+      <button disabled ={clean} className="ql-guided-checklist">
         <img src={GuidedCheckListIcon} alt="" />
-       </button>
-          : <button className="ql-clean"></button>
-      }
- 
+      </button>
     </div>
   ));
 }

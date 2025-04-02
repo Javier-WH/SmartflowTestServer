@@ -33,7 +33,6 @@ const formats = [
   'link',
   'image',
   'video',
-  //'guided-checklist-block',
   'guided-checklist',
   'style'
 ]

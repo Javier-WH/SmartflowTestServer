@@ -4,7 +4,7 @@
   }
 
 
- .ql-toolbar.ql-snow {
+  .ql-toolbar.ql-snow {
     border: none !important;
     border-bottom: 1px solid #ddd !important;
     position: fixed;
@@ -39,10 +39,10 @@
   }
 
   .quill-editor-container .toolbar {
-   display: flex !important;
-   flex-direction: column;
+    display: flex !important;
+    flex-direction: column;
 
-  
+
   }
 
   .group a {
@@ -256,14 +256,19 @@
   .ql-editor img {
     margin: 10px 0;
   }
+
   .ql-tooltip,
-  .ql-editing {     
+  .ql-editing {
     left: 0 !important;
     z-index: 10000 !important;
   }
 
-  .ant-collapse-content #editor-resizer{
+  .ant-collapse-content #editor-resizer {
     width: 0px !important;
     height: 0px !important;
     left: 50% !important;
+  }
+
+  .ql-guided-checklist img{
+    margin: 0px !important;
   }
