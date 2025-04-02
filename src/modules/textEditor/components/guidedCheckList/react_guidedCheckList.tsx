@@ -75,6 +75,7 @@ class Item extends React.Component<ItemProps> {
                         commonProps.onDeleteItem(item.id);
                       }
                     }}
+                    onPaste={(e) => {e.stopPropagation()}}
                   />
                 </div>
               ),
@@ -267,6 +268,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
         value={internalTitle}
         onChange={(e) => setInternalTitle(e.target.value)}
         placeholder="Optional title"
+        onPaste={(e) => e.stopPropagation()}
       />
 
       <div contentEditable={false} ref={containerRef}>
