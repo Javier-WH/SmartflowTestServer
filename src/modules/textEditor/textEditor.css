@@ -269,10 +269,20 @@
     left: 50% !important;
   }
 
-  .ql-guided-checklist img{
+  .ql-guided-checklist img {
     margin: 0px !important;
   }
 
   a {
     cursor: pointer !important;
+  }
+
+  .collapse-list-icon-false svg {
+    stroke: gray !important;
+    fill: gray !important;
+  }
+
+  .collapse-list-icon-true svg {
+    stroke: rgb(14, 173, 41) !important;
+    fill: rgb(14, 173, 41) !important;
   }

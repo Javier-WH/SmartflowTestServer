@@ -12,6 +12,7 @@ import "./styles.css";
 import ReactDOM from "react-dom/client";
 import Guidance from "./guidance";
 import { BiCollapseVertical } from "react-icons/bi";
+import { FaCheckCircle } from "react-icons/fa";
 
 
 // Definir tipos
@@ -110,7 +111,18 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
 
+
+  useEffect(() => {
+    const checkedItemsCopy = JSON.parse(JSON.stringify(checkedItems));
+
+    while (checkedItemsCopy.length < list.length) {
+      checkedItemsCopy.push(false);
+    }
+    setCheckedItems(checkedItemsCopy);
+  }, [list]);
 
   // this force update the component when the items prop changes and fix a bug that randomly ignores que initial values on load page
   useEffect(() => {
@@ -251,12 +263,23 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     },
     onNextItem: (currentId: string) => {
       const currentIndex = list.findIndex(item => item.id === currentId);
+      setChecket(currentIndex);
       if (currentIndex < list.length - 1) {
         const nextItemId = list[currentIndex + 1].id;
         setActiveItemId(nextItemId);
+      }else{
+        setActiveItemId(null);
+        setIsCollapsed(true);
       }
     },
     activeItemId,
+  };
+
+  const setChecket = (index: number) => {
+    setCheckedItems(checkedItems.map((item, i) => {
+      if (i === index) item = true;
+      return item
+    }));
   };
 
   if (isLoading) return <div style={{ width: '100%', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spin /></div>;
@@ -272,25 +295,43 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
           placeholder="Optional title"
           onPaste={(e) => e.stopPropagation()}
         />
-        <div style={{ cursor: "pointer" }} onClick={() => setActiveItemId(null)}>
+        <div style={{ cursor: "pointer" }} onClick={() => {
+            if(isCollapsed && list.length > 0){
+              setActiveItemId(list[0].id)
+            }
+            setIsCollapsed(!isCollapsed)
+          }}>
           <BiCollapseVertical />
         </div>
       </div>
+      {
+        isCollapsed
+          ? <div className="collapse-list-icon" style={{ display: "flex", gap: "5px" }}>
+            {
+              list.map((_item, index) => {
+                return <div className={checkedItems[index] ? "collapse-list-icon-true" : "collapse-list-icon-false" }>
+                  <FaCheckCircle />
+                </div>
+            })
+            }
+          </div>
+          : <div>
+            <div contentEditable={false} ref={containerRef}>
+              <DraggableList
+                itemKey="id"
+                template={Item}
+                list={list}
+                onMoveEnd={(newList, movedItem, oldIndex, newIndex) => handleListChange(newList, movedItem, oldIndex, newIndex)}
+                container={() => containerRef.current!}
+                commonProps={commonProps}
+              />
+            </div>
 
-      <div contentEditable={false} ref={containerRef}>
-        <DraggableList
-          itemKey="id"
-          template={Item}
-          list={list}
-          onMoveEnd={(newList, movedItem, oldIndex, newIndex) => handleListChange(newList, movedItem, oldIndex, newIndex)}
-          container={() => containerRef.current!}
-          commonProps={commonProps}
-        />
-      </div>
-
-      <Button className="add-item-button" contentEditable={false} onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)}>
-        +
-      </Button>
+            <Button className="add-item-button" contentEditable={false} onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)}>
+              +
+            </Button>
+          </div>
+      }
     </div>
   );
 };
