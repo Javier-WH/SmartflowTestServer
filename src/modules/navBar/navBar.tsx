@@ -40,6 +40,11 @@ export default function NavBar() {
             label: 'Organizations',
             onClick: () => navigate('/organizations'),
         },
+        {
+            key: '2',
+            label: 'Invite',
+            onClick: () => navigate(`/invite/${slug}`),
+        },
         // {
         //   key: '2',
         //   label: "Billing",

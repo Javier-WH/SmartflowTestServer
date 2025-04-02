@@ -11,6 +11,7 @@ import PrivateRoute from './PrivateRoute';
 import TextEditor from './modules/textEditor/textEditor';
 import Organizations from './modules/organizations/organizations';
 import JoinOrganization from './modules/onboarding/join-org';
+import InviteOrganization from './modules/joinOrganization/inviteOrganization';
 
 const router = createBrowserRouter([
     {
@@ -45,6 +46,14 @@ const router = createBrowserRouter([
             {
                 path: 'textEditor/:id',
                 element: <TextEditor />,
+            },
+            {
+                path: 'invite/:slug',
+                element: <InviteOrganization />,
+            },
+            {
+                path: 'join/:id',
+                element: <h1>Join</h1>,
             },
         ],
     },
