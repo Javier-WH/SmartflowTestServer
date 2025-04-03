@@ -160,7 +160,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                 setInviteError(response.message);
                 return;
             }
-
+       
             // Clear form and close modal on success
             setInviteEmail('');
             onInviteModalClose();
