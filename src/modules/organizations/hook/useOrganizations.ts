@@ -220,6 +220,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
             .eq('user_id', inviterUserId)
             .single();
 
+
         if (orgResponse.error) {
             return {
                 error: true,
@@ -238,6 +239,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
                 status: 'pending',
             })
             .select();
+
 
         if (invitationResponse.error) {
             // Check if it's a unique constraint error (invitation already exists)
@@ -276,6 +278,17 @@ export default function useOrganizations(user_id?: string, search?: string) {
         return { error: false, message: 'Organization deleted successfully', data: response.data };
     };
 
+    const getOrganizationInvite = async (id: string): Promise<OrganizationActionResponse> => {
+        const response = await supabase.from('organization_invitations')
+        .select('*')
+        .eq('id', id)
+        .eq('status', 'pending');
+
+        if (response.error) return errorManager(response.error);
+        return { error: false, message: 'content retrieved successfully', data: response.data }
+    };
+
+
     return {
         data: organizations,
         isLoading,
@@ -290,5 +303,6 @@ export default function useOrganizations(user_id?: string, search?: string) {
         joinOrganization,
         leaveOrganization,
         inviteUserToOrganization,
+        getOrganizationInvite
     };
 }

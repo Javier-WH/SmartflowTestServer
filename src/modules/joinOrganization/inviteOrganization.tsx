@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import useAuth from '../auth/hooks/useAuth';
+import useOrganizations from '../organizations/hook/useOrganizations';
 import { useNavigate, useParams } from 'react-router-dom';
 import useGetOrganizationData from '../navBar/hooks/useOrganizationData';
 import { useEffect, useState } from 'react';
@@ -15,11 +16,22 @@ interface Org {
   slug: string;
 
 }
+
+interface ResponseData{
+  created_at: string;
+  email: string;
+  id: string;
+  invited_by: string;
+  organization_id: string;
+  status: string;
+
+}
 export default function InviteOrganization() {
   const { slug } = useParams();
-  const { signOut } = useAuth();
+  const {user, signOut } = useAuth();
   const navigate = useNavigate();
   const { getOrganizationBasicData } = useGetOrganizationData();
+  const {inviteUserToOrganization} = useOrganizations();
   const [organization, setOrganization] = useState<Org | null>(null);
   const [email, setEmail] = useState<string>('');
   const [isValidEmail, setIsValidEmail] = useState<boolean>(false);
@@ -46,9 +58,23 @@ export default function InviteOrganization() {
   }
   const inviteOnClick = () => {
     const domain = import.meta.env.VITE_DOMAIN ?? 'localhost:5173';
-    const uuid = crypto.randomUUID();
-    const link = `${domain}/join/${uuid}`;
-    setInviteLink(link);
+    const inviterUserId = user?.id;
+    const organizationId = organization?.id;
+
+    if (!organizationId || !email || !inviterUserId) return;
+
+    inviteUserToOrganization(organizationId, email, inviterUserId)
+    .then(res => {
+      if (res.error) {
+        message.error(res.message);
+        return;
+      }
+      const responseData = res.data as ResponseData[]; 
+      const {id} = responseData[0];
+      const link = `${domain}/join/${id}`;
+      setInviteLink(link)
+    })
+    .catch(err => console.log(err));
   };
 
   const handleCopyLink = async () => {
@@ -67,7 +93,7 @@ export default function InviteOrganization() {
         <IoMdArrowRoundBack />
       </Button>
       <Button color="primary" onClick={signOut}>
-        Cerrar sesión
+        Close session
       </Button>
     </header>
     <section className="py-8 max-w-7xl mx-auto mt-16">

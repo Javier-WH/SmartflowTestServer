@@ -1,6 +1,6 @@
 import { type FormEvent, useState, useEffect } from 'react';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import AlertMessage from '../components/ErrorMessage';
 
@@ -52,9 +52,31 @@ const SignIn = () => {
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         if (token) {
+            // get url params
+            const searchParams = new URLSearchParams(location.search);
+            const redirectParam = searchParams.get('redirect');
+            
+            // if redirect param is valid redirect to it
+            if (redirectParam && isValidJoinPath(redirectParam)) {
+                navigate(redirectParam);
+                return
+            }
             navigate('/');
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
+
+    const isValidJoinPath = (path: string) => {
+        const uuidv4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        const segments = path.split('/');
+
+        // Check basic structure: "/join/uuid"
+        if (segments.length !== 3 || segments[1] !== 'join') return false;
+
+        //Check if it's a valid UUID
+        const uuid = segments[2];
+        return uuidv4Regex.test(uuid);
+    };
 
     return (
         <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen p-4">
