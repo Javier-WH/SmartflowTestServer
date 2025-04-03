@@ -175,6 +175,16 @@ export default function useOrganizations(user_id?: string, search?: string) {
             .select('*');
 
         if (response.error) return errorManager(response.error);
+
+        // update the status of the invitation
+        const organization_id = response.data[0].organization_id
+        const updateResponse = await supabase
+            .from('organization_invitations')
+            .update({ status: 'accepted' })
+            .eq('organization_id', organization_id)
+
+        if (updateResponse.error) return errorManager(updateResponse.error);
+
         return { error: false, message: 'content retrieved successfully', data: response.data };
     };
 
@@ -280,9 +290,9 @@ export default function useOrganizations(user_id?: string, search?: string) {
 
     const getOrganizationInvite = async (id: string): Promise<OrganizationActionResponse> => {
         const response = await supabase.from('organization_invitations')
-        .select('*')
-        .eq('id', id)
-        .eq('status', 'pending');
+            .select('*')
+            .eq('id', id)
+            .eq('status', 'pending');
 
         if (response.error) return errorManager(response.error);
         return { error: false, message: 'content retrieved successfully', data: response.data }

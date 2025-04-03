@@ -112,6 +112,7 @@ export default function JoinOrganization() {
           message.error(res.message);
           return
         }
+        
         navigate('/home');
       })
       .catch(err => console.log(err));
