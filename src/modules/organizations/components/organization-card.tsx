@@ -69,7 +69,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
     // Handle edit organization
     const handleEditOrganization = (org: Organization, e: React.MouseEvent<HTMLElement>) => {
         e.stopPropagation();
-        setFormData({ id: org.id, name: org.name, description: org.description || '' });
+        setFormData({ id: org.id, name: org.name || '', description: org.description || '' });
         onEditModalOpen();
     };
 
@@ -148,7 +148,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
             return;
         }
 
-        if (!organization || !user?.id) return;
+        if (!organization || !organization.id || !user?.id) return;
 
         setIsInviting(true);
         setInviteError('');
@@ -176,7 +176,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
 
     // Handle delete confirm
     const handleDeleteConfirm = async () => {
-        if (!organization) return;
+        if (!organization || !organization.id) return;
 
         setIsSubmitting(true);
 
@@ -201,7 +201,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
 
     // Handle leave confirm
     const handleLeaveConfirm = async () => {
-        if (!organization || !user?.id) return;
+        if (!organization || !organization.id || !user?.id) return;
 
         setIsSubmitting(true);
 
@@ -238,7 +238,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                 key={organization.id}
                 isPressable
                 isHoverable
-                onClick={() => handleCardClick(organization.slug)}
+                onClick={() => handleCardClick(organization.slug || '')}
                 className="border-2 hover:border-primary transition-all duration-200"
             >
                 <CardBody className="p-5">
