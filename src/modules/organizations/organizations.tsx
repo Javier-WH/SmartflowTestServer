@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { Spinner, Button, Input, useDisclosure } from '@nextui-org/react';
 import { PlusOutlined, TeamOutlined, SearchOutlined } from '@ant-design/icons';
 import useOrganizations from './hook/useOrganizations';
@@ -14,6 +14,11 @@ export default function Organizations() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState('');
 
+    useEffect(() => {
+        mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     // Form data state
     const [formData, setFormData] = useState<OrganizationFormData>({
         name: '',
@@ -25,7 +30,7 @@ export default function Organizations() {
 
     // Filter organizations based on search term
     const filteredOrganizations = organizations?.filter((org: Organization) =>
-        org.name.toLowerCase().includes(searchTerm.toLowerCase()),
+        org.name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
     );
 
     // Handle create form submit

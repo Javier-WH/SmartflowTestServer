@@ -23,16 +23,38 @@ interface InvitationData{
   status: string;
   
 }
+interface Roll {
+  id: string;
+  level: string;
+  read: boolean;
+  write: boolean;
+}
 export default function JoinOrganization() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { id: invitationId } = useParams();
-  const { getOrganizationInvite } = useOrganizations();
+  const { getOrganizationInvite, joinOrganization, getUserRolls } = useOrganizations();
   const { getOrganizationBasicDataById } = useGetOrganizationData();
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [organization, setOrganization] = useState<Org | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [invitationData, setInvitationData] = useState<InvitationData | null>(null);
+  const [rolls, setRolls] = useState<Roll[]>([]);
+
+  useEffect(() => {
+    if (!user) return;
+    getUserRolls()
+      .then(res => {
+        if (res.error) {
+          message.error(res.message);
+          return
+        }
+        setRolls(res.data as Roll[] || []);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }, []);
 
   useEffect(() => {
     if (!invitationId) return;
@@ -63,11 +85,37 @@ export default function JoinOrganization() {
     if (!organizationId) return;
     getOrganizationBasicDataById(organizationId)
       .then(res => {
-        //console.log(res);
+        if (res.error){
+          setErrorMessage(res.message);
+          return
+        }
+      
         setOrganization(res.data[0]);
       })
       .catch(err => console.log(err));
-  }, [organizationId]);
+  }, [organizationId, invitationData]);
+
+  useEffect(() => {
+    if (!invitationData) return;
+    if (user?.email !== invitationData.email) {
+      setErrorMessage('You do not have permission to join this organization');
+      return
+    }
+   }, [invitationData]);
+
+  const onClickJoin = () => {
+    if (!invitationData) return;
+    const rollId = rolls.find(roll => roll.level === 'Manager')?.id as string;
+    joinOrganization(user?.id as string, invitationData.organization_id, rollId)
+      .then(res => {
+        if (res.error) {
+          message.error(res.message);
+          return
+        }
+        navigate('/home');
+      })
+      .catch(err => console.log(err));
+  }
 
   return <>
     <header className="w-full flex justify-end items-center px-8 bg-white py-4 fixed top-0">
@@ -97,7 +145,7 @@ export default function JoinOrganization() {
               <p >{organization?.description}</p>
             </div>
             <div className="mb-6 max-w-md flex gap-[10px] items-end ">
-              <Button color="primary">
+              <Button color="primary" onClick={onClickJoin}>
                 Join
               </Button>
             </div>
