@@ -4,11 +4,12 @@ import useOrganizations from '../organizations/hook/useOrganizations';
 import { useNavigate, useParams } from 'react-router-dom';
 import useGetOrganizationData from '../navBar/hooks/useOrganizationData';
 import { useEffect, useState } from 'react';
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@nextui-org/react';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { ImUser } from "react-icons/im";
 import { CiMenuKebab } from "react-icons/ci";
-
+import { Organization } from '../organizations/types/organizations';
+import InviteUserModal, {InviteUserModalProps} from '../organizations/components/InviteUserModal'
 
 
 interface Org {
@@ -80,6 +81,16 @@ export default function Menbers() {
   }, [filter, members]);
 
 
+  const handleEditMember = (userEmail: string) => {
+    console.log(userEmail);
+  }
+
+  const handleDeleteMember = (userEmail: string) => {
+
+    console.log(userEmail);
+
+  }
+
   return <>
     <header className="w-full flex justify-between items-center px-8 bg-white py-4 fixed top-0">
       <Button color="primary" onClick={() => navigate(-1)}>
@@ -108,14 +119,14 @@ export default function Menbers() {
             filteredMembers.map((member) => (
               <div key={member.userid}
                 className="
-            flex items-center 
-            justify-between 
-            max-w-[900px]
-            border border-gray-100
-            rounded-xl
-            bg-white
-            shadow-sm
-            p-3"
+                  flex items-center 
+                  justify-between 
+                  max-w-[900px]
+                  border border-gray-100
+                  rounded-xl
+                  bg-white
+                  shadow-sm
+                  p-3"
               >
                 <div className="flex items-center">
                   <ImUser className="w-10 h-10 rounded-full mr-4" />
@@ -124,7 +135,25 @@ export default function Menbers() {
                     <p className="text-gray-500">{member.rollname}</p>
                   </div>
                 </div>
-                <CiMenuKebab style={{ cursor: "pointer" }} />
+  
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button
+                      variant="light"
+                      aria-label="Menú de opciones"
+                    >
+                      <CiMenuKebab />
+                    </Button>
+                  </DropdownTrigger>
+
+                  <DropdownMenu
+                    aria-label="Acciones del menú"
+                    variant="light"
+                  >
+                    <DropdownItem key="edit" onClick={() => handleEditMember(member.useremail)}>Edit</DropdownItem>
+                    <DropdownItem key="delete" onClick={() => handleDeleteMember(member.useremail)}>Delete</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
               </div>
             ))
           }

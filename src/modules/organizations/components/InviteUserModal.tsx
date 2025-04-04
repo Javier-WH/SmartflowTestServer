@@ -8,9 +8,9 @@ import {
     Input,
 } from '@nextui-org/react';
 import { MailOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Organization } from '../types/organization';
+import { Organization } from '../types/organizations';
 
-interface InviteUserModalProps {
+export interface InviteUserModalProps {
     isOpen: boolean;
     onClose: () => void;
     selectedOrganization: Organization | null;
