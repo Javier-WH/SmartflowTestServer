@@ -8,6 +8,7 @@ import { Button, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } 
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { ImUser } from "react-icons/im";
 import { CiMenuKebab } from "react-icons/ci";
+import EditMemberModal from './editMemberModal';
 import { Organization } from '../organizations/types/organizations';
 import InviteUserModal, {InviteUserModalProps} from '../organizations/components/InviteUserModal'
 
@@ -20,7 +21,7 @@ interface Org {
 
 }
 
-interface Member {
+export interface Member {
   rollid: string;
   rollname: string;
   userid: string;
@@ -39,6 +40,8 @@ export default function Menbers() {
   const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
   const [filter, setFilter] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [memberToEdit, setMemberToEdit] = useState<Member | null>(null);
+  
 
   useEffect(() => {
     setLoading(!organization && !members);
@@ -80,18 +83,24 @@ export default function Menbers() {
     setFilteredMembers(filtered);
   }, [filter, members]);
 
-
-  const handleEditMember = (userEmail: string) => {
-    console.log(userEmail);
+  const cleanMembers = () => {
+    setMemberToEdit(null);
   }
 
-  const handleDeleteMember = (userEmail: string) => {
+  const handleEditMember = (member: Member) => {
+    cleanMembers();
+    setMemberToEdit(member);
+    //console.log(member);
+  }
 
-    console.log(userEmail);
-
+  const handleDeleteMember = (member: Member) => {
+    cleanMembers();
+    //setMemberToDelete(member);
+    console.log(member);
   }
 
   return <>
+    <EditMemberModal member={memberToEdit} setMember={setMemberToEdit} key={memberToEdit?.userid || 'modal'} />
     <header className="w-full flex justify-between items-center px-8 bg-white py-4 fixed top-0">
       <Button color="primary" onClick={() => navigate(-1)}>
         <IoMdArrowRoundBack />
@@ -150,8 +159,8 @@ export default function Menbers() {
                     aria-label="Acciones del menú"
                     variant="light"
                   >
-                    <DropdownItem key="edit" onClick={() => handleEditMember(member.useremail)}>Edit</DropdownItem>
-                    <DropdownItem key="delete" onClick={() => handleDeleteMember(member.useremail)}>Delete</DropdownItem>
+                    <DropdownItem key="edit" onClick={() => handleEditMember(member)}>Edit</DropdownItem>
+                    <DropdownItem key="delete" onClick={() => handleDeleteMember(member)}>Delete</DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               </div>
