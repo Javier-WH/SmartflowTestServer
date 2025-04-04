@@ -26,7 +26,7 @@ interface ResponseData{
   status: string;
 
 }
-export default function InviteOrganization() {
+export default function Menbers() {
   const { slug } = useParams();
   const {user, signOut } = useAuth();
   const navigate = useNavigate();

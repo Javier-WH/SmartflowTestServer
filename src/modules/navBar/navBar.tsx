@@ -42,8 +42,8 @@ export default function NavBar() {
         },
         {
             key: '2',
-            label: 'Invite',
-            onClick: () => navigate(`/invite/${slug}`),
+            label: 'Members',
+            onClick: () => navigate(`/members/${slug}`),
         },
         // {
         //   key: '2',
