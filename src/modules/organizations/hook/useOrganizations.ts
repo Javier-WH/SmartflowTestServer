@@ -299,6 +299,23 @@ export default function useOrganizations(user_id?: string, search?: string) {
     };
 
 
+    const getOrganizationMembers = async (a_organization_id: string): Promise<OrganizationActionResponse> => {
+        const response = await supabase
+            .rpc('getmembers', {
+                a_organization_id
+            });
+
+        if (response.error) {
+            console.log(error);
+            return errorManager(error)
+        } else {
+            return { error: false, message: 'Organization members retrieved successfully', data: response.data };
+        }
+    }
+
+
+
+
     return {
         data: organizations,
         isLoading,
@@ -313,6 +330,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
         joinOrganization,
         leaveOrganization,
         inviteUserToOrganization,
-        getOrganizationInvite
+        getOrganizationInvite,
+        getOrganizationMembers
     };
 }

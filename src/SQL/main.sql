@@ -975,3 +975,31 @@ BEGIN
     RETURN;
 END;
 $$ LANGUAGE plpgsql;
+
+
+--get organization users
+
+DROP FUNCTION IF EXISTS getMembers;
+
+CREATE OR REPLACE FUNCTION getMembers(a_organization_id uuid)
+RETURNS TABLE (
+    userId UUID,
+    userEmail varchar,
+    rollId UUID,
+    rollName varchar
+) AS $$
+
+BEGIN
+
+  RETURN QUERY
+    SELECT 
+    u.id as userId,
+    u.email as userEmail,
+    r.id as rollId,
+    r.level as rollName
+    FROM public.organizations_users ou
+    JOIN auth.users u ON ou.user_id = u.id
+    JOIN public.rolls r ON ou.roll_id = r.id
+    WHERE ou.organization_id = a_organization_id; 
+END;
+$$ LANGUAGE plpgsql;
