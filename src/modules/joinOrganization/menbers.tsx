@@ -37,6 +37,12 @@ export default function Menbers() {
   const [members, setMembers] = useState<Member[]>([]);
   const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLoading(!organization && !members);
+  }, [organization, members]);
+
 
   useEffect(() => {
     if (!slug) return;
@@ -50,7 +56,6 @@ export default function Menbers() {
 
   useEffect(() => {
     if (!organization) return;
-
     getOrganizationMembers(organization.id)
       .then((res) => {
         if (res.error) {
@@ -60,7 +65,6 @@ export default function Menbers() {
         setMembers(res.data as Member[]);
       })
       .catch(err => console.log(err));
-
   }, [organization]);
 
 
@@ -85,45 +89,49 @@ export default function Menbers() {
         Close session
       </Button>
     </header>
-    <section className="py-8 max-w-7xl mx-auto mt-16">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold">{organization?.name}</h1>
-      </div>
-      <Input 
-        className='max-w-[900px]' 
-        value={filter} 
-        onChange={(e) => setFilter(e.target.value)} 
-        label="Search members" 
-        placeholder="Search by email"  
-      />
-      <div className="flex flex-col gap-1">
-        {
-          filteredMembers.map((member) => (
-            <div key={member.userid}
-              className="
-                flex items-center 
-                justify-between 
-                max-w-[900px]
-                border border-gray-100
-                rounded-xl
-                bg-white
-                shadow-sm
-                p-3"
-            >
-              <div className="flex items-center">
-                <ImUser className="w-10 h-10 rounded-full mr-4" />
-                <div>
-                  <h2 className="text-lg font-semibold">{member.useremail}</h2>
-                  <p className="text-gray-500">{member.rollname}</p>
+    {
+      loading 
+      ? <div className="flex justify-center items-center h-screen">Loading...</div> 
+      :<section className="py-8 max-w-7xl mx-auto mt-16">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-semibold">{organization?.name}</h1>
+        </div>
+        <Input
+          className='max-w-[900px]'
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          label="Search members"
+          placeholder="Search by email"
+        />
+        <div className="flex flex-col gap-1">
+          {
+            filteredMembers.map((member) => (
+              <div key={member.userid}
+                className="
+            flex items-center 
+            justify-between 
+            max-w-[900px]
+            border border-gray-100
+            rounded-xl
+            bg-white
+            shadow-sm
+            p-3"
+              >
+                <div className="flex items-center">
+                  <ImUser className="w-10 h-10 rounded-full mr-4" />
+                  <div>
+                    <h2 className="text-lg font-semibold">{member.useremail}</h2>
+                    <p className="text-gray-500">{member.rollname}</p>
+                  </div>
                 </div>
+                <CiMenuKebab style={{ cursor: "pointer" }} />
               </div>
-              <CiMenuKebab style={{ cursor: "pointer" }} />
-            </div>
-          ))
-        }
-      </div>
+            ))
+          }
+        </div>
 
 
-    </section>
+      </section>
+    }
   </>
 }
