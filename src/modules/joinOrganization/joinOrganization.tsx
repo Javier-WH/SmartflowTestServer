@@ -105,8 +105,8 @@ export default function JoinOrganization() {
 
   const onClickJoin = () => {
     if (!invitationData) return;
-    const rollId = rolls.find(roll => roll.level === 'Manager')?.id as string;
-    joinOrganization(user?.id as string, invitationData.organization_id, rollId)
+
+    joinOrganization(user?.id as string, invitationData.organization_id, "20d09d54-eb0b-498e-a6fa-910f598eec77")
       .then(res => {
         if (res.error) {
           message.error(res.message);

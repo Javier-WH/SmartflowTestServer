@@ -10,6 +10,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { ImUser } from "react-icons/im";
 import { CiMenuKebab } from "react-icons/ci";
 import EditMemberModal from './editMemberModal';
+import DeleteMemberModal from './deleteMemberModal';
 //import InviteUserModal, {InviteUserModalProps} from '../organizations/components/InviteUserModal'
 
 
@@ -48,6 +49,7 @@ export default function Menbers() {
   const [filter, setFilter] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [memberToEdit, setMemberToEdit] = useState<Member | null>(null);
+  const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
   const [rolls, setRolls] = useState<MemberRoll[]>([]);
 
   useEffect(() => {
@@ -88,7 +90,7 @@ export default function Menbers() {
         setMembers(res.data as Member[]);
       })
       .catch(err => console.log(err));
-  }, [organization, memberToEdit]);
+  }, [organization, memberToEdit, memberToDelete]);
 
 
   useEffect(() => {
@@ -119,13 +121,18 @@ export default function Menbers() {
   }
 
   const handleDeleteMember = (member: Member) => {
+    if (organization?.user_id !== user?.id) {
+      message.error('You are not the owner of this organization');
+      return;
+    }
     cleanMembers();
-    //setMemberToDelete(member);
-    console.log(member);
+    setMemberToDelete(member);
+
   }
 
   return <>
     <EditMemberModal organization={organization}  rolls={rolls} member={memberToEdit} setMember={setMemberToEdit} key={memberToEdit?.userid || 'modal'} />
+    <DeleteMemberModal organization={organization} member={memberToDelete} setMember={setMemberToDelete} key={memberToDelete?.userid || 'modal'} />
     <header className="w-full flex justify-between items-center px-8 bg-white py-4 fixed top-0">
       <Button color="primary" onClick={() => navigate(-1)}>
         <IoMdArrowRoundBack />
