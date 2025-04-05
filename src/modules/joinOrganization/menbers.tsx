@@ -5,20 +5,20 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useGetOrganizationData from '../navBar/hooks/useOrganizationData';
 import { useEffect, useState } from 'react';
 import { Button, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@nextui-org/react';
+import { message } from 'antd';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { ImUser } from "react-icons/im";
 import { CiMenuKebab } from "react-icons/ci";
 import EditMemberModal from './editMemberModal';
-import { Organization } from '../organizations/types/organizations';
-import InviteUserModal, {InviteUserModalProps} from '../organizations/components/InviteUserModal'
+//import InviteUserModal, {InviteUserModalProps} from '../organizations/components/InviteUserModal'
 
 
-interface Org {
+export interface Org {
   id: string;
   name: string;
   description: string;
   slug: string;
-
+  user_id: string;
 }
 
 export interface Member {
@@ -28,12 +28,19 @@ export interface Member {
   useremail: string;
 }
 
+export interface MemberRoll {
+  id: string;
+  level: string;
+  read: boolean
+  write: boolean;
+  delete: boolean;
+}
 
 export default function Menbers() {
   const { slug } = useParams();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
-  const { getOrganizationMembers } = useOrganizations();
+  const { getOrganizationMembers, getUserRolls } = useOrganizations();
   const { getOrganizationBasicData } = useGetOrganizationData();
   const [organization, setOrganization] = useState<Org | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
@@ -41,11 +48,23 @@ export default function Menbers() {
   const [filter, setFilter] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [memberToEdit, setMemberToEdit] = useState<Member | null>(null);
-  
+  const [rolls, setRolls] = useState<MemberRoll[]>([]);
 
   useEffect(() => {
     setLoading(!organization && !members);
   }, [organization, members]);
+
+  useEffect(()=> {
+    getUserRolls()
+      .then(res => {
+        if (res.error) {
+          console.log(res.error);
+          return;
+        }
+        setRolls(res.data as MemberRoll[]);
+      })
+      .catch(err => console.log(err));
+  }, [])
 
 
   useEffect(() => {
@@ -69,7 +88,7 @@ export default function Menbers() {
         setMembers(res.data as Member[]);
       })
       .catch(err => console.log(err));
-  }, [organization]);
+  }, [organization, memberToEdit]);
 
 
   useEffect(() => {
@@ -88,9 +107,15 @@ export default function Menbers() {
   }
 
   const handleEditMember = (member: Member) => {
+
+    if(organization?.user_id !== user?.id) {
+      message.error('You are not the owner of this organization');
+      return;
+    }
+
     cleanMembers();
     setMemberToEdit(member);
-    //console.log(member);
+ 
   }
 
   const handleDeleteMember = (member: Member) => {
@@ -100,7 +125,7 @@ export default function Menbers() {
   }
 
   return <>
-    <EditMemberModal member={memberToEdit} setMember={setMemberToEdit} key={memberToEdit?.userid || 'modal'} />
+    <EditMemberModal organization={organization}  rolls={rolls} member={memberToEdit} setMember={setMemberToEdit} key={memberToEdit?.userid || 'modal'} />
     <header className="w-full flex justify-between items-center px-8 bg-white py-4 fixed top-0">
       <Button color="primary" onClick={() => navigate(-1)}>
         <IoMdArrowRoundBack />
@@ -159,8 +184,8 @@ export default function Menbers() {
                     aria-label="Acciones del menú"
                     variant="light"
                   >
-                    <DropdownItem key="edit" onClick={() => handleEditMember(member)}>Edit</DropdownItem>
-                    <DropdownItem key="delete" onClick={() => handleDeleteMember(member)}>Delete</DropdownItem>
+                    <DropdownItem key="edit" onClick={() => handleEditMember(member)}>Edit roll</DropdownItem>
+                    <DropdownItem key="delete" onClick={() => handleDeleteMember(member)}>Delete member</DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               </div>

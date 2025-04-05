@@ -148,6 +148,24 @@ export default function useOrganizations(user_id?: string, search?: string) {
     };
 
     /**
+     * Updates the role of a user in an organization.
+     *
+     * @param {string} roll_id - The ID of the new role to assign to the user.
+     * @param {string} user_id - The ID of the user to update.
+     * @param {string} organization_id - The ID of the organization in which to update the user's role.
+     * @returns {Promise<OrganizationsResponse>} - A promise that resolves to an object with error status, message, and optional data.
+     */
+    const updateUserRoll = async ({ roll_id, user_id, organization_id }: { roll_id: string, user_id: string, organization_id : string }): Promise<OrganizationsResponse> => {
+        const response = await supabase.from('organizations_users')
+            .update({ roll_id })
+            .eq('user_id', user_id)
+            .eq('organization_id', organization_id)
+            .select('*');
+        if (response.error) return errorManager(response.error);
+        return { error: false, message: 'Member role updated successfully', data: response.data };
+    };
+
+    /**
      * Adds a user to an organization with a specified role.
      * @param userId - The ID of the user to add.
      * @param organizationId - The ID of the organization to join.
@@ -288,6 +306,14 @@ export default function useOrganizations(user_id?: string, search?: string) {
         return { error: false, message: 'Organization deleted successfully', data: response.data };
     };
 
+    /**
+     * Retrieves a pending invitation by its ID.
+     *
+     * @param {string} id - The ID of the invitation to retrieve.
+     * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object containing
+     * the error status, a message, and the invitation data if found.
+     */
+
     const getOrganizationInvite = async (id: string): Promise<OrganizationActionResponse> => {
         const response = await supabase.from('organization_invitations')
             .select('*')
@@ -298,6 +324,13 @@ export default function useOrganizations(user_id?: string, search?: string) {
         return { error: false, message: 'content retrieved successfully', data: response.data }
     };
 
+
+    /**
+     * Retrieves the members of a specified organization.
+     *
+     * @param {string} a_organization_id - The ID of the organization whose members are to be retrieved.
+     * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and data containing the organization members.
+     */
 
     const getOrganizationMembers = async (a_organization_id: string): Promise<OrganizationActionResponse> => {
         const response = await supabase
@@ -315,7 +348,6 @@ export default function useOrganizations(user_id?: string, search?: string) {
 
 
 
-
     return {
         data: organizations,
         isLoading,
@@ -327,6 +359,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
         deleteOrganization: deleteOrganizationById,
         updateOrganization,
         getUserRolls,
+        updateUserRoll,
         joinOrganization,
         leaveOrganization,
         inviteUserToOrganization,
