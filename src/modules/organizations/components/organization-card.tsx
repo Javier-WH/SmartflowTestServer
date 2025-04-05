@@ -58,7 +58,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
     const [isInviting, setIsInviting] = useState(false);
 
     const { user } = useAuth();
-    const { updateOrganization, deleteOrganization, leaveOrganization, inviteUserToOrganization, mutate } =
+    const { updateOrganization, deleteOrganization, leaveOrganization, inviteUserToOrganization, mutate, deleteInvitation } =
         useOrganizations(user?.id);
 
     // Handle card click to navigate to organization home
@@ -211,6 +211,13 @@ export default function OrganizationCard({ organization }: { organization: Organ
             if (response.error) {
                 setFormError(response.message);
                 return;
+            }
+        
+      
+            // Optionally delete the invitation if it exists
+            const invitationResponse = await deleteInvitation(organization.id, user.email || '');
+            if (invitationResponse.error) {
+                console.error('Error deleting invitation:', invitationResponse.message);
             }
 
             // Refresh organizations list
