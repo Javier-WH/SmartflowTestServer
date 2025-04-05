@@ -11,7 +11,7 @@ import { ImUser } from "react-icons/im";
 import { CiMenuKebab } from "react-icons/ci";
 import EditMemberModal from './editMemberModal';
 import DeleteMemberModal from './deleteMemberModal';
-//import InviteUserModal, {InviteUserModalProps} from '../organizations/components/InviteUserModal'
+import InviteUserModal from '../organizations/components/InviteUserModal'
 
 
 export interface Org {
@@ -41,7 +41,7 @@ export default function Menbers() {
   const { slug } = useParams();
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
-  const { getOrganizationMembers, getUserRolls } = useOrganizations();
+  const { getOrganizationMembers, getUserRolls, inviteUserToOrganization } = useOrganizations();
   const { getOrganizationBasicData } = useGetOrganizationData();
   const [organization, setOrganization] = useState<Org | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
@@ -51,6 +51,11 @@ export default function Menbers() {
   const [memberToEdit, setMemberToEdit] = useState<Member | null>(null);
   const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
   const [rolls, setRolls] = useState<MemberRoll[]>([]);
+
+  const [inviteUserOpen, setInviteUserOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState<string>('');
+  const [isInviting, setIsInviting] = useState<boolean>(false);
+  const [inviteError, setInviteError] = useState('');
 
   useEffect(() => {
     setLoading(!organization && !members);
@@ -130,7 +135,73 @@ export default function Menbers() {
 
   }
 
+
+
+  const handleInviteUser = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (organization?.user_id !== user?.id) {
+      message.error('You are not the owner of this organization');
+      return;
+    }
+
+    if (!inviteEmail.trim()) {
+      setInviteError('Email is required');
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(inviteEmail.trim())) {
+      setInviteError('Please enter a valid email address');
+      return;
+    }
+
+    if (!organization || !organization.id || !user?.id) return;
+
+    setIsInviting(true);
+    setInviteError('');
+
+    try {
+      const response = await inviteUserToOrganization(organization.id, inviteEmail.trim(), user.id);
+
+      if (response.error) {
+        setInviteError(response.message);
+        return;
+      }
+
+      // Clear form and close modal on success
+      setInviteEmail('');
+      handleCloseInviteModal();
+
+      // Show success toast or notification here if you have a notification system
+    } catch (error) {
+      setInviteError('An unexpected error occurred');
+      console.error(error);
+    } finally {
+      setIsInviting(false);
+    }
+  };
+
+
+  const handleCloseInviteModal = () => {
+    setInviteUserOpen(false);
+    setInviteEmail('');
+    setInviteError('');
+  };
+
+
   return <>
+    <InviteUserModal
+      isOpen={inviteUserOpen}
+      onClose={handleCloseInviteModal}
+      selectedOrganization={organization}
+      inviteEmail={inviteEmail}
+      setInviteEmail={setInviteEmail}
+      handleSubmit={handleInviteUser}
+      isInviting={isInviting}
+      inviteError={inviteError}
+    />
     <EditMemberModal organization={organization}  rolls={rolls} member={memberToEdit} setMember={setMemberToEdit} key={memberToEdit?.userid || 'modal'} />
     <DeleteMemberModal organization={organization} member={memberToDelete} setMember={setMemberToDelete} key={memberToDelete?.userid || 'modal'} />
     <header className="w-full flex justify-between items-center px-8 bg-white py-4 fixed top-0">
@@ -147,6 +218,7 @@ export default function Menbers() {
       :<section className="py-8 max-w-7xl mx-auto mt-16">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-semibold">{organization?.name}</h1>
+          <Button color="primary" onClick={() => setInviteUserOpen(true)}> Invite user</Button>
         </div>
         <Input
           className='max-w-[900px]'
