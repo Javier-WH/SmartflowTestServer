@@ -14,7 +14,7 @@ interface EditMemberModalProps {
 
 export default function DeleteMemberModal({ member, setMember, organization }: EditMemberModalProps) {
 
-  const { leaveOrganization } = useOrganizations();
+  const { leaveOrganization, deleteInvitation } = useOrganizations();
 
   const [deleteInput, setDeleteInput] = useState<string>('');
 
@@ -22,6 +22,7 @@ export default function DeleteMemberModal({ member, setMember, organization }: E
   const handleDeleteMember = async () => {
     if (!member || !organization) return;
     await leaveOrganization(organization.id, member.userid);
+    await deleteInvitation(organization.id, member.useremail);
     setMember(null);
   };
 

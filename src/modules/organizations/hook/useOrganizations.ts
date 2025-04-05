@@ -293,6 +293,21 @@ export default function useOrganizations(user_id?: string, search?: string) {
     };
 
     /**
+     * Deletes an invitation to an organization by its ID and email.
+     *
+     * @param {string} organization_id - The ID of the organization to delete the invitation from.
+     * @param {string} email - The email of the user to delete the invitation for.
+     * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
+     */
+    const deleteInvitation = async (organization_id: string, email: string): Promise<OrganizationActionResponse> => {
+        const response = await supabase.from('organization_invitations')
+            .delete().eq('organization_id', organization_id)
+            .eq('email', email)
+        if (response.error) return errorManager(response.error);
+        return { error: false, message: 'Invitation deleted successfully', data: response.data };
+    };
+
+    /**
      * Deletes an organization by its ID.
      *
      * @param {string} id - The ID of the organization to delete.
@@ -361,6 +376,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
         getUserRolls,
         updateUserRoll,
         joinOrganization,
+        deleteInvitation,
         leaveOrganization,
         inviteUserToOrganization,
         getOrganizationInvite,
