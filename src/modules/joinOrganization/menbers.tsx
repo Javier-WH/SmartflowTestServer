@@ -51,7 +51,6 @@ export default function Menbers() {
   const [memberToEdit, setMemberToEdit] = useState<Member | null>(null);
   const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
   const [rolls, setRolls] = useState<MemberRoll[]>([]);
-
   const [inviteUserOpen, setInviteUserOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState<string>('');
   const [isInviting, setIsInviting] = useState<boolean>(false);
@@ -114,7 +113,6 @@ export default function Menbers() {
   }
 
   const handleEditMember = (member: Member) => {
-
     if (organization?.user_id !== user?.id) {
       message.error('You are not the owner of this organization');
       return;

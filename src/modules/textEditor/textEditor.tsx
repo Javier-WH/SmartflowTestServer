@@ -319,6 +319,7 @@ export default function TextEditor() {
                         ) : null}
                     </div>
                     <Input
+                        {...(readOnly && { readOnly: true })}
                         ref={inputRef}
                         style={styles.titleStyles}
                         value={title}
