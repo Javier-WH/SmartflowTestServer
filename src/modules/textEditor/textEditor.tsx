@@ -5,7 +5,7 @@ import { Input, type InputRef } from 'antd';
 import { useContext, useEffect, useState, useRef } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import styles from './textEditorStyles.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
 import options from './components/utils/options.ts';
@@ -19,6 +19,7 @@ import homeIcon from '../../assets/svg/homeIcon.svg';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import './components/guidedCheckList/react_guidedCheckList.tsx'
 import { useDebouncedCallback } from 'use-debounce';
+
 
 
 // this is our custom blot
@@ -44,6 +45,8 @@ Quill.register(Font, true);
 
 export default function TextEditor() {
     const { id } = useParams();
+    const location = useLocation();
+    const readOnly = location.state.readOnly;
 
     const navigate = useNavigate();
 
@@ -165,6 +168,7 @@ export default function TextEditor() {
 
     // this useEffect is to update the dataBase
     useEffect(() => {
+        if (readOnly) return
         if (id && ableToSave && quillRef.current) {
             const editor = quillRef.current.getEditor();
             const htmlContent = editor.root.innerHTML;
@@ -228,6 +232,7 @@ export default function TextEditor() {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     const handleChangeSelection = () => {
+        if (readOnly) return
         const activeElement = document.activeElement;
         const editorRoot = quillRef.current?.getEditor().root;
         const toolbarContainer = document.getElementById('toolbar-guided-checklist'); 
@@ -326,10 +331,11 @@ export default function TextEditor() {
 
                 <div className="flex flex-col grow bg-white">
                     <div className="flex justify-center w-full grow relative">
-                        <CustomToolbar show={showToolbar} name="toolbar" />
+                        <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
                     </div>
 
                     <ReactQuill
+                        {...(readOnly && { readOnly: true })}
                         ref={quillRef}
                         theme="snow"
                         value={contenido}

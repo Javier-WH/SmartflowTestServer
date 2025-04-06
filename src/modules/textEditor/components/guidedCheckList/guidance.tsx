@@ -36,10 +36,11 @@ const Font = Quill.import('formats/font') as any;
 Font.whitelist = fontList;
 Quill.register(Font, true);
 
-export default function Guidance({ saveData, value, id }: {
+export default function Guidance({ saveData, value, id, readonly }: {
   saveData: (id: string, data: string) => void;
   value: string;
-  id: string
+  id: string;
+  readonly: boolean
 }) {
   const editorRef = useRef<Quill | null>(null);
   const quillRef = useRef<HTMLDivElement | null>(null);
@@ -61,6 +62,7 @@ export default function Guidance({ saveData, value, id }: {
     if (quillRef.current && !editorRef.current) {
       const options = {
         theme: 'snow',
+        readOnly: readonly,
         placeholder: 'Add a guidance (if needed!)',
         modules: {
           toolbar: {
@@ -105,6 +107,8 @@ export default function Guidance({ saveData, value, id }: {
       editorRef.current = new Quill(quillRef.current, options);
 
 
+
+
       // Matcher modificado para imágenes
       editorRef.current.clipboard.addMatcher('IMG', (node: Node) => {
         if (node.nodeType === 1) { // Solo elementos HTML
@@ -140,7 +144,7 @@ export default function Guidance({ saveData, value, id }: {
         editorRef.current.root.innerHTML = value; // Forzar actualización visual
       }
 
-      
+
       editorRef.current.on('text-change', () => {
         const content = editorRef.current?.root.innerHTML || '';
         saveData(id, content);
@@ -180,9 +184,12 @@ export default function Guidance({ saveData, value, id }: {
   }, [value]);
 
   return <>
-    <div className="flex justify-center w-full grow relative">
-      <CustomToolbar name={toolbarId} clean={true} />
-    </div>
+    {
+      !readonly &&
+      <div className="flex justify-center w-full grow relative">
+        <CustomToolbar name={toolbarId} clean={true} />
+      </div>
+    }
     <div className="quill-editor-container" ref={containerRef} onPaste={(e) => e.stopPropagation()} >
       <div className="collapse-editor" ref={quillRef} style={{ height: "200px" }} />
     </div>

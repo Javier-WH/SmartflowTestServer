@@ -20,7 +20,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     const navigate = useNavigate();
     const handleClick = (id: string) => {
         if (pageType === 'quill') {
-            navigate(`/textEditor/${id}`);
+            navigate(`/textEditor/${id}`, { state: { readOnly: !memberRoll.write } });
             return;
         }
         navigate(`/page/${id}`);

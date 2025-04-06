@@ -34,6 +34,7 @@ interface ItemProps {
     onCollapseChange: (id: string) => void;
     onNextItem: (id: string) => void;
     activeItemId: string | null;
+    readonly: boolean;
   };
 }
 
@@ -64,6 +65,7 @@ class Item extends React.Component<ItemProps> {
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span className="item-index">{item.index + 1}</span>
                   <Input
+                    readOnly={commonProps.readonly}
                     placeholder={`What's the ${item.index === 0 ? "first" : "next"} step?`}
                     value={item.text}
                     onClick={(e) => e.stopPropagation()}
@@ -83,17 +85,19 @@ class Item extends React.Component<ItemProps> {
               ),
               children: (
                 <>
-                  <Guidance saveData={commonProps.onGuidandeChange} value={item.guidande} id={item.id} />
+                  <Guidance saveData={commonProps.onGuidandeChange} value={item.guidande} id={item.id} readonly={commonProps.readonly} />
                   <Button className="collapse-next-button" onClick={() => commonProps.onNextItem(item.id)}>Next</Button>
                 </>
               )
             }
           ]}
         />
-
-        <div className="drag-handle" {...dragHandleProps}>
-          <GoGrabber />
-        </div>
+        {
+          !commonProps.readonly &&
+          <div className="drag-handle" {...dragHandleProps}>
+            <GoGrabber />
+          </div>
+        }
       </div>
     );
   }
@@ -103,7 +107,7 @@ class Item extends React.Component<ItemProps> {
 
 
 // eslint-disable-next-line react-refresh/only-export-components
-const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string }) => {
+const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?: string; readonly?: boolean }) => {
   const [internalTitle, setInternalTitle] = useState(title || '');
   const [list, setList] = useState<ListItem[]>([]);
   const componentRef = useRef<HTMLElement>();
@@ -231,6 +235,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
       );
     },
     onGuidandeChange: (id: string, guidande: string) => {
+      if (readonly) return;
       setList(currentList =>
         currentList.map(item =>
           item.id === id ? { ...item, guidande } : item
@@ -238,11 +243,13 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
       );
     },
     onDeleteItem: (id: string) => {
+      if (readonly) return;
       setList(currentList =>
         currentList.filter(item => item.id !== id)
       );
     },
     onAddItem: (id: string) => {
+      if (readonly) return;
       setList(currentList => {
         const index = currentList.findIndex(item => item.id === id);
         const newItem = {
@@ -267,12 +274,13 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
       if (currentIndex < list.length - 1) {
         const nextItemId = list[currentIndex + 1].id;
         setActiveItemId(nextItemId);
-      }else{
+      } else {
         setActiveItemId(null);
         setIsCollapsed(true);
       }
     },
     activeItemId,
+    readonly
   };
 
   const setChecket = (index: number) => {
@@ -289,6 +297,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
     }}>
       <div style={{ display: "grid", gridTemplateColumns: "1fr auto", alignItems: "center" }}>
         <Input
+          readOnly={readonly}
           className="title-input"
           value={internalTitle}
           onChange={(e) => setInternalTitle(e.target.value)}
@@ -296,11 +305,11 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
           onPaste={(e) => e.stopPropagation()}
         />
         <div style={{ cursor: "pointer" }} onClick={() => {
-            if(isCollapsed && list.length > 0){
-              setActiveItemId(list[0].id)
-            }
-            setIsCollapsed(!isCollapsed)
-          }}>
+          if (isCollapsed && list.length > 0) {
+            setActiveItemId(list[0].id)
+          }
+          setIsCollapsed(!isCollapsed)
+        }}>
           <BiCollapseVertical />
         </div>
       </div>
@@ -309,10 +318,10 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
           ? <div className="collapse-list-icon" style={{ display: "flex", gap: "5px" }}>
             {
               list.map((_item, index) => {
-                return <div className={checkedItems[index] ? "collapse-list-icon-true" : "collapse-list-icon-false" }>
+                return <div className={checkedItems[index] ? "collapse-list-icon-true" : "collapse-list-icon-false"}>
                   <FaCheckCircle />
                 </div>
-            })
+              })
             }
           </div>
           : <div>
@@ -326,10 +335,12 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
                 commonProps={commonProps}
               />
             </div>
-
-            <Button className="add-item-button" contentEditable={false} onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)}>
-              +
-            </Button>
+            {
+              !readonly &&
+              <Button className="add-item-button" contentEditable={false} onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)}>
+                +
+              </Button>
+            }
           </div>
       }
     </div>
@@ -340,6 +351,7 @@ const GuidedCheckListWC = ({ title, items }: { title?: string; items?: string })
 customElements.define('guided-checklist', reactToWebComponent(GuidedCheckListWC, React, ReactDOM, {
   props: {
     title: 'string',
-    items: 'string'
+    items: 'string',
+    readonly: 'boolean'
   }
 }));
