@@ -46,9 +46,8 @@ Quill.register(Font, true);
 export default function TextEditor() {
     const { id } = useParams();
     const location = useLocation();
-    const readOnly = location.state.readOnly;
-
-    const navigate = useNavigate();
+    let readOnly = location?.state?.readOnly;
+    if(readOnly === undefined) readOnly = false;
 
     const { setInPage } = useContext(MainContext) as MainContextValues;
     const [contenido, setContenido] = useState('');
@@ -59,7 +58,7 @@ export default function TextEditor() {
     const { updateFileContent, getFileContent } = useFilesManager();
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
-
+    const navigate = useNavigate();
 
 
 

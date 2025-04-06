@@ -30,17 +30,21 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [organizationId, setOrganizationId] = useState<string>('');
   const { memberRoll } = useRoll({userId: user?.id ?? '', organizationId: organizationId ?? ''});
 
+  console.log(organizationId);
   //get organization name
   useEffect(() => {
     if (!slug) return;
     getOrganizationBasicData(slug)
       .then(res => {
+    
         setOrganizationId(res?.data[0]?.id ?? '');
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        setOrganizationId('');
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug])
-
 
 
   const values: MainContextValues = {

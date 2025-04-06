@@ -44,8 +44,14 @@ export default function useRoll({userId, organizationId}: {userId: string, organ
   }
 
   useEffect(() => {
-    getRoll()
-  }, [userId, organizationId])
+    //console.log("Ejecutando useRoll con:", { userId, organizationId })
+    // Solo ejecutamos si tenemos userId y organizationId válidos
+    if (!userId || !organizationId) {
+      setMemberRoll(null);
+      return;
+    }
+    getRoll();
+  }, [userId, organizationId]);
 
   return { memberRoll }
 }
