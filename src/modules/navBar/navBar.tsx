@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { type MenuProps, message, Button } from 'antd';
 import useAuth from '@/modules/auth/hooks/useAuth';
 import Logo from '../../assets/svg/logo.svg';
@@ -12,16 +13,19 @@ import './navBar.css';
 import { useContext, useEffect, useState } from 'react';
 import useGetOrganizationData from './hooks/useOrganizationData';
 
+
 import type { Folder } from '../folderNavigator/types/folder';
 
 export default function NavBar() {
-    const { signOut } = useAuth();
+    const { signOut} = useAuth();
     const navigate = useNavigate();
-    const { inPage, setNewFolderRequest } = useContext(MainContext) as MainContextValues;
+    const { inPage, setNewFolderRequest, memberRoll } = useContext(MainContext) as MainContextValues;
     const { createFile } = useFilesManager();
     const { organization_id: slug } = useParams();
     const {getOrganizationBasicData} = useGetOrganizationData();
     const [organizationName, setOrganizationName] = useState<string>('');
+
+
 
     //get organization name
     useEffect(() => {
@@ -68,6 +72,10 @@ export default function NavBar() {
 
 
     const handleCreatePage = () => {
+        if (!memberRoll?.write) {
+            message.error('You do not have permission to create a page');
+            return
+        }
         if (!slug) {
             message.error('Cant find organization');
             return
@@ -88,6 +96,10 @@ export default function NavBar() {
     };
 
     const handleCreateFolder = () => {
+        if (!memberRoll?.write) {
+            message.error('You do not have permission to create a folder');
+            return
+        }
         const newFolder: Folder = {
             name: '',
             container: '7a89a4e6-b484-4a5b-bf94-5277cb45ae9x',

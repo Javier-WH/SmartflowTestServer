@@ -13,8 +13,8 @@ import useFilesManager from '../hooks/useFileManager';
 const pageType = import.meta.env.VITE_PAGE_TYPE;
 
 export function FileComponent({ file }: { file: ContainerElement }) {
-    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest, setFileCountUpdateRequest } = useContext(
-        FolderNavigatorContext,
+    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest, setFileCountUpdateRequest, memberRoll } = useContext(
+        FolderNavigatorContext, 
     ) as FolderNavigatorContextValues;
     const { moveFileToRoot } = useFilesManager();
     const navigate = useNavigate();
@@ -32,6 +32,10 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     };
 
     const handleDelete = async () => {
+        if (!memberRoll.delete) {
+            message.error('You do not have permission to delete a file');
+            return
+        }
         const newFile: File = {
             id: file.id,
             name: file.name,
@@ -41,6 +45,10 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     };
 
     const handleMoveToRoot = async () => {
+        if (!memberRoll.write) {
+            message.error('You do not have permission to move a file');
+            return
+        }
         if (!file.id) return;
         const request = await moveFileToRoot(file.id);
         if (request.error) {

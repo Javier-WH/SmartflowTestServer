@@ -11,11 +11,12 @@ import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MdFolder } from 'react-icons/md';
+
 import './folderContainer.css';
 
 export function FolderComponent({ folder, containerid }: { folder: ContainerElement; containerid: string | null }) {
     const { setModalFolder, setModalDeleteFolder, setUpdateFolderRequest, groupDataByContainer, fileCountUpdateRequest,
-        setFileCountUpdateRequest } = useContext(
+        setFileCountUpdateRequest, memberRoll } = useContext(
             FolderNavigatorContext,
         ) as FolderNavigatorContextValues;
 
@@ -25,6 +26,8 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     const [contentId, setContentId] = useState<string | null>(null);
     const { organization_id: slug } = useParams();
     const [filesCount, setFilesCount] = useState<string | number>('0');
+
+
 
 
     // updates the number of files when a file is moved
@@ -54,6 +57,10 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     };
 
     const handleCreateOrUpdateFolder = (update = false) => {
+        if (!memberRoll.write){
+            message.error('You do not have permission to create or update a folder');
+            return
+        }
         const container = update ? (containerid ?? undefined) : folder.id;
         const newFolder: Folder = {
             id: folder.id,
@@ -64,6 +71,10 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     };
 
     const handleDeleteFolder = () => {
+        if(!memberRoll.delete){
+            message.error('You do not have permission to delete a folder');
+            return
+        }
         const container = containerid ?? undefined;
         const newFolder: Folder = {
             id: folder.id,
@@ -74,6 +85,10 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     };
 
     const handleCreateFile = () => {
+        if (!memberRoll.write) {
+            message.error('You do not have permission to create a page');
+            return
+        }
         if (!slug) {
             message.error('Cant find organization');
             return;
@@ -96,6 +111,10 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     //d43ab1e4-3d79-4ab4-ac90-a8f04d0cee6f
 
     const handleMoveToRoot = async () => {
+        if (!memberRoll.write) {
+            message.error('You do not have permission to move a folder');
+            return
+        }
         const request = await moveFolderToRoot(folder.id);
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
@@ -156,6 +175,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
 
     const handleDrop = async (event: React.DragEvent<HTMLDivElement>, targetItemId: string, targetType: number) => {
         event.preventDefault();
+    
         const target = event.target as HTMLDivElement;
         // styles for drag and drop
         if (target.classList.contains('folder')) {
@@ -170,6 +190,11 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
         setUpdateFolderRequest(null);
 
         const requestFunction = draggedItemType === 0 ? moveFile : moveFolder;
+
+        if (!memberRoll.write) {
+            message.error(`You do not have permission to move a ${draggedItemType === 0 ? 'file' : 'folder'}`);
+            return
+        }
 
         const request = await requestFunction(draggedItemId, targetItemId);
         if (request.error) {

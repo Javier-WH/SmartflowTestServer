@@ -8,10 +8,15 @@ import { File } from '../types/file';
 import { MainContext, MainContextValues } from '@/modules/mainContext';
 import groupDataByContainer from './utils/groupDataByContainer';
 
+
+
 export const FolderNavigatorContext = createContext<FolderNavigatorContextValues | null>(null);
 
 export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { newFolderRequest, setNewFolderRequest, updateFolderRequestFromMain } = useContext(
+
+
+
+    const { newFolderRequest, setNewFolderRequest, updateFolderRequestFromMain, memberRoll } = useContext(
         MainContext,
     ) as MainContextValues;
     const [Loading, setLoading] = useState<string | null>(null);
@@ -20,6 +25,7 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
     const [updateFolderRequest, setUpdateFolderRequest] = useState<FolderResquest | null>(null);
     const [modalDeleteFile, setModalDeleteFile] = useState<File | null>(null);
     const [fileCountUpdateRequest, setFileCountUpdateRequest] = useState<boolean>(false);
+    
 
     useEffect(() => {
         setUpdateFolderRequest(updateFolderRequestFromMain);
@@ -49,7 +55,8 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
         modalDeleteFile,
         setModalDeleteFile,
         fileCountUpdateRequest, 
-        setFileCountUpdateRequest
+        setFileCountUpdateRequest,
+        memberRoll
     };
 
     return (
