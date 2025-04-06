@@ -39,7 +39,7 @@ export interface MemberRoll {
 
 export default function Menbers() {
   const { slug } = useParams();
-  const { signOut, user } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { getOrganizationMembers, getUserRolls, inviteUserToOrganization } = useOrganizations();
   const { getOrganizationBasicData } = useGetOrganizationData();
@@ -61,7 +61,7 @@ export default function Menbers() {
     setLoading(!organization && !members);
   }, [organization, members]);
 
-  useEffect(()=> {
+  useEffect(() => {
     getUserRolls()
       .then(res => {
         if (res.error) {
@@ -115,14 +115,14 @@ export default function Menbers() {
 
   const handleEditMember = (member: Member) => {
 
-    if(organization?.user_id !== user?.id) {
+    if (organization?.user_id !== user?.id) {
       message.error('You are not the owner of this organization');
       return;
     }
 
     cleanMembers();
     setMemberToEdit(member);
- 
+
   }
 
   const handleDeleteMember = (member: Member) => {
@@ -202,36 +202,37 @@ export default function Menbers() {
       isInviting={isInviting}
       inviteError={inviteError}
     />
-    <EditMemberModal organization={organization}  rolls={rolls} member={memberToEdit} setMember={setMemberToEdit} key={memberToEdit?.userid || 'modal'} />
+    <EditMemberModal organization={organization} rolls={rolls} member={memberToEdit} setMember={setMemberToEdit} key={memberToEdit?.userid || 'modal'} />
     <DeleteMemberModal organization={organization} member={memberToDelete} setMember={setMemberToDelete} key={memberToDelete?.userid || 'modal'} />
     <header className="w-full flex justify-between items-center px-8 bg-white py-4 fixed top-0">
       <Button color="primary" onClick={() => navigate(-1)}>
         <IoMdArrowRoundBack />
       </Button>
-      <Button color="primary" onClick={signOut}>
-        Close session
-      </Button>
+
     </header>
     {
-      loading 
-      ? <div className="flex justify-center items-center h-screen">Loading...</div> 
-      :<section className="py-8 max-w-7xl mx-auto mt-16">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-semibold">{organization?.name}</h1>
-          <Button color="primary" onClick={() => setInviteUserOpen(true)}> Invite user</Button>
-        </div>
-        <Input
-          className='max-w-[900px]'
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          label="Search members"
-          placeholder="Search by email"
-        />
-        <div className="flex flex-col gap-1">
-          {
-            filteredMembers.map((member) => (
-              <div key={member.userid}
-                className="
+      loading
+        ? <div className="flex justify-center items-center h-screen">Loading...</div>
+        : <section className="py-8 max-w-7xl mx-auto mt-16">
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-2xl font-semibold">{organization?.name}</h1>
+            {
+              organization?.user_id === user?.id &&
+              <Button color="primary" onClick={() => { setInviteUserOpen(true) }}> Invite user</Button>
+            }
+          </div>
+          <Input
+            className='max-w-[900px]'
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            label="Search members"
+            placeholder="Search by email"
+          />
+          <div className="flex flex-col gap-1">
+            {
+              filteredMembers.map((member) => (
+                <div key={member.userid}
+                  className="
                   flex items-center 
                   justify-between 
                   max-w-[900px]
@@ -240,40 +241,40 @@ export default function Menbers() {
                   bg-white
                   shadow-sm
                   p-3"
-              >
-                <div className="flex items-center">
-                  <ImUser className="w-10 h-10 rounded-full mr-4" />
-                  <div>
-                    <h2 className="text-lg font-semibold">{member.useremail}</h2>
-                    <p className="text-gray-500">{member.rollname}</p>
+                >
+                  <div className="flex items-center">
+                    <ImUser className="w-10 h-10 rounded-full mr-4" />
+                    <div>
+                      <h2 className="text-lg font-semibold">{member.useremail}</h2>
+                      <p className="text-gray-500">{member.rollname}</p>
+                    </div>
                   </div>
-                </div>
-  
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button
+
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        variant="light"
+                        aria-label="Menú de opciones"
+                      >
+                        <CiMenuKebab />
+                      </Button>
+                    </DropdownTrigger>
+
+                    <DropdownMenu
+                      aria-label="Acciones del menú"
                       variant="light"
-                      aria-label="Menú de opciones"
                     >
-                      <CiMenuKebab />
-                    </Button>
-                  </DropdownTrigger>
-
-                  <DropdownMenu
-                    aria-label="Acciones del menú"
-                    variant="light"
-                  >
-                    <DropdownItem key="edit" onClick={() => handleEditMember(member)}>Edit roll</DropdownItem>
-                    <DropdownItem key="delete" onClick={() => handleDeleteMember(member)}>Delete member</DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </div>
-            ))
-          }
-        </div>
+                      <DropdownItem key="edit" onClick={() => handleEditMember(member)}>Edit roll</DropdownItem>
+                      <DropdownItem key="delete" onClick={() => handleDeleteMember(member)}>Delete member</DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </div>
+              ))
+            }
+          </div>
 
 
-      </section>
+        </section>
     }
   </>
 }
