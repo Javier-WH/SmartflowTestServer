@@ -12,7 +12,7 @@ import { useContext } from "react";
 
 export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInterface[], word: string, closeBox: () => void }) {
 
-  const {setUpdateFolderRequestFromMain} = useContext(MainContext) as MainContextValues
+  const { memberRoll } = useContext(MainContext) as MainContextValues
   const { getHierarchyFolderContent } = useFolderManager()
   const hasResults = data.length > 0 && word.length > 0;
   const { organization_id: slug } = useParams();
@@ -47,6 +47,13 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
     if (type === 1) {
       const pageType = import.meta.env.VITE_PAGE_TYPE;
       if (pageType === "quill") {
+  
+         if (memberRoll) {
+           navigate(`/textEditor/${id}`, { state: { readOnly: !memberRoll.write } });
+         } else {
+           message.error("Member roll data is unavailable.");
+         }
+      
         navigate(`/textEditor/${id}`);
       } else {
         navigate(`/page/${id}`);
