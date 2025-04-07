@@ -47,14 +47,15 @@ export default function SearchBox({ data, word, closeBox }: { data: SearchBoxInt
     if (type === 1) {
       const pageType = import.meta.env.VITE_PAGE_TYPE;
       if (pageType === "quill") {
-  
+        console.log(memberRoll)
          if (memberRoll) {
            navigate(`/textEditor/${id}`, { state: { readOnly: !memberRoll.write } });
+           return
          } else {
            message.error("Member roll data is unavailable.");
          }
       
-        navigate(`/textEditor/${id}`);
+        //navigate(`/textEditor/${id}`);
       } else {
         navigate(`/page/${id}`);
       }
