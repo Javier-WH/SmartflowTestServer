@@ -245,14 +245,15 @@ export default function useOrganizations(user_id?: string, search?: string) {
             .from('organizations')
             .select('*')
             .eq('id', organizationId)
-            .eq('user_id', inviterUserId)
+            //.eq('user_id', inviterUserId)
             .single();
 
-
+ 
         if (orgResponse.error) {
             return {
                 error: true,
-                message: 'You do not have permission to invite users to this organization',
+                //message: 'You do not have permission to invite users to this organization',
+                message: 'Organization not found',
                 data: null,
             };
         }

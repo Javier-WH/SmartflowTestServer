@@ -3,7 +3,7 @@ import useAuth from '../auth/hooks/useAuth';
 import useOrganizations from '../organizations/hook/useOrganizations';
 import { useNavigate, useParams } from 'react-router-dom';
 import useGetOrganizationData from '../navBar/hooks/useOrganizationData';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext} from 'react';
 import { Button, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@nextui-org/react';
 import { message } from 'antd';
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -12,6 +12,7 @@ import { CiMenuKebab } from "react-icons/ci";
 import EditMemberModal from './editMemberModal';
 import DeleteMemberModal from './deleteMemberModal';
 import InviteUserModal from '../organizations/components/InviteUserModal'
+import { MainContext, MainContextValues } from '../mainContext';
 
 
 export interface Org {
@@ -38,6 +39,7 @@ export interface MemberRoll {
 }
 
 export default function Menbers() {
+  const { memberRoll } = useContext(MainContext) as MainContextValues
   const { slug } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -113,8 +115,8 @@ export default function Menbers() {
   }
 
   const handleEditMember = (member: Member) => {
-    if (organization?.user_id !== user?.id) {
-      message.error('You are not the owner of this organization');
+      if (organization?.user_id !== user?.id && !memberRoll?.invite) {
+      message.error('You do not have permission to invite members');
       return;
     }
 
@@ -124,8 +126,8 @@ export default function Menbers() {
   }
 
   const handleDeleteMember = (member: Member) => {
-    if (organization?.user_id !== user?.id) {
-      message.error('You are not the owner of this organization');
+    if (organization?.user_id !== user?.id && !memberRoll?.invite) {
+      message.error('You do not have permission to invite members');
       return;
     }
     cleanMembers();
@@ -138,8 +140,8 @@ export default function Menbers() {
   const handleInviteUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (organization?.user_id !== user?.id) {
-      message.error('You are not the owner of this organization');
+    if (organization?.user_id !== user?.id && !memberRoll?.invite) {
+      message.error('You do not have permission to invite members');
       return;
     }
 
@@ -215,7 +217,7 @@ export default function Menbers() {
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-2xl font-semibold">{organization?.name}</h1>
             {
-              organization?.user_id === user?.id &&
+              (organization?.user_id === user?.id || memberRoll?.invite)  &&
               <Button color="primary" onClick={() => { setInviteUserOpen(true) }}> Invite user</Button>
             }
           </div>

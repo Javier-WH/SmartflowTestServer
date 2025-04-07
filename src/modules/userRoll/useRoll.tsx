@@ -8,6 +8,7 @@ export interface MemberRolltype {
   read: boolean;
   write: boolean;
   delete: boolean;
+  invite: boolean;
 }
 export default function useRoll({userId, organizationId}: {userId: string, organizationId: string}) {
 
@@ -22,7 +23,8 @@ export default function useRoll({userId, organizationId}: {userId: string, organ
               level,
               read,
               write,
-              delete
+              delete,
+              invite
             )
       `)
       .eq('user_id', userId)
