@@ -126,6 +126,10 @@ export default function Menbers() {
   }
 
   const handleDeleteMember = (member: Member) => {
+    if (organization?.user_id === member.userid) {
+      message.error('You can not delete yourself');
+      return;
+    }
     if (organization?.user_id !== user?.id && !memberRoll?.invite) {
       message.error('You do not have permission to invite members');
       return;

@@ -30,7 +30,7 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [organizationId, setOrganizationId] = useState<string>('');
   const { memberRoll } = useRoll({userId: user?.id ?? '', organizationId: organizationId ?? ''});
 
-  console.log({ organization_id, slug});
+
   //get organization name
   useEffect(() => {
     if (!organization_id && !slug) return;
