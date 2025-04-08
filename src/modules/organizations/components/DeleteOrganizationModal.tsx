@@ -1,12 +1,5 @@
-import {
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-} from '@nextui-org/react';
-import type { Organization } from '../types/organization';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@nextui-org/react';
+import type { Organization } from '../types/organizations';
 
 interface DeleteOrganizationModalProps {
     isOpen: boolean;
