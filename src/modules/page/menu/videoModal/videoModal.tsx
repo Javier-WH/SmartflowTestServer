@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { Button, Modal, Input, Popover } from 'antd';
 import addVideoIcon from '../assets/svg/addVideoIcon.svg';
-import type { PageContext, PageContextValues } from '../../page';
+import { PageContext, type PageContextValues } from '../../page';
 import { v4 as uuidv4 } from 'uuid';
 import { Mode, PageType } from '../../types/pageEnums';
 import type { PageItem } from '../../types/pageTypes';
@@ -72,4 +72,3 @@ const VideoModal: React.FC = () => {
 };
 
 export default VideoModal;
-
