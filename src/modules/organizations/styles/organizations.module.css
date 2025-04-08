@@ -1,0 +1,70 @@
+.organizationContainer {
+  height: calc(100vh - var(--navBarHeight));
+  background-color: white;
+}
+
+.actions{
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  justify-content: space-evenly;
+  max-width: 100px;
+}
+
+.actions div {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.actions div:hover{
+ scale: 1.6;
+}
+
+.editIcon:hover {
+  fill: rgb(0, 26, 255);
+}
+.deleteIcon:hover {
+  fill: red;
+}
+.joinIcon:hover {
+  fill: rgb(10, 199, 35);
+}
+
+.pagination{
+  direction: ltr !important;
+}
+.searchContainer{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  column-gap: 15px;
+  padding-top: 20px;
+  padding-left: 10px;
+
+}
+
+.searchContainer input{ 
+  direction: ltr !important;
+  
+}
+
+
+.searchContainer div {
+  position: relative;
+  display: flex;
+  justify-content: start;
+  column-gap: 5px;
+}
+.searchContainer div button{
+  background-color: var(--mainColor) !important;
+  color: white !important;
+
+  
+}
+
+.searchContainer div h5 {
+  position: absolute;
+  left: 0px;
+  top: -50%;
+  font-size: 12px;
+  color: gray;
+}

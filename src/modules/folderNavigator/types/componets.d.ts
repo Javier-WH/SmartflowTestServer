@@ -6,5 +6,6 @@ export interface ContainerElement {
   container: string | null;
   content?: string;
   published?: boolean;
+  filesnumber?: string;
 }
 

@@ -1,0 +1,136 @@
+.disable-select {
+  user-select: none;
+}
+
+.drag-handle {
+  cursor: grab;
+  position: absolute;
+  left: -25px;
+  top: 35%;
+}
+
+.guided-checklist {
+  background: hsla(209, 34%, 30%, 3%);
+  padding: 10px;
+  padding-left: 30px;
+  width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.title-input {
+  outline: none !important;
+  border: none !important;
+  background: transparent !important;
+  font-size: 1.2rem !important;
+  margin-bottom: 16px;
+}
+.title-input:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.ant-collapse {
+  width: 100%;
+  background-color: white;
+}
+/*input title*/
+.ant-collapse-header .ant-input{
+  background-color: transparent;
+  border: none;
+  width: 100%;
+}
+
+.ant-collapse-header .ant-input:focus {
+  box-shadow: none !important;
+}
+
+/*content*/
+.ant-collapse-content-box .ant-input{
+  background-color: transparent;
+  border: none;
+}
+
+.ant-collapse-content-box .ant-input:focus {
+  box-shadow: none !important;
+}
+
+.add-item-button {
+ width: 100%;
+ background-color: transparent;
+ border: none;
+ font-size: 18px;
+ color: gray;
+}
+/**/
+.item-index {
+  background: hsla(209, 23%, 60%, 70%);
+  color: white;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.collapse-next-button{
+  color: white;
+  border: none;
+  background: hsla(205, 76%, 39%);
+}
+
+.collapse-next-button:hover {
+  color: white !important;
+  border: none;
+  background: rgb(60, 143, 202) !important;
+}
+
+.guided-checklist *:not(input):not(textarea) {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.drag-handle {
+  scale: 1.5;
+}
+
+/**/
+
+/* Eliminar TODOS los números de las listas */
+.collapse-editor .ql-editor ol {
+  list-style-type: none !important;
+  counter-reset: none !important;
+  padding-left: 1.5em;
+}
+
+/* Eliminar pseudo-elementos numéricos generados por Quill */
+.collapse-editor .ql-editor li::before {
+  content: none !important;
+}
+
+/* Viñetas personalizadas para listas normales */
+.collapse-editor .ql-editor ol[data-list="bullet"] li {
+  position: relative;
+}
+
+.collapse-editor .ql-editor ol[data-list="bullet"] li::before {
+  content: "•";
+  position: absolute;
+  left: -1.3em;
+  color: #333;
+}
+
+/* Checks personalizados */
+.collapse-editor .ql-editor ol[data-list="check"] li::before {
+  content: "☐ ";
+  margin-right: 0.5em;
+}
+
+
+
+
+
+
