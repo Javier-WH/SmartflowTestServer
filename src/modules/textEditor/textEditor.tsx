@@ -47,7 +47,7 @@ export default function TextEditor() {
     const { id } = useParams();
     const location = useLocation();
     let readOnly = location?.state?.readOnly;
-    if(readOnly === undefined) readOnly = false;
+    if (readOnly === undefined) readOnly = false;
 
     const { setInPage } = useContext(MainContext) as MainContextValues;
     const [contenido, setContenido] = useState('');
@@ -126,7 +126,7 @@ export default function TextEditor() {
 
     // if a content in database is found, when the page is loaded, the content is loaded
     useEffect(() => {
-        
+
         if (id) {
             setAbleToSave(false);
             getFileContent(id)
@@ -162,7 +162,7 @@ export default function TextEditor() {
                 });
         },
         500,
-        { leading: false, trailing: true } 
+        { leading: false, trailing: true }
     );
 
     // this useEffect is to update the dataBase
@@ -203,7 +203,7 @@ export default function TextEditor() {
             // Set the cursor at the start
             editor.focus();
             editor.setSelection(0, 0);
-          
+
         }
     };
 
@@ -234,7 +234,7 @@ export default function TextEditor() {
         if (readOnly) return
         const activeElement = document.activeElement;
         const editorRoot = quillRef.current?.getEditor().root;
-        const toolbarContainer = document.getElementById('toolbar-guided-checklist'); 
+        const toolbarContainer = document.getElementById('toolbar-guided-checklist');
 
         const isToolbarElement = toolbarContainer?.contains(activeElement);
 
@@ -282,7 +282,7 @@ export default function TextEditor() {
         }
     };
 
-  
+
     // add paste event listener
     useEffect(() => {
         if (quillRef.current) {
@@ -295,15 +295,52 @@ export default function TextEditor() {
         }
     }, []);
 
+    useEffect(() => {
+        const editor = quillRef.current?.getEditor();
+        if (!editor) return;
 
+        const editorContainer = editor.root;
+        const resizeModule = editor.getModule('resize');
+
+        const handleScroll = () => {
+            const resizer = document.getElementById('editor-resizer');
+            // Usar 'resizeModule.img' si está disponible, de lo contrario buscar imágenes seleccionadas
+            const activeImage = resizeModule?.img || editorContainer.querySelector('img.ql-image-resizing');
+
+            if (resizer && activeImage) {
+                const imageRect = activeImage.getBoundingClientRect();
+                resizer.style.top = `${imageRect.top}px`;
+                resizer.style.left = `${imageRect.left}px`;
+                resizer.style.width = `${imageRect.width}px`;
+                resizer.style.height = `${imageRect.height}px`;
+            }
+        };
+
+        editorContainer.addEventListener('scroll', handleScroll);
+        return () => editorContainer.removeEventListener('scroll', handleScroll);
+    }, []);
+
+
+
+
+    //ql-tooltip
+    const onScroll = () => {
+        const resizer = document.getElementById('editor-resizer') as HTMLDivElement;
+        if (!resizer) return
+        const data = document.getElementsByClassName('ql-tooltip')[0] as HTMLDivElement;
+        const marginTop = data.style.marginTop.replace('px', '')
+        const resizerTop = resizer.style.top.replace('px', '')
+        resizer.style.top = `${Number(marginTop) + Number(resizerTop)}px`
+        console.log({resizerTop, marginTop})
+    }
 
     return (
-        <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white">
-            <div className="flex flex-col h-full w-full max-w-3xl">
-                <div className="mt-8">
-                    <div className="flex items-center">
-                        <button type="button" style={styles.homeButton} 
-                            onClick={() => navigate(-1)} 
+        <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white"  >
+            <div className="flex flex-col h-full w-full max-w-3xl" >
+                <div className="mt-8" >
+                    <div className="flex items-center" >
+                        <button type="button" style={styles.homeButton}
+                            onClick={() => navigate(-1)}
                         >
                             <img src={homeIcon} alt="" /> {'>'}
                         </button>
@@ -329,10 +366,19 @@ export default function TextEditor() {
                     />
                 </div>
 
-                <div className="flex flex-col grow bg-white">
+                <div 
+                    style={{
+                        border: '1px solid #ccc',
+                        height: 'calc(100vh - 210px)',
+                        marginBottom: '70px'
+                    }}
+                    onScrollCapture={onScroll}
+                >
+                    {/*</div><div className="flex flex-col grow bg-white">*/}
                     <div className="flex justify-center w-full grow relative">
                         <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
                     </div>
+
 
                     <ReactQuill
                         {...(readOnly && { readOnly: true })}
@@ -345,7 +391,10 @@ export default function TextEditor() {
                         placeholder=""
                         className="h-full"
                         onChangeSelection={handleChangeSelection}
+                        
                     />
+
+
 
                 </div>
 
