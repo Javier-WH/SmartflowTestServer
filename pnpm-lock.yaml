@@ -44,6 +44,9 @@ importers:
       quill:
         specifier: ^2.0.3
         version: 2.0.3
+      quill-delta:
+        specifier: ^5.1.0
+        version: 5.1.0
       quill-image-resize-module-react:
         specifier: ^3.0.0
         version: 3.0.0
