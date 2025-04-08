@@ -5,8 +5,9 @@
 *{
     direction: ltr
 }
-#root, html, body{
+#root, html, body {
     height: 100%;
+    width: 100%;
     padding:0;
     margin:0;
     background-color: #F0F0F0;
@@ -40,4 +41,11 @@ nav > * {
     border-style: solid;
 }
 
+.ant-pagination-item-link{
+    rotate: 180deg;
+}
+
+.ant-input-number{
+    width: 100% !important;
+}
 

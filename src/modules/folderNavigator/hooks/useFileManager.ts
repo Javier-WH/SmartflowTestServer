@@ -2,7 +2,7 @@ import supabase from '../../../lib/supabase';
 import { FileResponse } from "../types/file"
 import errorManager from '../errorManager/fileErrorManager';
 import { PageItem } from '@/modules/page/types/pageTypes';
-
+const pageType = import.meta.env.VITE_PAGE_TYPE;
 
 const getFiles = async (container: string | null): Promise<FileResponse> => {
   const response = await supabase
@@ -15,8 +15,9 @@ const getFiles = async (container: string | null): Promise<FileResponse> => {
 }
 
 const moveFile = async (fileId: string, newContainerId: string | null): Promise<FileResponse> => {
+  const functionName = pageType === 'quill' ? 'move_file_quill' : 'move_file';
   const { data, error } = await supabase
-    .rpc('move_file', {
+    .rpc(functionName, {
       p_file_id: fileId,
       p_new_container_id: newContainerId,
     });
@@ -29,11 +30,15 @@ const moveFile = async (fileId: string, newContainerId: string | null): Promise<
   }
 }
 
-const createFile = async (fileName: string, containerId: string | null = null): Promise<FileResponse> => {
+const createFile = async (fileName: string, containerId: string | null = null, slug: string): Promise<FileResponse> => {
+
+  const functionName = pageType === 'quill' ? 'create_file_quill' : 'create_file';
+
   const { data, error } = await supabase
-    .rpc('create_file', {
+    .rpc(functionName, {
       p_name: fileName,
       p_container: containerId,
+      p_slug: slug
     });
   if (error) {
     console.log(error);
@@ -44,9 +49,10 @@ const createFile = async (fileName: string, containerId: string | null = null): 
 }
 
 const getFileContent = async (fileId: string): Promise<FileResponse> => {
+  const tableName = pageType === 'quill' ? 'filesquill' : 'files';
   const response = await supabase
-    .from('files')
-    .select('content, name')
+    .from(tableName)
+    .select('content, name, updated_at')
     .eq('id', fileId)
     .single();
 
@@ -54,22 +60,28 @@ const getFileContent = async (fileId: string): Promise<FileResponse> => {
   return { error: false, message: 'content retrieved successfully', data: response.data };
 }
 
-const updateFileContent = async (fileId: string, content:PageItem[] , name: string): Promise<FileResponse> => {
+const updateFileContent = async (fileId: string, content:PageItem[] | string , name: string): Promise<FileResponse> => {
+  const tableName = pageType === 'quill' ? 'filesquill' : 'files';
+  if (name === '') name = 'untitled';
   const response = await supabase
-    .from('files')
+    .from(tableName)
     .update({ 
       name,
       content 
     })
-    .eq('id', fileId);
+    .eq('id', fileId)
+    .select('content, name, updated_at')
+    .single();
   if (response.error) return errorManager(response.error)
   return { error: false, message: 'content updated successfully', data: response.data };
 
 }
 
 const deleteFile = async (folderId: string): Promise<FileResponse> => {
+
+  const functionName = pageType === 'quill' ? 'borrar_archivo_quill' : 'borrar_archivo';
   const { data, error } = await supabase
-    .rpc('borrar_archivo', {
+    .rpc(functionName, {
       p_file_id: folderId
     })
     .select('*');
@@ -83,8 +95,9 @@ const deleteFile = async (folderId: string): Promise<FileResponse> => {
 }
 
 const moveFileToRoot = async (fileId: string | null): Promise<FileResponse> => {
+  const functionName = pageType === 'quill' ? 'move_file_to_root_quill' : 'move_file_to_root';
   const { data, error } = await supabase
-    .rpc('move_file_to_root', {
+    .rpc(functionName, {
       p_file_id: fileId
     });
 
@@ -93,6 +106,22 @@ const moveFileToRoot = async (fileId: string | null): Promise<FileResponse> => {
     return errorManager(error)
   } else {
     return { error: false, message: 'File moved to root successfully', data };
+  }
+}
+
+const searchFiles = async (text: string, slug: string): Promise<FileResponse> => {
+  const functionName = pageType === 'quill' ? 'partial_search_filesquill' : 'partial_search_files';
+  const { data, error } = await supabase
+    .rpc(functionName, {
+      search_term: text,
+      p_slug: slug
+    });
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Files found successfully', data };
   }
 }
 
@@ -106,6 +135,7 @@ export default function useFilesManager() {
     getFileContent,
     updateFileContent,
     deleteFile,
-    moveFileToRoot
+    moveFileToRoot,
+    searchFiles
   }
 }

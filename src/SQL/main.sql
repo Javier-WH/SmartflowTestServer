@@ -835,3 +835,171 @@ BEGIN
     WHERE NOT EXISTS (SELECT 1 FROM combined);
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- full text search quill
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+ALTER TABLE public.filesquill 
+ADD COLUMN searchable_text text GENERATED ALWAYS AS (
+  coalesce(name, '') || ' ' || coalesce(regexp_replace(content, '<[^>]+>', '', 'gi'), '')
+) STORED;
+
+CREATE INDEX idx_filesquill_trgm_search ON public.filesquill USING GIN (searchable_text gin_trgm_ops);
+
+CREATE OR REPLACE FUNCTION public.partial_search_filesquill(
+  search_term text
+)
+RETURNS TABLE (
+  id uuid,
+  name varchar,
+  content text,
+  container uuid,
+  created_at timestamptz,
+  updated_at timestamptz,
+  similarity_score float4
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    f.id,
+    f.name,
+    f.content,
+    f.container,
+    f.created_at,
+    f.updated_at,
+    similarity(f.searchable_text, search_term) AS similarity_score
+  FROM
+    public.filesquill f
+  WHERE
+    f.searchable_text ILIKE '%' || search_term || '%'
+  ORDER BY
+    similarity_score DESC,
+    f.updated_at DESC
+  LIMIT 100;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+
+
+-- jerarquia de carpetas
+
+DROP FUNCTION IF EXISTS getHierarchyFolderContent;
+CREATE OR REPLACE FUNCTION getHierarchyFolderContent(p_folder_id UUID)
+RETURNS TABLE (
+   id UUID,
+   name VARCHAR,
+   type INTEGER,
+   published BOOLEAN,
+   level INTEGER,
+   container UUID
+) AS $$
+DECLARE
+    curr_folder_id UUID;         -- Folder actual en el recorrido
+    parent_folder_id UUID;       -- Contenedor del folder actual
+    ancestors UUID[] := ARRAY[]::UUID[];  -- Acumula los id de los padres
+    i INT;
+    rev_array UUID[];            -- Arreglo invertido de ancestros
+BEGIN
+    -- Caso en que no se pasa un id: retornamos el contenido del root
+    IF p_folder_id IS NULL THEN
+        RETURN QUERY
+            SELECT r.id, 
+                   r.name, 
+                   r.type, 
+                   r.published, 
+                   0 AS level,
+                   NULL AS container
+            FROM (
+                  SELECT * FROM getRootContentQuill()
+            ) r;
+        RETURN;
+    END IF;
+    
+    -- Iniciar la búsqueda con la carpeta ingresada
+    curr_folder_id := p_folder_id;
+    
+    LOOP
+        SELECT f.container 
+          INTO parent_folder_id
+        FROM public.folders f
+        WHERE f.id = curr_folder_id;
+        
+        -- Si no hay contenedor, entonces se llegó al global root
+        IF parent_folder_id IS NULL THEN
+            EXIT;
+        END IF;
+        
+        ancestors := ancestors || parent_folder_id;
+        curr_folder_id := parent_folder_id;
+    END LOOP;
+    
+    -- Invertir el arreglo para que el primer elemento sea el de más alto nivel
+    rev_array := (
+        SELECT ARRAY(
+            SELECT t.x
+            FROM unnest(ancestors) WITH ORDINALITY AS t(x, ord)
+            ORDER BY t.ord DESC
+        )
+    );
+    
+    -- Si no hay ancestros, la carpeta es de primer nivel; se usa el contenido del root
+    IF rev_array IS NULL OR array_length(rev_array, 1) = 0 THEN
+        RETURN QUERY
+            SELECT r.id, 
+                   r.name, 
+                   r.type, 
+                   r.published, 
+                   0 AS level,
+                   NULL AS container
+            FROM getRootContentQuill() r;
+    ELSE
+        -- Por cada nivel de la jerarquía se obtiene su contenido
+        -- Se asigna level = (i-1) para que el nivel 0 corresponda al root
+        FOR i IN 1..array_length(rev_array, 1) LOOP
+            RETURN QUERY
+              SELECT r.id,
+                     r.name,
+                     r.type,
+                     r.published,
+                     (i - 1) AS level,
+                     CASE
+                       WHEN r.type = 1 THEN (SELECT f.container FROM public.folders f WHERE f.id = r.id)
+                       WHEN r.type = 0 THEN (SELECT a.container FROM public.filesquill a WHERE a.id = r.id)
+                     END AS container
+              FROM getfolderContentQuill(rev_array[i]) r;
+        END LOOP;
+    END IF;
+    
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;
+
+
+--get organization users
+
+GRANT USAGE ON SCHEMA auth TO authenticated;
+GRANT SELECT ON TABLE auth.users TO authenticated;
+
+CREATE OR REPLACE FUNCTION getMembers(a_organization_id uuid)
+RETURNS TABLE (
+    userId UUID,
+    userEmail varchar,
+    rollId UUID,
+    rollName varchar
+) AS $$
+BEGIN
+  RETURN QUERY
+    SELECT 
+      u.id as userId,
+      u.email as userEmail,
+      r.id as rollId,
+      r.level as rollName
+    FROM public.organizations_users ou
+    JOIN auth.users u ON ou.user_id = u.id
+    JOIN public.rolls r ON ou.roll_id = r.id
+    WHERE ou.organization_id = a_organization_id; 
+END;
+$$ LANGUAGE plpgsql
+SECURITY DEFINER;

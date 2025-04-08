@@ -175,6 +175,7 @@ export default function Page() {
               return <TextInputComponent item={item} key={item.id} />
             } else if (item.type === PageType.GuidedCheckList) {
               return <GuidedCheckList item={item} key={item.id} />
+              //console.log("GuidedCheckList is disabled for now")
             }
           })
         }
