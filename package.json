@@ -22,6 +22,7 @@
         "framer-motion": "11.1.7",
         "onscan.js": "1.5.2",
         "quill": "^2.0.3",
+        "quill-delta": "^5.1.0",
         "quill-image-resize-module-react": "^3.0.0",
         "quill-resize-image": "^1.0.5",
         "quill-table-ui": "^1.0.7",
