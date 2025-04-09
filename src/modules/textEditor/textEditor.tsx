@@ -31,7 +31,7 @@ Quill.register(CustomImage, true);
 Quill.register(CustomVideo, true);
 
 // register image resize module
-Quill.register('modules/resize', ResizeModule);
+//Quill.register('modules/resize', ResizeModule);
 
 // Register custom font sizes
 const Size = Quill.import('attributors/style/size');
@@ -59,6 +59,28 @@ export default function TextEditor() {
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
     const navigate = useNavigate();
+
+    const selectedImage = useRef<HTMLImageElement | null>(null);
+
+    useEffect(() => {
+
+        const setSelectedImage = (e: Event) => {
+        
+            const target = e.target as HTMLImageElement;
+            if (target.tagName === 'IMG') {
+                selectedImage.current = target;
+                return
+            }
+            selectedImage.current = null;
+
+        }
+
+        quillRef.current?.getEditor().root.addEventListener('click', setSelectedImage);
+
+        return () => {
+            quillRef.current?.getEditor().root.removeEventListener('click', setSelectedImage);
+        }
+    }, []);
 
 
 
@@ -218,7 +240,7 @@ export default function TextEditor() {
                 'guided-checklist': insertGuidedCheckList
             },
         },
-        resize: {
+        /*resize: {
             toolbar: {},
             locale: {
                 floatLeft: 'Left',
@@ -226,7 +248,7 @@ export default function TextEditor() {
                 center: 'Center',
                 restore: 'Restore',
             },
-        },
+        },*/
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
@@ -235,20 +257,25 @@ export default function TextEditor() {
         const activeElement = document.activeElement;
         const editorRoot = quillRef.current?.getEditor().root;
         const toolbarContainer = document.getElementById('toolbar-guided-checklist');
-
+        
         const isToolbarElement = toolbarContainer?.contains(activeElement);
-
+        
         if (editorRoot && activeElement && !isToolbarElement) {
             const isCollapseEditorFocused = editorRoot.contains(activeElement) &&
-                (activeElement.classList.contains('collapse-editor') ||
-                    activeElement.closest('.collapse-editor'));
-
+            (activeElement.classList.contains('collapse-editor') ||
+            activeElement.closest('.collapse-editor'));
+            
             if (isCollapseEditorFocused) {
                 setShowToolbar(false);
             } else {
                 setShowToolbar(true);
             }
         }
+        /*const resizer = document.getElementById('editor-resizer') as HTMLDivElement;
+        if (editorRoot && activeElement && resizer){
+            const handler = resizer.getElementsByClassName('handler')[0]
+            handler.addEventListener('hover', onScroll);
+        }*/
     };
 
 
@@ -295,44 +322,37 @@ export default function TextEditor() {
         }
     }, []);
 
-    useEffect(() => {
-        const editor = quillRef.current?.getEditor();
-        if (!editor) return;
-
-        const editorContainer = editor.root;
-        const resizeModule = editor.getModule('resize');
-
-        const handleScroll = () => {
-            const resizer = document.getElementById('editor-resizer');
-            // Usar 'resizeModule.img' si está disponible, de lo contrario buscar imágenes seleccionadas
-            const activeImage = resizeModule?.img || editorContainer.querySelector('img.ql-image-resizing');
-
-            if (resizer && activeImage) {
-                const imageRect = activeImage.getBoundingClientRect();
-                resizer.style.top = `${imageRect.top}px`;
-                resizer.style.left = `${imageRect.left}px`;
-                resizer.style.width = `${imageRect.width}px`;
-                resizer.style.height = `${imageRect.height}px`;
-            }
-        };
-
-        editorContainer.addEventListener('scroll', handleScroll);
-        return () => editorContainer.removeEventListener('scroll', handleScroll);
-    }, []);
 
 
 
 
-    //ql-tooltip
+
     const onScroll = () => {
         const resizer = document.getElementById('editor-resizer') as HTMLDivElement;
-        if (!resizer) return
-        const data = document.getElementsByClassName('ql-tooltip')[0] as HTMLDivElement;
-        const marginTop = data.style.marginTop.replace('px', '')
-        const resizerTop = resizer.style.top.replace('px', '')
-        resizer.style.top = `${Number(marginTop) + Number(resizerTop)}px`
-        console.log({resizerTop, marginTop})
-    }
+        if (!resizer || !selectedImage) return;
+        //const handler = resizer.getElementsByClassName('handler')[0] as HTMLDivElement;
+        //console.log(handler);
+        // Calculate the position of the selected image in the viewport
+        const imageRect = selectedImage.current?.getBoundingClientRect();
+        if (!imageRect) return;
+        // Update the position of the resizer
+        resizer.style.top = `${imageRect.top - 140}px`;
+
+    };
+
+    useEffect(() => {
+        console.log("hola")
+        if (!quillRef.current ) return
+        quillRef.current.getEditor().root.addEventListener('scroll', onScroll);
+        quillRef.current.getEditor().root.addEventListener('click', onScroll);
+
+
+        return () => {
+            quillRef.current?.getEditor().root.removeEventListener('scroll', onScroll);
+            quillRef.current?.getEditor().root.removeEventListener('click', onScroll);
+        };
+        
+    }, [selectedImage.current])
 
     return (
         <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white"  >
@@ -366,15 +386,18 @@ export default function TextEditor() {
                     />
                 </div>
 
-                <div 
+                {/*<div
                     style={{
                         border: '1px solid #ccc',
                         height: 'calc(100vh - 210px)',
-                        marginBottom: '70px'
+                        marginBottom: '70px',
+                        position: 'relative'
                     }}
-                    onScrollCapture={onScroll}
+                    //onScrollCapture={onScroll}
                 >
-                    {/*</div><div className="flex flex-col grow bg-white">*/}
+                </div>*/}
+                
+                <div >
                     <div className="flex justify-center w-full grow relative">
                         <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
                     </div>
@@ -389,9 +412,10 @@ export default function TextEditor() {
                         modules={modulos}
                         formats={options.formats}
                         placeholder=""
-                        className="h-full"
+                        //className="h-full"
                         onChangeSelection={handleChangeSelection}
-                        
+                        style={{border: '1px solid black', height: 'calc(100vh - 210px)'}}
+
                     />
 
 

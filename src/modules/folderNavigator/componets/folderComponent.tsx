@@ -57,6 +57,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
     };
 
     const handleCreateOrUpdateFolder = (update = false) => {
+        console.log(memberRoll)
         if (!memberRoll.write){
             message.error('You do not have permission to create or update a folder');
             return
