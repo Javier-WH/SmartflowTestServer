@@ -68,10 +68,22 @@ export default function TextEditor() {
         const setSelectedImageEvent = (e: Event) => {
             const target = e.target as HTMLImageElement;
             //setSelectedImage(null);
-            if (target.tagName === 'IMG') {
+            /*if (target.tagName === 'IMG') {
+
                 setSelectedImage(target)
                 return
+            }*/
+
+                   // Buscar la imagen más cercana (incluso si el click fue en un hijo de la imagen)
+            const img = target.closest('img');
+            if (img) {
+            const parentBox = img.closest('.ant-collapse-content-box');
+                console.log(parentBox?.getElementsByClassName('ql-editor')[0]);
+            if (!parentBox) {
+                setSelectedImage(img);
+                return;
             }
+        }
         }
         window.addEventListener('click', setSelectedImageEvent);
         return () => {
@@ -90,11 +102,12 @@ export default function TextEditor() {
         const resizer = document.getElementById("editor-resizer") as HTMLElement;
         if (resizer) {
             const imageRect = selectedImage.getBoundingClientRect();
-            const quillRect = quillRef.current.getEditor().root.getBoundingClientRect();
-
+           // const quillRect = quillRef.current.getEditor().root.getBoundingClientRect();
+            const container = selectedImage.parentElement?.parentElement
+            const quillRect = container?.getBoundingClientRect();
+            if(!container || !quillRect) return
             // Calculate the top position of the image relative to the Quill container
-            const topPosition = imageRect.top - quillRect.top;
-
+            const topPosition = quillRect ? imageRect.top - quillRect.top : 0;
             resizer.style.top = `${topPosition}px`;
         }
     };
@@ -355,7 +368,6 @@ export default function TextEditor() {
 
 
     //paste image handler
-
     const handlePaste = (e: ClipboardEvent) => {
         const editor = quillRef.current?.getEditor();
         if (!editor) return;
@@ -431,17 +443,7 @@ export default function TextEditor() {
                     />
                 </div>
 
-                {/*<div
-                    style={{
-                        border: '1px solid #ccc',
-                        height: 'calc(100vh - 210px)',
-                        marginBottom: '70px',
-                        position: 'relative'
-                    }}
-                    //onScrollCapture={onScroll}
-                >
-                </div>*/}
-
+            
                 <div >
                     <div className="flex justify-center w-full grow relative">
                         <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
@@ -459,7 +461,7 @@ export default function TextEditor() {
                         placeholder=""
                         //className="h-full"
                         onChangeSelection={handleChangeSelection}
-                        style={{ border: '1px solid black', height: 'calc(100vh - 210px)' }}
+                        style={{ height: 'calc(100vh - 210px)', overflowY: 'hidden' }}
 
                     />
 
