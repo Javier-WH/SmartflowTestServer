@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
-//import ResizeModule from '@botom/quill-resize-module';
+import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from "../toolbar/CustonToolbar";
 import Delta from 'quill-delta';
 
@@ -48,9 +48,9 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
   const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
 
-  /*useEffect(() => {
+  useEffect(() => {
     Quill.register('modules/resize', ResizeModule);
-  }, []);*/
+  }, []);
 
   const handlePaste = (e: ClipboardEvent) => {
     e.stopPropagation();
@@ -59,7 +59,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
 
   useEffect(() => {
-    let resizeModule: any = null;
+
     if (quillRef.current && !editorRef.current) {
       const options = {
         theme: 'snow',
@@ -106,7 +106,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
       // create the editor
       editorRef.current = new Quill(quillRef.current, options);
-      resizeModule = editorRef.current.getModule('resize');
+
 
 
 
@@ -165,40 +165,13 @@ export default function Guidance({ saveData, value, id, readonly }: {
     window.addEventListener('click', forceSaveOnImageResize);
 
 
-    /*return () => {
+    return () => {
       const editorRoot = editorRef.current?.root;
       if (editorRoot) {
         editorRoot.removeEventListener('paste', handlePaste);
       }
       window.removeEventListener('click', forceSaveOnImageResize);
       if (editorRef.current) {
-        editorRef.current = null;
-      }
-    };*/
-
-    return () => {
-      // Destruir en orden inverso
-      if (editorRef.current) {
-        // 1. Destruir módulo de resize primero
-        if (resizeModule) {
-          try {
-            resizeModule.destroy();
-          } catch (e) {
-            console.log('Resize module already destroyed');
-          }
-        }
-
-        // 2. Remover todos los listeners
-        editorRef.current.off('text-change');
-        const editorRoot = editorRef.current.root;
-        editorRoot.removeEventListener('paste', handlePaste);
-
-        // 3. Eliminar el editor del DOM
-        if (quillRef.current) {
-          quillRef.current.innerHTML = '';
-        }
-
-        // 4. Eliminar instancia de Quill
         editorRef.current = null;
       }
     };
@@ -219,7 +192,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
       </div>
     }
     <div className="quill-editor-container" ref={containerRef} onPaste={(e) => e.stopPropagation()} >
-      <div className="collapse-editor" ref={quillRef} style={{ height: "1000px" }} />
+      <div className="collapse-editor" ref={quillRef} style={{ height: "200px" }} />
     </div>
 
   </>

@@ -19,7 +19,9 @@ import homeIcon from '../../assets/svg/homeIcon.svg';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import './components/guidedCheckList/react_guidedCheckList.tsx'
 import { useDebouncedCallback } from 'use-debounce';
-//import ImageResizer from './imageResizer/imageResizer.tsx';
+
+
+
 
 
 
@@ -30,6 +32,18 @@ Quill.register('formats/guided-checklist', GuidedCheckListBlot); // Mismo nombre
 // Override the image and video (iframe) blot in order to prevent a bug related to the width and height of images and videos
 Quill.register(CustomImage, true);
 Quill.register(CustomVideo, true);
+
+/*const originalDestroy = ResizeModule.prototype.destroy;
+ResizeModule.prototype.destroy = function () {
+    try {
+        if (this.overlay && document.body.contains(this.overlay)) {
+            originalDestroy.call(this);
+        }
+    } catch (error) {
+        console.log('Error controlado en resize module:', error);
+    }
+};*/
+
 
 // register image resize module
 Quill.register('modules/resize', ResizeModule);
@@ -73,7 +87,7 @@ export default function TextEditor() {
                 return
             }
 
-                   // Buscar la imagen más cercana (incluso si el click fue en un hijo de la imagen)
+            // Buscar la imagen más cercana (incluso si el click fue en un hijo de la imagen)
             /*const img = target.closest('img');
             if (img) {
             const parentBox = img.closest('.ant-collapse-content-box');
@@ -90,7 +104,7 @@ export default function TextEditor() {
         }
     }, []);
 
- 
+
 
     // Function to reposition the resizer
     const fixResizerPosition = () => {
@@ -101,10 +115,10 @@ export default function TextEditor() {
         const resizer = document.getElementById("editor-resizer") as HTMLElement;
         if (resizer) {
             const imageRect = selectedImage.getBoundingClientRect();
-           // const quillRect = quillRef.current.getEditor().root.getBoundingClientRect();
+            // const quillRect = quillRef.current.getEditor().root.getBoundingClientRect();
             const container = selectedImage.closest('.ql-editor');
             const quillRect = container?.getBoundingClientRect();
-            if(!container || !quillRect) return
+            if (!container || !quillRect) return
             // Calculate the top position of the image relative to the Quill container
             const topPosition = quillRect ? imageRect.top - quillRect.top : 0;
             resizer.style.top = `${topPosition}px`;
@@ -444,32 +458,26 @@ export default function TextEditor() {
                     />
                 </div>
 
-            
-                <div >
-                    <div className="flex justify-center w-full grow relative">
-                        <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
-                    </div>
+                <ReactQuill
+                    {...(readOnly && { readOnly: true })}
+                    ref={quillRef}
+                    theme="snow"
+                    value={contenido}
+                    onChange={handleEditorChange}
+                    modules={modulos}
+                    formats={options.formats}
+                    placeholder=""
+                    //className="h-full"
+                    onChangeSelection={handleChangeSelection}
+                    style={{ height: 'calc(100vh - 210px)', overflowY: 'hidden' }}
 
-
-                    <ReactQuill
-                        {...(readOnly && { readOnly: true })}
-                        ref={quillRef}
-                        theme="snow"
-                        value={contenido}
-                        onChange={handleEditorChange}
-                        modules={modulos}
-                        formats={options.formats}
-                        placeholder=""
-                        //className="h-full"
-                        onChangeSelection={handleChangeSelection}
-                        style={{ height: 'calc(100vh - 210px)', overflowY: 'hidden' }}
-
-                    />
+                />
 
 
 
-                </div>
-
+            </div>
+            <div className="flex justify-center w-full grow relative">
+                <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
             </div>
             {/*<ImageResizer image={selectedImage} />*/}
         </div>

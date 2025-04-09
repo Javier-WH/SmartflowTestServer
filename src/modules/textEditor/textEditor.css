@@ -10,13 +10,16 @@
     z-index: 10000 !important;
     background-color: var(--pageBarColor);
     bottom: 20px;
-
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 670px;
   }
 
-  :not(#toolbar).ql-toolbar.ql-snow {
+  /*:not(#toolbar).ql-toolbar.ql-snow {
     margin-left: -20px;
 
-  }
+  }*/
 
   .ql-editor {
     padding: 0 !important;
@@ -262,11 +265,11 @@
     z-index: 10000 !important;
   }
 
-  /*.ant-collapse-content #editor-resizer {
+  .ant-collapse-content #editor-resizer {
     width: 0px !important;
     height: 0px !important;
     left: 50% !important;
-  }*/
+  }
 
   .ql-guided-checklist img {
     margin: 0px !important;
