@@ -68,14 +68,13 @@ export default function TextEditor() {
         const setSelectedImageEvent = (e: Event) => {
             const target = e.target as HTMLImageElement;
             //setSelectedImage(null);
-            /*if (target.tagName === 'IMG') {
-
+            if (target.tagName === 'IMG') {
                 setSelectedImage(target)
                 return
-            }*/
+            }
 
                    // Buscar la imagen más cercana (incluso si el click fue en un hijo de la imagen)
-            const img = target.closest('img');
+            /*const img = target.closest('img');
             if (img) {
             const parentBox = img.closest('.ant-collapse-content-box');
                 console.log(parentBox?.getElementsByClassName('ql-editor')[0]);
@@ -83,7 +82,7 @@ export default function TextEditor() {
                 setSelectedImage(img);
                 return;
             }
-        }
+            }*/
         }
         window.addEventListener('click', setSelectedImageEvent);
         return () => {
@@ -103,7 +102,7 @@ export default function TextEditor() {
         if (resizer) {
             const imageRect = selectedImage.getBoundingClientRect();
            // const quillRect = quillRef.current.getEditor().root.getBoundingClientRect();
-            const container = selectedImage.parentElement?.parentElement
+            const container = selectedImage.closest('.ql-editor');
             const quillRect = container?.getBoundingClientRect();
             if(!container || !quillRect) return
             // Calculate the top position of the image relative to the Quill container
@@ -119,7 +118,9 @@ export default function TextEditor() {
 
     // Reposition the resizer on scroll
     useEffect(() => {
-        const quillEditorElement = quillRef.current?.getEditor().root  as HTMLElement | null;
+        if (!selectedImage) return;
+        //const quillEditorElement = quillRef.current?.getEditor().root  as HTMLElement | null;
+        const quillEditorElement = selectedImage.closest('.ql-editor');
         if (quillEditorElement) {
             const handleScroll = () => {
                 fixResizerPosition();
