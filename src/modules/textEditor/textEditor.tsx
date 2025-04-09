@@ -67,7 +67,7 @@ export default function TextEditor() {
 
         const setSelectedImageEvent = (e: Event) => {
             const target = e.target as HTMLImageElement;
-            setSelectedImage(null);
+            //setSelectedImage(null);
             if (target.tagName === 'IMG') {
                 setSelectedImage(target)
                 return
@@ -79,7 +79,7 @@ export default function TextEditor() {
         }
     }, []);
 
-    
+ 
 
     // Function to reposition the resizer
     const fixResizerPosition = () => {
@@ -112,8 +112,10 @@ export default function TextEditor() {
                 fixResizerPosition();
             };
             quillEditorElement.addEventListener('scroll', handleScroll);
+            quillEditorElement.addEventListener('click', handleScroll);
             return () => {
                 quillEditorElement.removeEventListener('scroll', handleScroll);
+                quillEditorElement.removeEventListener('click', handleScroll);
             };
         }
     }, [selectedImage]);
