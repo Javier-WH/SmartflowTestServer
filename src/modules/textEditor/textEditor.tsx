@@ -19,6 +19,7 @@ import homeIcon from '../../assets/svg/homeIcon.svg';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import './components/guidedCheckList/react_guidedCheckList.tsx'
 import { useDebouncedCallback } from 'use-debounce';
+//import ImageResizer from './imageResizer/imageResizer.tsx';
 
 
 
@@ -31,7 +32,7 @@ Quill.register(CustomImage, true);
 Quill.register(CustomVideo, true);
 
 // register image resize module
-//Quill.register('modules/resize', ResizeModule);
+Quill.register('modules/resize', ResizeModule);
 
 // Register custom font sizes
 const Size = Quill.import('attributors/style/size');
@@ -59,28 +60,104 @@ export default function TextEditor() {
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
     const navigate = useNavigate();
+    const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(null);
 
-    const selectedImage = useRef<HTMLImageElement | null>(null);
-
+    // get selected image
     useEffect(() => {
 
-        const setSelectedImage = (e: Event) => {
-        
+        const setSelectedImageEvent = (e: Event) => {
             const target = e.target as HTMLImageElement;
+            setSelectedImage(null);
             if (target.tagName === 'IMG') {
-                selectedImage.current = target;
+                setSelectedImage(target)
                 return
             }
-            selectedImage.current = null;
-
         }
-
-        quillRef.current?.getEditor().root.addEventListener('click', setSelectedImage);
-
+        window.addEventListener('click', setSelectedImageEvent);
         return () => {
-            quillRef.current?.getEditor().root.removeEventListener('click', setSelectedImage);
+            window.removeEventListener('click', setSelectedImageEvent);
         }
     }, []);
+
+    
+
+    // Function to reposition the resizer
+    const fixResizerPosition = () => {
+        if (!selectedImage || !quillRef.current) {
+            return;
+        }
+
+        const resizer = document.getElementById("editor-resizer") as HTMLElement;
+        if (resizer) {
+            const imageRect = selectedImage.getBoundingClientRect();
+            const quillRect = quillRef.current.getEditor().root.getBoundingClientRect();
+
+            // Calculate the top position of the image relative to the Quill container
+            const topPosition = imageRect.top - quillRect.top;
+
+            resizer.style.top = `${topPosition}px`;
+        }
+    };
+
+    // Reposition the resizer when the selected image changes
+    useEffect(() => {
+        fixResizerPosition();
+    }, [selectedImage]);
+
+    // Reposition the resizer on scroll
+    useEffect(() => {
+        const quillEditorElement = quillRef.current?.getEditor().root  as HTMLElement | null;
+        if (quillEditorElement) {
+            const handleScroll = () => {
+                fixResizerPosition();
+            };
+            quillEditorElement.addEventListener('scroll', handleScroll);
+            return () => {
+                quillEditorElement.removeEventListener('scroll', handleScroll);
+            };
+        }
+    }, [selectedImage]);
+
+
+    // Reposition the resizer when image size, display or float changes
+    useEffect(() => {
+        if (!selectedImage) return;
+
+        const observer = new MutationObserver(mutationsList => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes') {
+                    if (mutation.attributeName === 'style') {
+                        const newDisplay = selectedImage.style.display;
+                        const newFloat = selectedImage.style.float;
+                        const previousDisplay = mutation.oldValue?.includes('display:') ? mutation.oldValue.split('display:')[1]?.split(';')[0]?.trim() : undefined;
+                        const previousFloat = mutation.oldValue?.includes('float:') ? mutation.oldValue.split('float:')[1]?.split(';')[0]?.trim() : undefined;
+
+                        if (newDisplay !== previousDisplay || newFloat !== previousFloat) {
+                            fixResizerPosition();
+                        }
+                    } else if (mutation.attributeName === 'width' || mutation.attributeName === 'height') {
+                        fixResizerPosition();
+                    }
+                }
+            }
+        });
+
+        observer.observe(selectedImage, {
+            attributes: true, // Listen for changes to attributes
+            attributeFilter: ['style', 'width', 'height'], // Specifically target the style, width, and height attributes
+            attributeOldValue: true, // Record the previous value of the attributes
+        });
+
+        const resizeObserver = new ResizeObserver(() => {
+            fixResizerPosition();
+        });
+        resizeObserver.observe(selectedImage);
+
+        return () => {
+            observer.disconnect();
+            resizeObserver.disconnect();
+        };
+    }, [selectedImage, quillRef]);
 
 
 
@@ -240,7 +317,7 @@ export default function TextEditor() {
                 'guided-checklist': insertGuidedCheckList
             },
         },
-        /*resize: {
+        resize: {
             toolbar: {},
             locale: {
                 floatLeft: 'Left',
@@ -248,7 +325,7 @@ export default function TextEditor() {
                 center: 'Center',
                 restore: 'Restore',
             },
-        },*/
+        },
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
@@ -257,25 +334,21 @@ export default function TextEditor() {
         const activeElement = document.activeElement;
         const editorRoot = quillRef.current?.getEditor().root;
         const toolbarContainer = document.getElementById('toolbar-guided-checklist');
-        
+
         const isToolbarElement = toolbarContainer?.contains(activeElement);
-        
+
         if (editorRoot && activeElement && !isToolbarElement) {
             const isCollapseEditorFocused = editorRoot.contains(activeElement) &&
-            (activeElement.classList.contains('collapse-editor') ||
-            activeElement.closest('.collapse-editor'));
-            
+                (activeElement.classList.contains('collapse-editor') ||
+                    activeElement.closest('.collapse-editor'));
+
             if (isCollapseEditorFocused) {
                 setShowToolbar(false);
             } else {
                 setShowToolbar(true);
             }
         }
-        /*const resizer = document.getElementById('editor-resizer') as HTMLDivElement;
-        if (editorRoot && activeElement && resizer){
-            const handler = resizer.getElementsByClassName('handler')[0]
-            handler.addEventListener('hover', onScroll);
-        }*/
+
     };
 
 
@@ -324,36 +397,6 @@ export default function TextEditor() {
 
 
 
-
-
-
-    const onScroll = () => {
-        const resizer = document.getElementById('editor-resizer') as HTMLDivElement;
-        if (!resizer || !selectedImage) return;
-        //const handler = resizer.getElementsByClassName('handler')[0] as HTMLDivElement;
-        //console.log(handler);
-        // Calculate the position of the selected image in the viewport
-        const imageRect = selectedImage.current?.getBoundingClientRect();
-        if (!imageRect) return;
-        // Update the position of the resizer
-        resizer.style.top = `${imageRect.top - 140}px`;
-
-    };
-
-    useEffect(() => {
-        console.log("hola")
-        if (!quillRef.current ) return
-        quillRef.current.getEditor().root.addEventListener('scroll', onScroll);
-        quillRef.current.getEditor().root.addEventListener('click', onScroll);
-
-
-        return () => {
-            quillRef.current?.getEditor().root.removeEventListener('scroll', onScroll);
-            quillRef.current?.getEditor().root.removeEventListener('click', onScroll);
-        };
-        
-    }, [selectedImage.current])
-
     return (
         <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white"  >
             <div className="flex flex-col h-full w-full max-w-3xl" >
@@ -396,7 +439,7 @@ export default function TextEditor() {
                     //onScrollCapture={onScroll}
                 >
                 </div>*/}
-                
+
                 <div >
                     <div className="flex justify-center w-full grow relative">
                         <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
@@ -414,7 +457,7 @@ export default function TextEditor() {
                         placeholder=""
                         //className="h-full"
                         onChangeSelection={handleChangeSelection}
-                        style={{border: '1px solid black', height: 'calc(100vh - 210px)'}}
+                        style={{ border: '1px solid black', height: 'calc(100vh - 210px)' }}
 
                     />
 
@@ -423,6 +466,7 @@ export default function TextEditor() {
                 </div>
 
             </div>
+            {/*<ImageResizer image={selectedImage} />*/}
         </div>
     );
 }
