@@ -45,6 +45,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
   const editorRef = useRef<Quill | null>(null);
   const quillRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const resizing = useRef(false);
 
   const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
 
@@ -108,11 +109,9 @@ export default function Guidance({ saveData, value, id, readonly }: {
       editorRef.current = new Quill(quillRef.current, options);
 
 
-
-
-      // Matcher modificado para imágenes
+      // load initial images data
       editorRef.current.clipboard.addMatcher('IMG', (node: Node) => {
-        if (node.nodeType === 1) { // Solo elementos HTML
+        if (node.nodeType === 1) { // only html elements
           const element = node as HTMLElement;
           return new Delta().insert({
             image: {
@@ -132,48 +131,46 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
       editorRoot.addEventListener('paste', handlePaste);
 
-      // load initial data
+      // load quill initial data
       if (value) {
         editorRef.current.clipboard.dangerouslyPasteHTML(value);
-        //const delta = editorRef.current.clipboard.convert({ html: value });
-        //editorRef.current.setContents(delta);
       }
 
       if (value) {
         const delta = editorRef.current.clipboard.convert({ html: value });
         editorRef.current.setContents(delta);
-        editorRef.current.root.innerHTML = value; // Forzar actualización visual
+        editorRef.current.root.innerHTML = value; // force visual update
       }
 
 
       editorRef.current.on('text-change', () => {
+        if (resizing.current) return;
         const content = editorRef.current?.root.innerHTML || '';
         saveData(id, content);
       });
     }
 
     // this prevent a bug when image resize
-    const forceSaveOnImageResize = (e: MouseEvent) => {
-      if (!e.target) return;
-      if (e.target instanceof HTMLElement) {
-        if (e.target.classList.contains('btn')) {
-          const content = editorRef.current?.root.innerHTML || '';
-          saveData(id, content);
-        }
-      }
-    };
-    window.addEventListener('click', forceSaveOnImageResize);
-
+    // we have to preven save while resizing, otherwise the resize will crap on the guidance
+    window.addEventListener('mousedown', handleResizeStart);
+    const onResizeEnd = () => {
+      const content = editorRef.current?.root.innerHTML || '';
+      saveData(id, content);
+      handleResizeEnd();
+    }
+    window.addEventListener('mouseup', onResizeEnd);
 
     return () => {
+      //remove all the listeners to avoid memory leaks
       const editorRoot = editorRef.current?.root;
       if (editorRoot) {
         editorRoot.removeEventListener('paste', handlePaste);
       }
-      window.removeEventListener('click', forceSaveOnImageResize);
       if (editorRef.current) {
         editorRef.current = null;
       }
+      window.removeEventListener('mousedown', handleResizeStart);
+      window.removeEventListener('mouseup', onResizeEnd);
     };
   }, []);
 
@@ -183,6 +180,14 @@ export default function Guidance({ saveData, value, id, readonly }: {
       editorRef.current.clipboard.dangerouslyPasteHTML(value);
     }
   }, [value]);
+
+  const handleResizeStart = () => {
+    resizing.current = true;
+  };
+
+  const handleResizeEnd = () => {
+    resizing.current = false;
+  };
 
   return <>
     {
@@ -198,3 +203,4 @@ export default function Guidance({ saveData, value, id, readonly }: {
   </>
 
 }
+

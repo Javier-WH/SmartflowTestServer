@@ -33,17 +33,6 @@ Quill.register('formats/guided-checklist', GuidedCheckListBlot); // Mismo nombre
 Quill.register(CustomImage, true);
 Quill.register(CustomVideo, true);
 
-/*const originalDestroy = ResizeModule.prototype.destroy;
-ResizeModule.prototype.destroy = function () {
-    try {
-        if (this.overlay && document.body.contains(this.overlay)) {
-            originalDestroy.call(this);
-        }
-    } catch (error) {
-        console.log('Error controlado en resize module:', error);
-    }
-};*/
-
 
 // register image resize module
 Quill.register('modules/resize', ResizeModule);
@@ -78,25 +67,21 @@ export default function TextEditor() {
 
     // get selected image
     useEffect(() => {
-
         const setSelectedImageEvent = (e: Event) => {
-            const target = e.target as HTMLImageElement;
             //setSelectedImage(null);
-            if (target.tagName === 'IMG') {
-                setSelectedImage(target)
-                return
-            }
+            const target = e.target as HTMLImageElement;
 
-            // Buscar la imagen más cercana (incluso si el click fue en un hijo de la imagen)
-            /*const img = target.closest('img');
+            const img = target.closest('img');
             if (img) {
-            const parentBox = img.closest('.ant-collapse-content-box');
-                console.log(parentBox?.getElementsByClassName('ql-editor')[0]);
-            if (!parentBox) {
+                const parentBlot = img.closest('guided-checklist');
+                if (parentBlot) {
+                    setSelectedImage(null);
+                    return;
+                }
+
                 setSelectedImage(img);
                 return;
             }
-            }*/
         }
         window.addEventListener('click', setSelectedImageEvent);
         return () => {
@@ -111,7 +96,9 @@ export default function TextEditor() {
         if (!selectedImage || !quillRef.current) {
             return;
         }
-
+        const parentBox = selectedImage.closest('.ant-collapse-content-box');
+        if (parentBox) return
+    
         const resizer = document.getElementById("editor-resizer") as HTMLElement;
         if (resizer) {
             const imageRect = selectedImage.getBoundingClientRect();
@@ -127,15 +114,21 @@ export default function TextEditor() {
 
     // Reposition the resizer when the selected image changes
     useEffect(() => {
+        const parentBox = selectedImage?.closest('.ant-collapse-content-box');
+        if (parentBox) return
+  
         fixResizerPosition();
     }, [selectedImage]);
 
     // Reposition the resizer on scroll
     useEffect(() => {
         if (!selectedImage) return;
+        const parentBox = selectedImage?.closest('.ant-collapse-content-box');
+        if (parentBox) return
         //const quillEditorElement = quillRef.current?.getEditor().root  as HTMLElement | null;
         const quillEditorElement = selectedImage.closest('.ql-editor');
         if (quillEditorElement) {
+   
             const handleScroll = () => {
                 fixResizerPosition();
             };
@@ -152,6 +145,11 @@ export default function TextEditor() {
     // Reposition the resizer when image size, display or float changes
     useEffect(() => {
         if (!selectedImage) return;
+        const parentBlot = selectedImage?.closest('guided-checklist');
+        if (parentBlot) {
+            
+            return;
+        }
 
         const observer = new MutationObserver(mutationsList => {
             for (const mutation of mutationsList) {
@@ -184,6 +182,7 @@ export default function TextEditor() {
         resizeObserver.observe(selectedImage);
 
         return () => {
+          
             observer.disconnect();
             resizeObserver.disconnect();
         };
