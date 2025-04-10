@@ -199,7 +199,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
       </div>
     }
     <div className="quill-editor-container" ref={containerRef} onPaste={(e) => e.stopPropagation()} >
-      <div className="collapse-editor" ref={quillRef} style={{ height: "200px" }} />
+      <div className="collapse-editor" ref={quillRef} style={{ height: "200px", overflowY: "hidden" }} />
     </div>
 
   </>
