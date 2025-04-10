@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { MainContext, type MainContextValues } from '../mainContext';
-import { Input, type InputRef } from 'antd';
+import { Input, type InputRef, Image } from 'antd';
 import { useContext, useEffect, useState, useRef } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import styles from './textEditorStyles.tsx';
@@ -65,6 +65,8 @@ export default function TextEditor() {
     const navigate = useNavigate();
     const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(null);
 
+    const [visible, setVisible] = useState(false);
+
     // get selected image
     useEffect(() => {
         const setSelectedImageEvent = (e: Event) => {
@@ -90,7 +92,7 @@ export default function TextEditor() {
         if (!selectedImage || !quillRef.current) {
             return;
         }
-    
+
         const resizer = document.getElementById("editor-resizer") as HTMLElement;
         if (resizer) {
             const imageRect = selectedImage.getBoundingClientRect();
@@ -105,16 +107,27 @@ export default function TextEditor() {
 
     // Reposition the resizer when the selected image changes
     useEffect(() => {
+        if (!selectedImage) return;
         fixResizerPosition();
+        const resizer = document.getElementById("editor-resizer") as HTMLElement;
+        const openImagePreview = () => {
+            setVisible(true);
+        }
+        if (resizer) {
+            resizer.addEventListener('click', openImagePreview);
+        }
+        return () => {
+            resizer.removeEventListener('click', openImagePreview);
+        }
     }, [selectedImage]);
 
     // Reposition the resizer on scroll
     useEffect(() => {
         if (!selectedImage) return;
-   
+
         const quillEditorElement = selectedImage.closest('.ql-editor');
         if (quillEditorElement) {
-   
+
             const handleScroll = () => {
                 fixResizerPosition();
             };
@@ -131,7 +144,7 @@ export default function TextEditor() {
     // Reposition the resizer when image size, display or float changes
     useEffect(() => {
         if (!selectedImage) return;
-     
+
         const observer = new MutationObserver(mutationsList => {
             for (const mutation of mutationsList) {
                 if (mutation.type === 'attributes') {
@@ -163,7 +176,7 @@ export default function TextEditor() {
         resizeObserver.observe(selectedImage);
 
         return () => {
-          
+
             observer.disconnect();
             resizeObserver.disconnect();
         };
@@ -407,59 +420,75 @@ export default function TextEditor() {
 
 
     return (
-        <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white"  >
-            <div className="flex flex-col h-full w-full max-w-3xl" >
-                <div className="mt-8" >
-                    <div className="flex items-center" >
-                        <button type="button" style={styles.homeButton}
-                            onClick={() => navigate(-1)}
-                        >
-                            <img src={homeIcon} alt="" /> {'>'}
-                        </button>
-                        {updatedAt ? (
-                            <span className="w-full text-gray-400">
-                                <span>Última actualización: </span>
-                                {Intl.DateTimeFormat('es-ES', {
-                                    dateStyle: 'medium',
-                                    timeStyle: 'medium',
-                                    hour12: true,
-                                }).format(new Date(updatedAt))}
-                            </span>
-                        ) : null}
+        <>
+            <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white"  >
+                <div className="flex flex-col h-full w-full max-w-3xl" >
+                    <div className="mt-8" >
+                        <div className="flex items-center" >
+                            <button type="button" style={styles.homeButton}
+                                onClick={() => navigate(-1)}
+                            >
+                                <img src={homeIcon} alt="" /> {'>'}
+                            </button>
+                            {updatedAt ? (
+                                <span className="w-full text-gray-400">
+                                    <span>Última actualización: </span>
+                                    {Intl.DateTimeFormat('es-ES', {
+                                        dateStyle: 'medium',
+                                        timeStyle: 'medium',
+                                        hour12: true,
+                                    }).format(new Date(updatedAt))}
+                                </span>
+                            ) : null}
+                        </div>
+                        <Input
+                            {...(readOnly && { readOnly: true })}
+                            ref={inputRef}
+                            style={styles.titleStyles}
+                            value={title}
+                            onChange={e => setTitle(e.target.value)}
+                            placeholder="Give your page a title"
+                            onKeyDown={handleTitleKeyDown}
+                        />
                     </div>
-                    <Input
+
+                    <ReactQuill
                         {...(readOnly && { readOnly: true })}
-                        ref={inputRef}
-                        style={styles.titleStyles}
-                        value={title}
-                        onChange={e => setTitle(e.target.value)}
-                        placeholder="Give your page a title"
-                        onKeyDown={handleTitleKeyDown}
+                        ref={quillRef}
+                        theme="snow"
+                        value={contenido}
+                        onChange={handleEditorChange}
+                        modules={modulos}
+                        formats={options.formats}
+                        placeholder=""
+                        //className="h-full"
+                        onChangeSelection={handleChangeSelection}
+                        style={{ height: 'calc(100vh - 210px)', overflowY: 'hidden' }}
+
+                    />
+
+
+
+                </div>
+                <div className="flex justify-center w-full grow relative">
+                    <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
+                    <Image
+                        width={200}
+                        style={{ display: 'none' }}
+                        src=""
+                        preview={{
+                            visible,
+                            src: selectedImage?.src || '',
+                            onVisibleChange: (value) => {
+                                setVisible(value);
+                            },
+                        }}
                     />
                 </div>
-
-                <ReactQuill
-                    {...(readOnly && { readOnly: true })}
-                    ref={quillRef}
-                    theme="snow"
-                    value={contenido}
-                    onChange={handleEditorChange}
-                    modules={modulos}
-                    formats={options.formats}
-                    placeholder=""
-                    //className="h-full"
-                    onChangeSelection={handleChangeSelection}
-                    style={{ height: 'calc(100vh - 210px)', overflowY: 'hidden' }}
-
-                />
-
-
-
             </div>
-            <div className="flex justify-center w-full grow relative">
-                <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
-            </div>
-            {/*<ImageResizer image={selectedImage} />*/}
-        </div>
+
+
+
+        </>
     );
 }

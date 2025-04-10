@@ -2,7 +2,17 @@
     border: none !important;
 
   }
-
+  .editor-resizer{
+    z-index: 10000 !important;
+  }
+  .ant-image-preview-root,
+  .ant-image-preview-operations-wrapper{
+    z-index: 10002 !important;
+  }
+.ant-image-preview-footer{
+  background-color: var(--pageBarColor);
+  margin-bottom: 40px;
+}
   .ql-toolbar.ql-snow {
     border: none !important;
     border-bottom: 1px solid #ddd !important;
