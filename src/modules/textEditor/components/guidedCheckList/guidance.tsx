@@ -45,7 +45,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
   const editorRef = useRef<Quill | null>(null);
   const quillRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const resizing = useRef(false);
+  const resizing = useRef(false); //awful solution for unknown image resize bug
 
   const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
 
@@ -132,9 +132,9 @@ export default function Guidance({ saveData, value, id, readonly }: {
       editorRoot.addEventListener('paste', handlePaste);
 
       // load quill initial data
-      if (value) {
+      /*if (value) {
         editorRef.current.clipboard.dangerouslyPasteHTML(value);
-      }
+      }*/
 
       if (value) {
         const delta = editorRef.current.clipboard.convert({ html: value });
@@ -151,12 +151,13 @@ export default function Guidance({ saveData, value, id, readonly }: {
     }
 
     // this prevent a bug when image resize
-    // we have to preven save while resizing, otherwise the resize will crap on the guidance
+    // we have to preven save while resizing, otherwise the resize will crap on the guidance and all die :(
+    // idk why this happens, but it does... if you know, please let me know
     window.addEventListener('mousedown', handleResizeStart);
     const onResizeEnd = () => {
       const content = editorRef.current?.root.innerHTML || '';
-      saveData(id, content);
       handleResizeEnd();
+      saveData(id, content); // save on resize image end
     }
     window.addEventListener('mouseup', onResizeEnd);
 
@@ -181,6 +182,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
     }
   }, [value]);
 
+  //awful solution for unknown image resize bug
   const handleResizeStart = () => {
     resizing.current = true;
   };

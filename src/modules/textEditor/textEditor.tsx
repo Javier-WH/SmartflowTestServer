@@ -73,12 +73,6 @@ export default function TextEditor() {
 
             const img = target.closest('img');
             if (img) {
-                const parentBlot = img.closest('guided-checklist');
-                if (parentBlot) {
-                    setSelectedImage(null);
-                    return;
-                }
-
                 setSelectedImage(img);
                 return;
             }
@@ -96,13 +90,10 @@ export default function TextEditor() {
         if (!selectedImage || !quillRef.current) {
             return;
         }
-        const parentBox = selectedImage.closest('.ant-collapse-content-box');
-        if (parentBox) return
     
         const resizer = document.getElementById("editor-resizer") as HTMLElement;
         if (resizer) {
             const imageRect = selectedImage.getBoundingClientRect();
-            // const quillRect = quillRef.current.getEditor().root.getBoundingClientRect();
             const container = selectedImage.closest('.ql-editor');
             const quillRect = container?.getBoundingClientRect();
             if (!container || !quillRect) return
@@ -114,18 +105,13 @@ export default function TextEditor() {
 
     // Reposition the resizer when the selected image changes
     useEffect(() => {
-        const parentBox = selectedImage?.closest('.ant-collapse-content-box');
-        if (parentBox) return
-  
         fixResizerPosition();
     }, [selectedImage]);
 
     // Reposition the resizer on scroll
     useEffect(() => {
         if (!selectedImage) return;
-        const parentBox = selectedImage?.closest('.ant-collapse-content-box');
-        if (parentBox) return
-        //const quillEditorElement = quillRef.current?.getEditor().root  as HTMLElement | null;
+   
         const quillEditorElement = selectedImage.closest('.ql-editor');
         if (quillEditorElement) {
    
@@ -145,12 +131,7 @@ export default function TextEditor() {
     // Reposition the resizer when image size, display or float changes
     useEffect(() => {
         if (!selectedImage) return;
-        const parentBlot = selectedImage?.closest('guided-checklist');
-        if (parentBlot) {
-            
-            return;
-        }
-
+     
         const observer = new MutationObserver(mutationsList => {
             for (const mutation of mutationsList) {
                 if (mutation.type === 'attributes') {
