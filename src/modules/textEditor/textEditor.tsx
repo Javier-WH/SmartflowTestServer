@@ -75,6 +75,7 @@ export default function TextEditor() {
 
             const img = target.closest('img');
             if (img) {
+                if (img.classList.contains('ant-image-preview-img'))return
                 setSelectedImage(img);
                 return;
             }
@@ -105,20 +106,36 @@ export default function TextEditor() {
         }
     };
 
+    // event to open image preview
+    useEffect(() => {
+        const openImagePreview = (e: Event) => {
+            const target = e.target as HTMLImageElement;
+            const imageToolbar = document.getElementsByClassName('toolbar')[0];
+            if (target.id === 'editor-resizer'){
+                setVisible(true);
+                //zIndex does not work on this dinamic render, so we have to hide the toolbar;
+                if (imageToolbar) {
+                    imageToolbar.classList.add('hidden');
+                }
+            }else{
+                if (imageToolbar) {
+                    imageToolbar.classList.remove('hidden');
+                }
+            }
+
+            
+        }
+        document.addEventListener('click', openImagePreview);
+        return () => {   
+            document.removeEventListener('click', openImagePreview);
+        }
+    },[])
+  
+
     // Reposition the resizer when the selected image changes
     useEffect(() => {
         if (!selectedImage) return;
         fixResizerPosition();
-        const resizer = document.getElementById("editor-resizer") as HTMLElement;
-        const openImagePreview = () => {
-            setVisible(true);
-        }
-        if (resizer) {
-            resizer.addEventListener('click', openImagePreview);
-        }
-        return () => {
-            resizer.removeEventListener('click', openImagePreview);
-        }
     }, [selectedImage]);
 
     // Reposition the resizer on scroll
@@ -416,6 +433,7 @@ export default function TextEditor() {
             };
         }
     }, []);
+
 
 
 
