@@ -111,16 +111,19 @@ export default function TextEditor() {
         const openImagePreview = (e: Event) => {
             const target = e.target as HTMLImageElement;
             const imageToolbar = document.getElementsByClassName('toolbar')[0];
-            if (target.id === 'editor-resizer'){
-                setVisible(true);
-                //zIndex does not work on this dinamic render, so we have to hide the toolbar;
+            const imagehandler = document.getElementsByClassName('handler')[0];
+            // if readOnly cant change image size, so we have to hide the toolbar
+            if (readOnly){
                 if (imageToolbar) {
                     imageToolbar.classList.add('hidden');
                 }
-            }else{
-                if (imageToolbar) {
-                    imageToolbar.classList.remove('hidden');
+                if (imagehandler) {
+                    imagehandler.classList.add('hidden');
                 }
+            }
+
+            if (target.id === 'editor-resizer'){
+                setVisible(true);
             }
 
             
