@@ -63,7 +63,7 @@ export default function TextEditor() {
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
     const navigate = useNavigate();
-    const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(null);
+    const [selectedImage, setSelectedImage] = useState<HTMLImageElement| HTMLIFrameElement | null>(null);
 
     const [visible, setVisible] = useState(false);
 
@@ -73,7 +73,7 @@ export default function TextEditor() {
             //setSelectedImage(null);
             const target = e.target as HTMLImageElement;
 
-            const img = target.closest('img');
+            const img = target.closest('img') || target.closest('iframe');
             if (img) {
                 if (img.classList.contains('ant-image-preview-img'))return
                 setSelectedImage(img);
