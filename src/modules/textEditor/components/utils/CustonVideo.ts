@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Quill } from 'react-quill';
-// Importa el blot de imagen por defecto
+// Import the default image blot
 const Video = Quill.import('formats/video');
 export default class CustomVideo extends Video {
-    // Al crear la imagen, revisamos si 'value' es un objeto que incluya src, width y height
+    // When creating the image, we check if 'value' is an object that includes src, width and height
     static create(value: any) {
 
         const node = super.create(value);
@@ -22,12 +22,14 @@ export default class CustomVideo extends Video {
             }
         } else {
             node.setAttribute('src', value);
+            node.setAttribute('width', "100%");
+            node.setAttribute('height', "400px");
         }
         return node;
     }
 
 
-    // Al serializar la imagen, devolvemos un objeto que contenga src, width y height
+    // When serializing the image, we return an object containing src, width, and height
     static formats(domNode: HTMLElement) {
         const formats: { src: string | null; width?: string | null; height?: string | null; style?: string | null } = { src: domNode.getAttribute('src') };
         const width = domNode.getAttribute('width');
@@ -45,7 +47,7 @@ export default class CustomVideo extends Video {
         return formats;
     }
 
-    // Permite actualizar width y height al aplicarse un formato
+    // Allows you to update width and height when applying a format
     format(name: string, value: any) {
         if (name === 'width' || name === 'height' || name === 'style') {
             if (value) {

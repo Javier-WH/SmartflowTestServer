@@ -1,0 +1,48 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import Quill from "quill";
+
+const Image = Quill.import('formats/image') as any;
+export default class CustomImageGuidance extends Image {
+
+    // When creating the image, we check if 'value' is an object that includes src, width, and height
+    static create(value: any) {
+        const node = super.create(value);
+
+        // Only if the image does not already have a defined width, assign the default size
+        if (!node.getAttribute("width")) {
+            node.setAttribute("width", "300"); 
+            node.style.width = "300px";
+        }
+        if (!node.getAttribute("height")) {
+            node.setAttribute("height", "200"); 
+            node.style.height = "200px";
+        }
+
+        return node;
+
+    }
+
+
+    // Only if the image does not already have a defined width, assign the default size
+    static formats(domNode: HTMLElement) {
+        const formats: { src: string | null; width?: string | null; height?: string | null; style?: string | null } = { src: domNode.getAttribute('src') };
+        const style = domNode.getAttribute('style');
+        if (style) {
+            formats.style = style
+        }
+        return formats;
+    }
+
+    // Allows you to update width and height when applying a format
+    format(name: string, value: any) {
+        if (name === 'width' || name === 'height' || name === 'style') {
+            if (value) {
+                this.domNode.setAttribute(name, value);
+            } else {
+                this.domNode.removeAttribute(name);
+            }
+        } else {
+            super.format(name, value);
+        }
+    }
+}

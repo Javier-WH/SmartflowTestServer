@@ -5,7 +5,9 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from "../toolbar/CustonToolbar";
-import Delta from 'quill-delta';
+import CustomImage from "../utils/CustonImageGuidance";
+
+
 
 const fontSizeList = ['10px', '12px', '14px', '16px', '18px', '20px', '22px', '24px', '26px', '28px', '30px', '32px', '34px', '36px', '38px', '40px', '42px', '44px', '46px', '48px']
 const fontList = [
@@ -31,6 +33,9 @@ const Size = Quill.import('attributors/style/size') as any;
 Size.whitelist = fontSizeList;
 Quill.register(Size, true);
 
+
+
+
 // Register custom fonts
 const Font = Quill.import('formats/font') as any;
 Font.whitelist = fontList;
@@ -51,6 +56,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
   useEffect(() => {
     Quill.register('modules/resize', ResizeModule);
+    Quill.register(CustomImage, true);
   }, []);
 
   const handlePaste = (e: ClipboardEvent) => {
@@ -110,7 +116,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
 
       // load initial images data
-      editorRef.current.clipboard.addMatcher('IMG', (node: Node) => {
+      /*editorRef.current.clipboard.addMatcher('IMG', (node: Node) => {
         if (node.nodeType === 1) { // only html elements
           const element = node as HTMLElement;
           return new Delta().insert({
@@ -123,7 +129,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
           });
         }
         return new Delta();
-      });
+      });*/
 
 
 
@@ -131,10 +137,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
       editorRoot.addEventListener('paste', handlePaste);
 
-      // load quill initial data
-      /*if (value) {
-        editorRef.current.clipboard.dangerouslyPasteHTML(value);
-      }*/
+      
 
       if (value) {
         const delta = editorRef.current.clipboard.convert({ html: value });
@@ -148,6 +151,8 @@ export default function Guidance({ saveData, value, id, readonly }: {
         const content = editorRef.current?.root.innerHTML || '';
         saveData(id, content);
       });
+
+      
     }
 
     // this prevent a bug when image resize
@@ -191,6 +196,8 @@ export default function Guidance({ saveData, value, id, readonly }: {
     resizing.current = false;
   };
 
+  
+
   return <>
     {
       !readonly &&
@@ -206,3 +213,49 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
 }
 
+/*
+const Image = Quill.import('formats/image') as any;
+ class CustomImage extends Image {
+
+    // Al crear la imagen, revisamos si 'value' es un objeto que incluya src, width y height
+    static create(value: any) {
+        const node = super.create(value);
+
+      // Solo si la imagen no tiene ya una anchura definida, asigna el tamaño predeterminado
+      if (!node.getAttribute("width")) {
+        node.setAttribute("width", "300"); // Ancho predeterminado
+        node.style.width = "300px";
+      }
+      if (!node.getAttribute("height")) {
+        node.setAttribute("height", "200"); // Alto predeterminado
+        node.style.height = "200px";
+      }
+
+      return node;
+
+    }
+
+
+    // Al serializar la imagen, devolvemos un objeto que contenga src, width y height
+    static formats(domNode: HTMLElement) {
+        const formats: { src: string | null; width?: string | null; height?: string | null; style?: string | null } = { src: domNode.getAttribute('src') };
+        const style = domNode.getAttribute('style');
+        if (style) {
+            formats.style = style
+        }
+        return formats;
+    }
+
+    // Permite actualizar width y height al aplicarse un formato
+    format(name: string, value: any) {
+        if (name === 'width' || name === 'height' || name === 'style') {
+            if (value) {
+                this.domNode.setAttribute(name, value);
+            } else {
+                this.domNode.removeAttribute(name);
+            }
+        } else {
+            super.format(name, value);
+        }
+    }
+}*/

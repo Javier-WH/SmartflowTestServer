@@ -63,28 +63,57 @@ export default function TextEditor() {
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
     const navigate = useNavigate();
-    const [selectedImage, setSelectedImage] = useState<HTMLImageElement| HTMLIFrameElement | null>(null);
+    const [selectedImage, setSelectedImage] = useState<HTMLElement| null>(null);
 
     const [visible, setVisible] = useState(false);
 
     // get selected image
     useEffect(() => {
-        const setSelectedImageEvent = (e: Event) => {
-            //setSelectedImage(null);
-            const target = e.target as HTMLImageElement;
+        const handleIframeClick = (e: MouseEvent) => {
+            const iframes = document.querySelectorAll('.ql-editor iframe');
+            const target = e.target as HTMLElement;
 
-            const img = target.closest('img') || target.closest('iframe');
-            if (img) {
-                if (img.classList.contains('ant-image-preview-img'))return
-                setSelectedImage(img);
+            // Verificar si el clic ocurrió dentro de un iframe
+            const clickedInsideIframe = Array.from(iframes).some(iframe => {
+                try {
+                    return (iframe as HTMLIFrameElement).contentDocument?.contains(target);
+                } catch (error) {
+                    return false;
+                }
+            });
+
+            if (clickedInsideIframe) {
+                const iframe = target.closest('iframe');
+                if (iframe) {
+                    setSelectedImage(iframe);
+                }
                 return;
             }
-        }
-        window.addEventListener('click', setSelectedImageEvent);
+
+            // Detección normal para imágenes y iframes externos
+            const element = target.closest('img, iframe');
+            if (element && !element.classList.contains('ant-image-preview-img')) {
+                setSelectedImage(element as HTMLElement);
+            }
+        };
+
+        const checkFocus = () => {
+            const activeElement = document.activeElement;
+            if (activeElement?.tagName === 'IFRAME') {
+                setSelectedImage(activeElement as HTMLIFrameElement);
+            }
+        };
+
+        window.addEventListener('click', handleIframeClick);
+        window.addEventListener('blur', checkFocus);
+
         return () => {
-            window.removeEventListener('click', setSelectedImageEvent);
-        }
+            window.removeEventListener('click', handleIframeClick);
+            window.removeEventListener('blur', checkFocus);
+        };
     }, []);
+
+    
 
 
 
@@ -93,7 +122,7 @@ export default function TextEditor() {
         if (!selectedImage || !quillRef.current) {
             return;
         }
-
+      
         const resizer = document.getElementById("editor-resizer") as HTMLElement;
         if (resizer) {
             const imageRect = selectedImage.getBoundingClientRect();
@@ -106,38 +135,12 @@ export default function TextEditor() {
         }
     };
 
-    // event to open image preview
-    useEffect(() => {
-        const openImagePreview = (e: Event) => {
-            const target = e.target as HTMLImageElement;
-            const imageToolbar = document.getElementsByClassName('toolbar')[0];
-            const imagehandler = document.getElementsByClassName('handler')[0];
-            // if readOnly cant change image size, so we have to hide the toolbar
-            if (readOnly){
-                if (imageToolbar) {
-                    imageToolbar.classList.add('hidden');
-                }
-                if (imagehandler) {
-                    imagehandler.classList.add('hidden');
-                }
-            }
 
-            if (target.id === 'editor-resizer'){
-                setVisible(true);
-            }
-
-            
-        }
-        document.addEventListener('click', openImagePreview);
-        return () => {   
-            document.removeEventListener('click', openImagePreview);
-        }
-    },[])
   
 
     // Reposition the resizer when the selected image changes
     useEffect(() => {
-        if (!selectedImage) return;
+       
         fixResizerPosition();
     }, [selectedImage]);
 
@@ -201,6 +204,35 @@ export default function TextEditor() {
             resizeObserver.disconnect();
         };
     }, [selectedImage, quillRef]);
+
+
+    // event to open image preview
+    useEffect(() => {
+        const openImagePreview = (e: Event) => {
+            const target = e.target as HTMLImageElement;
+            const imageToolbar = document.getElementsByClassName('toolbar')[0];
+            const imagehandler = document.getElementsByClassName('handler')[0];
+            // if readOnly cant change image size, so we have to hide the toolbar
+            if (readOnly) {
+                if (imageToolbar) {
+                    imageToolbar.classList.add('hidden');
+                }
+                if (imagehandler) {
+                    imagehandler.classList.add('hidden');
+                }
+            }
+
+            if (target.id === 'editor-resizer') {
+                setVisible(true);
+            }
+
+
+        }
+        document.addEventListener('click', openImagePreview);
+        return () => {
+            document.removeEventListener('click', openImagePreview);
+        }
+    }, [])
 
 
 
@@ -484,7 +516,7 @@ export default function TextEditor() {
                         placeholder=""
                         //className="h-full"
                         onChangeSelection={handleChangeSelection}
-                        style={{ height: 'calc(100vh - 210px)', overflowY: 'hidden' }}
+                        style={{ height: 'calc(100vh - 210px)' }}
 
                     />
 
@@ -498,8 +530,8 @@ export default function TextEditor() {
                         style={{ display: 'none' }}
                         src=""
                         preview={{
-                            visible,
-                            src: selectedImage?.src || '',
+                            visible: visible && selectedImage?.tagName === 'IMG',
+                            src: (selectedImage as HTMLImageElement)?.src || '',
                             onVisibleChange: (value) => {
                                 setVisible(value);
                             },
