@@ -67,53 +67,28 @@ export default function TextEditor() {
 
     const [visible, setVisible] = useState(false);
 
+
     // get selected image
     useEffect(() => {
-        const handleIframeClick = (e: MouseEvent) => {
-            const iframes = document.querySelectorAll('.ql-editor iframe');
+        const handleElementClick = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-
-            // Verificar si el clic ocurrió dentro de un iframe
-            const clickedInsideIframe = Array.from(iframes).some(iframe => {
-                try {
-                    return (iframe as HTMLIFrameElement).contentDocument?.contains(target);
-                } catch (error) {
-                    return false;
-                }
-            });
-
-            if (clickedInsideIframe) {
-                const iframe = target.closest('iframe');
-                if (iframe) {
-                    setSelectedImage(iframe);
-                }
-                return;
-            }
-
-            // Detección normal para imágenes y iframes externos
-            const element = target.closest('img, iframe');
+        
+       
+            const element = target.closest('img');
             if (element && !element.classList.contains('ant-image-preview-img')) {
                 setSelectedImage(element as HTMLElement);
             }
         };
 
-        const checkFocus = () => {
-            const activeElement = document.activeElement;
-            if (activeElement?.tagName === 'IFRAME') {
-                setSelectedImage(activeElement as HTMLIFrameElement);
-            }
-        };
-
-        window.addEventListener('click', handleIframeClick);
-        window.addEventListener('blur', checkFocus);
+        window.addEventListener('click', handleElementClick);
 
         return () => {
-            window.removeEventListener('click', handleIframeClick);
-            window.removeEventListener('blur', checkFocus);
+            window.removeEventListener('click', handleElementClick);
+
         };
     }, []);
 
-    
+  
 
 
 
@@ -405,6 +380,7 @@ export default function TextEditor() {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     const handleChangeSelection = () => {
+        
         if (readOnly) return
         const activeElement = document.activeElement;
         const editorRoot = quillRef.current?.getEditor().root;
@@ -426,9 +402,12 @@ export default function TextEditor() {
 
     };
 
+    
+
 
     //paste image handler
     const handlePaste = (e: ClipboardEvent) => {
+
         const editor = quillRef.current?.getEditor();
         if (!editor) return;
 
