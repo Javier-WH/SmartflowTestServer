@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { MainContext, type MainContextValues } from '../mainContext';
-import { Input, type InputRef, Image } from 'antd';
+import { Input, type InputRef, Image, Spin } from 'antd';
 import { useContext, useEffect, useState, useRef } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import styles from './textEditorStyles.tsx';
@@ -64,7 +65,7 @@ export default function TextEditor() {
     const inputRef = useRef<InputRef>(null);
     const navigate = useNavigate();
     const [selectedImage, setSelectedImage] = useState<HTMLElement| null>(null);
-
+    const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
 
 
@@ -88,6 +89,69 @@ export default function TextEditor() {
         };
     }, []);
 
+    // get selected video (only for youtube), we have force to do this beacause iframe is not selectable by any means due to security reasons, web browsers do not allow to select iframe
+    useEffect(() => {
+        if (!quillRef.current) return;
+
+        let scriptTag: HTMLScriptElement | null = null;
+
+        const loadYouTubeAPI = () => {
+            if (window.YT) return;
+
+            scriptTag = document.createElement('script');
+            scriptTag.src = "https://www.youtube.com/iframe_api";
+            document.body.appendChild(scriptTag);
+        };
+
+        const initializePlayers = (iframe: HTMLIFrameElement) => {
+            if (!window.YT) return;
+
+            new (window.YT as typeof YT).Player(iframe, {
+                events: {
+                  
+                    onStateChange: (event: { data: number }) => {
+                        if (event.data === 1) { // playing
+       
+                          setSelectedImage(iframe);
+                        }
+
+                        if (event.data === 2) { // paused
+               
+                            setSelectedImage(iframe);
+                        }
+                    }
+                }
+            });
+        };
+
+        loadYouTubeAPI();
+
+        const editor = quillRef.current.getEditor();
+        const editorRoot = editor.root;
+
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeName === 'IFRAME') {
+                        const iframe = node as HTMLIFrameElement;
+                        if (iframe.src.includes('youtube.com/embed')) {
+                            initializePlayers(iframe);
+                        }
+                    }
+                });
+            });
+        });
+
+        observer.observe(editorRoot, { childList: true, subtree: true });
+
+        return () => {
+            observer.disconnect();
+            // Limpiar el script solo si fue cargado por este componente
+            if (scriptTag && document.body.contains(scriptTag)) {
+                document.body.removeChild(scriptTag);
+            }
+        };
+    }, [quillRef.current]);
   
 
 
@@ -99,6 +163,11 @@ export default function TextEditor() {
         }
       
         const resizer = document.getElementById("editor-resizer") as HTMLElement;
+       if (selectedImage?.tagName === 'IMG') {
+            resizer?.classList?.add('showResizer');
+        }else{
+            resizer?.classList?.remove('showResizer');
+        }
         if (resizer) {
             const imageRect = selectedImage.getBoundingClientRect();
             const container = selectedImage.closest('.ql-editor');
@@ -115,7 +184,7 @@ export default function TextEditor() {
 
     // Reposition the resizer when the selected image changes
     useEffect(() => {
-       
+      
         fixResizerPosition();
     }, [selectedImage]);
 
@@ -277,6 +346,7 @@ export default function TextEditor() {
     useEffect(() => {
 
         if (id) {
+            setLoading(true);
             setAbleToSave(false);
             getFileContent(id)
                 .then(response => {
@@ -292,7 +362,12 @@ export default function TextEditor() {
                     setUpdatedAt(updated_at);
                 })
                 .catch(error => console.error(error))
-                .finally(() => setAbleToSave(true));
+                .finally(() => {
+                    setAbleToSave(true)
+                  setTimeout(() => {
+                      setLoading(false);
+                  }, 500);
+                });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
@@ -454,6 +529,7 @@ export default function TextEditor() {
     return (
         <>
             <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white"  >
+                {loading && <div className='quill-loader'><Spin size="large"></Spin>Loading</div>}
                 <div className="flex flex-col h-full w-full max-w-3xl" >
                     <div className="mt-8" >
                         <div className="flex items-center" >
@@ -473,6 +549,7 @@ export default function TextEditor() {
                                 </span>
                             ) : null}
                         </div>
+         
                         <Input
                             {...(readOnly && { readOnly: true })}
                             ref={inputRef}
@@ -496,6 +573,7 @@ export default function TextEditor() {
                         //className="h-full"
                         onChangeSelection={handleChangeSelection}
                         style={{ height: 'calc(100vh - 210px)' }}
+                        
 
                     />
 

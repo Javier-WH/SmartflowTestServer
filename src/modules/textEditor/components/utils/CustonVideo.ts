@@ -21,7 +21,20 @@ export default class CustomVideo extends Video {
                 node.setAttribute('style', value.style);
             }
         } else {
-            node.setAttribute('src', value);
+
+            let src = value;
+            // Modificación para YouTube
+            try {
+                const url = new URL(value);
+                if (url.hostname.includes('youtube.com')) {
+                    url.searchParams.set('enablejsapi', '1');
+                    url.searchParams.set('origin', window.location.origin);
+                    src = url.toString();
+                }
+            } catch (e) {
+                console.error(e);
+            }
+            node.setAttribute('src', src);
             node.setAttribute('width', "100%");
             node.setAttribute('height', "400px");
         }

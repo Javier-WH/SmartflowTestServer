@@ -3,24 +3,42 @@
 
 }
 
+
+.handler{
+  pointer-events: all !important;
+}
 #editor-resizer {
+  pointer-events: none;
+  background: transparent !important;
+  border: none !important;
+
+}
+
+
+.showResizer {
+  pointer-events: all !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
 }
 
-#editor-resizer::after {
-  content: 'Click for image preview' !important;
-  color: white !important;
+.showResizer::after {
+  content: 'Click for image preview';
+  color: rgb(78, 72, 72) !important;
+  background-color: rgba(177, 204, 245, 0.432) !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
-
 
 
 .ant-image-preview-root,
 .ant-image-preview-operations-wrapper {
   z-index: 10002 !important;
-    position: fixed !important;
+  position: fixed !important;
 }
 
 .ant-image-preview-body {
@@ -65,6 +83,7 @@
 
 /*video and image toolbar*/
 .toolbar {
+  pointer-events: all !important;
   z-index: 1001;
   background-color: var(--pageBarColor) !important;
   color: white !important;
@@ -301,6 +320,7 @@
     left: 50% !important;
   }*/
 
+
 .ql-guided-checklist img {
   margin: 0px !important;
 }
@@ -317,4 +337,20 @@ a {
 .collapse-list-icon-true svg {
   stroke: rgb(14, 173, 41) !important;
   fill: rgb(14, 173, 41) !important;
+}
+
+.quill-loader {
+  z-index: 10000 !important;
+  background-color: white;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  top: 90px;
+  color: rgb(98, 220, 236);
 }
