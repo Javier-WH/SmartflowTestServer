@@ -110,14 +110,9 @@ export default function TextEditor() {
                 events: {
                   
                     onStateChange: (event: { data: number }) => {
-                        if (event.data === 1) { // playing
+                        if (event.data === 1 || event.data === 2) { // playing
        
                           setSelectedImage(iframe);
-                        }
-
-                        if (event.data === 2) { // paused
-               
-                            setSelectedImage(iframe);
                         }
                     }
                 }
@@ -132,6 +127,9 @@ export default function TextEditor() {
         const observer = new MutationObserver((mutations) => {
             mutations.forEach(mutation => {
                 mutation.addedNodes.forEach(node => {
+                    //guided-checklist-block
+                    if ((node as HTMLElement).closest('guided-checklist')) return
+                    console.log(node);
                     if (node.nodeName === 'IFRAME') {
                         const iframe = node as HTMLIFrameElement;
                         if (iframe.src.includes('youtube.com/embed')) {
@@ -184,7 +182,7 @@ export default function TextEditor() {
 
     // Reposition the resizer when the selected image changes
     useEffect(() => {
-      
+      console.log(selectedImage);
         fixResizerPosition();
     }, [selectedImage]);
 

@@ -6,6 +6,7 @@ import "quill/dist/quill.snow.css";
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from "../toolbar/CustonToolbar";
 import CustomImage from "../utils/CustonImageGuidance";
+import CustomVideo from "../utils/CustonVideoGuidance";
 
 
 
@@ -57,6 +58,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
   useEffect(() => {
     Quill.register('modules/resize', ResizeModule);
     Quill.register(CustomImage, true);
+    Quill.register(CustomVideo, true);
   }, []);
 
   const handlePaste = (e: ClipboardEvent) => {
