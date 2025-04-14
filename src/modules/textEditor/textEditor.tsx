@@ -81,7 +81,8 @@ export default function TextEditor() {
     useEffect(() => {
         const handleElementClick = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-            
+
+
             const element = target.closest('img');
             if (element && !element.classList.contains('ant-image-preview-img')) {
                 setSelectedImage(element as HTMLElement);
@@ -129,14 +130,20 @@ export default function TextEditor() {
         const editor = quillRef.current.getEditor();
         const editorRoot = editor.root;
 
-        const observer = new MutationObserver(() => {
+        const observer = new MutationObserver((mutations) => {
 
-            const iframes = document.getElementsByTagName('iframe');
-           
-            for(const iframe of iframes) {
-                initializePlayers(iframe);
-            }
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeName !== 'IFRAME') return
+                    const iframe = node as HTMLIFrameElement; 
+                    if (iframe.closest('guided-checklist')) return // to prevent endless loop
+                
+                    if (iframe.src.includes('youtube.com/embed')) {
+                        initializePlayers(iframe);
+                    }
 
+                });
+            });
         });
 
         observer.observe(editorRoot, { childList: true, subtree: true });
@@ -169,7 +176,6 @@ export default function TextEditor() {
             const imageRect = selectedImage.getBoundingClientRect();
             const container = selectedImage.closest('.ql-editor');
             const quillRect = container?.getBoundingClientRect();
-            console.log({quillRect});
             if (!container || !quillRect) return
             // Calculate the top position of the image relative to the Quill container
             const topPosition = quillRect ? imageRect.top - quillRect.top : 0;
@@ -182,7 +188,7 @@ export default function TextEditor() {
 
     // Reposition the resizer when the selected image changes
     useEffect(() => {
-       // console.log(selectedImage);
+        console.log(selectedImage);
         fixResizerPosition();
     }, [selectedImage]);
 
