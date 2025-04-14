@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { type FormEvent, useState, useEffect } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
@@ -15,8 +16,22 @@ const SignUp = () => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-
+    const [redirect, setRedirect] = useState<string | null>(null);
     const { token, signUp } = useAuth();
+
+    useEffect(() => {
+
+        const searchParams = new URLSearchParams(location.search);
+        const redirectParam = searchParams.get('redirect');
+
+
+        if (redirectParam) {
+            setRedirect(redirectParam);
+            return
+        }
+        setRedirect(null);
+
+    }, []);
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -58,6 +73,10 @@ const SignUp = () => {
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         if (token) {
+            if (redirect) {
+                navigate(redirect)
+                return
+            }
             navigate('/');
         }
     }, [token]);

@@ -4,13 +4,6 @@ import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { MainContext, type MainContextValues } from '../mainContext';
 import { Input, type InputRef, Image, Spin } from 'antd';
 import { useContext, useEffect, useState, useRef } from 'react';
-
-// Extend the Window interface to include setQuillImage
-declare global {
-    interface Window {
-        setQuillImage?: (image: HTMLElement | null) => void;
-    }
-}
 import ReactQuill, { Quill } from 'react-quill';
 import styles from './textEditorStyles.tsx';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
@@ -580,7 +573,6 @@ export default function TextEditor() {
                         //className="h-full"
                         onChangeSelection={handleChangeSelection}
                         style={{ height: 'calc(100vh - 210px)' }}
-
 
                     />
 
