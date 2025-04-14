@@ -4,6 +4,13 @@ import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { MainContext, type MainContextValues } from '../mainContext';
 import { Input, type InputRef, Image, Spin } from 'antd';
 import { useContext, useEffect, useState, useRef } from 'react';
+
+// Extend the Window interface to include setQuillImage
+declare global {
+    interface Window {
+        setQuillImage?: (image: HTMLElement | null) => void;
+    }
+}
 import ReactQuill, { Quill } from 'react-quill';
 import styles from './textEditorStyles.tsx';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
@@ -64,17 +71,17 @@ export default function TextEditor() {
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
     const navigate = useNavigate();
-    const [selectedImage, setSelectedImage] = useState<HTMLElement| null>(null);
+    const [selectedImage, setSelectedImage] = useState<HTMLElement | null>(null);
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
+
 
 
     // get selected image
     useEffect(() => {
         const handleElementClick = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-        
-       
+            
             const element = target.closest('img');
             if (element && !element.classList.contains('ant-image-preview-img')) {
                 setSelectedImage(element as HTMLElement);
@@ -108,11 +115,9 @@ export default function TextEditor() {
 
             new (window.YT as typeof YT).Player(iframe, {
                 events: {
-                  
                     onStateChange: (event: { data: number }) => {
-                        if (event.data === 1 || event.data === 2) { // playing
-       
-                          setSelectedImage(iframe);
+                        if (event.data === 1 || event.data === 2) { // playing (1) or paused (2)
+                            setSelectedImage(iframe);
                         }
                     }
                 }
@@ -124,20 +129,14 @@ export default function TextEditor() {
         const editor = quillRef.current.getEditor();
         const editorRoot = editor.root;
 
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach(mutation => {
-                mutation.addedNodes.forEach(node => {
-                    //guided-checklist-block
-                    if ((node as HTMLElement).closest('guided-checklist')) return
-                    console.log(node);
-                    if (node.nodeName === 'IFRAME') {
-                        const iframe = node as HTMLIFrameElement;
-                        if (iframe.src.includes('youtube.com/embed')) {
-                            initializePlayers(iframe);
-                        }
-                    }
-                });
-            });
+        const observer = new MutationObserver(() => {
+
+            const iframes = document.getElementsByTagName('iframe');
+           
+            for(const iframe of iframes) {
+                initializePlayers(iframe);
+            }
+
         });
 
         observer.observe(editorRoot, { childList: true, subtree: true });
@@ -150,7 +149,7 @@ export default function TextEditor() {
             }
         };
     }, [quillRef.current]);
-  
+
 
 
 
@@ -159,17 +158,18 @@ export default function TextEditor() {
         if (!selectedImage || !quillRef.current) {
             return;
         }
-      
+
         const resizer = document.getElementById("editor-resizer") as HTMLElement;
-       if (selectedImage?.tagName === 'IMG') {
+        if (selectedImage?.tagName === 'IMG') {
             resizer?.classList?.add('showResizer');
-        }else{
+        } else {
             resizer?.classList?.remove('showResizer');
         }
         if (resizer) {
             const imageRect = selectedImage.getBoundingClientRect();
             const container = selectedImage.closest('.ql-editor');
             const quillRect = container?.getBoundingClientRect();
+            console.log({quillRect});
             if (!container || !quillRect) return
             // Calculate the top position of the image relative to the Quill container
             const topPosition = quillRect ? imageRect.top - quillRect.top : 0;
@@ -178,11 +178,11 @@ export default function TextEditor() {
     };
 
 
-  
+
 
     // Reposition the resizer when the selected image changes
     useEffect(() => {
-      console.log(selectedImage);
+       // console.log(selectedImage);
         fixResizerPosition();
     }, [selectedImage]);
 
@@ -362,9 +362,9 @@ export default function TextEditor() {
                 .catch(error => console.error(error))
                 .finally(() => {
                     setAbleToSave(true)
-                  setTimeout(() => {
-                      setLoading(false);
-                  }, 500);
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 500);
                 });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -453,7 +453,7 @@ export default function TextEditor() {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     const handleChangeSelection = () => {
-        
+
         if (readOnly) return
         const activeElement = document.activeElement;
         const editorRoot = quillRef.current?.getEditor().root;
@@ -475,7 +475,7 @@ export default function TextEditor() {
 
     };
 
-    
+
 
 
     //paste image handler
@@ -547,7 +547,7 @@ export default function TextEditor() {
                                 </span>
                             ) : null}
                         </div>
-         
+
                         <Input
                             {...(readOnly && { readOnly: true })}
                             ref={inputRef}
@@ -571,7 +571,7 @@ export default function TextEditor() {
                         //className="h-full"
                         onChangeSelection={handleChangeSelection}
                         style={{ height: 'calc(100vh - 210px)' }}
-                        
+
 
                     />
 
