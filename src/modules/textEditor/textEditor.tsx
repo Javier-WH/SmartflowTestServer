@@ -113,12 +113,12 @@ export default function TextEditor() {
 
         const initializePlayers = (iframe: HTMLIFrameElement) => {
             if (!window.YT) return;
-
             new (window.YT as typeof YT).Player(iframe, {
                 events: {
                     onStateChange: (event: { data: number }) => {
                         if (event.data === 1 || event.data === 2) { // playing (1) or paused (2)
                             setSelectedImage(iframe);
+                         
                         }
                     }
                 }
@@ -136,9 +136,12 @@ export default function TextEditor() {
                 mutation.addedNodes.forEach(node => {
                     if (node.nodeName !== 'IFRAME') return
                     const iframe = node as HTMLIFrameElement; 
-                    if (iframe.closest('guided-checklist')) return // to prevent endless loop
+                    if (iframe.closest('guided-checklist')) {
+                        return
+                    }
                 
                     if (iframe.src.includes('youtube.com/embed')) {
+                  
                         initializePlayers(iframe);
                     }
 
@@ -150,7 +153,7 @@ export default function TextEditor() {
 
         return () => {
             observer.disconnect();
-            // Limpiar el script solo si fue cargado por este componente
+            // clean up the YouTube API script only if it was loaded
             if (scriptTag && document.body.contains(scriptTag)) {
                 document.body.removeChild(scriptTag);
             }
