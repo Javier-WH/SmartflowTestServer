@@ -72,7 +72,15 @@ export default function TextEditor() {
         const handleElementClick = (e: MouseEvent) => {
         
             const target = e.target as HTMLElement;
-            if(target.id === 'editor-resizer') return
+            if(
+                target.id === 'editor-resizer' || 
+                target.classList.contains('ant-image-preview-wrap') ||
+                target.classList.contains('ant-image-preview-operations-operation') ||
+                target.classList.contains('ant-image-preview-operations') ||
+                target.tagName === 'svg' ||
+                target.tagName === 'path' 
+            ) return
+            console.log(target)
             const element = target.closest('img');
             if (element && !element.classList.contains('ant-image-preview-img')) {
                 setSelectedImage(element as HTMLElement);
