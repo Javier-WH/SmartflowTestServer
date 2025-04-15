@@ -195,8 +195,17 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
     // update component attributes
     useEffect(() => {
         if (componentRef.current) {
-            componentRef.current.setAttribute('title', internalTitle);
-            componentRef.current.setAttribute('items', JSON.stringify(list));
+            const currentTitle = componentRef.current.getAttribute('title');
+            const currentItems = componentRef.current.getAttribute('items');
+
+            if (currentTitle !== internalTitle) {
+                componentRef.current.setAttribute('title', internalTitle);
+            }
+
+            const itemsString = JSON.stringify(list);
+            if (currentItems !== itemsString) {
+                componentRef.current.setAttribute('items', itemsString);
+            }
         }
     }, [internalTitle, list]);
 

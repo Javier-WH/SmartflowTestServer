@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from "../toolbar/CustonToolbar";
 import CustomImage from "../utils/CustonImageGuidance";
 import CustomVideo from "../utils/CustonVideoGuidance";
+import { useDebouncedCallback } from "use-debounce";
 
 
 
@@ -52,9 +53,14 @@ export default function Guidance({ saveData, value, id, readonly }: {
   const quillRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const resizing = useRef(false); //awful solution for unknown image resize bug
-
+  const [currentContent, setCurrentContent] = useState(value);
   const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
 
+
+  const debouncedSave = useDebouncedCallback((content: string) => {
+    saveData(id, content);
+  }, 300);
+  
   useEffect(() => {
     Quill.register('modules/resize', ResizeModule);
     Quill.register(CustomImage, true);
@@ -117,24 +123,6 @@ export default function Guidance({ saveData, value, id, readonly }: {
       editorRef.current = new Quill(quillRef.current, options);
 
 
-      // load initial images data
-      /*editorRef.current.clipboard.addMatcher('IMG', (node: Node) => {
-        if (node.nodeType === 1) { // only html elements
-          const element = node as HTMLElement;
-          return new Delta().insert({
-            image: {
-              src: element.getAttribute('src') || '',
-              width: element.getAttribute('width'),
-              height: element.getAttribute('height'),
-              style: element.getAttribute('style')
-            }
-          });
-        }
-        return new Delta();
-      });*/
-
-
-
       const editorRoot = editorRef.current.root;
 
       editorRoot.addEventListener('paste', handlePaste);
@@ -148,10 +136,13 @@ export default function Guidance({ saveData, value, id, readonly }: {
       }
 
 
+ 
       editorRef.current.on('text-change', () => {
         if (resizing.current) return;
         const content = editorRef.current?.root.innerHTML || '';
-        saveData(id, content);
+        if (content === currentContent) return;
+        setCurrentContent(content);
+        debouncedSave(content);
       });
 
       
@@ -184,8 +175,9 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
   // external changes sync
   useEffect(() => {
-    if (editorRef.current && value !== editorRef.current.root.innerHTML) {
+    if (editorRef.current && value !== currentContent) {
       editorRef.current.clipboard.dangerouslyPasteHTML(value);
+      setCurrentContent(value);
     }
   }, [value]);
 
