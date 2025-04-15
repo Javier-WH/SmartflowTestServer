@@ -121,7 +121,9 @@
 .quill-editor-container .toolbar {
   display: flex !important;
   flex-direction: column;
-
+  position: fixed !important;
+  top: 0 !important;
+  
 
 }
 
