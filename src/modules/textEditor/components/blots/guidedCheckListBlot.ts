@@ -35,6 +35,8 @@ export default class GuidedCheckListBlot extends BlockEmbed {
     }
   }
 
+  
+
   static formats(domNode: HTMLElement) {
     return {
       title: domNode.getAttribute('title') || '',

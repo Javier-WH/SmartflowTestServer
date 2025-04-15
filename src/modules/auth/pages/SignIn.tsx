@@ -1,6 +1,6 @@
 import { type FormEvent, useState, useEffect } from 'react';
 
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import AlertMessage from '../components/ErrorMessage';
 
@@ -14,8 +14,22 @@ const SignIn = () => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [redirect, setRedirect] = useState<string | null>(null);
 
     const { token, signIn } = useAuth();
+
+    useEffect(() => {
+
+        const searchParams = new URLSearchParams(location.search);
+        const redirectParam = searchParams.get('redirect');
+
+        // if redirect param is valid redirect to it
+        if (redirectParam && isValidJoinPath(redirectParam)) {
+            setRedirect(redirectParam);
+            return
+        }
+
+    }, []);
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -116,7 +130,7 @@ const SignIn = () => {
                 <div className="text-center">
                     <span>
                         ¿No tienes una cuenta?{' '}
-                        <Link to="/auth/signup" className="text-center underline">
+                        <Link to={`/auth/signup?${redirect ? `redirect=${redirect}` : ''}`} className="text-center underline">
                             Regístrate
                         </Link>
                     </span>

@@ -5,7 +5,10 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from "../toolbar/CustonToolbar";
-import Delta from 'quill-delta';
+import CustomImage from "../utils/CustonImageGuidance";
+import CustomVideo from "../utils/CustonVideoGuidance";
+
+
 
 const fontSizeList = ['10px', '12px', '14px', '16px', '18px', '20px', '22px', '24px', '26px', '28px', '30px', '32px', '34px', '36px', '38px', '40px', '42px', '44px', '46px', '48px']
 const fontList = [
@@ -31,6 +34,9 @@ const Size = Quill.import('attributors/style/size') as any;
 Size.whitelist = fontSizeList;
 Quill.register(Size, true);
 
+
+
+
 // Register custom fonts
 const Font = Quill.import('formats/font') as any;
 Font.whitelist = fontList;
@@ -45,11 +51,14 @@ export default function Guidance({ saveData, value, id, readonly }: {
   const editorRef = useRef<Quill | null>(null);
   const quillRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const resizing = useRef(false); //awful solution for unknown image resize bug
 
   const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
 
   useEffect(() => {
     Quill.register('modules/resize', ResizeModule);
+    Quill.register(CustomImage, true);
+    Quill.register(CustomVideo, true);
   }, []);
 
   const handlePaste = (e: ClipboardEvent) => {
@@ -59,6 +68,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
 
   useEffect(() => {
+
     if (quillRef.current && !editorRef.current) {
       const options = {
         theme: 'snow',
@@ -107,11 +117,9 @@ export default function Guidance({ saveData, value, id, readonly }: {
       editorRef.current = new Quill(quillRef.current, options);
 
 
-
-
-      // Matcher modificado para imágenes
-      editorRef.current.clipboard.addMatcher('IMG', (node: Node) => {
-        if (node.nodeType === 1) { // Solo elementos HTML
+      // load initial images data
+      /*editorRef.current.clipboard.addMatcher('IMG', (node: Node) => {
+        if (node.nodeType === 1) { // only html elements
           const element = node as HTMLElement;
           return new Delta().insert({
             image: {
@@ -123,7 +131,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
           });
         }
         return new Delta();
-      });
+      });*/
 
 
 
@@ -131,48 +139,46 @@ export default function Guidance({ saveData, value, id, readonly }: {
 
       editorRoot.addEventListener('paste', handlePaste);
 
-      // load initial data
-      if (value) {
-        editorRef.current.clipboard.dangerouslyPasteHTML(value);
-        //const delta = editorRef.current.clipboard.convert({ html: value });
-        //editorRef.current.setContents(delta);
-      }
+      
 
       if (value) {
         const delta = editorRef.current.clipboard.convert({ html: value });
         editorRef.current.setContents(delta);
-        editorRef.current.root.innerHTML = value; // Forzar actualización visual
+        editorRef.current.root.innerHTML = value; // force visual update
       }
 
 
       editorRef.current.on('text-change', () => {
+        if (resizing.current) return;
         const content = editorRef.current?.root.innerHTML || '';
         saveData(id, content);
       });
+
+      
     }
 
     // this prevent a bug when image resize
-    const forceSaveOnImageResize = (e: MouseEvent) => {
-      if (!e.target) return;
-      if (e.target instanceof HTMLElement) {
-        if (e.target.classList.contains('btn')) {
-          const content = editorRef.current?.root.innerHTML || '';
-          saveData(id, content);
-        }
-      }
-    };
-    window.addEventListener('click', forceSaveOnImageResize);
-
+    // we have to preven save while resizing, otherwise the resize will crap on the guidance and all die :(
+    // idk why this happens, but it does... if you know, please let me know
+    window.addEventListener('mousedown', handleResizeStart);
+    const onResizeEnd = () => {
+      const content = editorRef.current?.root.innerHTML || '';
+      handleResizeEnd();
+      saveData(id, content); // save on resize image end
+    }
+    window.addEventListener('mouseup', onResizeEnd);
 
     return () => {
+      //remove all the listeners to avoid memory leaks
       const editorRoot = editorRef.current?.root;
       if (editorRoot) {
         editorRoot.removeEventListener('paste', handlePaste);
       }
-      window.removeEventListener('click', forceSaveOnImageResize);
       if (editorRef.current) {
         editorRef.current = null;
       }
+      window.removeEventListener('mousedown', handleResizeStart);
+      window.removeEventListener('mouseup', onResizeEnd);
     };
   }, []);
 
@@ -182,6 +188,17 @@ export default function Guidance({ saveData, value, id, readonly }: {
       editorRef.current.clipboard.dangerouslyPasteHTML(value);
     }
   }, [value]);
+
+  //awful solution for unknown image resize bug
+  const handleResizeStart = () => {
+    resizing.current = true;
+  };
+
+  const handleResizeEnd = () => {
+    resizing.current = false;
+  };
+
+  
 
   return <>
     {
@@ -197,3 +214,4 @@ export default function Guidance({ saveData, value, id, readonly }: {
   </>
 
 }
+
