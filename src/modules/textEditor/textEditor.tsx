@@ -81,7 +81,6 @@ export default function TextEditor() {
                 target.tagName === 'svg' ||
                 target.tagName === 'path' 
             ) return
-            console.log(target)
             const element = target.closest('img');
             if (element && !element.classList.contains('ant-image-preview-img')) {
                 setSelectedImage(element as HTMLElement);
@@ -437,7 +436,6 @@ export default function TextEditor() {
                             modules={modulos}
                             formats={options.formats}
                             placeholder=""
-                            //className="h-full"
                             onChangeSelection={handleChangeSelection}
            
 
