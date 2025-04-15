@@ -77,6 +77,7 @@ export default function TextEditor() {
                 target.classList.contains('ant-image-preview-wrap') ||
                 target.classList.contains('ant-image-preview-operations-operation') ||
                 target.classList.contains('ant-image-preview-operations') ||
+                target.classList.contains('ant-image-preview-img') ||
                 target.tagName === 'svg' ||
                 target.tagName === 'path' 
             ) return
