@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { MainContext, type MainContextValues } from '../mainContext';
-import { Input, type InputRef } from 'antd';
+import { Input, type InputRef, Image, Spin } from 'antd';
 import { useContext, useEffect, useState, useRef } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import styles from './textEditorStyles.tsx';
@@ -30,6 +31,7 @@ Quill.register('formats/guided-checklist', GuidedCheckListBlot); // Mismo nombre
 Quill.register(CustomImage, true);
 Quill.register(CustomVideo, true);
 
+
 // register image resize module
 Quill.register('modules/resize', ResizeModule);
 
@@ -47,7 +49,7 @@ export default function TextEditor() {
     const { id } = useParams();
     const location = useLocation();
     let readOnly = location?.state?.readOnly;
-    if(readOnly === undefined) readOnly = false;
+    if (readOnly === undefined) readOnly = false;
 
     const { setInPage } = useContext(MainContext) as MainContextValues;
     const [contenido, setContenido] = useState('');
@@ -59,6 +61,86 @@ export default function TextEditor() {
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef<InputRef>(null);
     const navigate = useNavigate();
+    const [selectedImage, setSelectedImage] = useState<HTMLElement | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [visible, setVisible] = useState(false);
+
+
+
+    // get selected image
+    useEffect(() => {
+        const handleElementClick = (e: MouseEvent) => {
+        
+            const target = e.target as HTMLElement;
+            if(
+                target.id === 'editor-resizer' || 
+                target.classList.contains('ant-image-preview-wrap') ||
+                target.classList.contains('ant-image-preview-operations-operation') ||
+                target.classList.contains('ant-image-preview-operations') ||
+                target.tagName === 'svg' ||
+                target.tagName === 'path' 
+            ) return
+            console.log(target)
+            const element = target.closest('img');
+            if (element && !element.classList.contains('ant-image-preview-img')) {
+                setSelectedImage(element as HTMLElement);
+       
+                return    
+            }
+            setSelectedImage(null);
+     
+          
+        };
+        window.addEventListener('click', handleElementClick);
+        return () => {
+            window.removeEventListener('click', handleElementClick);
+
+        };
+    }, []);
+
+    
+
+
+    // event to open image preview
+    useEffect(() => {
+        const resizer = document.getElementById('editor-resizer');
+        if (!selectedImage) {
+            resizer?.classList.remove('showResizer');
+            return
+        }
+        resizer?.classList.add('showResizer');
+        const openImagePreview = (e: Event) => {
+            const target = e.target as HTMLImageElement;
+          
+            if (target.id === 'editor-resizer') {
+                setVisible(true);
+            }
+
+        }
+        document.addEventListener('click', openImagePreview);
+        return () => {
+            document.removeEventListener('click', openImagePreview);
+        }
+    }, [selectedImage])
+
+
+    // adjust resizer to prevent edition while readonly
+    useEffect(() => {
+
+        const imageToolbar = document.getElementsByClassName('toolbar')[0];
+        const imagehandler = document.getElementsByClassName('handler')[0];
+        // if readOnly cant change image size, so we have to hide the toolbar
+        if (readOnly) {
+            if (imageToolbar) {
+                imageToolbar.classList.add('hidden');
+            }
+            if (imagehandler) {
+                imagehandler.classList.add('hidden');
+            }
+        }
+
+
+    },[selectedImage])
 
 
 
@@ -126,8 +208,9 @@ export default function TextEditor() {
 
     // if a content in database is found, when the page is loaded, the content is loaded
     useEffect(() => {
-        
+
         if (id) {
+            setLoading(true);
             setAbleToSave(false);
             getFileContent(id)
                 .then(response => {
@@ -143,7 +226,12 @@ export default function TextEditor() {
                     setUpdatedAt(updated_at);
                 })
                 .catch(error => console.error(error))
-                .finally(() => setAbleToSave(true));
+                .finally(() => {
+                    setAbleToSave(true)
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 500);
+                });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
@@ -162,7 +250,7 @@ export default function TextEditor() {
                 });
         },
         500,
-        { leading: false, trailing: true } 
+        { leading: false, trailing: true }
     );
 
     // this useEffect is to update the dataBase
@@ -203,7 +291,7 @@ export default function TextEditor() {
             // Set the cursor at the start
             editor.focus();
             editor.setSelection(0, 0);
-          
+
         }
     };
 
@@ -231,10 +319,11 @@ export default function TextEditor() {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     const handleChangeSelection = () => {
+
         if (readOnly) return
         const activeElement = document.activeElement;
         const editorRoot = quillRef.current?.getEditor().root;
-        const toolbarContainer = document.getElementById('toolbar-guided-checklist'); 
+        const toolbarContainer = document.getElementById('toolbar-guided-checklist');
 
         const isToolbarElement = toolbarContainer?.contains(activeElement);
 
@@ -249,12 +338,15 @@ export default function TextEditor() {
                 setShowToolbar(true);
             }
         }
+
     };
 
 
-    //paste image handler
 
+
+    //paste image handler
     const handlePaste = (e: ClipboardEvent) => {
+
         const editor = quillRef.current?.getEditor();
         if (!editor) return;
 
@@ -282,7 +374,7 @@ export default function TextEditor() {
         }
     };
 
-  
+
     // add paste event listener
     useEffect(() => {
         if (quillRef.current) {
@@ -297,59 +389,82 @@ export default function TextEditor() {
 
 
 
+
     return (
-        <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white">
-            <div className="flex flex-col h-full w-full max-w-3xl">
-                <div className="mt-8">
-                    <div className="flex items-center">
-                        <button type="button" style={styles.homeButton} 
-                            onClick={() => navigate(-1)} 
-                        >
-                            <img src={homeIcon} alt="" /> {'>'}
-                        </button>
-                        {updatedAt ? (
-                            <span className="w-full text-gray-400">
-                                <span>Última actualización: </span>
-                                {Intl.DateTimeFormat('es-ES', {
-                                    dateStyle: 'medium',
-                                    timeStyle: 'medium',
-                                    hour12: true,
-                                }).format(new Date(updatedAt))}
-                            </span>
-                        ) : null}
-                    </div>
-                    <Input
-                        {...(readOnly && { readOnly: true })}
-                        ref={inputRef}
-                        style={styles.titleStyles}
-                        value={title}
-                        onChange={e => setTitle(e.target.value)}
-                        placeholder="Give your page a title"
-                        onKeyDown={handleTitleKeyDown}
-                    />
-                </div>
+        <>
+            <div onClick={handleChangeSelection} className="flex flex-col items-center h-full bg-white"  >
+                {loading && <div className='quill-loader'><Spin size="large"></Spin>Loading</div>}
+                <div className="flex flex-col h-full w-full max-w-3xl" >
+                    <div className="mt-8" >
+                        <div className="flex items-center" >
+                            <button type="button" style={styles.homeButton}
+                                onClick={() => navigate(-1)}
+                            >
+                                <img src={homeIcon} alt="" /> {'>'}
+                            </button>
+                            {updatedAt ? (
+                                <span className="w-full text-gray-400">
+                                    <span>Última actualización: </span>
+                                    {Intl.DateTimeFormat('es-ES', {
+                                        dateStyle: 'medium',
+                                        timeStyle: 'medium',
+                                        hour12: true,
+                                    }).format(new Date(updatedAt))}
+                                </span>
+                            ) : null}
+                        </div>
 
-                <div className="flex flex-col grow bg-white">
-                    <div className="flex justify-center w-full grow relative">
-                        <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
+                        <Input
+                            {...(readOnly && { readOnly: true })}
+                            ref={inputRef}
+                            style={styles.titleStyles}
+                            value={title}
+                            onChange={e => setTitle(e.target.value)}
+                            placeholder="Give your page a title"
+                            onKeyDown={handleTitleKeyDown}
+                        />
                     </div>
 
-                    <ReactQuill
-                        {...(readOnly && { readOnly: true })}
-                        ref={quillRef}
-                        theme="snow"
-                        value={contenido}
-                        onChange={handleEditorChange}
-                        modules={modulos}
-                        formats={options.formats}
-                        placeholder=""
-                        className="h-full"
-                        onChangeSelection={handleChangeSelection}
-                    />
+                    <div className='editor-container'>
+
+                        <ReactQuill
+                            {...(readOnly && { readOnly: true })}
+                            ref={quillRef}
+                            theme="snow"
+                            value={contenido}
+                            onChange={handleEditorChange}
+                            modules={modulos}
+                            formats={options.formats}
+                            placeholder=""
+                            //className="h-full"
+                            onChangeSelection={handleChangeSelection}
+           
+
+                        />
+                    </div>
+
+
 
                 </div>
-
             </div>
-        </div>
+            <div className="flex justify-center w-full grow relative">
+                <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
+                <Image
+                    width={200}
+                    style={{ display: 'none' }}
+                    src=""
+                    preview={{
+                        visible: visible,
+                        src: (selectedImage as HTMLImageElement)?.src || '',
+                        onVisibleChange: (value) => {
+                            setVisible(value);
+                        },
+                    }}
+                />
+            </div>
+
+
+
+        </>
     );
 }
