@@ -103,22 +103,10 @@ export default function TextEditor() {
         resizer?.classList.add('showResizer');
         const openImagePreview = (e: Event) => {
             const target = e.target as HTMLImageElement;
-            const imageToolbar = document.getElementsByClassName('toolbar')[0];
-            const imagehandler = document.getElementsByClassName('handler')[0];
-            // if readOnly cant change image size, so we have to hide the toolbar
-            if (readOnly) {
-                if (imageToolbar) {
-                    imageToolbar.classList.add('hidden');
-                }
-                if (imagehandler) {
-                    imagehandler.classList.add('hidden');
-                }
-            }
-
+          
             if (target.id === 'editor-resizer') {
                 setVisible(true);
             }
-
 
         }
         document.addEventListener('click', openImagePreview);
@@ -126,6 +114,25 @@ export default function TextEditor() {
             document.removeEventListener('click', openImagePreview);
         }
     }, [selectedImage])
+
+
+    // adjust resizer to prevent edition while readonly
+    useEffect(() => {
+
+        const imageToolbar = document.getElementsByClassName('toolbar')[0];
+        const imagehandler = document.getElementsByClassName('handler')[0];
+        // if readOnly cant change image size, so we have to hide the toolbar
+        if (readOnly) {
+            if (imageToolbar) {
+                imageToolbar.classList.add('hidden');
+            }
+            if (imagehandler) {
+                imagehandler.classList.add('hidden');
+            }
+        }
+
+
+    },[selectedImage])
 
 
 
