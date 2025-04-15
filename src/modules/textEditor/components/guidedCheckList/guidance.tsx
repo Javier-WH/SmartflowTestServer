@@ -148,16 +148,7 @@ export default function Guidance({ saveData, value, id, readonly }: {
       
     }
 
-    // this prevent a bug when image resize
-    // we have to preven save while resizing, otherwise the resize will crap on the guidance and all die :(
-    // idk why this happens, but it does... if you know, please let me know
-    window.addEventListener('mousedown', handleResizeStart);
-    const onResizeEnd = () => {
-      const content = editorRef.current?.root.innerHTML || '';
-      handleResizeEnd();
-      saveData(id, content); // save on resize image end
-    }
-    window.addEventListener('mouseup', onResizeEnd);
+   
 
     return () => {
       //remove all the listeners to avoid memory leaks
@@ -168,8 +159,8 @@ export default function Guidance({ saveData, value, id, readonly }: {
       if (editorRef.current) {
         editorRef.current = null;
       }
-      window.removeEventListener('mousedown', handleResizeStart);
-      window.removeEventListener('mouseup', onResizeEnd);
+
+
     };
   }, []);
 
@@ -181,14 +172,8 @@ export default function Guidance({ saveData, value, id, readonly }: {
     }
   }, [value]);
 
-  //awful solution for unknown image resize bug
-  const handleResizeStart = () => {
-    resizing.current = true;
-  };
 
-  const handleResizeEnd = () => {
-    resizing.current = false;
-  };
+
 
   
 
