@@ -23,9 +23,6 @@ import { useDebouncedCallback } from 'use-debounce';
 
 
 
-
-
-
 // this is our custom blot
 Quill.register('formats/guided-checklist', GuidedCheckListBlot); // Mismo nombre que el blot
 
@@ -73,185 +70,37 @@ export default function TextEditor() {
     // get selected image
     useEffect(() => {
         const handleElementClick = (e: MouseEvent) => {
+        
             const target = e.target as HTMLElement;
-
-
+            if(target.id === 'editor-resizer') return
             const element = target.closest('img');
             if (element && !element.classList.contains('ant-image-preview-img')) {
                 setSelectedImage(element as HTMLElement);
+       
+                return    
             }
+            setSelectedImage(null);
+     
+          
         };
-
         window.addEventListener('click', handleElementClick);
-
         return () => {
             window.removeEventListener('click', handleElementClick);
 
         };
     }, []);
 
-    // get selected video (only for youtube), we have force to do this beacause iframe is not selectable by any means due to security reasons, web browsers do not allow to select iframe
-    useEffect(() => {
-        if (!quillRef.current) return;
-
-        let scriptTag: HTMLScriptElement | null = null;
-
-        const loadYouTubeAPI = () => {
-            if (window.YT) return;
-
-            scriptTag = document.createElement('script');
-            scriptTag.src = "https://www.youtube.com/iframe_api";
-            document.body.appendChild(scriptTag);
-        };
-
-        const initializePlayers = (iframe: HTMLIFrameElement) => {
-            if (!window.YT) return;
-            new (window.YT as typeof YT).Player(iframe, {
-                events: {
-                    onStateChange: (event: { data: number }) => {
-                        if (event.data === 1 || event.data === 2) { // playing (1) or paused (2)
-                            setSelectedImage(iframe);
-                         
-                        }
-                    }
-                }
-            });
-        };
-
-        loadYouTubeAPI();
-
-        const editor = quillRef.current.getEditor();
-        const editorRoot = editor.root;
-
-        const observer = new MutationObserver((mutations) => {
-
-            mutations.forEach(mutation => {
-                mutation.addedNodes.forEach(node => {
-                    if (node.nodeName !== 'IFRAME') return
-                    const iframe = node as HTMLIFrameElement; 
-                    if (iframe.closest('guided-checklist')) {
-                        return
-                    }
-                
-                    if (iframe.src.includes('youtube.com/embed')) {
-                  
-                        initializePlayers(iframe);
-                    }
-
-                });
-            });
-        });
-
-        observer.observe(editorRoot, { childList: true, subtree: true });
-
-        return () => {
-            observer.disconnect();
-            // clean up the YouTube API script only if it was loaded
-            if (scriptTag && document.body.contains(scriptTag)) {
-                document.body.removeChild(scriptTag);
-            }
-        };
-    }, [quillRef.current]);
-
-
-
-
-    // Function to reposition the resizer
-    const fixResizerPosition = () => {
-        if (!selectedImage || !quillRef.current) {
-            return;
-        }
-
-        const resizer = document.getElementById("editor-resizer") as HTMLElement;
-        if (selectedImage?.tagName === 'IMG') {
-            resizer?.classList?.add('showResizer');
-        } else {
-            resizer?.classList?.remove('showResizer');
-        }
-        if (resizer) {
-            const imageRect = selectedImage.getBoundingClientRect();
-            const container = selectedImage.closest('.ql-editor');
-            const quillRect = container?.getBoundingClientRect();
-            if (!container || !quillRect) return
-            // Calculate the top position of the image relative to the Quill container
-            const topPosition = quillRect ? imageRect.top - quillRect.top : 0;
-            resizer.style.top = `${topPosition}px`;
-        }
-    };
-
-
-
-
-    // Reposition the resizer when the selected image changes
-    useEffect(() => {
-        console.log(selectedImage);
-        fixResizerPosition();
-    }, [selectedImage]);
-
-    // Reposition the resizer on scroll
-    useEffect(() => {
-        if (!selectedImage) return;
-
-        const quillEditorElement = selectedImage.closest('.ql-editor');
-        if (quillEditorElement) {
-
-            const handleScroll = () => {
-                fixResizerPosition();
-            };
-            quillEditorElement.addEventListener('scroll', handleScroll);
-            quillEditorElement.addEventListener('click', handleScroll);
-            return () => {
-                quillEditorElement.removeEventListener('scroll', handleScroll);
-                quillEditorElement.removeEventListener('click', handleScroll);
-            };
-        }
-    }, [selectedImage]);
-
-
-    // Reposition the resizer when image size, display or float changes
-    useEffect(() => {
-        if (!selectedImage) return;
-
-        const observer = new MutationObserver(mutationsList => {
-            for (const mutation of mutationsList) {
-                if (mutation.type === 'attributes') {
-                    if (mutation.attributeName === 'style') {
-                        const newDisplay = selectedImage.style.display;
-                        const newFloat = selectedImage.style.float;
-                        const previousDisplay = mutation.oldValue?.includes('display:') ? mutation.oldValue.split('display:')[1]?.split(';')[0]?.trim() : undefined;
-                        const previousFloat = mutation.oldValue?.includes('float:') ? mutation.oldValue.split('float:')[1]?.split(';')[0]?.trim() : undefined;
-
-                        if (newDisplay !== previousDisplay || newFloat !== previousFloat) {
-                            fixResizerPosition();
-                        }
-                    } else if (mutation.attributeName === 'width' || mutation.attributeName === 'height') {
-                        fixResizerPosition();
-                    }
-                }
-            }
-        });
-
-        observer.observe(selectedImage, {
-            attributes: true, // Listen for changes to attributes
-            attributeFilter: ['style', 'width', 'height'], // Specifically target the style, width, and height attributes
-            attributeOldValue: true, // Record the previous value of the attributes
-        });
-
-        const resizeObserver = new ResizeObserver(() => {
-            fixResizerPosition();
-        });
-        resizeObserver.observe(selectedImage);
-
-        return () => {
-
-            observer.disconnect();
-            resizeObserver.disconnect();
-        };
-    }, [selectedImage, quillRef]);
+    
 
 
     // event to open image preview
     useEffect(() => {
+        const resizer = document.getElementById('editor-resizer');
+        if (!selectedImage) {
+            resizer?.classList.remove('showResizer');
+            return
+        }
+        resizer?.classList.add('showResizer');
         const openImagePreview = (e: Event) => {
             const target = e.target as HTMLImageElement;
             const imageToolbar = document.getElementsByClassName('toolbar')[0];
@@ -276,7 +125,7 @@ export default function TextEditor() {
         return () => {
             document.removeEventListener('click', openImagePreview);
         }
-    }, [])
+    }, [selectedImage])
 
 
 
@@ -561,39 +410,42 @@ export default function TextEditor() {
                         />
                     </div>
 
-                    <ReactQuill
-                        {...(readOnly && { readOnly: true })}
-                        ref={quillRef}
-                        theme="snow"
-                        value={contenido}
-                        onChange={handleEditorChange}
-                        modules={modulos}
-                        formats={options.formats}
-                        placeholder=""
-                        //className="h-full"
-                        onChangeSelection={handleChangeSelection}
-                        style={{ height: 'calc(100vh - 210px)' }}
+                    <div className='editor-container'>
 
-                    />
+                        <ReactQuill
+                            {...(readOnly && { readOnly: true })}
+                            ref={quillRef}
+                            theme="snow"
+                            value={contenido}
+                            onChange={handleEditorChange}
+                            modules={modulos}
+                            formats={options.formats}
+                            placeholder=""
+                            //className="h-full"
+                            onChangeSelection={handleChangeSelection}
+           
+
+                        />
+                    </div>
 
 
 
                 </div>
-                <div className="flex justify-center w-full grow relative">
-                    <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
-                    <Image
-                        width={200}
-                        style={{ display: 'none' }}
-                        src=""
-                        preview={{
-                            visible: visible && selectedImage?.tagName === 'IMG',
-                            src: (selectedImage as HTMLImageElement)?.src || '',
-                            onVisibleChange: (value) => {
-                                setVisible(value);
-                            },
-                        }}
-                    />
-                </div>
+            </div>
+            <div className="flex justify-center w-full grow relative">
+                <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
+                <Image
+                    width={200}
+                    style={{ display: 'none' }}
+                    src=""
+                    preview={{
+                        visible: visible,
+                        src: (selectedImage as HTMLImageElement)?.src || '',
+                        onVisibleChange: (value) => {
+                            setVisible(value);
+                        },
+                    }}
+                />
             </div>
 
 

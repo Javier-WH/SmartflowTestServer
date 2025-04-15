@@ -4,9 +4,10 @@
 }
 
 
-.handler{
+.handler {
   pointer-events: all !important;
 }
+
 #editor-resizer {
   pointer-events: none;
   background: transparent !important;
@@ -64,16 +65,44 @@
   visibility: hidden !important;
 }
 
-/*:not(#toolbar).ql-toolbar.ql-snow {
-    margin-left: -20px;
 
-  }*/
+
+.editor-container {
+  width: 100%;
+  overflow-y: auto;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 140px;
+  bottom: 70px;
+  display: flex;
+  justify-content: center;
+}
+
+.quill {
+  width: 800px;
+  height: auto !important;
+  min-height: 100%;
+
+}
+
+.ql-container {
+  height: auto !important;
+  min-height: 100%;
+}
 
 .ql-editor {
-  padding: 0 !important;
+  overflow-y: visible !important; 
+  min-height: 100% !important;
+  padding-bottom: 50px;
   font-size: 16px !important;
-  /* Tamaño predeterminado */
 }
+
+.ant-collapse-content-box .quill-editor-container{
+  max-height: 500px !important;
+  overflow-y: auto !important ;
+}
+
 
 .ql-container:focus,
 .ql-toolbar:focus {
