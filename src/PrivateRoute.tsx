@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { Spinner } from '@nextui-org/react';
+import { Spinner } from "@heroui/react";
 
 import { AuthContext } from './modules/auth/context/auth';
 

@@ -13,7 +13,7 @@
         "@ant-design/icons": "5.6.1",
         "@botom/quill-resize-module": "^2.0.1",
         "@internationalized/date": "3.5.4",
-        "@nextui-org/react": "2.3.6",
+        "@heroui/react": "2.7.6",
         "@polymer/iron-collapse": "^3.0.1",
         "@supabase-cache-helpers/postgrest-swr": "1.7.5",
         "@supabase/supabase-js": "2.42.7",

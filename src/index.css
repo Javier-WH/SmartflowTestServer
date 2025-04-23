@@ -2,22 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
-    direction: ltr
+* {
+    direction: ltr;
 }
-#root, html, body {
+#root,
+html,
+body {
     height: 100%;
     width: 100%;
-    padding:0;
-    margin:0;
-    background-color: #F0F0F0;
+    padding: 0;
+    margin: 0;
+    background: linear-gradient(68.66deg, #e8e2ff 1.3%, #f7f5ff 50%);
     font-family: Helvetica, Arial, sans-serif;
-    
-  --toastify-toast-width: 450px;
-  --toastify-toast-max-height: 400px;
+
+    --toastify-toast-width: 450px;
+    --toastify-toast-max-height: 400px;
 }
 
-a, th, td, tr, .rdt_TableCol, small {
+a,
+th,
+td,
+tr,
+.rdt_TableCol,
+small {
     color: #808080;
 }
 
@@ -28,7 +35,6 @@ a, th, td, tr, .rdt_TableCol, small {
 nav > * {
     letter-spacing: 0.2rem;
 }
- 
 
 .page-item .page-link {
     background-color: white !important;
@@ -37,15 +43,14 @@ nav > * {
 
 #main-menu-nav {
     border-width: 1px;
-    border-color: #FFF0E8;
+    border-color: #fff0e8;
     border-style: solid;
 }
 
-.ant-pagination-item-link{
+.ant-pagination-item-link {
     rotate: 180deg;
 }
 
-.ant-input-number{
+.ant-input-number {
     width: 100% !important;
 }
-

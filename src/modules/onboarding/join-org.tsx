@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input } from "@heroui/react";
 
 import useOrganizations from '../organizations/hook/useOrganizations';
 import useAuth from '../auth/hooks/useAuth';

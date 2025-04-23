@@ -12,7 +12,7 @@ import {
     DropdownTrigger,
     Button,
     useDisclosure,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import {
     MoreOutlined,
     EditOutlined,
@@ -252,7 +252,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className="bg-primary/10 p-3 rounded-full">
-                                <TeamOutlined style={{ fontSize: '24px', color: 'var(--nextui-colors-primary)' }} />
+                                <TeamOutlined style={{ fontSize: '24px', color: 'var(--heroui-colors-primary)' }} />
                             </div>
                             <div>
                                 <h3 className="text-xl font-medium">{organization.name}</h3>

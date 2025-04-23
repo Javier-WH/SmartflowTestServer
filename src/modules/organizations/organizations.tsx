@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
-import { Spinner, Button, Input, useDisclosure } from '@nextui-org/react';
+import { Spinner, Button, Input, useDisclosure } from "@heroui/react";
 import { PlusOutlined, TeamOutlined, SearchOutlined } from '@ant-design/icons';
 import useOrganizations from './hook/useOrganizations';
 import useAuth from '../auth/hooks/useAuth';

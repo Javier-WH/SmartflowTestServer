@@ -6,7 +6,7 @@ import {
     ModalFooter,
     Button,
     Input,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { MailOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Organization } from '../types/organizations';
 

@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 // import Chat from './chat/chat';
 import { MainContextProvider } from './mainContext';
-import { Spinner } from '@nextui-org/react';
+import { Spinner } from "@heroui/react";
 import useOrganizations from './organizations/hook/useOrganizations';
 import useAuth from './auth/hooks/useAuth';
 
