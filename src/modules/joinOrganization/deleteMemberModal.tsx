@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Modal, ModalContent, ModalHeader, ModalBody, Button, Input } from '@nextui-org/react';
+import { Modal, ModalContent, ModalHeader, ModalBody, Button, Input } from "@heroui/react";
 import { Member, Org } from './menbers.tsx';
 import { useState } from 'react';
 import useOrganizations from '../organizations/hook/useOrganizations.ts';

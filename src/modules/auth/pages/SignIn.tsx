@@ -4,9 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import AlertMessage from '../components/ErrorMessage';
 
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input } from '@/components/ui';
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import useAuth from '../hooks/useAuth';
+import { Card, CardBody } from '@heroui/react';
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -19,16 +20,14 @@ const SignIn = () => {
     const { token, signIn } = useAuth();
 
     useEffect(() => {
-
         const searchParams = new URLSearchParams(location.search);
         const redirectParam = searchParams.get('redirect');
 
         // if redirect param is valid redirect to it
         if (redirectParam && isValidJoinPath(redirectParam)) {
             setRedirect(redirectParam);
-            return
+            return;
         }
-
     }, []);
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -69,15 +68,15 @@ const SignIn = () => {
             // get url params
             const searchParams = new URLSearchParams(location.search);
             const redirectParam = searchParams.get('redirect');
-            
+
             // if redirect param is valid redirect to it
             if (redirectParam && isValidJoinPath(redirectParam)) {
                 navigate(redirectParam);
-                return
+                return;
             }
             navigate('/');
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     const isValidJoinPath = (path: string) => {
@@ -94,48 +93,59 @@ const SignIn = () => {
 
     return (
         <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen p-4">
-            <div className="flex flex-col gap-5 border-1 border-gray-200 rounded-lg p-5 w-full max-w-md">
-                <h1 className="text-center text-xl">Bienvenido</h1>
-                <Input name="email" label="Email" variant="underlined" autoFocus />
-                <Input
-                    name="password"
-                    label="Contraseña"
-                    variant="underlined"
-                    endContent={
-                        <button
-                            className="focus:outline-none"
-                            type="button"
-                            onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                        >
-                            {isPasswordVisible ? (
-                                <IconEye className="text-2xl text-default-400 pointer-events-none" />
-                            ) : (
-                                <IconEyeOff className="text-2xl text-default-400 pointer-events-none" />
-                            )}
-                        </button>
-                    }
-                    type={isPasswordVisible ? 'text' : 'password'}
-                />
+            <Card className="w-full max-w-md border-none" radius="sm">
+                <CardBody className="flex flex-col gap-5 p-8">
+                    <h1 className="text-2xl font-bold">Iniciar Sesión</h1>
+                    <p className="text-zinc-500">Ingrese los datos de su cuenta de Smartflo</p>
+                    <div className="space-y-1">
+                        <label htmlFor="email">Email</label>
+                        <Input id="email" name="email" autoFocus />
+                    </div>
+                    <div className="space-y-1">
+                        <label htmlFor="password">Contraseña</label>
+                        <Input
+                            id="password"
+                            name="password"
+                            endContent={
+                                <button
+                                    className="focus:outline-none"
+                                    type="button"
+                                    onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                                >
+                                    {isPasswordVisible ? (
+                                        <IconEye className="text-2xl text-default-400 pointer-events-none" />
+                                    ) : (
+                                        <IconEyeOff className="text-2xl text-default-400 pointer-events-none" />
+                                    )}
+                                </button>
+                            }
+                            type={isPasswordVisible ? 'text' : 'password'}
+                        />
+                    </div>
 
-                {error && <AlertMessage text={error} />}
+                    {error && <AlertMessage text={error} />}
 
-                <Button type="submit" variant="ghost" isLoading={loading}>
-                    Iniciar Sesion
-                </Button>
+                    <Button type="submit" isLoading={loading}>
+                        Iniciar Sesion
+                    </Button>
 
-                <Link to="/forgot-password" className="text-center underline">
-                    ¿Olvidaste tu contraseña?
-                </Link>
+                    <Link to="/forgot-password" className="text-center text-primary underline">
+                        ¿Olvidaste tu contraseña?
+                    </Link>
 
-                <div className="text-center">
-                    <span>
-                        ¿No tienes una cuenta?{' '}
-                        <Link to={`/auth/signup?${redirect ? `redirect=${redirect}` : ''}`} className="text-center underline">
-                            Regístrate
-                        </Link>
-                    </span>
-                </div>
-            </div>
+                    <div className="text-center">
+                        <span>
+                            ¿No tienes una cuenta?{' '}
+                            <Link
+                                to={`/auth/signup?${redirect ? `redirect=${redirect}` : ''}`}
+                                className="text-center text-primary underline"
+                            >
+                                Regístrate
+                            </Link>
+                        </span>
+                    </div>
+                </CardBody>
+            </Card>
         </form>
     );
 };

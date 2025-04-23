@@ -4,7 +4,7 @@ import useOrganizations from '../organizations/hook/useOrganizations';
 import { useNavigate, useParams } from 'react-router-dom';
 import useGetOrganizationData from '../navBar/hooks/useOrganizationData';
 import { useEffect, useState, useContext} from 'react';
-import { Button, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@nextui-org/react';
+import { Button, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 import { message } from 'antd';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { ImUser } from "react-icons/im";

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 import useAuth from '../auth/hooks/useAuth';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';

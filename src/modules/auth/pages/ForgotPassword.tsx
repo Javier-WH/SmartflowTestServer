@@ -2,7 +2,8 @@ import { type FormEvent, useState, useEffect } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 
-import { Button, Input } from '@nextui-org/react';
+import { Card, CardBody } from '@heroui/react';
+import { Button, Input } from '@/components/ui';
 
 import { IconChevronLeft } from '@tabler/icons-react';
 
@@ -59,23 +60,29 @@ const ForgotPassword = () => {
 
     return (
         <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen p-4">
-            <div className="flex flex-col gap-5 border-1 border-gray-200 rounded-lg p-5 w-full max-w-md">
-                <Link to="/auth/signin" className="text-center max-w-max p-2">
-                    <IconChevronLeft />
-                </Link>
-                <h1 className="text-center text-xl">Restablece tu contraseña</h1>
-                <span className="mt-4 text-center">
-                    Enviaremos un correo electrónico con un enlace para restablecer tu contraseña
-                </span>
-                <Input name="email" label="Email" variant="underlined" autoFocus />
+            <Card className="w-full max-w-md border-none" radius="sm">
+                <CardBody className="flex flex-col gap-5 p-8">
+                    <h1 className="font-bold text-2xl">Restablece tu contraseña</h1>
+                    <span className="mt-4">
+                        Enviaremos un correo electrónico con un enlace para restablecer tu contraseña
+                    </span>
+                    <div>
+                        <label htmlFor="email">Correo electrónico</label>
+                        <Input id="email" name="email" autoFocus />
+                    </div>
 
-                {successMessage && <AlertMessage text={successMessage} type="success" />}
-                {error && <AlertMessage text={error} />}
+                    {successMessage && <AlertMessage text={successMessage} type="success" />}
+                    {error && <AlertMessage text={error} />}
 
-                <Button type="submit" variant="ghost" isLoading={loading}>
-                    Enviar
-                </Button>
-            </div>
+                    <Button type="submit" isLoading={loading}>
+                        Enviar
+                    </Button>
+
+                    <Link to="/auth/signin" className="text-center text-primary underline">
+                        Volver al inicio de sesión
+                    </Link>
+                </CardBody>
+            </Card>
         </form>
     );
 };
