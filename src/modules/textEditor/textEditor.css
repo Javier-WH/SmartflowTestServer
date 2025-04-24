@@ -106,7 +106,7 @@
 /*video and image toolbar*/
 .toolbar {
     pointer-events: all !important;
-    z-index: 1001;
+    z-index: 10000000001;
     background-color: var(--pageBarColor) !important;
     color: white !important;
 }
@@ -135,7 +135,7 @@
 }
 
 .ql-snow .ql-picker-label {
-    @apply text-black cursor-pointer hover:bg-primary/10
+    @apply text-black cursor-pointer hover:bg-primary/10 
 }
 
 /* invertir menus*/
@@ -144,6 +144,7 @@
     /* bottom: auto !important; */
     /* transform: translateY(0) !important; */
     @apply bg-gray-100; 
+    z-index: 1001 !important;
 }
 
 
