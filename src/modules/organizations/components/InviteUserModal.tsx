@@ -1,14 +1,7 @@
-import {
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-    Input,
-} from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
+import { Button, Input } from '@/components/ui';
 import { MailOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Organization } from '../types/organizations';
+import type { Organization } from '../types/organizations';
 
 export interface InviteUserModalProps {
     isOpen: boolean;
@@ -41,20 +34,23 @@ export default function InviteUserModal({
                         </ModalHeader>
                         <form onSubmit={handleSubmit}>
                             <ModalBody>
-                                <Input
-                                    label="Email Address"
-                                    placeholder="email@example.com"
-                                    value={inviteEmail}
-                                    onChange={e => setInviteEmail(e.target.value)}
-                                    startContent={<MailOutlined className="text-gray-400" />}
-                                    type="email"
-                                    autoFocus
-                                    isRequired
-                                />
+                                <div>
+                                    <label htmlFor="email">Email Address</label>
+                                    <Input
+                                        id="email"
+                                        placeholder="email@example.com"
+                                        value={inviteEmail}
+                                        onChange={e => setInviteEmail(e.target.value)}
+                                        startContent={<MailOutlined className="text-gray-400" />}
+                                        type="email"
+                                        autoFocus
+                                        isRequired
+                                    />
+                                </div>
                                 {inviteError && <p className="text-danger text-sm mt-2">{inviteError}</p>}
                             </ModalBody>
                             <ModalFooter>
-                                <Button variant="flat" onPress={onClose}>
+                                <Button variant="bordered" onPress={onClose}>
                                     Cancel
                                 </Button>
                                 <Button

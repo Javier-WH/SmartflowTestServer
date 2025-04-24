@@ -1,11 +1,13 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
-import { Spinner, Button, Input, useDisclosure } from "@heroui/react";
+import { Spinner, useDisclosure } from '@heroui/react';
+import { Button, Input } from '@/components/ui';
 import { PlusOutlined, TeamOutlined, SearchOutlined } from '@ant-design/icons';
 import useOrganizations from './hook/useOrganizations';
 import useAuth from '../auth/hooks/useAuth';
 import type { Organization, OrganizationFormData } from './types/organizations';
 import CreateOrganizationModal from './components/CreateOrganizationModal';
 import OrganizationCard from './components/organization-card';
+import UserMenu from '@/components/ui/UserMenu';
 
 export default function Organizations() {
     const { user, signOut } = useAuth();
@@ -16,7 +18,7 @@ export default function Organizations() {
 
     useEffect(() => {
         mutate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Form data state
@@ -29,8 +31,8 @@ export default function Organizations() {
     const { isOpen: isCreateModalOpen, onOpen: onCreateModalOpen, onClose: onCreateModalClose } = useDisclosure();
 
     // Filter organizations based on search term
-    const filteredOrganizations = organizations?.filter((org: Organization) =>
-        org.name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
+    const filteredOrganizations = organizations?.filter(
+        (org: Organization) => org.name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
     );
 
     // Handle create form submit
@@ -113,10 +115,8 @@ export default function Organizations() {
 
     return (
         <div>
-            <header className="flex justify-end px-8 bg-white w-full py-4 fixed top-0">
-                <Button color="primary" onClick={signOut}>
-                    Cerrar sesión
-                </Button>
+            <header className="flex justify-end px-8 w-full py-2 fixed top-0 bg-gray-100">
+                <UserMenu />
             </header>
             <section className="py-8 max-w-7xl mx-auto mt-16">
                 <div className="flex justify-between items-center mb-8">
@@ -130,9 +130,12 @@ export default function Organizations() {
                     <Input
                         placeholder="Search organizations..."
                         value={searchTerm}
+                        type="search"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                         startContent={<SearchOutlined className="text-gray-400" />}
+                        onClear={() => setSearchTerm('')}
                         isClearable
+                        autoFocus
                     />
                 </div>
 

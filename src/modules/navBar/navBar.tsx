@@ -13,30 +13,27 @@ import './navBar.css';
 import { useContext, useEffect, useState } from 'react';
 import useGetOrganizationData from './hooks/useOrganizationData';
 
-
 import type { Folder } from '../folderNavigator/types/folder';
 
 export default function NavBar() {
-    const { signOut} = useAuth();
+    const { signOut } = useAuth();
     const navigate = useNavigate();
     const { inPage, setNewFolderRequest, memberRoll } = useContext(MainContext) as MainContextValues;
     const { createFile } = useFilesManager();
     const { organization_id: slug } = useParams();
-    const {getOrganizationBasicData} = useGetOrganizationData();
+    const { getOrganizationBasicData } = useGetOrganizationData();
     const [organizationName, setOrganizationName] = useState<string>('');
-
-
 
     //get organization name
     useEffect(() => {
         if (!slug) return;
         getOrganizationBasicData(slug)
-        .then(res => {
-            setOrganizationName(res?.data[0]?.name ?? 'Unknown');
-        })
-        .catch(err => console.log(err));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [slug])
+            .then(res => {
+                setOrganizationName(res?.data[0]?.name ?? 'Unknown');
+            })
+            .catch(err => console.log(err));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [slug]);
 
     const userMenu: MenuProps['items'] = [
         {
@@ -47,7 +44,7 @@ export default function NavBar() {
         {
             key: '2',
             label: 'Members',
-            onClick: () => navigate(`/members/${slug}`),
+            onClick: () => navigate(`/${slug}/members`),
         },
         // {
         //   key: '2',
@@ -69,16 +66,14 @@ export default function NavBar() {
         },
     ];
 
-
-
     const handleCreatePage = () => {
         if (!memberRoll?.write) {
             message.error('You do not have permission to create a page');
-            return
+            return;
         }
         if (!slug) {
             message.error('Cant find organization');
-            return
+            return;
         }
         createFile('untitled', null, slug).then(res => {
             if (res.error) {
@@ -98,7 +93,7 @@ export default function NavBar() {
     const handleCreateFolder = () => {
         if (!memberRoll?.write) {
             message.error('You do not have permission to create a folder');
-            return
+            return;
         }
         const newFolder: Folder = {
             name: '',

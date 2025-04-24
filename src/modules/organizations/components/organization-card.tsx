@@ -12,7 +12,8 @@ import {
     DropdownTrigger,
     Button,
     useDisclosure,
-} from "@heroui/react";
+    PressEvent,
+} from '@heroui/react';
 import {
     MoreOutlined,
     EditOutlined,
@@ -58,8 +59,14 @@ export default function OrganizationCard({ organization }: { organization: Organ
     const [isInviting, setIsInviting] = useState(false);
 
     const { user } = useAuth();
-    const { updateOrganization, deleteOrganization, leaveOrganization, inviteUserToOrganization, mutate, deleteInvitation } =
-        useOrganizations(user?.id);
+    const {
+        updateOrganization,
+        deleteOrganization,
+        leaveOrganization,
+        inviteUserToOrganization,
+        mutate,
+        deleteInvitation,
+    } = useOrganizations(user?.id);
 
     // Handle card click to navigate to organization home
     const handleCardClick = (organizationSlug: string) => {
@@ -67,27 +74,23 @@ export default function OrganizationCard({ organization }: { organization: Organ
     };
 
     // Handle edit organization
-    const handleEditOrganization = (org: Organization, e: React.MouseEvent<HTMLElement>) => {
-        e.stopPropagation();
+    const handleEditOrganization = (org: Organization) => {
         setFormData({ id: org.id, name: org.name || '', description: org.description || '' });
         onEditModalOpen();
     };
 
     // Handle delete organization
-    const handleDeleteOrganization = (e: React.MouseEvent<HTMLElement>) => {
-        e.stopPropagation();
+    const handleDeleteOrganization = () => {
         onDeleteModalOpen();
     };
 
     // Handle leave organization
-    const handleLeaveOrganization = (e: React.MouseEvent<HTMLElement>) => {
-        e.stopPropagation();
+    const handleLeaveOrganization = () => {
         onLeaveModalOpen();
     };
 
     // Handle invite users
-    const handleInviteUsers = (e: React.MouseEvent<HTMLElement>) => {
-        e.stopPropagation();
+    const handleInviteUsers = () => {
         setInviteEmail('');
         setInviteError('');
         onInviteModalOpen();
@@ -160,7 +163,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                 setInviteError(response.message);
                 return;
             }
-       
+
             // Clear form and close modal on success
             setInviteEmail('');
             onInviteModalClose();
@@ -212,8 +215,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                 setFormError(response.message);
                 return;
             }
-        
-      
+
             // Optionally delete the invitation if it exists
             const invitationResponse = await deleteInvitation(organization.id, user.email || '');
             if (invitationResponse.error) {
@@ -289,7 +291,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                         <DropdownItem
                                             key="invite-option"
                                             startContent={<UserAddOutlined />}
-                                            onClick={(e: React.MouseEvent<HTMLElement>) => handleInviteUsers(e)}
+                                            onPress={handleInviteUsers}
                                         >
                                             Invite Users
                                         </DropdownItem>
@@ -299,9 +301,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                         <DropdownItem
                                             key="edit-option"
                                             startContent={<EditOutlined />}
-                                            onClick={(e: React.MouseEvent<HTMLElement>) =>
-                                                handleEditOrganization(organization, e)
-                                            }
+                                            onPress={() => handleEditOrganization(organization)}
                                         >
                                             Edit
                                         </DropdownItem>
@@ -313,7 +313,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                             className="text-danger"
                                             color="danger"
                                             startContent={<DeleteOutlined />}
-                                            onClick={(e: React.MouseEvent<HTMLElement>) => handleDeleteOrganization(e)}
+                                            onPress={handleDeleteOrganization}
                                         >
                                             Delete
                                         </DropdownItem>
@@ -325,7 +325,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                             className="text-warning"
                                             color="warning"
                                             startContent={<LogoutOutlined />}
-                                            onClick={(e: React.MouseEvent<HTMLElement>) => handleLeaveOrganization(e)}
+                                            onPress={handleLeaveOrganization}
                                         >
                                             Leave Organization
                                         </DropdownItem>
