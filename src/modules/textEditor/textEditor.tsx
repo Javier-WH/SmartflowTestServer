@@ -380,7 +380,7 @@ export default function TextEditor() {
             </div>
 
             <header className="bg-gray-100 rounded-2xl mt-4 shadow-gray-200 shadow-md">
-                <CustomToolbar show={showToolbar && !readOnly} name="toolbar" />
+                <CustomToolbar show={!readOnly} name="toolbar" />
             </header>
 
             <div onClick={handleChangeSelection} className="flex flex-col items-center h-full pb-4 pt-4">
