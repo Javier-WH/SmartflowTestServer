@@ -55,3 +55,7 @@ nav > * {
 .ant-input-number {
     width: 100% !important;
 }
+
+textarea {
+    height: auto !important;
+}

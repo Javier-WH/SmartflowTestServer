@@ -1,348 +1,334 @@
 .ql-container.ql-snow {
-  border: none !important;
-
+    border: none !important;
 }
 
-
 .handler {
-  pointer-events: all !important;
+    pointer-events: all !important;
 }
 
 #editor-resizer {
-  pointer-events: none;
-  background: transparent !important;
-  border: none !important;
-
+    pointer-events: none;
+    background: transparent !important;
+    border: none !important;
 }
 
-
 .showResizer {
-  pointer-events: all !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
+    pointer-events: all !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
 }
 
 .showResizer::after {
-  content: 'Click for image preview';
-  color: rgb(78, 72, 72) !important;
-  background-color: rgba(177, 204, 245, 0.432) !important;
-  width: 100% !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+    content: "Click for image preview";
+    color: rgb(78, 72, 72) !important;
+    background-color: rgba(177, 204, 245, 0.432) !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
-
 
 .ant-image-preview-root,
 .ant-image-preview-operations-wrapper {
-  z-index: 10002 !important;
-  position: fixed !important;
+    z-index: 10002 !important;
+    position: fixed !important;
 }
 
 .ant-image-preview-body {
-  background-color: black !important;
+    background-color: black !important;
 }
 
+/* .ql-toolbar.ql-snow { */
+/*     position: absolute; */
+/*     z-index: 10000 !important; */
+/*     background-color: var(--pageBarColor); */
+/*     top: 0; */
+/*     left: 0; */
+/*     right: 0; */
+/*     margin: auto; */
+/*     width: 670px; */
+/* } */
 
 .ql-toolbar.ql-snow {
-  border: none !important;
-  border-bottom: 1px solid #ddd !important;
-  position: fixed;
-  z-index: 10000 !important;
-  background-color: var(--pageBarColor);
-  bottom: 20px;
-  left: 0;
-  right: 0;
-  margin: auto;
-  width: 670px;
+    border-radius: 16px;
+    border: none !important;
 }
 
 .hidden {
-  display: none !important;
-  visibility: hidden !important;
+    display: none !important;
+    visibility: hidden !important;
 }
 
-
-
 .editor-container {
-  width: 100%;
-  overflow-y: auto;
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 140px;
-  bottom: 70px;
-  display: flex;
-  justify-content: center;
+    width: 100%;
+    overflow-y: auto;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 140px;
+    bottom: 70px;
+    display: flex;
+    justify-content: center;
 }
 
 .quill {
-  width: 800px;
-  height: auto !important;
-  min-height: 100%;
-
+    width: 800px;
+    height: auto !important;
+    min-height: 100%;
 }
 
 .ql-container {
-  height: auto !important;
-  min-height: 100%;
+    height: auto !important;
+    min-height: 100%;
 }
 
 .ql-editor {
-  overflow-y: visible !important; 
-  min-height: 100% !important;
-  padding-bottom: 50px;
-  font-size: 16px !important;
+    overflow-y: visible !important;
+    min-height: 100% !important;
+    padding-bottom: 50px;
+    font-size: 16px !important;
 }
 
-.ant-collapse-content-box .quill-editor-container{
-  max-height: 500px !important;
-  overflow-y: auto !important ;
+.ant-collapse-content-box .quill-editor-container {
+    max-height: 500px !important;
+    overflow-y: auto !important;
 }
-
 
 .ql-container:focus,
 .ql-toolbar:focus {
-  outline: none !important;
-  box-shadow: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 /*video and image toolbar*/
 .toolbar {
-  pointer-events: all !important;
-  z-index: 1001;
-  background-color: var(--pageBarColor) !important;
-  color: white !important;
+    pointer-events: all !important;
+    z-index: 1001;
+    background-color: var(--pageBarColor) !important;
+    color: white !important;
 }
 
 .quill-editor-container .toolbar {
-  display: flex !important;
-  flex-direction: column;
-  position: fixed !important;
-  top: 0 !important;
-  
-
+    display: flex !important;
+    flex-direction: column;
+    position: fixed !important;
+    top: 0 !important;
 }
 
 .group a {
-  color: white !important;
-  font-size: 11px !important;
+    color: white !important;
+    font-size: 11px !important;
 }
 
 /**/
 
 /*iconos*/
 .ql-snow .ql-stroke {
-  stroke: white !important;
-
+    @apply stroke-black
 }
 
 .ql-snow .ql-fill {
-  fill: white !important;
-
+    @apply fill-black;
 }
 
 .ql-snow .ql-picker-label {
-  color: white !important;
-
+    @apply text-black cursor-pointer hover:bg-primary/10
 }
 
 /* invertir menus*/
 .ql-snow .ql-picker-options {
-  top: auto !important;
-  bottom: 100% !important;
-  transform: translateY(0) !important;
-  margin-bottom: 8px;
-  background-color: var(--folderTextColor) !important;
-  color: white;
+    /* top: 100% !important; */
+    /* bottom: auto !important; */
+    /* transform: translateY(0) !important; */
+    @apply bg-gray-100; 
 }
 
-.ql-picker-item {
-  padding: 5px !important;
+
+.ql-picker-item .ql-stroke {
+    @apply !stroke-black;
 }
 
 .ql-picker-item:hover {
-  color: var(--currentColor) !important;
-  background-color: var(--pageBarColor) !important;
-}
-
-.ql-selected {
-  color: rgb(94, 161, 68) !important;
+    background-color: white !important;
 }
 
 .ql-snow .ql-color-picker .ql-picker-options {
-  left: 0 !important;
-  width: 200px !important;
+    left: 0 !important;
+    width: 200px !important;
 }
 
-.ql-snow .ql-icon-picker .ql-picker-options {}
+.ql-snow .ql-icon-picker .ql-picker-options {
+}
+
+/* .ql-toolbar .ql-snow { */
+/*     position: relative; */
+/*     overflow: visible !important; */
+/* } */
 
 .ql-toolbar {
-  position: relative;
-  overflow: visible !important;
+    @apply h-14 items-center;
 }
 
 .ql-picker-label {
-  position: relative;
-  z-index: 1;
+    position: relative;
+    z-index: 1;
 }
 
 /* font size */
 
 .ql-size-10px {
-  font-size: 10px;
+    font-size: 10px;
 }
 
 .ql-size-12px {
-  font-size: 12px;
+    font-size: 12px;
 }
 
 .ql-size-14px {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 .ql-size-16px {
-  font-size: 16px;
+    font-size: 16px;
 }
 
 .ql-size-18px {
-  font-size: 18px;
+    font-size: 18px;
 }
 
 .ql-size-20px {
-  font-size: 20px;
+    font-size: 20px;
 }
 
 .ql-size-22px {
-  font-size: 22px;
+    font-size: 22px;
 }
 
 .ql-size-24px {
-  font-size: 24px;
+    font-size: 24px;
 }
 
 .ql-size-26px {
-  font-size: 26px;
+    font-size: 26px;
 }
 
 .ql-size-28px {
-  font-size: 28px;
+    font-size: 28px;
 }
 
 .ql-size-18px {
-  font-size: 30px;
+    font-size: 30px;
 }
 
 .ql-size-32px {
-  font-size: 32px;
+    font-size: 32px;
 }
 
 .ql-size-34px {
-  font-size: 32px;
+    font-size: 32px;
 }
 
 .ql-size-36px {
-  font-size: 32px;
+    font-size: 32px;
 }
 
 .ql-size-38px {
-  font-size: 32px;
+    font-size: 32px;
 }
 
 .ql-size-40px {
-  font-size: 32px;
+    font-size: 32px;
 }
 
 .ql-size-42px {
-  font-size: 32px;
+    font-size: 32px;
 }
 
 .ql-size-44px {
-  font-size: 32px;
+    font-size: 32px;
 }
 
 .ql-size-46px {
-  font-size: 32px;
+    font-size: 32px;
 }
 
 .ql-size-48px {
-  font-size: 48px;
+    font-size: 48px;
 }
 
 /*font type*/
 
 .ql-font-arial {
-  font-family: 'Arial', sans-serif;
+    font-family: "Arial", sans-serif;
 }
 
 .ql-font-times-new-roman {
-  font-family: 'Times New Roman', serif;
+    font-family: "Times New Roman", serif;
 }
 
 .ql-font-courier-new {
-  font-family: 'Courier New', monospace;
+    font-family: "Courier New", monospace;
 }
 
 .ql-font-comic-sans-ms {
-  font-family: 'Comic Sans MS', cursive;
+    font-family: "Comic Sans MS", cursive;
 }
 
 .ql-font-roboto {
-  font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
 .ql-font-georgia {
-  font-family: 'Georgia', serif;
+    font-family: "Georgia", serif;
 }
 
 .ql-font-verdana {
-  font-family: 'Verdana', sans-serif;
+    font-family: "Verdana", sans-serif;
 }
 
 .ql-font-open-sans {
-  font-family: 'Open Sans', sans-serif;
+    font-family: "Open Sans", sans-serif;
 }
 
 .ql-font-lato {
-  font-family: 'Lato', sans-serif;
+    font-family: "Lato", sans-serif;
 }
 
 .ql-font-montserrat {
-  font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
 
 .ql-font-impact {
-  font-family: 'Impact', sans-serif;
+    font-family: "Impact", sans-serif;
 }
 
 .ql-font-fantasy {
-  font-family: 'Fantasy', sans-serif;
+    font-family: "Fantasy", sans-serif;
 }
 
 .ql-font-cursive {
-  font-family: 'Cursive', cursive;
+    font-family: "Cursive", cursive;
 }
 
 .ql-font-monospace {
-  font-family: 'Monospace', monospace;
+    font-family: "Monospace", monospace;
 }
 
 .ql-font-serif {
-  font-family: 'Serif', serif;
+    font-family: "Serif", serif;
 }
 
-
 .ql-editor img {
-  margin: 10px 0;
+    margin: 10px 0;
 }
 
 .ql-tooltip,
 .ql-editing {
-  left: 0 !important;
-  z-index: 10000 !important;
+    left: 0 !important;
+    z-index: 10000 !important;
 }
 
 /*.ant-collapse-content #editor-resizer {
@@ -351,37 +337,40 @@
     left: 50% !important;
   }*/
 
+.ql-guided-checklist {
+    @apply text-black;
+}
 
 .ql-guided-checklist img {
-  margin: 0px !important;
+    margin: 0px !important;
 }
 
 a {
-  cursor: pointer !important;
+    cursor: pointer !important;
 }
 
 .collapse-list-icon-false svg {
-  stroke: gray !important;
-  fill: gray !important;
+    stroke: gray !important;
+    fill: gray !important;
 }
 
 .collapse-list-icon-true svg {
-  stroke: rgb(14, 173, 41) !important;
-  fill: rgb(14, 173, 41) !important;
+    stroke: rgb(14, 173, 41) !important;
+    fill: rgb(14, 173, 41) !important;
 }
 
 .quill-loader {
-  z-index: 10000 !important;
-  background-color: white;
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  top: 90px;
-  color: rgb(98, 220, 236);
+    z-index: 10000 !important;
+    background-color: white;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    top: 90px;
+    color: rgb(98, 220, 236);
 }

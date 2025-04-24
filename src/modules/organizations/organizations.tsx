@@ -115,9 +115,6 @@ export default function Organizations() {
 
     return (
         <div>
-            <header className="flex justify-end px-8 w-full py-2 fixed top-0 bg-gray-100">
-                <UserMenu />
-            </header>
             <section className="py-8 max-w-7xl mx-auto mt-16">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-2xl font-semibold">Your Organizations</h1>

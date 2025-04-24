@@ -1,9 +1,10 @@
 import { Outlet } from 'react-router-dom';
 // import Chat from './chat/chat';
 import { MainContextProvider } from './mainContext';
-import { Spinner } from "@heroui/react";
+import { Spinner } from '@heroui/react';
 import useOrganizations from './organizations/hook/useOrganizations';
 import useAuth from './auth/hooks/useAuth';
+import UserMenu from '@/components/ui/UserMenu';
 
 export default function MainLayout() {
     const { user } = useAuth();
@@ -21,7 +22,13 @@ export default function MainLayout() {
     return (
         <MainContextProvider>
             <div className="flex flex-col h-full w-full">
-                <main className="grow">
+                <header className="flex justify-between items-center px-8 w-full h-[70px] fixed top-0 bg-gray-100">
+                    <h1 className="font-[300] text-[40px] tracking-[0.3rem]">
+                        <span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO
+                    </h1>
+                    <UserMenu />
+                </header>
+                <main className="mt-[70px] grow overflow-hidden">
                     <Outlet />
                 </main>
                 {/* <Chat /> */}

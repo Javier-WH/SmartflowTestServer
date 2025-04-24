@@ -29,7 +29,16 @@ const router = createBrowserRouter([
                 element: <Navigate to="/home" />,
             },
             {
-                path: ':organization_id/home',
+                path: ':organization_id',
+                element: <Home />,
+                children: [
+                    { path: 'home' },
+                    { path: 'page/:id', element: <Page /> },
+                    { path: 'edit/:id', element: <TextEditor /> },
+                ],
+            },
+            {
+                path: ':organization_id/edit/:id',
                 element: <Home />,
             },
             {
@@ -43,14 +52,6 @@ const router = createBrowserRouter([
             {
                 path: 'organizations',
                 element: <Organizations />,
-            },
-            {
-                path: 'page/:id',
-                element: <Page />,
-            },
-            {
-                path: 'textEditor/:id',
-                element: <TextEditor />,
             },
             {
                 path: 'join/:id',
