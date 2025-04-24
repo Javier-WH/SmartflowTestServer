@@ -1,10 +1,12 @@
 import useAuth from '@/modules/auth/hooks/useAuth';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User } from '@heroui/react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export default function UserMenu() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { organization_id } = useParams();
+    console.log('[LS] -> src/components/ui/UserMenu.tsx:8 -> organization_id: ', organization_id);
 
     const { user, signOut } = useAuth();
 
@@ -22,21 +24,25 @@ export default function UserMenu() {
             );
         }
 
-        return (
-            <DropdownMenu aria-label="User Actions" variant="flat">
-                <DropdownItem key="organizations" onPress={() => navigate('/organizations')}>
-                    Organizations
-                </DropdownItem>
+        if (organization_id) {
+            return (
+                <DropdownMenu aria-label="User Actions" variant="flat">
+                    <DropdownItem key="organizations" onPress={() => navigate('/organizations')}>
+                        Organizations
+                    </DropdownItem>
 
-                <DropdownItem key="members" onPress={() => navigate('members')}>
-                    Members
-                </DropdownItem>
+                    <DropdownItem key="members" onPress={() => navigate(`/${organization_id}/members`)}>
+                        Members
+                    </DropdownItem>
 
-                <DropdownItem key="logout" color="danger" onPress={signOut}>
-                    Log Out
-                </DropdownItem>
-            </DropdownMenu>
-        );
+                    <DropdownItem key="logout" color="danger" onPress={signOut}>
+                        Log Out
+                    </DropdownItem>
+                </DropdownMenu>
+            );
+        }
+
+        return null;
     };
 
     return (

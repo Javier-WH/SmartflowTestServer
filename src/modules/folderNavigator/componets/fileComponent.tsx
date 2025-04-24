@@ -1,26 +1,27 @@
 import { Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
-import { ContainerElement } from '../types/componets';
+import type { ContainerElement } from '../types/componets';
 import publishedIcon from '../assets/svg/publishedFile.svg';
 import unPublishedIcon from '../assets/svg/unPublishedFile.svg';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useContext } from 'react';
-import { File } from '../types/file';
+import type { File } from '../types/file';
 import './folderContainer.css';
-import { FolderData, FolderNavigatorContextValues } from '../types/folder';
+import type { FolderData, FolderNavigatorContextValues } from '../types/folder';
 import useFilesManager from '../hooks/useFileManager';
 const pageType = import.meta.env.VITE_PAGE_TYPE;
 
 export function FileComponent({ file }: { file: ContainerElement }) {
-    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest, setFileCountUpdateRequest, memberRoll } = useContext(
-        FolderNavigatorContext, 
-    ) as FolderNavigatorContextValues;
+    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest, setFileCountUpdateRequest, memberRoll } =
+        useContext(FolderNavigatorContext) as FolderNavigatorContextValues;
     const { moveFileToRoot } = useFilesManager();
     const navigate = useNavigate();
+    const { organization_id } = useParams();
+
     const handleClick = (id: string) => {
         if (pageType === 'quill') {
-            navigate(`/textEditor/${id}`, { state: { readOnly: !memberRoll.write } });
+            navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
             return;
         }
         navigate(`/page/${id}`);
@@ -34,7 +35,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     const handleDelete = async () => {
         if (!memberRoll.delete) {
             message.error('You do not have permission to delete a file');
-            return
+            return;
         }
         const newFile: File = {
             id: file.id,
@@ -47,7 +48,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     const handleMoveToRoot = async () => {
         if (!memberRoll.write) {
             message.error('You do not have permission to move a file');
-            return
+            return;
         }
         if (!file.id) return;
         const request = await moveFileToRoot(file.id);
@@ -90,4 +91,3 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         </div>
     );
 }
-

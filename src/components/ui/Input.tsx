@@ -1,16 +1,15 @@
 import { Input as InputComponent, type InputProps } from '@heroui/react';
 
 export default function Input(props: InputProps) {
+    const variant = props.variant ?? 'bordered';
     return (
         <InputComponent
             {...props}
-            variant="bordered"
+            variant={variant}
             size="lg"
             radius="sm"
             color="primary"
-            classNames={{
-                inputWrapper: 'border',
-            }}
+            classNames={props.classNames ?? { inputWrapper: variant === 'bordered' ? 'border' : '' }}
         />
     );
 }
