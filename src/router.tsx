@@ -14,7 +14,6 @@ import JoinOrganization from './modules/onboarding/join-org';
 import Members from './modules/joinOrganization/menbers';
 import UserJoinOrganization from './modules/joinOrganization/joinOrganization';
 
-
 const router = createBrowserRouter([
     {
         path: '/',
@@ -34,6 +33,10 @@ const router = createBrowserRouter([
                 element: <Home />,
             },
             {
+                path: ':organization_id/members',
+                element: <Members />,
+            },
+            {
                 path: 'home',
                 element: <Organizations />,
             },
@@ -48,10 +51,6 @@ const router = createBrowserRouter([
             {
                 path: 'textEditor/:id',
                 element: <TextEditor />,
-            },
-            {
-                path: 'members/:slug',
-                element: <Members />,
             },
             {
                 path: 'join/:id',
