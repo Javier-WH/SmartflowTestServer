@@ -1,203 +1,196 @@
 .pageMainContainer {
-  width: 100vw;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  flex-direction: column;
-  background-color: white;
-  padding-top: 100px;
-
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+    background-color: white;
+    padding-top: 100px;
 }
 
 .pageMainButonsContainer {
-  width: var(--pageWidth);
+    width: var(--pageWidth);
 }
 
 .pageMainButonsContainer Button {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  width: 80px;
-  font-family: monospace;
-  color: gray;
-
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 80px;
+    font-family: monospace;
+    color: gray;
 }
 
 .title::placeholder {
-  color: rgb(192, 213, 228);
+    color: rgb(192, 213, 228);
 }
 
 .title {
-  width: var(--pageWidth);
-  font-size: 45px;
-  outline: none;
+    width: var(--pageWidth);
+    font-size: 45px;
+    outline: none;
 }
 
 .pageContentContainer {
-  /*border: 1px solid rgb(192, 213, 228);*/
-  background-color: white;
-  width: var(--pageWidth);
-  min-height: calc(100vh - 360px);
-  outline: none;
+    /*border: 1px solid rgb(192, 213, 228);*/
+    background-color: white;
+    width: var(--pageWidth);
+    min-height: calc(100vh - 360px);
+    outline: none;
 }
 
 .textItem {
-  outline: none;
+    outline: none;
 }
 
 .buttonBar {
-  background-color: var(--pageBarColor);
-  width: calc(var(--pageWidth) * 0.54);
-  min-width: 378px;
-  height: 43px;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  position: fixed;
-  bottom: 2px;
+    background-color: var(--pageBarColor);
+    width: calc(var(--pageWidth) * 0.54);
+    min-width: 378px;
+    height: 43px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    position: fixed;
+    bottom: 2px;
 }
 
 .divider {
-  font-weight: 100;
-  height: 100%;
+    font-weight: 100;
+    height: 100%;
 }
 
 .buttonBar button {
-  background-color: transparent;
+    background-color: transparent;
 }
 
 .intemPopover {
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  gap: 0px;
-  margin: 0px;
-  color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 0px;
+    margin: 0px;
+    color: white;
 }
 
 .intemPopover button {
-  background-color: transparent;
-  color: white;
-  border: none;
+    background-color: transparent;
+    color: white;
+    border: none;
 }
 
 .listItem {
-  outline: none;
-  width: 100%;
+    outline: none;
+    width: 100%;
 }
 .mcListItem {
-  outline: none;
-  width: 100%;
-  position: relative;
+    outline: none;
+    width: 100%;
+    position: relative;
 }
 .mcPlaceHolder::before {
- content: "Hola Mundo";
- color: gray;
+    content: "Hola Mundo";
+    color: gray;
 }
 
 .collapseBlue,
 .collapseBlue * {
-  background-color: hsl(205, 79%, 92%);
+    background-color: hsl(205, 79%, 92%);
 }
-
 
 .collapseYellow,
 .collapseYellow * {
-  background-color: hsl(48, 100%, 88%);
+    background-color: hsl(48, 100%, 88%);
 }
 
 .collapseRed,
 .collapseRed * {
-  background-color: hsl(360, 100%, 87%);
+    background-color: hsl(360, 100%, 87%);
 }
 
 .collapseGreen,
 .collapseGreen * {
-  background-color: hsl(154, 75%, 87%);
+    background-color: hsl(154, 75%, 87%);
 }
 
 .collapseGray,
 .collapseGray * {
-  background-color: hsl(210, 36%, 96%);
+    background-color: hsl(210, 36%, 96%);
 }
 
 .collapseWhite,
 .collapseWhite * {
-  background-color: white;
+    background-color: white;
 }
-.mcContainer{
-  display: "flex"; 
-  flex-direction: "column";
-  position: "relative";
-  width: max-content;
-  min-width: 300px;
-  margin-bottom: 50px;
+.mcContainer {
+    display: "flex";
+    flex-direction: "column";
+    position: "relative";
+    width: max-content;
+    min-width: 300px;
+    margin-bottom: 50px;
 }
 
 .mcItem {
-  display: "flex" !important;
-  align-items: "center";
-  column-gap: "10px" !important;
-  background-color: var(--pageBarColor);
-  padding: 10px;
-  background: rgba(199, 228, 247, 0.986);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(98, 193, 255, 0.87);
-  margin-bottom: 10px;
-  position: relative;
+    display: "flex" !important;
+    align-items: "center";
+    column-gap: "10px" !important;
+    background-color: var(--pageBarColor);
+    padding: 10px;
+    background: rgba(199, 228, 247, 0.986);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(98, 193, 255, 0.87);
+    margin-bottom: 10px;
+    position: relative;
 }
 
 .mcItemPlusButton {
-  background: rgba(199, 228, 247, 0.986);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(98, 193, 255, 0.87);
-  color:rgba(98, 193, 255, 0.87);
-  cursor: pointer;
-  text-align: center;
-  font-size: 18px;
-  position: absolute;
-  left: 0;
-  width: 100%;
+    background: rgba(199, 228, 247, 0.986);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(98, 193, 255, 0.87);
+    color: rgba(98, 193, 255, 0.87);
+    cursor: pointer;
+    text-align: center;
+    font-size: 18px;
+    position: absolute;
+    left: 0;
+    width: 100%;
 }
 .textItemContainer2,
-.textInputContainer *{
-  direction: ltr !important;
-  box-shadow: none !important;
-
+.textInputContainer * {
+    direction: ltr !important;
+    box-shadow: none !important;
 }
 
-.inputTextArea{
-  border: 1px solid lightgray;
-  cursor: not-allowed;
+.inputTextArea {
+    border: 1px solid lightgray;
+    cursor: not-allowed;
 }
 
-
-.inputGuidedCheckList{
-  background: transparent !important;
-  outline: none !important;
-  border: "1px solid trasparent" !important;
+.inputGuidedCheckList {
+    background: transparent !important;
+    outline: none !important;
+    border: "1px solid trasparent" !important;
 }
 
 .inputGuidedCheckList:focus {
-  box-shadow: none !important;
-  outline: none !important;
-  border: "1px solid red" !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: "1px solid red" !important;
 }
-.textItemContainer{
-
-  background-color: white;
-  position: relative;
-
+.textItemContainer {
+    background-color: white;
+    position: relative;
 }
-.disableSelect{
-  margin: 0px !important;
-  padding: 0px !important;
+.disableSelect {
+    margin: 0px !important;
+    padding: 0px !important;
 }
 
-.nextButton span{
-  background-color: transparent !important;
+.nextButton span {
+    background-color: transparent !important;
 }

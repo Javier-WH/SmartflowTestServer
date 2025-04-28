@@ -1,25 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import './components/guidedCheckList/react_guidedCheckList.tsx';
-import Input from '@/components/ui/Input.tsx';
 import { useEffect, useState, useRef } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
-import styles from './textEditorStyles.tsx';
 import { useParams, useLocation } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
 import options from './components/utils/options.ts';
 import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.ts';
-import useFilesManager from '../folderNavigator/hooks/useFileManager.ts';
 import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { useDebouncedCallback } from 'use-debounce';
 import { Textarea } from '@heroui/react';
+import { Spinner } from '@heroui/react';
 
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
+import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 
 // this is our custom blot
 Quill.register('formats/guided-checklist', GuidedCheckListBlot); // Mismo nombre que el blot
@@ -65,17 +64,164 @@ export default function TextEditor() {
     let readOnly = location?.state?.readOnly;
     if (readOnly === undefined) readOnly = false;
 
-    const [content, setContenido] = useState('');
     const [title, setTitle] = useState('');
     const [showToolbar, setShowToolbar] = useState(true);
-    const [ableToSave, setAbleToSave] = useState(false);
-    const [updatedAt, setUpdatedAt] = useState(0);
-    const { updateFileContent, getFileContent } = useFilesManager();
     const quillRef = useRef<ReactQuill>(null);
     const inputRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState<HTMLElement | null>(null);
-    const [loading, setLoading] = useState(false);
+
+    const currentFileId = useRef(id);
+
+    const { data: fileContent, isLoading, mutate, isMutating } = useFileContent({ fileId: id });
+
+    const [content, setContent] = useState(fileContent?.content ?? '');
+    const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
+
     const [visible, setVisible] = useState(false);
+
+    const debouncedUpdate = useDebouncedCallback(
+        async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
+            if (!id) return;
+
+            await mutate({ id, ...(htmlContent ? { content: htmlContent } : {}), ...(title ? { name: title } : {}) });
+        },
+        500,
+        { leading: false, trailing: true },
+    );
+
+    const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const editor = quillRef.current?.getEditor();
+            if (!editor) return;
+            const contents = editor.getContents();
+
+            // Check if the first element is a checklist
+            const hasChecklistFirst = contents.ops?.[0]?.insert?.['guided-checklist'];
+
+            // Insert a new line at the start if the first element is a checklist
+            if (hasChecklistFirst) {
+                editor.insertText(0, '\n', 'user');
+            }
+
+            // Set the cursor at the start
+            editor.focus();
+            editor.setSelection(0, 0);
+        }
+    };
+
+    const handleEditorChange = (value: string) => {
+        setContent(value);
+        if (readOnly) return;
+        if (!isLoading && !isMutating && quillRef.current) {
+            const editor = quillRef.current.getEditor();
+            const htmlContent = editor.root.innerHTML;
+
+            handleContentOrTitleChange({ newContent: value });
+        }
+    };
+
+    const handleContentOrTitleChange = ({ newContent, newTitle }: { newContent?: string; newTitle?: string }) => {
+        let needsDebounce = false;
+
+        if (newContent !== undefined && newContent !== content) {
+            setContent(newContent);
+            needsDebounce = true;
+        }
+        if (newTitle !== undefined && newTitle !== title) {
+            setTitle(newTitle);
+            needsDebounce = true;
+        }
+
+        // Only schedule update if not read-only, content is loaded, and not currently saving
+        // Crucially, also check if the initial content for the *current* ID has been loaded
+        if (!readOnly && isInitialContentLoaded && !isMutating && needsDebounce) {
+            // Schedule the update with the ID relevant *at this moment*
+            console.log(`Scheduling update for ID: ${currentFileId.current}`);
+            debouncedUpdate({
+                id: currentFileId.current,
+                ...(newContent !== undefined && { htmlContent: newContent }),
+                ...(newTitle !== undefined && { title: newTitle }),
+            });
+        }
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+    const handleChangeSelection = () => {
+        if (readOnly) return;
+        const activeElement = document.activeElement;
+        const editorRoot = quillRef.current?.getEditor().root;
+        const toolbarContainer = document.getElementById('toolbar-guided-checklist');
+
+        const isToolbarElement = toolbarContainer?.contains(activeElement);
+
+        if (editorRoot && activeElement && !isToolbarElement) {
+            const isCollapseEditorFocused =
+                editorRoot.contains(activeElement) &&
+                (activeElement.classList.contains('collapse-editor') || activeElement.closest('.collapse-editor'));
+
+            if (isCollapseEditorFocused) {
+                setShowToolbar(false);
+            } else {
+                setShowToolbar(true);
+            }
+        }
+    };
+
+    //paste image handler
+    const handlePaste = (e: ClipboardEvent) => {
+        const editor = quillRef.current?.getEditor();
+        if (!editor) return;
+
+        const items = e.clipboardData?.items;
+        if (!items) return;
+
+        // search for image in clipboard
+        for (const item of items) {
+            if (item.type.startsWith('image')) {
+                e.preventDefault();
+                const file = item.getAsFile();
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = loadEvent => {
+                    const imageUrl = loadEvent.target?.result;
+                    if (typeof imageUrl === 'string') {
+                        const range = editor.getSelection(true);
+                        editor.insertEmbed(range?.index || 0, 'image', imageUrl);
+                    }
+                };
+                reader.readAsDataURL(file);
+                return;
+            }
+        }
+    };
+
+    useEffect(() => {
+        setIsInitialContentLoaded(false);
+        if (fileContent) {
+            setContent(fileContent.content ?? '');
+            setTitle(fileContent.name ?? '');
+            currentFileId.current = id;
+            setIsInitialContentLoaded(true);
+        } else if (!isLoading) {
+            setContent('');
+            setTitle('');
+            currentFileId.current = id;
+            setIsInitialContentLoaded(true);
+        }
+    }, [fileContent, id, isLoading]); // Add isLoading dependency
+
+    useEffect(() => {
+        // This cleanup function runs when the component unmounts OR
+        // when 'id' changes *before* the next render's effect runs.
+        return () => {
+            console.log(`ID changed to ${id} or component unmounting. Cancelling pending updates.`);
+            debouncedUpdate.cancel();
+            // Update the ref *immediately* when ID changes, so subsequent checks are accurate
+            currentFileId.current = id;
+        };
+    }, [id, debouncedUpdate]);
 
     // get selected image
     useEffect(() => {
@@ -198,137 +344,6 @@ export default function TextEditor() {
         }
     }, []);
 
-    // if a content in database is found, when the page is loaded, the content is loaded
-    useEffect(() => {
-        if (id) {
-            setLoading(true);
-            setAbleToSave(false);
-            getFileContent(id)
-                .then(response => {
-                    if (response.error) return;
-                    const { content, name, updated_at } = response.data;
-                    setTitle(name === 'untitled' ? '' : name);
-                    setContenido(content ? content : '');
-                    /*const editor = quillRef.current?.getEditor();
-                    if (editor) {
-                        editor.root.innerHTML = content;
-                    }*/
-
-                    setUpdatedAt(updated_at);
-                })
-                .catch(error => console.error(error))
-                .finally(() => {
-                    setAbleToSave(true);
-                    setTimeout(() => {
-                        setLoading(false);
-                    }, 500);
-                });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
-
-    const debouncedUpdate = useDebouncedCallback(
-        async (id: string, htmlContent: string, title: string) => {
-            // save htmlContent istead of content, prevent a bug related to images sizes and styles
-            updateFileContent(id, htmlContent, title).then(response => {
-                console.log('[LS] -> src/modules/textEditor/textEditor.tsx:70 -> response: ', response);
-                if (response.error) {
-                    console.error(response);
-                    return;
-                }
-                setUpdatedAt(response.data.updated_at);
-            });
-        },
-        500,
-        { leading: false, trailing: true },
-    );
-
-    // this useEffect is to update the dataBase
-    useEffect(() => {
-        if (readOnly) return;
-        if (id && ableToSave && quillRef.current) {
-            const editor = quillRef.current.getEditor();
-            const htmlContent = editor.root.innerHTML;
-            debouncedUpdate(id, htmlContent, title);
-        }
-    }, [content, title]);
-
-    const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const editor = quillRef.current?.getEditor();
-            if (!editor) return;
-            const contents = editor.getContents();
-
-            // Check if the first element is a checklist
-            const hasChecklistFirst = contents.ops?.[0]?.insert?.['guided-checklist'];
-
-            // Insert a new line at the start if the first element is a checklist
-            if (hasChecklistFirst) {
-                editor.insertText(0, '\n', 'user');
-            }
-
-            // Set the cursor at the start
-            editor.focus();
-            editor.setSelection(0, 0);
-        }
-    };
-
-    const handleEditorChange = (value: string) => {
-        setContenido(value);
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-    const handleChangeSelection = () => {
-        if (readOnly) return;
-        const activeElement = document.activeElement;
-        const editorRoot = quillRef.current?.getEditor().root;
-        const toolbarContainer = document.getElementById('toolbar-guided-checklist');
-
-        const isToolbarElement = toolbarContainer?.contains(activeElement);
-
-        if (editorRoot && activeElement && !isToolbarElement) {
-            const isCollapseEditorFocused =
-                editorRoot.contains(activeElement) &&
-                (activeElement.classList.contains('collapse-editor') || activeElement.closest('.collapse-editor'));
-
-            if (isCollapseEditorFocused) {
-                setShowToolbar(false);
-            } else {
-                setShowToolbar(true);
-            }
-        }
-    };
-
-    //paste image handler
-    const handlePaste = (e: ClipboardEvent) => {
-        const editor = quillRef.current?.getEditor();
-        if (!editor) return;
-
-        const items = e.clipboardData?.items;
-        if (!items) return;
-
-        // search for image in clipboard
-        for (const item of items) {
-            if (item.type.startsWith('image')) {
-                e.preventDefault();
-                const file = item.getAsFile();
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = loadEvent => {
-                    const imageUrl = loadEvent.target?.result;
-                    if (typeof imageUrl === 'string') {
-                        const range = editor.getSelection(true);
-                        editor.insertEmbed(range?.index || 0, 'image', imageUrl);
-                    }
-                };
-                reader.readAsDataURL(file);
-                return;
-            }
-        }
-    };
-
     // add paste event listener
     useEffect(() => {
         if (quillRef.current) {
@@ -341,6 +356,14 @@ export default function TextEditor() {
         }
     }, []);
 
+    if (isLoading && !isInitialContentLoaded) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <Spinner size="lg" />
+            </div>
+        );
+    }
+
     return (
         <div className="h-full relative">
             <div className="flex justify-between items-center flex-wrap gap-4">
@@ -349,7 +372,11 @@ export default function TextEditor() {
                         {...(readOnly && { readOnly: true })}
                         ref={inputRef}
                         value={title}
-                        onChange={e => setTitle(e.target.value)}
+                        onChange={e => {
+                            setTitle(e.target.value);
+                            if (readOnly) return;
+                            handleContentOrTitleChange({ newTitle: e.target.value });
+                        }}
                         placeholder="Give your page a title"
                         onKeyDown={handleTitleKeyDown}
                         minRows={1}
@@ -366,14 +393,14 @@ export default function TextEditor() {
                     {/* <button type="button" style={styles.homeButton} onClick={() => navigate(-1)}> */}
                     {/*     <img src={homeIcon} alt="" /> {'>'} */}
                     {/* </button> */}
-                    {updatedAt ? (
+                    {fileContent?.updated_at ? (
                         <span className="w-full text-gray-400">
                             <span>Última actualización: </span>
                             {Intl.DateTimeFormat('es-ES', {
                                 dateStyle: 'medium',
                                 timeStyle: 'medium',
                                 hour12: true,
-                            }).format(new Date(updatedAt))}
+                            }).format(new Date(fileContent?.updated_at))}
                         </span>
                     ) : null}
                 </div>
@@ -383,12 +410,10 @@ export default function TextEditor() {
                 <CustomToolbar show={!readOnly} name="toolbar" />
             </header>
 
-            <div onClick={handleChangeSelection} className="flex flex-col items-center h-full pb-4 pt-4">
-                {/* {loading && ( */}
-                {/*     <div className="quill-loader"> */}
-                {/*         <Spin size="large"></Spin>Loading */}
-                {/*     </div> */}
-                {/* )} */}
+            <div
+                onClick={handleChangeSelection}
+                className="flex flex-col items-center h-full pb-4 mt-4 overflow-y-auto"
+            >
                 <ReactQuill
                     {...(readOnly && { readOnly: true })}
                     ref={quillRef}

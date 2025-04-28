@@ -38,10 +38,6 @@ const router = createBrowserRouter([
                 ],
             },
             {
-                path: ':organization_id/edit/:id',
-                element: <Home />,
-            },
-            {
                 path: ':organization_id/members',
                 element: <Members />,
             },
