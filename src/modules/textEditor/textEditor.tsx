@@ -19,6 +19,7 @@ import { Spinner } from '@heroui/react';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
+import { Image } from 'antd';
 
 // this is our custom blot
 Quill.register('formats/guided-checklist', GuidedCheckListBlot); // Mismo nombre que el blot
@@ -425,6 +426,18 @@ export default function TextEditor() {
                     formats={options.formats}
                     onChangeSelection={handleChangeSelection}
                     className="w-[60%] h-full"
+                />
+                <Image
+                    width={200}
+                    style={{ display: 'none' }}
+                    src=""
+                    preview={{
+                        visible: visible,
+                        src: (selectedImage as HTMLImageElement)?.src || '',
+                        onVisibleChange: (value) => {
+                            setVisible(value);
+                        },
+                    }}
                 />
             </div>
         </div>
