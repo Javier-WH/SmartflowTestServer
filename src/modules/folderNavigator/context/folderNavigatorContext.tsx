@@ -54,7 +54,7 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className="h-full">
             <FolderNavigatorContext.Provider value={values}>
                 <CreateOrUpdateFolderModal
                     folder={modalFolder}

@@ -7,7 +7,7 @@ export default function Browser() {
     const { rootFolder } = useContext(MainContext) as MainContextValues;
 
     return (
-        <div className="w-full overflow-auto p-2">
+        <div className="w-full overflow-auto p-2 h-full">
             <FolderContainer folderId={rootFolder} />
         </div>
     );

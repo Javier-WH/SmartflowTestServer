@@ -363,7 +363,7 @@ export default function TextEditor() {
     }
 
     return (
-        <div className="h-full w-full relative pb-36">
+        <div className="h-full w-full relative pb-36 px-2">
             <div className="flex justify-between items-center flex-wrap gap-4">
                 <div className="grow">
                     <Textarea
@@ -404,7 +404,7 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <header className="bg-gray-100 rounded-2xl mt-4 shadow-gray-200 shadow-md">
+            <header className="bg-gray-100 rounded-2xl mt-4 shadow-gray-200 shadow-md ring-gray-200 ring-1">
                 <CustomToolbar show={!readOnly} name="toolbar" />
             </header>
 

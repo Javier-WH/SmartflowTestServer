@@ -1,59 +1,60 @@
 @keyframes borderColorChange {
-  0% {
-    border-color: rgb(38, 0, 255);
-  }
+    0% {
+        border-color: rgb(38, 0, 255);
+    }
 
-  25% {
-    border-color: rgb(137, 128, 189);
-  }
+    25% {
+        border-color: rgb(137, 128, 189);
+    }
 
-  50% {
-    border-color: rgb(38, 0, 255);
-  }
+    50% {
+        border-color: rgb(38, 0, 255);
+    }
 
-  75% {
-    border-color: rgb(5, 95, 136);
-  }
+    75% {
+        border-color: rgb(5, 95, 136);
+    }
 
-  100% {
-    border-color: rgb(137, 128, 189);
-  }
+    100% {
+        border-color: rgb(137, 128, 189);
+    }
 }
 
 @keyframes textColorChange {
-  0% {
-    color: rgb(38, 0, 255);
-  }
+    0% {
+        color: rgb(38, 0, 255);
+    }
 
-  25% {
-    color: rgb(137, 128, 189);
-  }
+    25% {
+        color: rgb(137, 128, 189);
+    }
 
-  50% {
-    color: rgb(38, 0, 255);
-  }
+    50% {
+        color: rgb(38, 0, 255);
+    }
 
-  75% {
-    color: rgb(5, 95, 136);
-  }
+    75% {
+        color: rgb(5, 95, 136);
+    }
 
-  100% {
-    color: rgb(137, 128, 189);
-  }
+    100% {
+        color: rgb(137, 128, 189);
+    }
 }
 
 .highlighted-folder {
-  border: 2px solid red;
-  animation: borderColorChange 1s infinite;
-  position: "relative";
+    border: 2px solid red;
+    animation: borderColorChange 1s infinite;
+    position: "relative";
 }
 
-.highlighted-folder::after{
-  content: "🔍 Folder found" ;
-  position: absolute;
-  right: 0;
-  display: flex;
-  width: 200px;
-  font-size: 12px;
-  animation: textColorChange 1s infinite;
-}
+/* .highlighted-folder::after{ */
+/*   content: "🔍 Folder found" ; */
+/*   position: absolute; */
+/*   right: 0; */
+/*   display: flex; */
+/*   width: 200px; */
+/*   font-size: 12px; */
+/*   animation: textColorChange 1s infinite; */
+/* } */
+
