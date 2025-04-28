@@ -365,7 +365,7 @@ export default function TextEditor() {
     }
 
     return (
-        <div className="h-full relative">
+        <div className="h-full w-full relative">
             <div className="flex justify-between items-center flex-wrap gap-4">
                 <div className="grow">
                     <Textarea
@@ -412,18 +412,21 @@ export default function TextEditor() {
 
             <div
                 onClick={handleChangeSelection}
-                className="flex flex-col items-center h-full pb-4 mt-4 overflow-y-auto"
+                className="flex flex-col items-center w-full h-full pb-4 mt-4 overflow-y-auto"
             >
-                <ReactQuill
-                    {...(readOnly && { readOnly: true })}
-                    ref={quillRef}
-                    theme="snow"
-                    value={content}
-                    onChange={handleEditorChange}
-                    modules={modules}
-                    formats={options.formats}
-                    onChangeSelection={handleChangeSelection}
-                />
+                <div className="w-[60%] ">
+                    <ReactQuill
+                        {...(readOnly && { readOnly: true })}
+                        ref={quillRef}
+                        theme="snow"
+                        value={content}
+                        onChange={handleEditorChange}
+                        modules={modules}
+                        formats={options.formats}
+                        onChangeSelection={handleChangeSelection}
+                        className="w-full"
+                    />
+                </div>
             </div>
         </div>
     );
