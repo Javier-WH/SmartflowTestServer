@@ -408,10 +408,7 @@ export default function TextEditor() {
                 <CustomToolbar show={!readOnly} name="toolbar" />
             </header>
 
-            <div
-                onClick={() => quillRef.current?.focus()}
-                className="flex flex-col items-center w-full h-full pb-4 mt-4 overflow-y-auto cursor-text"
-            >
+            <div className="flex flex-col items-center w-full h-full pb-4 mt-4 overflow-y-auto cursor-text">
                 <ReactQuill
                     {...(readOnly && { readOnly: true })}
                     ref={ref => {
