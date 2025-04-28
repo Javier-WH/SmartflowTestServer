@@ -83,7 +83,6 @@ export default function TextEditor() {
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id) return;
 
-            console.log({ id });
             await mutate({
                 id,
                 ...(htmlContent ? { content: htmlContent } : {}),
@@ -265,7 +264,7 @@ export default function TextEditor() {
             currentFileId.current = id;
             setIsInitialContentLoaded(true);
         }
-    }, [fileContent, id, isInitialContentLoaded]); // Add isLoading dependency
+    }, [fileContent, id, isInitialContentLoaded]);
 
     useEffect(() => {
         // This cleanup function runs when the component unmounts OR
@@ -275,6 +274,7 @@ export default function TextEditor() {
             debouncedUpdate.cancel();
             // Update the ref *immediately* when ID changes, so subsequent checks are accurate
             currentFileId.current = id;
+            setIsInitialContentLoaded(false);
         };
     }, [id, debouncedUpdate]);
 
