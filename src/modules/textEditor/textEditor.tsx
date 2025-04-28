@@ -83,7 +83,12 @@ export default function TextEditor() {
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id) return;
 
-            await mutate({ id, ...(htmlContent ? { content: htmlContent } : {}), ...(title ? { name: title } : {}) });
+            console.log({ id });
+            await mutate({
+                id,
+                ...(htmlContent ? { content: htmlContent } : {}),
+                ...(title ? { name: title } : {}),
+            });
         },
         500,
         { leading: false, trailing: true },
@@ -117,7 +122,7 @@ export default function TextEditor() {
             const editor = quillRef.current.getEditor();
             const htmlContent = editor.root.innerHTML;
 
-            handleContentOrTitleChange({ newContent: value });
+            handleContentOrTitleChange({ newContent: htmlContent });
         }
     };
 
@@ -197,20 +202,67 @@ export default function TextEditor() {
         }
     };
 
+    const configureQuillMatchers = () => {
+        quillRef.current.focus();
+        const editor = quillRef.current.getEditor();
+        // add a matcher for images
+        editor.clipboard.addMatcher('IMG', (node, delta) => {
+            // get the width, height and style attributes
+            const widthAttr = node.getAttribute('width');
+            const heightAttr = node.getAttribute('height');
+            const styleAttr = node.getAttribute('style');
+            //  update the delta
+            delta.ops = delta.ops?.map(op => {
+                if (op.insert?.image && typeof op.insert.image === 'string') {
+                    return {
+                        insert: {
+                            image: {
+                                src: op.insert.image,
+                                width: widthAttr,
+                                height: heightAttr,
+                                style: styleAttr,
+                            },
+                        },
+                    };
+                }
+                return op;
+            });
+            return delta;
+        });
+
+        // add a matcher for videos
+        // this do the same as the image matcher but for videos (iframes)
+        editor.clipboard.addMatcher('IFRAME', (node, delta) => {
+            const styleAttr = node.getAttribute('style');
+            const widthAttr = node.getAttribute('width');
+            const heightAttr = node.getAttribute('height');
+            delta.ops = delta.ops?.map(op => {
+                if (op.insert?.video && typeof op.insert.video === 'string') {
+                    return {
+                        insert: {
+                            video: {
+                                src: op.insert.video,
+                                width: widthAttr,
+                                height: heightAttr,
+                                style: styleAttr,
+                            },
+                        },
+                    };
+                }
+                return op;
+            });
+            return delta;
+        });
+    };
+
     useEffect(() => {
-        setIsInitialContentLoaded(false);
-        if (fileContent) {
+        if (fileContent && !isInitialContentLoaded) {
             setContent(fileContent.content ?? '');
             setTitle(fileContent.name ?? '');
             currentFileId.current = id;
             setIsInitialContentLoaded(true);
-        } else if (!isLoading) {
-            setContent('');
-            setTitle('');
-            currentFileId.current = id;
-            setIsInitialContentLoaded(true);
         }
-    }, [fileContent, id, isLoading]); // Add isLoading dependency
+    }, [fileContent, id, isInitialContentLoaded]); // Add isLoading dependency
 
     useEffect(() => {
         // This cleanup function runs when the component unmounts OR
@@ -287,63 +339,6 @@ export default function TextEditor() {
         }
     }, [selectedImage]);
 
-    // this useEfect check every image and video loaded in the editor and add the width, height and style attributes found in the page load
-    // this is done to prevent a bug related to the width, height and styles of images
-    useEffect(() => {
-        if (quillRef.current) {
-            quillRef.current.focus();
-            const editor = quillRef.current.getEditor();
-            // add a matcher for images
-            editor.clipboard.addMatcher('IMG', (node, delta) => {
-                // get the width, height and style attributes
-                const widthAttr = node.getAttribute('width');
-                const heightAttr = node.getAttribute('height');
-                const styleAttr = node.getAttribute('style');
-                //  update the delta
-                delta.ops = delta.ops?.map(op => {
-                    if (op.insert?.image && typeof op.insert.image === 'string') {
-                        return {
-                            insert: {
-                                image: {
-                                    src: op.insert.image,
-                                    width: widthAttr,
-                                    height: heightAttr,
-                                    style: styleAttr,
-                                },
-                            },
-                        };
-                    }
-                    return op;
-                });
-                return delta;
-            });
-
-            // add a matcher for videos
-            // this do the same as the image matcher but for videos (iframes)
-            editor.clipboard.addMatcher('IFRAME', (node, delta) => {
-                const styleAttr = node.getAttribute('style');
-                const widthAttr = node.getAttribute('width');
-                const heightAttr = node.getAttribute('height');
-                delta.ops = delta.ops?.map(op => {
-                    if (op.insert?.video && typeof op.insert.video === 'string') {
-                        return {
-                            insert: {
-                                video: {
-                                    src: op.insert.video,
-                                    width: widthAttr,
-                                    height: heightAttr,
-                                    style: styleAttr,
-                                },
-                            },
-                        };
-                    }
-                    return op;
-                });
-                return delta;
-            });
-        }
-    }, []);
-
     // add paste event listener
     useEffect(() => {
         if (quillRef.current) {
@@ -417,7 +412,13 @@ export default function TextEditor() {
                 <div className="w-[60%] ">
                     <ReactQuill
                         {...(readOnly && { readOnly: true })}
-                        ref={quillRef}
+                        ref={ref => {
+                            if (ref) {
+                                quillRef.current = ref;
+
+                                configureQuillMatchers();
+                            }
+                        }}
                         theme="snow"
                         value={content}
                         onChange={handleEditorChange}
