@@ -92,7 +92,10 @@ const SignIn = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen p-4">
+        <form
+            onSubmit={handleSubmit}
+            className="flex justify-center items-center h-screen p-4 bg-[linear-gradient(68.66deg,#e8e2ff_1.3%,#f7f5ff_50%)]"
+        >
             <Card className="w-full max-w-md border-none" radius="sm">
                 <CardBody className="flex flex-col gap-5 p-8">
                     <h1 className="text-2xl font-bold">Iniciar Sesión</h1>

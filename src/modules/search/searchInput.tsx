@@ -1,62 +1,57 @@
-import { Input } from 'antd';
+import { Input } from '@/components/ui';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { IoSearchSharp } from "react-icons/io5";
+import { IoSearchSharp } from 'react-icons/io5';
 import useFilesManager from '../folderNavigator/hooks/useFileManager';
 import type { SearchBoxInterface } from './types/searchBox';
 import SearchBox from './searchBox/searchBox';
 
 export default function SearchInput() {
+    const [searchValue, setSearchValue] = useState('');
+    const [searchResults, setSearchResults] = useState<SearchBoxInterface[]>([]);
+    const { searchFiles } = useFilesManager();
+    const { organization_id: slug } = useParams();
 
-  const [searchValue, setSearchValue] = useState('')
-  const [searchResults, setSearchResults] = useState<SearchBoxInterface[]>([])
-  const { searchFiles } = useFilesManager()
-  const { organization_id: slug } = useParams();
+    useEffect(() => {
+        if (searchValue.length === 0 || searchValue === '' || !slug) {
+            closeBox();
+            return;
+        }
 
-  useEffect(() => {
-    if (searchValue.length === 0 || searchValue === '' || !slug) {
-      closeBox()
-      return
-    }
+        searchFiles(searchValue, slug)
+            .then(res => setSearchResults(res.data))
+            .catch(err => console.log(err));
 
-    searchFiles(searchValue, slug)
-    .then(res => setSearchResults(res.data))
-    .catch(err => console.log(err))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchValue]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue])
+    useEffect(() => {
+        const keyEvent = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                closeBox();
+            }
+        };
 
-  useEffect(() => {
-    const keyEvent = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        closeBox()
-      }
-    }
+        window.addEventListener('keydown', keyEvent);
+        return () => {
+            window.removeEventListener('keydown', keyEvent);
+        };
+    }, []);
 
-    window.addEventListener('keydown', keyEvent)
-    return () => {
-      window.removeEventListener('keydown', keyEvent)
-    }
-  },[])
+    const closeBox = () => {
+        setSearchResults([]);
+        setSearchValue('');
+    };
 
-
-
-  const closeBox = () => {
-    setSearchResults([])
-    setSearchValue('')
-  }
-
-
-
-  return <div style={{ width: '100%', position: 'relative'}}>
-    <Input
-      suffix={<IoSearchSharp />} 
-      size='large' 
-      value={searchValue} 
-      onChange={(e) => setSearchValue(e.target.value)}
-      
-    />
-    <SearchBox data={searchResults} word={searchValue} closeBox= {closeBox}/>
-  </div>
-
+    return (
+        <div style={{ width: '100%', position: 'relative' }}>
+            <Input
+                startContent={<IoSearchSharp />}
+                value={searchValue}
+                onChange={e => setSearchValue(e.target.value)}
+                placeholder="Search..."
+            />
+            <SearchBox data={searchResults} word={searchValue} closeBox={closeBox} />
+        </div>
+    );
 }

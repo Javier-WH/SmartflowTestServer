@@ -1,5 +1,11 @@
 import { useEffect, useState, useContext } from 'react';
-import { message, Spin } from 'antd';
+import { useParams } from 'react-router-dom';
+
+import { message } from 'antd';
+import { Spinner } from '@heroui/react';
+import { Button } from '@/components/ui';
+import { IconFilePlus } from '@tabler/icons-react';
+
 import type { FolderRequestItem } from '../types/folder';
 import type { ContainerElement } from '../types/componets';
 import useFolderManager from '../hooks/useFolderManager';
@@ -7,7 +13,6 @@ import { FolderComponent } from './folderComponent';
 import { FileComponent } from './fileComponent';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import type { FolderNavigatorContextValues } from '../types/folder';
-import { useParams } from 'react-router-dom';
 
 export default function FolderContainer({ folderId }: { folderId: string | null }) {
     const { organization_id: slug } = useParams();
@@ -103,9 +108,24 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updateFolderRequest, slug]);
 
-    if (content?.length === 0) {
-        if (Loading === folderId) return <Spin />;
-        return null;
+    if (Loading === folderId) {
+        return (
+            <div className="w-full h-full flex justify-center items-center">
+                <Spinner />
+            </div>
+        );
+    }
+
+    if (content?.length === 0 && folderId === null) {
+        return (
+            <div className="flex flex-col gap-2 justify-center items-center w-full h-full ">
+                No documents found
+                <Button variant="light">
+                    <IconFilePlus />
+                    Create your first document
+                </Button>
+            </div>
+        );
     }
 
     return (
