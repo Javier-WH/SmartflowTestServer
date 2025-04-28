@@ -203,7 +203,6 @@ export default function TextEditor() {
     };
 
     const configureQuillMatchers = () => {
-        quillRef.current.focus();
         const editor = quillRef.current.getEditor();
         // add a matcher for images
         editor.clipboard.addMatcher('IMG', (node, delta) => {
@@ -254,6 +253,10 @@ export default function TextEditor() {
             return delta;
         });
     };
+
+    useEffect(() => {
+        if (quillRef.current) quillRef.current.focus();
+    }, [quillRef.current]);
 
     useEffect(() => {
         if (fileContent && !isInitialContentLoaded) {
@@ -406,28 +409,26 @@ export default function TextEditor() {
             </header>
 
             <div
-                onClick={handleChangeSelection}
-                className="flex flex-col items-center w-full h-full pb-4 mt-4 overflow-y-auto"
+                onClick={() => quillRef.current?.focus()}
+                className="flex flex-col items-center w-full h-full pb-4 mt-4 overflow-y-auto cursor-text"
             >
-                <div className="w-[60%] ">
-                    <ReactQuill
-                        {...(readOnly && { readOnly: true })}
-                        ref={ref => {
-                            if (ref) {
-                                quillRef.current = ref;
+                <ReactQuill
+                    {...(readOnly && { readOnly: true })}
+                    ref={ref => {
+                        if (ref) {
+                            quillRef.current = ref;
 
-                                configureQuillMatchers();
-                            }
-                        }}
-                        theme="snow"
-                        value={content}
-                        onChange={handleEditorChange}
-                        modules={modules}
-                        formats={options.formats}
-                        onChangeSelection={handleChangeSelection}
-                        className="w-full"
-                    />
-                </div>
+                            configureQuillMatchers();
+                        }
+                    }}
+                    theme="snow"
+                    value={content}
+                    onChange={handleEditorChange}
+                    modules={modules}
+                    formats={options.formats}
+                    onChangeSelection={handleChangeSelection}
+                    className="w-[60%] h-full"
+                />
             </div>
         </div>
     );
