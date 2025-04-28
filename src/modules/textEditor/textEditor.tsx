@@ -427,7 +427,9 @@ export default function TextEditor() {
                     onChangeSelection={handleChangeSelection}
                     className="w-[60%] h-full"
                 />
+            
                 <Image
+                // Ant Design Image component for image preview
                     width={200}
                     style={{ display: 'none' }}
                     src=""
