@@ -7,7 +7,10 @@ export default function useFileContent({ fileId }: { fileId: string }) {
         isLoading,
         error,
         count,
-    } = useQuery(supabase.from('filesquill').select('content, name, updated_at').eq('id', fileId).single());
+    } = useQuery(supabase.from('filesquill').select('content, name, updated_at').eq('id', fileId).single(), {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+    });
 
     const { trigger: update, isMutating } = useUpdateMutation(
         supabase.from('filesquill'),
