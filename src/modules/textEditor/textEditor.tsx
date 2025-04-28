@@ -363,7 +363,7 @@ export default function TextEditor() {
     }
 
     return (
-        <div className="h-full w-full relative">
+        <div className="h-full w-full relative pb-36">
             <div className="flex justify-between items-center flex-wrap gap-4">
                 <div className="grow">
                     <Textarea
