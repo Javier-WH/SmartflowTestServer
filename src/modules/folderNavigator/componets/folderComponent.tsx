@@ -14,7 +14,7 @@ import { MdFolder } from 'react-icons/md';
 
 import './folderContainer.css';
 
-export function FolderComponent({ folder, containerid }: { folder: ContainerElement; containerid: string | null }) {
+export function FolderComponent({ folder, containerid, depth }: { folder: ContainerElement; containerid: string | null, depth: number }) {
     const {
         setModalFolder,
         setModalDeleteFolder,
@@ -246,7 +246,7 @@ export function FolderComponent({ folder, containerid }: { folder: ContainerElem
             <div className="ml-5">
                 {contentId && (
                     <div>
-                        <FolderContainer folderId={contentId} />
+                        <FolderContainer folderId={contentId} depth={depth + 1} />
                     </div>
                 )}
             </div>

@@ -14,7 +14,7 @@ import { FileComponent } from './fileComponent';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import type { FolderNavigatorContextValues } from '../types/folder';
 
-export default function FolderContainer({ folderId }: { folderId: string | null }) {
+export default function FolderContainer({ folderId, depth = 0 }: { folderId: string | null, depth?: number }) {
     const { organization_id: slug } = useParams();
     const { Loading, setLoading, updateFolderRequest } = useContext(
         FolderNavigatorContext,
@@ -55,17 +55,16 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
 
     // open folders at start if they are in root
     useEffect(() => {
-        if(content.length === 0 || folderId !== null ) return
+        if (!content || content.length === 0 || depth >= 2) return;
         for (const item of content) {
-           if(item.type === 1){
-               const folder = document.getElementById(item.id ?? '')
-                if(folder && !folder.classList.contains('opened')){
+            if (item.type === 1) {
+                const folder = document.getElementById(item.id ?? '');
+                if (folder && !folder.classList.contains('opened')) {
                     folder.click();
                 }
-           }
+            }
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [content]);
+    }, [content, depth]); 
 
 
     async function getRoot() {
@@ -151,7 +150,7 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
                 return (
                     <div key={item.id} className="w-full mb-1 cursor-pointer">
                         {item.type === 1 ? (
-                            <FolderComponent folder={item} containerid={folderId} />
+                            <FolderComponent folder={item} containerid={folderId} depth={depth} />
                         ) : (
                             <FileComponent file={item} />
                         )}
