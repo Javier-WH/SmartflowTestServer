@@ -23,6 +23,7 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
     const { getFolderContent, getRootContent } = useFolderManager();
     const [content, setContent] = useState<ContainerElement[] | null>([]);
 
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         async function getContent() {
@@ -53,18 +54,6 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
     }, [folderId]);
 
 
-    // open folders at start if they are in root
-    useEffect(() => {
-        if (!content || content.length === 0 || depth >= 2) return;
-        for (const item of content) {
-            if (item.type === 1) {
-                const folder = document.getElementById(item.id ?? '');
-                if (folder && !folder.classList.contains('opened')) {
-                    folder.click();
-                }
-            }
-        }
-    }, [content, depth]); 
 
 
     async function getRoot() {

@@ -221,6 +221,7 @@ export function FolderComponent({ folder, containerid, depth }: { folder: Contai
                 {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
                 <div
                     id={folder.id}
+                    data-depth={depth}
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => toggleFolder(folder.id ?? null)}
                     className={`hover:bg-primary-50 folder ${contentId === null ? '' : 'opened'}`}
