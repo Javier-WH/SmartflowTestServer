@@ -58,7 +58,6 @@ export function FolderComponent({ folder, containerid, depth }: { folder: Contai
     };
 
     const handleCreateOrUpdateFolder = (update = false) => {
-        console.log(memberRoll);
         if (!memberRoll.write) {
             message.error('You do not have permission to create or update a folder');
             return;
@@ -110,7 +109,7 @@ export function FolderComponent({ folder, containerid, depth }: { folder: Contai
         });
     };
 
-    //d43ab1e4-3d79-4ab4-ac90-a8f04d0cee6f
+    
 
     const handleMoveToRoot = async () => {
         if (!memberRoll.write) {
