@@ -24,11 +24,10 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
     const [content, setContent] = useState<ContainerElement[] | null>([]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-
     useEffect(() => {
         async function getContent() {
             if (!slug) return;
-            setLoading(folderId);
+ 
             const response = await getFolderContent(folderId, slug);
             if (response.error) {
                 message.error(response.message);
@@ -53,6 +52,22 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [folderId]);
 
+
+    // open folders at start if they are in root
+    useEffect(() => {
+        if(content.length === 0 || folderId !== null ) return
+        for (const item of content) {
+           if(item.type === 1){
+               const folder = document.getElementById(item.id ?? '')
+                if(folder && !folder.classList.contains('opened')){
+                    folder.click();
+                }
+           }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [content]);
+
+
     async function getRoot() {
         if (!slug) return;
         const response = await getRootContent(slug);
@@ -74,6 +89,8 @@ export default function FolderContainer({ folderId }: { folderId: string | null 
         //console.log(newItems)
         setContent(newItems ?? []);
     }
+
+
 
     // on move folder
     useEffect(() => {
