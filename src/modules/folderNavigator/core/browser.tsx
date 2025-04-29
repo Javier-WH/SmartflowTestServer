@@ -23,12 +23,12 @@ export default function Browser() {
     // open folders at start if they are in root
     useEffect(() => {
         observerRef.current = new MutationObserver(() => {
-            // Verificar primer nivel
+            // Check first level
             if (processedFolders.current.size === 0) {
                 openFolders(0);
             }
 
-            // Verificar segundo nivel después de abrir el primero
+            // Check second level if first level is opened
             if (document.querySelectorAll('.folder[data-depth="0"].opened').length > 0) {
                 openFolders(1);
             }

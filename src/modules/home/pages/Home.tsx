@@ -1,13 +1,14 @@
 import { Outlet } from 'react-router-dom';
-
 import FolderNavigator from '@/modules/folderNavigator/folderNavigator';
-
 import '../css/home.css';
 import SearchInput from '@/modules/search/searchInput';
 import { Button } from '@/components/ui';
 import { IconFilePlus, IconFolderPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@heroui/react';
 import CreateOrUpdateFolderModal from '@/modules/folderNavigator/modal/createOrUpdateFolderModal';
+import { useContext } from 'react';
+import { MainContext, MainContextValues } from '@/modules/mainContext';
+import { Folder } from '@/modules/folderNavigator/types/folder';
 
 export default function Home() {
     const {
@@ -15,6 +16,17 @@ export default function Home() {
         onOpen: openCreateFolderModal,
         onClose: closeCreateFolderModal,
     } = useDisclosure();
+
+    const { setNewFolderRequest } = useContext(MainContext) as MainContextValues;
+
+    const handleCreateFolder = () => {
+        const newFolder: Folder = {
+            id: crypto.randomUUID(),
+            name: '',
+            container: null,
+        };
+        setNewFolderRequest(newFolder);
+    }
 
     return (
         <div className="flex flex-col md:flex-row h-full p-4 gap-2">
@@ -27,7 +39,7 @@ export default function Home() {
                             <IconFilePlus />
                         </Button>
 
-                        <Button variant="light" isIconOnly>
+                        <Button variant="light" isIconOnly onPress={handleCreateFolder}>
                             <IconFolderPlus />
                         </Button>
                     </div>
