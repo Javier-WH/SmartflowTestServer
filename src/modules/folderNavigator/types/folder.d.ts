@@ -51,7 +51,9 @@ export interface FolderNavigatorContextValues{
   setModalDeleteFile: React.Dispatch<React.SetStateAction<File | null>>;
   fileCountUpdateRequest: boolean,
   setFileCountUpdateRequest: React.Dispatch<React.SetStateAction<boolean>>,
-  memberRoll: MemberRolltype | null
+  memberRoll: MemberRolltype | null,
+  selectedFileId: string | null, 
+  setSelectedFileId: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 export type getFolderResponse = (folderId: string | null) => Promise<FolderResponse>

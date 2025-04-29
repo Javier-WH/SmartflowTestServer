@@ -4,6 +4,7 @@ import useRoll, { MemberRolltype } from '@/modules/userRoll/useRoll';
 import useAuth from '@/modules/auth/hooks/useAuth';
 import { useParams } from 'react-router-dom';
 import useGetOrganizationData from './navBar/hooks/useOrganizationData';
+
 export interface MainContextValues {
   inPage: boolean,
   setInPage: React.Dispatch<React.SetStateAction<boolean>>,
@@ -13,7 +14,9 @@ export interface MainContextValues {
   setUpdateFolderRequestFromMain: React.Dispatch<React.SetStateAction<FolderResquest | null>>,
   rootFolder: string | null,
   setRootFolder: React.Dispatch<React.SetStateAction<string | null>>
-  memberRoll: MemberRolltype | null
+  memberRoll: MemberRolltype | null,
+  selectedFileId: string | null,
+  setSelectedFileId: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 export const MainContext = createContext<MainContextValues | null>(null);
@@ -29,6 +32,7 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [rootFolder, setRootFolder] = useState<string | null>(null);
   const [organizationId, setOrganizationId] = useState<string>('');
   const { memberRoll } = useRoll({userId: user?.id ?? '', organizationId: organizationId ?? ''});
+  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
 
 
   //get organization name
@@ -56,7 +60,9 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     setUpdateFolderRequestFromMain,
     rootFolder,
     setRootFolder,
-    memberRoll
+    memberRoll,
+    selectedFileId, 
+    setSelectedFileId
   }
 
   return (
