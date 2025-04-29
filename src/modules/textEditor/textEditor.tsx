@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import './components/guidedCheckList/react_guidedCheckList.tsx';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import { useParams, useLocation } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
@@ -15,11 +15,11 @@ import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { useDebouncedCallback } from 'use-debounce';
 import { Textarea } from '@heroui/react';
 import { Spinner } from '@heroui/react';
-
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image } from 'antd';
+import { MainContext, MainContextValues } from '../mainContext.tsx';
 
 // this is our custom blot
 Quill.register('formats/guided-checklist', GuidedCheckListBlot); // Mismo nombre que el blot
@@ -65,6 +65,7 @@ export default function TextEditor() {
     let readOnly = location?.state?.readOnly;
     if (readOnly === undefined) readOnly = false;
 
+    const {setSelectedFileId} = useContext(MainContext) as MainContextValues;
     const [title, setTitle] = useState('');
     const [showToolbar, setShowToolbar] = useState(true);
     const quillRef = useRef<ReactQuill>(null);
@@ -253,6 +254,13 @@ export default function TextEditor() {
             return delta;
         });
     };
+
+    // set selected file when file is selected
+
+    useEffect(() => {
+        if(!id) return;
+        setSelectedFileId(id);
+    }, [id]);
 
     useEffect(() => {
         if (quillRef.current) quillRef.current.focus();

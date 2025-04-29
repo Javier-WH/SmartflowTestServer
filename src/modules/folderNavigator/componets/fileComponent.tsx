@@ -13,7 +13,7 @@ import useFilesManager from '../hooks/useFileManager';
 const pageType = import.meta.env.VITE_PAGE_TYPE;
 
 export function FileComponent({ file }: { file: ContainerElement }) {
-    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest, setFileCountUpdateRequest, memberRoll } =
+    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest, setFileCountUpdateRequest, memberRoll, selectedFileId } =
         useContext(FolderNavigatorContext) as FolderNavigatorContextValues;
     const { moveFileToRoot } = useFilesManager();
     const navigate = useNavigate();
@@ -80,7 +80,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                 <div
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => handleClick(file.id)}
-                    className="hover:bg-primary-50 p-2"
+                    className={`hover:bg-primary-50 p-2 ${selectedFileId === file.id ? 'bg-primary-100' : ''}`}
                     draggable
                     onDragStart={event => handleDragStart(event, file.id, file.type)}
                 >
