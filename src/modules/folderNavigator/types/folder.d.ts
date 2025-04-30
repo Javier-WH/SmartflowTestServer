@@ -53,7 +53,9 @@ export interface FolderNavigatorContextValues{
   setFileCountUpdateRequest: React.Dispatch<React.SetStateAction<boolean>>,
   memberRoll: MemberRolltype | null,
   selectedFileId: string | null, 
-  setSelectedFileId: React.Dispatch<React.SetStateAction<string | null>>
+  setSelectedFileId: React.Dispatch<React.SetStateAction<string | null>>,
+  changleFileNameRequest: {fileId: string, fileName: string} | null,
+  setChangleFileNameRequest: React.Dispatch<React.SetStateAction<{fileId: string, fileName: string} | null>>
 }
 
 export type getFolderResponse = (folderId: string | null) => Promise<FolderResponse>

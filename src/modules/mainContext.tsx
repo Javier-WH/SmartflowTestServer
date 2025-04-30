@@ -17,6 +17,8 @@ export interface MainContextValues {
   memberRoll: MemberRolltype | null,
   selectedFileId: string | null,
   setSelectedFileId: React.Dispatch<React.SetStateAction<string | null>>
+  changleFileNameRequest: {fileId: string, fileName: string} | null,
+  setChangleFileNameRequest: React.Dispatch<React.SetStateAction<{fileId: string, fileName: string} | null>>
 }
 
 export const MainContext = createContext<MainContextValues | null>(null);
@@ -33,6 +35,7 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [organizationId, setOrganizationId] = useState<string>('');
   const { memberRoll } = useRoll({userId: user?.id ?? '', organizationId: organizationId ?? ''});
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
+  const [changleFileNameRequest, setChangleFileNameRequest] = useState<{fileId: string, fileName: string} | null>(null);
 
 
   //get organization name
@@ -62,7 +65,9 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     setRootFolder,
     memberRoll,
     selectedFileId, 
-    setSelectedFileId
+    setSelectedFileId,
+    changleFileNameRequest, 
+    setChangleFileNameRequest
   }
 
   return (

@@ -109,6 +109,12 @@ const moveFolderToRoot = async (folderId: string | null): Promise<FolderResponse
     return { error: false, message: 'Folder moved to root successfully', data };
 };
 
+/**
+ * Retrieves the content of a folder by its id or root if null.
+ * @param folderId The id of the folder to retrieve its content. If null, retrieves the root content.
+ * @param slug The slug of the organization.
+ * @returns A FolderResponse object with the content of the folder.
+ */
 const getFolderContent = async (folderId: string | null, slug: string): Promise<FolderResponse> => {
     const functionName = pageType === 'quill' ? 'getfoldercontentquill' : 'getfoldercontent';
 

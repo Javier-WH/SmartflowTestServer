@@ -26,7 +26,7 @@ export function FolderComponent({ folder, containerid, depth }: { folder: Contai
     } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues;
 
     const navigate = useNavigate();
-    const { moveFolder, moveFolderToRoot, getFilesCount } = useFolderManager();
+    const { moveFolder, moveFolderToRoot, getFilesCount, getFolderContent } = useFolderManager();
     const { moveFile, createFile } = useFilesManager();
     const [contentId, setContentId] = useState<string | null>(null);
     const { organization_id: slug } = useParams();
@@ -101,6 +101,20 @@ export function FolderComponent({ folder, containerid, depth }: { folder: Contai
             }
             const id = res.data;
             const pageType = import.meta.env.VITE_PAGE_TYPE;
+
+            const currentFolder = document.getElementById(folder.id);
+            if (currentFolder) {
+                if(currentFolder.classList.contains('opened')){
+                    currentFolder.click();
+                    setTimeout(() => {
+                        currentFolder.click();          
+                    }, 10);
+                    
+                }else{
+                    currentFolder.click();
+                }
+            }
+     
             if (pageType === 'quill') {
                 navigate(`/${slug}/edit/${id}`);
             } else {
