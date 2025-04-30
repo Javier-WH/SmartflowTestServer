@@ -26,7 +26,7 @@ export function FolderComponent({ folder, containerid, depth }: { folder: Contai
     } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues;
 
     const navigate = useNavigate();
-    const { moveFolder, moveFolderToRoot, getFilesCount, getFolderContent } = useFolderManager();
+    const { moveFolder, moveFolderToRoot, getFilesCount } = useFolderManager();
     const { moveFile, createFile } = useFilesManager();
     const [contentId, setContentId] = useState<string | null>(null);
     const { organization_id: slug } = useParams();

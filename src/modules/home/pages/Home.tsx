@@ -19,7 +19,7 @@ export default function Home() {
         onClose: closeCreateFolderModal,
     } = useDisclosure();
 
-    const { setNewFolderRequest, memberRoll } = useContext(MainContext) as MainContextValues;
+    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain } = useContext(MainContext) as MainContextValues;
     const { createFile } = useFilesManager();
     const { getRootContent } = useFolderManager();
     const { organization_id: slug } = useParams();
@@ -59,7 +59,9 @@ export default function Home() {
                     message.error('Error creating page');
                     return;
                 }
-                console.log(res.data);
+            
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                setUpdateFolderRequestFromMain(res.data as any);
             });
             const id = res.data;
             if (id){
