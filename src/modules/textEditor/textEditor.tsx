@@ -65,7 +65,7 @@ export default function TextEditor() {
     let readOnly = location?.state?.readOnly;
     if (readOnly === undefined) readOnly = false;
 
-    const {setSelectedFileId} = useContext(MainContext) as MainContextValues;
+    const {setSelectedFileId, setChangleFileNameRequest} = useContext(MainContext) as MainContextValues;
     const [title, setTitle] = useState('');
     const [showToolbar, setShowToolbar] = useState(true);
     const quillRef = useRef<ReactQuill>(null);
@@ -383,6 +383,7 @@ export default function TextEditor() {
                             setTitle(e.target.value);
                             if (readOnly) return;
                             handleContentOrTitleChange({ newTitle: e.target.value });
+                            setChangleFileNameRequest({ fileId: id, fileName: e.target.value });
                         }}
                         placeholder="Give your page a title"
                         onKeyDown={handleTitleKeyDown}

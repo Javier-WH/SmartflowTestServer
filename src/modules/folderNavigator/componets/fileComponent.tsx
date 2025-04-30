@@ -5,7 +5,7 @@ import publishedIcon from '../assets/svg/publishedFile.svg';
 import unPublishedIcon from '../assets/svg/unPublishedFile.svg';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import type { File } from '../types/file';
 import './folderContainer.css';
 import type { FolderData, FolderNavigatorContextValues } from '../types/folder';
@@ -13,11 +13,23 @@ import useFilesManager from '../hooks/useFileManager';
 const pageType = import.meta.env.VITE_PAGE_TYPE;
 
 export function FileComponent({ file }: { file: ContainerElement }) {
-    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest, setFileCountUpdateRequest, memberRoll, selectedFileId } =
+    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest, setFileCountUpdateRequest, memberRoll, selectedFileId, changleFileNameRequest} =
         useContext(FolderNavigatorContext) as FolderNavigatorContextValues;
     const { moveFileToRoot } = useFilesManager();
     const navigate = useNavigate();
     const { organization_id } = useParams();
+    const [fileName, setFileName] = useState<string>(file.name);
+
+    useEffect(() => {
+        if (changleFileNameRequest?.fileId !== file.id) return;
+        setFileName(changleFileNameRequest.fileName);
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+     }, [changleFileNameRequest]);
+
+    useEffect(() => {
+        if (!file)return
+        setFileName(file.name);
+    }, [file]);
 
     const handleClick = (id: string) => {
         if (pageType === 'quill') {
@@ -85,7 +97,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                     onDragStart={event => handleDragStart(event, file.id, file.type)}
                 >
                     <img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />
-                    <span>{file.name}</span>
+                    <span>{fileName}</span>
                 </div>
             </Dropdown>
         </div>

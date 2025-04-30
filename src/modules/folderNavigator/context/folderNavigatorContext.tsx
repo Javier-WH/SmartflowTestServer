@@ -11,7 +11,7 @@ import groupDataByContainer from './utils/groupDataByContainer';
 export const FolderNavigatorContext = createContext<FolderNavigatorContextValues | null>(null);
 
 export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { newFolderRequest, setNewFolderRequest, updateFolderRequestFromMain, memberRoll, selectedFileId, setSelectedFileId } = useContext(MainContext) as MainContextValues;
+    const { newFolderRequest, setNewFolderRequest, updateFolderRequestFromMain, memberRoll, selectedFileId, setSelectedFileId, changleFileNameRequest, setChangleFileNameRequest } = useContext(MainContext) as MainContextValues;
     const [Loading, setLoading] = useState<string | null>(null);
     const [modalFolder, setModalFolder] = useState<Folder | null>(null);
     const [modalDeleteFolder, setModalDeleteFolder] = useState<Folder | null>(null);
@@ -50,7 +50,9 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
         setFileCountUpdateRequest,
         memberRoll,
         selectedFileId, 
-        setSelectedFileId
+        setSelectedFileId,
+        changleFileNameRequest, 
+        setChangleFileNameRequest
     };
 
     return (
