@@ -5,12 +5,12 @@ import SearchInput from '@/modules/search/searchInput';
 import { Button } from '@/components/ui';
 import { IconFilePlus, IconFolderPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@heroui/react';
-import CreateOrUpdateFolderModal from '@/modules/folderNavigator/modal/createOrUpdateFolderModal';
 import { useContext } from 'react';
 import { MainContext, MainContextValues } from '@/modules/mainContext';
 import { Folder } from '@/modules/folderNavigator/types/folder';
 import { message } from 'antd';
 import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
+import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
 
 export default function Home() {
     const {
@@ -21,6 +21,7 @@ export default function Home() {
 
     const { setNewFolderRequest, memberRoll } = useContext(MainContext) as MainContextValues;
     const { createFile } = useFilesManager();
+    const { getRootContent } = useFolderManager();
     const { organization_id: slug } = useParams();
     const navigate = useNavigate();
 
@@ -51,10 +52,20 @@ export default function Home() {
                 message.error('Error creating page');
                 return;
             }
+
+            getRootContent(slug).then(res => {
+              
+                if (res.error) {
+                    message.error('Error creating page');
+                    return;
+                }
+                console.log(res.data);
+            });
             const id = res.data;
             if (id){
                 navigate(`/${slug}/edit/${id}`);
             }
+
         });
     };
 
