@@ -13,8 +13,15 @@ import useFilesManager from '../hooks/useFileManager';
 const pageType = import.meta.env.VITE_PAGE_TYPE;
 
 export function FileComponent({ file }: { file: ContainerElement }) {
-    const { setModalDeleteFile, groupDataByContainer, setUpdateFolderRequest, setFileCountUpdateRequest, memberRoll, selectedFileId, changleFileNameRequest} =
-        useContext(FolderNavigatorContext) as FolderNavigatorContextValues;
+    const {
+        setModalDeleteFile,
+        groupDataByContainer,
+        setUpdateFolderRequest,
+        setFileCountUpdateRequest,
+        memberRoll,
+        selectedFileId,
+        changleFileNameRequest,
+    } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues;
     const { moveFileToRoot } = useFilesManager();
     const navigate = useNavigate();
     const { organization_id } = useParams();
@@ -23,11 +30,11 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     useEffect(() => {
         if (changleFileNameRequest?.fileId !== file.id) return;
         setFileName(changleFileNameRequest.fileName);
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-     }, [changleFileNameRequest]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [changleFileNameRequest]);
 
     useEffect(() => {
-        if (!file)return
+        if (!file) return;
         setFileName(file.name);
     }, [file]);
 
@@ -97,7 +104,9 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                     onDragStart={event => handleDragStart(event, file.id, file.type)}
                 >
                     <img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />
-                    <span>{fileName}</span>
+                    <span className="text-ellipsis overflow-hidden" title={fileName}>
+                        {fileName}
+                    </span>
                 </div>
             </Dropdown>
         </div>
