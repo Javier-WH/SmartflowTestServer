@@ -99,7 +99,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                 <div
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => handleClick(file.id)}
-                    className={`hover:bg-primary-50 p-2 ${selectedFileId === file.id ? 'bg-primary-100' : ''}`}
+                    className={`hover:bg-primary hover:text-white p-2 rounded-lg ${selectedFileId === file.id ? 'bg-primary text-white' : ''}`}
                     draggable
                     onDragStart={event => handleDragStart(event, file.id, file.type)}
                 >
