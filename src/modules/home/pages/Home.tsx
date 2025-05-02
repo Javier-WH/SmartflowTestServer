@@ -4,20 +4,15 @@ import '../css/home.css';
 import SearchInput from '@/modules/search/searchInput';
 import { Button } from '@/components/ui';
 import { IconChevronLeft, IconChevronRight, IconFilePlus, IconFolderPlus } from '@tabler/icons-react';
-import { cn, useDisclosure } from '@heroui/react';
+import { cn } from '@heroui/react';
 import { useContext, useState } from 'react';
-import { MainContext, MainContextValues } from '@/modules/mainContext';
-import { Folder } from '@/modules/folderNavigator/types/folder';
+import { MainContext, type MainContextValues } from '@/modules/mainContext';
+import type { Folder } from '@/modules/folderNavigator/types/folder';
 import { message } from 'antd';
 import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
 import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
 
 export default function Home() {
-    const {
-        isOpen: isCreateFolderModalOpen,
-        onOpen: openCreateFolderModal,
-        onClose: closeCreateFolderModal,
-    } = useDisclosure();
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain } = useContext(
@@ -76,9 +71,9 @@ export default function Home() {
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative">
+        <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto">
             <nav
-                className={`flex flex-col gap-2 h-full transition-all duration-200 ease-in-out ${
+                className={`flex flex-col gap-2 h-full transition-all duration-200 ease-in-out relative ${
                     isSidebarCollapsed
                         ? 'w-0 md:w-16 opacity-0 md:opacity-100 overflow-hidden bg-gray-100 rounded-xl'
                         : 'w-full md:w-1/4 min-w-[350px] opacity-100'
@@ -114,23 +109,26 @@ export default function Home() {
                         <IconFolderPlus />
                     </Button>
                 </div>
-            </nav>
 
-            <Button
-                onPress={handleToggleSidebar}
-                isIconOnly
-                color="primary"
-                className={cn(
-                    'absolute -translate-y-1/2 z-20 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out left-2 text-primary',
-                    {
-                        'md:left-7 md:bottom-4': isSidebarCollapsed,
-                        'md:left-[calc(25%-0.75rem)] top-1/2 ': !isSidebarCollapsed,
-                    },
-                )}
-                style={{ transform: `translateY(-50%) ${isSidebarCollapsed ? 'rotate(0deg)' : 'rotate(180deg)'}` }} // Rotate icon container
-            >
-                {isSidebarCollapsed ? <IconChevronRight size={16} /> : <IconChevronLeft size={16} />}
-            </Button>
+                <Button
+                    onPress={handleToggleSidebar}
+                    isIconOnly
+                    color="primary"
+                    className={cn(
+                        'absolute -translate-y-1/2 z-20 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out left-2 text-primary',
+                        {
+                            'md:left-1/2 md:-translate-x-1/2 md:bottom-4': isSidebarCollapsed,
+                            'md:left-[95%] top-1/2': !isSidebarCollapsed,
+                        },
+                    )}
+                >
+                    {isSidebarCollapsed ? (
+                        <IconChevronRight key="sidebar-collapsed" size={16} />
+                    ) : (
+                        <IconChevronLeft key="sidebar-expanded" size={16} />
+                    )}
+                </Button>
+            </nav>
 
             <section
                 className={`flex-grow overflow-hidden transition-all duration-200 ease-in-out ${
