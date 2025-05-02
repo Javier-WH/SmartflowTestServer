@@ -14,7 +14,11 @@ import { MdFolder } from 'react-icons/md';
 
 import './folderContainer.css';
 
-export function FolderComponent({ folder, containerid, depth }: { folder: ContainerElement; containerid: string | null, depth: number }) {
+export function FolderComponent({
+    folder,
+    containerid,
+    depth,
+}: { folder: ContainerElement; containerid: string | null; depth: number }) {
     const {
         setModalFolder,
         setModalDeleteFolder,
@@ -104,17 +108,16 @@ export function FolderComponent({ folder, containerid, depth }: { folder: Contai
 
             const currentFolder = document.getElementById(folder.id);
             if (currentFolder) {
-                if(currentFolder.classList.contains('opened')){
+                if (currentFolder.classList.contains('opened')) {
                     currentFolder.click();
                     setTimeout(() => {
-                        currentFolder.click();          
+                        currentFolder.click();
                     }, 10);
-                    
-                }else{
+                } else {
                     currentFolder.click();
                 }
             }
-     
+
             if (pageType === 'quill') {
                 navigate(`/${slug}/edit/${id}`);
             } else {
@@ -122,8 +125,6 @@ export function FolderComponent({ folder, containerid, depth }: { folder: Contai
             }
         });
     };
-
-    
 
     const handleMoveToRoot = async () => {
         if (!memberRoll.write) {
@@ -243,6 +244,7 @@ export function FolderComponent({ folder, containerid, depth }: { folder: Contai
                     onDragOver={handleDragOver}
                     onDrop={event => handleDrop(event, folder.id, folder.type)}
                     onDragLeave={handleDragLeave}
+                    title={folder.name}
                 >
                     <img
                         style={{ pointerEvents: 'none' }}
