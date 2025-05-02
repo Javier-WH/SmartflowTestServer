@@ -114,8 +114,8 @@ export default function Organizations() {
     }
 
     return (
-        <div>
-            <section className="py-8 max-w-7xl mx-auto mt-16">
+        <div className="overflow-y-auto h-full p-4 lg:p-6">
+            <section className="pb-8 max-w-7xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-2xl font-semibold">Your Organizations</h1>
                     <Button color="primary" startContent={<PlusOutlined />} onClick={handleCreateOrganization}>
