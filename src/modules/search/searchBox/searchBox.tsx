@@ -51,7 +51,7 @@ export default function SearchBox({
             if (pageType === 'quill') {
                 console.log(memberRoll);
                 if (memberRoll) {
-                    navigate(`/textEditor/${id}`, { state: { readOnly: !memberRoll.write } });
+                    navigate(`/${slug}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
                     return;
                 } else {
                     message.error('Member roll data is unavailable.');
