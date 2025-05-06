@@ -6,8 +6,13 @@ export default function CustomToolbar({
     clean = false,
 }: { show?: boolean; name: string; clean?: boolean }) {
     return (
-        <div id={name} style={{ display: show ? 'flex' : 'none' }} defaultValue="arial">
-            <select className="ql-font" style={{ width: '180px' }}>
+        <div
+            id={name}
+            style={{ display: show ? 'flex' : 'none' }}
+            defaultValue="arial"
+            className="flex gap-2 h-full lg:h-auto overflow-x-auto w-full"
+        >
+            <select className="ql-font lg:!w-[180px]">
                 <option value="arial">Arial</option>
                 <option value="times-new-roman">Times New Roman</option>
                 <option value="courier-new">Courier New</option>
@@ -46,21 +51,21 @@ export default function CustomToolbar({
                 <option value="46px">46</option>
                 <option value="48px">48</option>
             </select>
-            <button className="ql-bold"></button>
-            <button className="ql-italic"></button>
-            <button className="ql-underline"></button>
-            <button className="ql-strike"></button>
-            <button className="ql-list" value="ordered"></button>
-            <button className="ql-list" value="bullet"></button>
-            <button className="ql-list" value="check"></button>
-            <select className="ql-align"></select>
-            <select className="ql-color"></select>
-            <select className="ql-background"></select>
-            <button className="ql-link"></button>
-            <button className="ql-image"></button>
-            <button className="ql-video"></button>
-            <button className="ql-clean"></button>
-            <button disabled={clean} className="ql-guided-checklist">
+            <button className="ql-bold action-button"></button>
+            <button className="ql-italic action-button"></button>
+            <button className="ql-underline action-button"></button>
+            <button className="ql-strike action-button"></button>
+            <button className="ql-list action-button" value="ordered"></button>
+            <button className="ql-list action-button" value="bullet"></button>
+            <button className="ql-list action-button" value="check"></button>
+            <select className="ql-align action-button"></select>
+            <select className="ql-color action-button"></select>
+            <select className="ql-background action-button"></select>
+            <button className="ql-link action-button"></button>
+            <button className="ql-image action-button"></button>
+            <button className="ql-video action-button"></button>
+            <button className="ql-clean action-button"></button>
+            <button disabled={clean} className="ql-guided-checklist action-button">
                 <GuidedCheckListIcon />
             </button>
         </div>

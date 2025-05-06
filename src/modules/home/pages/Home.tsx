@@ -3,7 +3,15 @@ import FolderNavigator from '@/modules/folderNavigator/folderNavigator';
 import '../css/home.css';
 import SearchInput from '@/modules/search/searchInput';
 import { Button } from '@/components/ui';
-import { IconChevronLeft, IconChevronRight, IconFilePlus, IconFolderPlus } from '@tabler/icons-react';
+import {
+    IconChevronDown,
+    IconChevronLeft,
+    IconChevronRight,
+    IconChevronUp,
+    IconFile,
+    IconFilePlus,
+    IconFolderPlus,
+} from '@tabler/icons-react';
 import { cn } from '@heroui/react';
 import { useContext, useState } from 'react';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
@@ -72,15 +80,34 @@ export default function Home() {
 
     return (
         <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto">
+            {/* Mobile Header Container */}
+            <Button
+                isIconOnly
+                className="md:hidden flex items-center justify-between py-6 px-4 bg-gray-100 rounded-lg w-full shadow-md cursor-pointer"
+                onPress={handleToggleSidebar}
+            >
+                <span className="flex gap-2 items-center font-medium text-black">
+                    <IconFile className="text-primary" />
+                    Document Explorer
+                </span>
+
+                {isSidebarCollapsed ? (
+                    <IconChevronDown className="text-primary" />
+                ) : (
+                    <IconChevronUp className="text-primary" />
+                )}
+            </Button>
+
             <nav
-                className={`flex flex-col gap-2 h-full transition-all duration-200 ease-in-out relative ${
+                className={`flex flex-col gap-2 h-full relative ${
                     isSidebarCollapsed
-                        ? 'w-0 md:w-16 opacity-0 md:opacity-100 overflow-hidden bg-gray-100 rounded-xl'
-                        : 'w-full md:w-1/4 min-w-[350px] opacity-100'
+                        ? 'max-h-0 md:max-h-none md:w-16 opacity-0 md:opacity-100 overflow-hidden md:bg-gray-100 md:rounded-xl'
+                        : 'max-h-[calc(100vh-180px)] md:max-h-none w-full md:w-1/4 min-w-[350px] opacity-100'
                 }`}
             >
+                {/* Content visible when sidebar is expanded */}
                 <div
-                    className={`flex flex-col h-full ${isSidebarCollapsed ? 'opacity-0 invisible absolute' : 'opacity-100 visible relative'}`}
+                    className={`flex flex-col h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'opacity-0 invisible absolute md:opacity-100 md:visible md:relative' : 'opacity-100 visible relative'}`}
                 >
                     <SearchInput />
 
@@ -93,7 +120,8 @@ export default function Home() {
                                 <IconFolderPlus />
                             </Button>
                         </div>
-                        <div className="flex-grow overflow-auto">
+
+                        <div className="flex-grow lg:overflow-auto">
                             <FolderNavigator />
                         </div>
                     </div>
@@ -110,15 +138,16 @@ export default function Home() {
                     </Button>
                 </div>
 
+                {/* Desktop Toggle Button */}
                 <Button
                     onPress={handleToggleSidebar}
                     isIconOnly
                     color="primary"
                     className={cn(
-                        'absolute -translate-y-1/2 z-20 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out left-2 text-primary',
+                        'hidden md:flex absolute -translate-y-1/2 z-20 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out text-primary',
                         {
-                            'md:left-1/2 md:-translate-x-1/2 md:bottom-4': isSidebarCollapsed,
-                            'md:left-[95%] top-1/2': !isSidebarCollapsed,
+                            'left-1/2 -translate-x-1/2 bottom-4': isSidebarCollapsed, // Simplified for desktop
+                            'left-[95%] top-1/2': !isSidebarCollapsed, // Simplified for desktop
                         },
                     )}
                 >
@@ -131,9 +160,9 @@ export default function Home() {
             </nav>
 
             <section
-                className={`flex-grow overflow-hidden transition-all duration-200 ease-in-out ${
-                    isSidebarCollapsed ? 'w-full md:w-[calc(100%-4rem-0.5rem)]' : 'w-full md:w-[calc(75%-0.5rem)]' // Adjust width based on sidebar state and gap
-                }`}
+                className={`grow transition-all duration-200 ease-in-out ${
+                    isSidebarCollapsed ? 'w-full md:w-[calc(100%-4rem-0.5rem)]' : 'w-full md:w-[calc(75%-0.5rem)]'
+                } ${isSidebarCollapsed ? 'mt-0' : 'mt-2 md:mt-0'}`}
             >
                 <Outlet />
             </section>

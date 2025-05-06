@@ -127,15 +127,16 @@
 
 /*iconos*/
 .ql-snow .ql-stroke {
-    @apply stroke-black
+    @apply !stroke-black
 }
 
 .ql-snow .ql-fill {
     @apply fill-black;
 }
 
+
 .ql-snow .ql-picker-label {
-    @apply text-black cursor-pointer hover:bg-primary/10 
+    @apply text-black cursor-pointer hover:!bg-primary/90 hover:!text-white rounded-md
 }
 
 /* invertir menus*/
@@ -143,17 +144,20 @@
     /* top: 100% !important; */
     /* bottom: auto !important; */
     /* transform: translateY(0) !important; */
-    @apply bg-gray-100; 
+    @apply bg-gray-100 !text-black; 
     z-index: 1001 !important;
 }
 
+.ql-picker-item {
+    @apply p-2 rounded-md;
+}
 
 .ql-picker-item .ql-stroke {
     @apply !stroke-black;
 }
 
 .ql-picker-item:hover {
-    background-color: white !important;
+    @apply bg-primary !text-white
 }
 
 .ql-snow .ql-color-picker .ql-picker-options {
@@ -261,6 +265,7 @@
 }
 
 /*font type*/
+
 
 .ql-font-arial {
     font-family: "Arial", sans-serif;
@@ -374,4 +379,16 @@ a {
     right: 0;
     top: 90px;
     color: rgb(98, 220, 236);
+}
+
+.action-button {
+    @apply rounded-md hover:!bg-primary hover:!text-white
+}
+
+.action-button:hover .ql-stroke {
+    @apply !stroke-white
+}
+
+.action-button:hover .ql-fill {
+    @apply !fill-white
 }
