@@ -439,6 +439,7 @@ export default function TextEditor() {
                         onPress={() => {
                             if (memberRoll?.write) {
                                 setReadOnly(false);
+                                quillRef.current?.setEditorContents(quillRef.current?.getEditor(), content);
                             } else {
                                 message.error('You do not have permission to edit this page');
                             }
