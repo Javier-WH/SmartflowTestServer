@@ -432,12 +432,12 @@ export default function TextEditor() {
                 <CustomToolbar show={!readOnly} name="toolbar" />
             </header>
 
-            {readOnly && memberRoll.write && (
+            {readOnly && memberRoll && memberRoll.write ? (
                 <div className="flex justify-end gap-2 items-center">
                     <Button
                         color="primary"
                         onPress={() => {
-                            if (memberRoll.write) {
+                            if (memberRoll?.write) {
                                 setReadOnly(false);
                             } else {
                                 message.error('You do not have permission to edit this page');
@@ -449,7 +449,7 @@ export default function TextEditor() {
 
                     <div id="toolbar" className="hidden" />
                 </div>
-            )}
+            ) : null}
 
             <div
                 ref={quillContainerRef}
