@@ -79,7 +79,7 @@ export default function Home() {
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-[calc(100%-10px)] p-4 gap-2 relative overflow-auto lg:overflow-hidden">
+        <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
             {/* Mobile Header Container */}
             <Button
                 isIconOnly

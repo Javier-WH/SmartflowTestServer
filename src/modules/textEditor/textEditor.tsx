@@ -69,6 +69,7 @@ export default function TextEditor() {
     const [title, setTitle] = useState('');
     const [showToolbar, setShowToolbar] = useState(true);
     const quillRef = useRef<ReactQuill>(null);
+    const quillContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState<HTMLElement | null>(null);
 
@@ -124,6 +125,12 @@ export default function TextEditor() {
             const htmlContent = editor.root.innerHTML;
 
             handleContentOrTitleChange({ newContent: htmlContent });
+            // setTimeout(() => {
+            //     quillContainerRef.current?.scroll({
+            //         top: quillContainerRef.current?.scrollTop,
+            //         behavior: 'instant',
+            //     });
+            // });
         }
     };
 
@@ -372,8 +379,101 @@ export default function TextEditor() {
     }
 
     return (
-        <div className="flex flex-row lg:flex-col h-full w-full relative pb-12 lg:pb-36 lg:px-2 overflow-y-auto">
-            <section className="w-[calc(100%-60px)] lg:w-full lg:h-full">
+        <div className="flex flex-col h-full overflow-hidden px-[1px]">
+            <div className="flex justify-between items-center flex-wrap gap-4">
+                <div className="grow">
+                    <Textarea
+                        {...(readOnly && { readOnly: true })}
+                        ref={inputRef}
+                        value={title}
+                        onChange={e => {
+                            setTitle(e.target.value);
+                            if (readOnly) return;
+                            handleContentOrTitleChange({ newTitle: e.target.value });
+                            setChangleFileNameRequest({ fileId: id, fileName: e.target.value });
+                        }}
+                        placeholder="Give your page a title"
+                        onKeyDown={handleTitleKeyDown}
+                        minRows={1}
+                        maxRows={4}
+                        radius="none"
+                        classNames={{
+                            inputWrapper: '!bg-transparent shadow-none p-0',
+                            input: 'bg-transparent shadow-none focus:bg-transparent text-4xl font-bold',
+                        }}
+                    />
+                </div>
+
+                <div>
+                    {/* <button type="button" style={styles.homeButton} onClick={() => navigate(-1)}> */}
+                    {/*     <img src={homeIcon} alt="" /> {'>'} */}
+                    {/* </button> */}
+                    {fileContent?.updated_at ? (
+                        <span className="w-full text-gray-400">
+                            <span>Última actualización: </span>
+                            {Intl.DateTimeFormat('es-ES', {
+                                dateStyle: 'medium',
+                                timeStyle: 'medium',
+                                hour12: true,
+                            }).format(new Date(fileContent?.updated_at))}
+                        </span>
+                    ) : null}
+                </div>
+            </div>
+
+            <header
+                className={cn(
+                    'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100',
+                    { hidden: readOnly },
+                )}
+            >
+                <CustomToolbar show={!readOnly} name="toolbar" />
+            </header>
+
+            <div
+                ref={quillContainerRef}
+                className="flex justify-center h-full overflow-y-auto mt-4 scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin"
+            >
+                <div className="h-full w-full max-w-[60%]">
+                    <ReactQuill
+                        {...(readOnly && { readOnly: true })}
+                        ref={ref => {
+                            if (ref) {
+                                quillRef.current = ref;
+
+                                configureQuillMatchers();
+                            }
+                        }}
+                        theme="snow"
+                        value={content}
+                        onChange={handleEditorChange}
+                        modules={modules}
+                        formats={options.formats}
+                        onChangeSelection={handleChangeSelection}
+                        className="w-full h-full pr-12 lg:pr-0"
+                    />
+
+                    <Image
+                        // Ant Design Image component for image preview
+                        width={200}
+                        style={{ display: 'none' }}
+                        src=""
+                        preview={{
+                            visible: visible,
+                            src: (selectedImage as HTMLImageElement)?.src || '',
+                            onVisibleChange: value => {
+                                setVisible(value);
+                            },
+                        }}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="flex flex-row lg:flex-col h-full w-full relative lg:overflow-hidden">
+            <section className="w-full lg:h-full lg:overflow-hidden">
                 <div className="flex justify-between items-center flex-wrap gap-4">
                     <div className="grow">
                         <Textarea
@@ -417,7 +517,7 @@ export default function TextEditor() {
 
                 <header
                     className={cn(
-                        'w-full py-2 bg-gray-100 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-4',
+                        'w-full p-2 bg-gray-100 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-4',
                         {
                             hidden: readOnly,
                         },
@@ -426,7 +526,10 @@ export default function TextEditor() {
                     <CustomToolbar show={!readOnly} name="toolbar" />
                 </header>
 
-                <div className="flex flex-col items-center w-full h-full pb-4 mt-4 overflow-hidden lg:overflow-y-auto cursor-text">
+                <div
+                    ref={quillContainerRef}
+                    className="flex flex-col items-center w-full h-full pb-4 mt-4 overflow-hidden lg:overflow-y-auto cursor-text"
+                >
                     <ReactQuill
                         {...(readOnly && { readOnly: true })}
                         ref={ref => {
@@ -442,7 +545,7 @@ export default function TextEditor() {
                         modules={modules}
                         formats={options.formats}
                         onChangeSelection={handleChangeSelection}
-                        className="w-full lg:w-[60%] h-full pr-12 overflow-hidden"
+                        className="w-full lg:w-[60%] h-full pr-12 lg:pr-0"
                     />
 
                     <Image
