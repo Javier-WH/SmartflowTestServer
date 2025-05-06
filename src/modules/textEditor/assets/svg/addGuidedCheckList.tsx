@@ -6,8 +6,8 @@ const GuidedChecklistIcon = (props: SVGProps<SVGSVGElement>) => (
         fill="currentColor"
         strokeWidth={0}
         viewBox="0 0 1024 1024"
-        height="1em"
-        width="1em"
+        height={18}
+        width={18}
         xmlns="http://www.w3.org/2000/svg"
         {...props}
     >

@@ -65,7 +65,7 @@ export default function TextEditor() {
     let readOnly = location?.state?.readOnly;
     if (readOnly === undefined) readOnly = false;
 
-    const {setSelectedFileId, setChangleFileNameRequest} = useContext(MainContext) as MainContextValues;
+    const { setSelectedFileId, setChangleFileNameRequest } = useContext(MainContext) as MainContextValues;
     const [title, setTitle] = useState('');
     const [showToolbar, setShowToolbar] = useState(true);
     const quillRef = useRef<ReactQuill>(null);
@@ -258,7 +258,7 @@ export default function TextEditor() {
     // set selected file when file is selected
 
     useEffect(() => {
-        if(!id) return;
+        if (!id) return;
         setSelectedFileId(id);
     }, [id]);
 
@@ -372,85 +372,87 @@ export default function TextEditor() {
     }
 
     return (
-        <div className="h-full w-full relative pb-36 px-2">
-            <div className="flex justify-between items-center flex-wrap gap-4">
-                <div className="grow">
-                    <Textarea
+        <div className="flex flex-row lg:flex-col h-full w-full relative pb-12 lg:pb-36 lg:px-2 overflow-y-auto">
+            <section className="w-[calc(100%-60px)] lg:w-full lg:h-full">
+                <div className="flex justify-between items-center flex-wrap gap-4">
+                    <div className="grow">
+                        <Textarea
+                            {...(readOnly && { readOnly: true })}
+                            ref={inputRef}
+                            value={title}
+                            onChange={e => {
+                                setTitle(e.target.value);
+                                if (readOnly) return;
+                                handleContentOrTitleChange({ newTitle: e.target.value });
+                                setChangleFileNameRequest({ fileId: id, fileName: e.target.value });
+                            }}
+                            placeholder="Give your page a title"
+                            onKeyDown={handleTitleKeyDown}
+                            minRows={1}
+                            maxRows={4}
+                            radius="none"
+                            classNames={{
+                                inputWrapper: '!bg-transparent shadow-none p-0',
+                                input: 'bg-transparent shadow-none focus:bg-transparent text-4xl font-bold',
+                            }}
+                        />
+                    </div>
+
+                    <div>
+                        {/* <button type="button" style={styles.homeButton} onClick={() => navigate(-1)}> */}
+                        {/*     <img src={homeIcon} alt="" /> {'>'} */}
+                        {/* </button> */}
+                        {fileContent?.updated_at ? (
+                            <span className="w-full text-gray-400">
+                                <span>Última actualización: </span>
+                                {Intl.DateTimeFormat('es-ES', {
+                                    dateStyle: 'medium',
+                                    timeStyle: 'medium',
+                                    hour12: true,
+                                }).format(new Date(fileContent?.updated_at))}
+                            </span>
+                        ) : null}
+                    </div>
+                </div>
+
+                <header className="w-full py-2 bg-gray-100 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-4">
+                    <CustomToolbar show={!readOnly} name="toolbar" />
+                </header>
+
+                <div className="flex flex-col items-center w-full h-full pb-4 mt-4 overflow-hidden lg:overflow-y-auto cursor-text">
+                    <ReactQuill
                         {...(readOnly && { readOnly: true })}
-                        ref={inputRef}
-                        value={title}
-                        onChange={e => {
-                            setTitle(e.target.value);
-                            if (readOnly) return;
-                            handleContentOrTitleChange({ newTitle: e.target.value });
-                            setChangleFileNameRequest({ fileId: id, fileName: e.target.value });
+                        ref={ref => {
+                            if (ref) {
+                                quillRef.current = ref;
+
+                                configureQuillMatchers();
+                            }
                         }}
-                        placeholder="Give your page a title"
-                        onKeyDown={handleTitleKeyDown}
-                        minRows={1}
-                        maxRows={4}
-                        radius="none"
-                        classNames={{
-                            inputWrapper: '!bg-transparent shadow-none p-0',
-                            input: 'bg-transparent shadow-none focus:bg-transparent text-4xl font-bold',
+                        theme="snow"
+                        value={content}
+                        onChange={handleEditorChange}
+                        modules={modules}
+                        formats={options.formats}
+                        onChangeSelection={handleChangeSelection}
+                        className="w-full lg:w-[60%] h-full pr-12 overflow-hidden"
+                    />
+
+                    <Image
+                        // Ant Design Image component for image preview
+                        width={200}
+                        style={{ display: 'none' }}
+                        src=""
+                        preview={{
+                            visible: visible,
+                            src: (selectedImage as HTMLImageElement)?.src || '',
+                            onVisibleChange: value => {
+                                setVisible(value);
+                            },
                         }}
                     />
                 </div>
-
-                <div>
-                    {/* <button type="button" style={styles.homeButton} onClick={() => navigate(-1)}> */}
-                    {/*     <img src={homeIcon} alt="" /> {'>'} */}
-                    {/* </button> */}
-                    {fileContent?.updated_at ? (
-                        <span className="w-full text-gray-400">
-                            <span>Última actualización: </span>
-                            {Intl.DateTimeFormat('es-ES', {
-                                dateStyle: 'medium',
-                                timeStyle: 'medium',
-                                hour12: true,
-                            }).format(new Date(fileContent?.updated_at))}
-                        </span>
-                    ) : null}
-                </div>
-            </div>
-
-            <header className="bg-gray-100 rounded-2xl mt-4 shadow-gray-200 shadow-md ring-gray-200 ring-1">
-                <CustomToolbar show={!readOnly} name="toolbar" />
-            </header>
-
-            <div className="flex flex-col items-center w-full h-full pb-4 mt-4 overflow-y-auto cursor-text">
-                <ReactQuill
-                    {...(readOnly && { readOnly: true })}
-                    ref={ref => {
-                        if (ref) {
-                            quillRef.current = ref;
-
-                            configureQuillMatchers();
-                        }
-                    }}
-                    theme="snow"
-                    value={content}
-                    onChange={handleEditorChange}
-                    modules={modules}
-                    formats={options.formats}
-                    onChangeSelection={handleChangeSelection}
-                    className="w-[60%] h-full"
-                />
-            
-                <Image
-                // Ant Design Image component for image preview
-                    width={200}
-                    style={{ display: 'none' }}
-                    src=""
-                    preview={{
-                        visible: visible,
-                        src: (selectedImage as HTMLImageElement)?.src || '',
-                        onVisibleChange: (value) => {
-                            setVisible(value);
-                        },
-                    }}
-                />
-            </div>
+            </section>
         </div>
     );
 }
