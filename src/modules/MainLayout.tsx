@@ -22,14 +22,14 @@ export default function MainLayout() {
     return (
         <MainContextProvider>
             <div className="flex flex-col h-full w-full">
-                <header className="flex justify-end md:justify-between items-center px-8 w-full h-[70px] fixed top-0 bg-gray-100 shadow-md">
+                <header className="flex justify-end md:justify-between items-center px-8 w-full h-[70px] fixed lg:static top-0 bg-gray-100 shadow-md">
                     <h1 className="max-md:hidden md:block font-[300] text-[40px] tracking-[0.3rem]">
                         <span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO
                     </h1>
                     <UserMenu />
                 </header>
 
-                <main className="mt-[70px] grow overflow-hidden">
+                <main className="h-[calc(100%-70px)]">
                     <Outlet />
                 </main>
                 {/* <Chat /> */}

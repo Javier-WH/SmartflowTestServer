@@ -79,7 +79,7 @@ export default function Home() {
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto">
+        <div className="flex flex-col md:flex-row h-[calc(100%-10px)] p-4 gap-2 relative overflow-auto lg:overflow-hidden">
             {/* Mobile Header Container */}
             <Button
                 isIconOnly
@@ -99,19 +99,20 @@ export default function Home() {
             </Button>
 
             <nav
-                className={`flex flex-col gap-2 h-full relative ${
-                    isSidebarCollapsed
-                        ? 'max-h-0 md:max-h-none md:w-16 opacity-0 md:opacity-100 overflow-hidden md:bg-gray-100 md:rounded-xl'
-                        : 'max-h-[calc(100vh-180px)] md:max-h-none w-full md:w-1/4 min-w-[350px] opacity-100'
-                }`}
+                className={cn('flex flex-col gap-2 h-full relative overflow-hidden', {
+                    'max-h-0 md:max-h-none md:w-16 opacity-0 md:opacity-100 overflow-hidden md:bg-gray-100 md:rounded-xl':
+                        isSidebarCollapsed,
+                    'max-h-[calc(100%-180px)] md:max-h-none w-full md:w-1/4 min-w-[350px] opacity-100':
+                        !isSidebarCollapsed,
+                })}
             >
                 {/* Content visible when sidebar is expanded */}
                 <div
-                    className={`flex flex-col h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'opacity-0 invisible absolute md:opacity-100 md:visible md:relative' : 'opacity-100 visible relative'}`}
+                    className={`flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'opacity-0 invisible absolute md:opacity-100 md:visible md:relative' : 'opacity-100 visible relative'}`}
                 >
                     <SearchInput />
 
-                    <div className="bg-gray-100 shadow-gray-100 ring-gray-200 ring-1 shadow-md h-full py-1 rounded-md flex flex-col mt-2">
+                    <div className="bg-gray-200 shadow-gray-100 ring-gray-200 ring-1 shadow-md h-full py-1 rounded-md flex flex-col mt-2 overflow-hidden">
                         <div className="flex justify-end gap-1 px-1">
                             <Button variant="light" isIconOnly onPress={handleCreatePage}>
                                 <IconFilePlus />
@@ -121,7 +122,7 @@ export default function Home() {
                             </Button>
                         </div>
 
-                        <div className="flex-grow lg:overflow-auto">
+                        <div className="grow overflow-auto">
                             <FolderNavigator />
                         </div>
                     </div>
