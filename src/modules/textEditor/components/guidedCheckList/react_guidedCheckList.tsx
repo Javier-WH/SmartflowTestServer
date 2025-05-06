@@ -13,6 +13,7 @@ import ReactDOM from 'react-dom/client';
 import Guidance from './guidance';
 import { BiCollapseVertical } from 'react-icons/bi';
 import { FaCheckCircle } from 'react-icons/fa';
+import { cn } from '@heroui/react';
 
 // Definir tipos
 interface ListItem {
@@ -67,7 +68,10 @@ class Item extends React.Component<ItemProps> {
                                         readOnly={commonProps.readonly}
                                         placeholder={`What's the ${item.index === 0 ? 'first' : 'next'} step?`}
                                         value={item.text}
-                                        onClick={e => e.stopPropagation()}
+                                        onClick={e => {
+                                            console.log('commonProps.readonly', commonProps.readonly);
+                                            if (!commonProps.readonly) e.stopPropagation();
+                                        }}
                                         onChange={e => commonProps.onTextChange(item.id, e.target.value)}
                                         onKeyDown={e => {
                                             if (e.key === 'Enter') {
@@ -81,6 +85,10 @@ class Item extends React.Component<ItemProps> {
                                         onPaste={e => {
                                             e.stopPropagation();
                                         }}
+                                        className={cn({
+                                            'cursor-text': !commonProps.readonly,
+                                            'cursor-pointer': commonProps.readonly,
+                                        })}
                                     />
                                 </div>
                             ),
@@ -377,4 +385,3 @@ customElements.define(
         },
     }),
 );
-
