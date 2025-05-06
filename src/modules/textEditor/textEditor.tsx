@@ -3,7 +3,7 @@
 import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { useEffect, useState, useRef, useContext } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
 import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
 import options from './components/utils/options.ts';
@@ -13,13 +13,13 @@ import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { useDebouncedCallback } from 'use-debounce';
-import { Textarea, cn } from '@heroui/react';
+import { Button, Textarea, cn } from '@heroui/react';
 import { Spinner } from '@heroui/react';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
-import { Image } from 'antd';
-import { MainContext, MainContextValues } from '../mainContext.tsx';
+import { Image, message } from 'antd';
+import { MainContext, type MainContextValues } from '../mainContext.tsx';
 
 // this is our custom blot
 Quill.register('formats/guided-checklist', GuidedCheckListBlot); // Mismo nombre que el blot
@@ -41,37 +41,19 @@ const Font = Quill.import('formats/font');
 Font.whitelist = options.fontList;
 Quill.register(Font, true);
 
-const modules = {
-    toolbar: {
-        container: '#toolbar',
-        handlers: {
-            'guided-checklist': insertGuidedCheckList,
-        },
-    },
-    resize: {
-        toolbar: {},
-        locale: {
-            floatLeft: 'Left',
-            floatRight: 'Right',
-            center: 'Center',
-            restore: 'Restore',
-        },
-    },
-};
-
 export default function TextEditor() {
     const { id } = useParams();
-    const location = useLocation();
-    let readOnly = location?.state?.readOnly;
-    if (readOnly === undefined) readOnly = false;
 
-    const { setSelectedFileId, setChangleFileNameRequest } = useContext(MainContext) as MainContextValues;
+    const { setSelectedFileId, setChangleFileNameRequest, memberRoll } = useContext(MainContext) as MainContextValues;
+
     const [title, setTitle] = useState('');
     const [showToolbar, setShowToolbar] = useState(true);
     const quillRef = useRef<ReactQuill>(null);
     const quillContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState<HTMLElement | null>(null);
+
+    const [readOnly, setReadOnly] = useState(true);
 
     const currentFileId = useRef(id);
 
@@ -81,6 +63,24 @@ export default function TextEditor() {
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
 
     const [visible, setVisible] = useState(false);
+
+    const modules = {
+        toolbar: {
+            container: '#toolbar',
+            handlers: {
+                'guided-checklist': insertGuidedCheckList,
+            },
+        },
+        resize: {
+            toolbar: {},
+            locale: {
+                floatLeft: 'Left',
+                floatRight: 'Right',
+                center: 'Center',
+                restore: 'Restore',
+            },
+        },
+    };
 
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
@@ -291,6 +291,7 @@ export default function TextEditor() {
             // Update the ref *immediately* when ID changes, so subsequent checks are accurate
             currentFileId.current = id;
             setIsInitialContentLoaded(false);
+            setReadOnly(true);
         };
     }, [id, debouncedUpdate]);
 
@@ -422,13 +423,33 @@ export default function TextEditor() {
             </div>
 
             <header
-                className={cn(
-                    'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100',
-                    { hidden: readOnly },
-                )}
+                className={cn({
+                    hidden: readOnly,
+                    'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100':
+                        !readOnly,
+                })}
             >
                 <CustomToolbar show={!readOnly} name="toolbar" />
             </header>
+
+            {readOnly && memberRoll.write && (
+                <div className="flex justify-end gap-2 items-center">
+                    <Button
+                        color="primary"
+                        onPress={() => {
+                            if (memberRoll.write) {
+                                setReadOnly(false);
+                            } else {
+                                message.error('You do not have permission to edit this page');
+                            }
+                        }}
+                    >
+                        Editar
+                    </Button>
+
+                    <div id="toolbar" className="hidden" />
+                </div>
+            )}
 
             <div
                 ref={quillContainerRef}
@@ -436,7 +457,7 @@ export default function TextEditor() {
             >
                 <div className="h-full w-full max-w-[60%]">
                     <ReactQuill
-                        {...(readOnly && { readOnly: true })}
+                        readOnly={readOnly}
                         ref={ref => {
                             if (ref) {
                                 quillRef.current = ref;
