@@ -11,7 +11,16 @@ import groupDataByContainer from './utils/groupDataByContainer';
 export const FolderNavigatorContext = createContext<FolderNavigatorContextValues | null>(null);
 
 export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { newFolderRequest, setNewFolderRequest, updateFolderRequestFromMain, memberRoll, selectedFileId, setSelectedFileId, changleFileNameRequest, setChangleFileNameRequest } = useContext(MainContext) as MainContextValues;
+    const {
+        newFolderRequest,
+        setNewFolderRequest,
+        updateFolderRequestFromMain,
+        memberRoll,
+        selectedFileId,
+        setSelectedFileId,
+        changleFileNameRequest,
+        setChangleFileNameRequest,
+    } = useContext(MainContext) as MainContextValues;
     const [Loading, setLoading] = useState<string | null>(null);
     const [modalFolder, setModalFolder] = useState<Folder | null>(null);
     const [modalDeleteFolder, setModalDeleteFolder] = useState<Folder | null>(null);
@@ -49,14 +58,14 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
         fileCountUpdateRequest,
         setFileCountUpdateRequest,
         memberRoll,
-        selectedFileId, 
+        selectedFileId,
         setSelectedFileId,
-        changleFileNameRequest, 
-        setChangleFileNameRequest
+        changleFileNameRequest,
+        setChangleFileNameRequest,
     };
 
     return (
-        <div className="h-full">
+        <>
             <FolderNavigatorContext.Provider value={values}>
                 <CreateOrUpdateFolderModal
                     folder={modalFolder}
@@ -80,6 +89,6 @@ export const FolderNavigatorProvider: React.FC<{ children: ReactNode }> = ({ chi
                 />
                 {children}
             </FolderNavigatorContext.Provider>
-        </div>
+        </>
     );
 };

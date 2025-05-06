@@ -122,7 +122,7 @@ export default function Home() {
                             </Button>
                         </div>
 
-                        <div className="grow overflow-auto">
+                        <div className="grow overflow-y-auto scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
                             <FolderNavigator />
                         </div>
                     </div>
