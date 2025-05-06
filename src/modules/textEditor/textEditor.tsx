@@ -13,7 +13,7 @@ import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { useDebouncedCallback } from 'use-debounce';
-import { Textarea } from '@heroui/react';
+import { Textarea, cn } from '@heroui/react';
 import { Spinner } from '@heroui/react';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
@@ -415,7 +415,14 @@ export default function TextEditor() {
                     </div>
                 </div>
 
-                <header className="w-full py-2 bg-gray-100 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-4">
+                <header
+                    className={cn(
+                        'w-full py-2 bg-gray-100 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-4',
+                        {
+                            hidden: readOnly,
+                        },
+                    )}
+                >
                     <CustomToolbar show={!readOnly} name="toolbar" />
                 </header>
 
