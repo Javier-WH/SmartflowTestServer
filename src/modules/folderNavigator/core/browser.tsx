@@ -38,7 +38,7 @@ export default function Browser() {
             childList: true,
             subtree: true,
             attributes: true,
-            attributeFilter: ['class']
+            attributeFilter: ['class'],
         });
 
         return () => {
@@ -47,7 +47,7 @@ export default function Browser() {
     }, []);
 
     return (
-        <div className="w-full overflow-auto p-2 h-full">
+        <div className="w-full p-2 h-full">
             <FolderContainer folderId={rootFolder} depth={0} />
         </div>
     );
