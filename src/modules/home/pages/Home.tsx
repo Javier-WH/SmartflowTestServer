@@ -98,67 +98,67 @@ export default function Home() {
                 )}
             </Button>
 
-            <nav
-                className={cn('flex flex-col gap-2 h-full relative overflow-hidden', {
-                    'max-h-0 md:max-h-none md:w-16 opacity-0 md:opacity-100 overflow-hidden md:bg-gray-100 md:rounded-xl':
-                        isSidebarCollapsed,
-                    'max-h-[calc(100%-180px)] md:max-h-none w-full md:w-1/4 min-w-[350px] opacity-100':
-                        !isSidebarCollapsed,
+            <div
+                className={cn('flex flex-col gap-2 h-full relative', {
+                    'max-h-0 md:max-h-none md:w-16 md:bg-gray-100 md:rounded-xl': isSidebarCollapsed,
+                    'max-h-[calc(100%-180px)] md:max-h-none w-full md:w-1/4 min-w-[350px]': !isSidebarCollapsed,
                 })}
             >
-                {/* Content visible when sidebar is expanded */}
-                <div
-                    className={`flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'opacity-0 invisible absolute md:opacity-100 md:visible md:relative' : 'opacity-100 visible relative'}`}
-                >
-                    <SearchInput />
+                <nav className="w-full h-full overflow-hidden">
+                    {/* Content visible when sidebar is expanded */}
+                    <div
+                        className={`flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'hidden absolute md:opacity-100 md:visible md:relative' : 'relative'}`}
+                    >
+                        <SearchInput />
 
-                    <div className="bg-gray-200 shadow-gray-100 ring-gray-200 ring-1 shadow-md h-full py-1 rounded-md flex flex-col mt-2 overflow-hidden">
-                        <div className="flex justify-end gap-1 px-1">
-                            <Button variant="light" isIconOnly onPress={handleCreatePage}>
-                                <IconFilePlus />
-                            </Button>
-                            <Button variant="light" isIconOnly onPress={handleCreateFolder}>
-                                <IconFolderPlus />
-                            </Button>
-                        </div>
+                        <div className="bg-gray-200 shadow-gray-100 ring-gray-200 ring-1 shadow-md h-full py-1 rounded-md flex flex-col mt-2 overflow-hidden">
+                            <div className="flex justify-end gap-1 px-1">
+                                <Button variant="light" isIconOnly onPress={handleCreatePage}>
+                                    <IconFilePlus />
+                                </Button>
+                                <Button variant="light" isIconOnly onPress={handleCreateFolder}>
+                                    <IconFolderPlus />
+                                </Button>
+                            </div>
 
-                        <div className="grow overflow-y-auto scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
-                            <FolderNavigator />
+                            <div className="grow overflow-y-auto scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
+                                <FolderNavigator />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div
-                    className={`flex flex-col items-center gap-2 pt-4 mt-6 ${isSidebarCollapsed ? 'opacity-100 visible' : 'opacity-0 invisible absolute'}`}
-                >
-                    <Button variant="light" isIconOnly onPress={handleCreatePage}>
-                        <IconFilePlus />
-                    </Button>
-                    <Button variant="light" isIconOnly onPress={handleCreateFolder}>
-                        <IconFolderPlus />
-                    </Button>
-                </div>
+                    <div
+                        className={`flex flex-col items-center gap-2 pt-4 mt-6 ${isSidebarCollapsed ? 'opacity-100 visible' : 'opacity-0 invisible absolute'}`}
+                    >
+                        <Button variant="light" isIconOnly onPress={handleCreatePage}>
+                            <IconFilePlus />
+                        </Button>
+                        <Button variant="light" isIconOnly onPress={handleCreateFolder}>
+                            <IconFolderPlus />
+                        </Button>
+                    </div>
 
-                {/* Desktop Toggle Button */}
-                <Button
-                    onPress={handleToggleSidebar}
-                    isIconOnly
-                    color="primary"
-                    className={cn(
-                        'hidden md:flex absolute -translate-y-1/2 z-20 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out text-primary',
-                        {
-                            'left-1/2 -translate-x-1/2 bottom-4': isSidebarCollapsed, // Simplified for desktop
-                            'left-[95%] top-1/2': !isSidebarCollapsed, // Simplified for desktop
-                        },
-                    )}
-                >
-                    {isSidebarCollapsed ? (
-                        <IconChevronRight key="sidebar-collapsed" size={16} />
-                    ) : (
-                        <IconChevronLeft key="sidebar-expanded" size={16} />
-                    )}
-                </Button>
-            </nav>
+                    {/* Desktop Toggle Button */}
+                    <Button
+                        onPress={handleToggleSidebar}
+                        isIconOnly
+                        color="primary"
+                        className={cn(
+                            'max-sm:hidden md:flex absolute -translate-y-1/2 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out text-primary',
+                            {
+                                'left-1/2 -translate-x-1/2 bottom-4': isSidebarCollapsed,
+                                'left-[95%] top-1/2': !isSidebarCollapsed,
+                            },
+                        )}
+                    >
+                        {isSidebarCollapsed ? (
+                            <IconChevronRight key="sidebar-collapsed" size={16} />
+                        ) : (
+                            <IconChevronLeft key="sidebar-expanded" size={16} />
+                        )}
+                    </Button>
+                </nav>
+            </div>
 
             <section
                 className={`grow transition-all duration-200 ease-in-out ${
