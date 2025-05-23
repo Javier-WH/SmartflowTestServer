@@ -47,6 +47,7 @@ export default function TextEditor() {
     const { setSelectedFileId, setChangleFileNameRequest, memberRoll } = useContext(MainContext) as MainContextValues;
 
     const [title, setTitle] = useState('');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [showToolbar, setShowToolbar] = useState(true);
     const quillRef = useRef<ReactQuill>(null);
     const quillContainerRef = useRef<HTMLDivElement>(null);
