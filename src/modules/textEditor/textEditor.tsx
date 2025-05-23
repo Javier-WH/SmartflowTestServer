@@ -379,6 +379,7 @@ export default function TextEditor() {
         );
     }
 
+
     return (
         <div className="flex flex-col h-full overflow-hidden px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
@@ -422,15 +423,18 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <header
-                className={cn({
-                    hidden: readOnly,
-                    'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100':
-                        !readOnly,
-                })}
-            >
-                <CustomToolbar show={!readOnly} name="toolbar" />
-            </header>
+                <header
+                    className={cn({
+                        hidden: readOnly ,
+                        'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100 min-h-14':
+                            !readOnly,
+                    })}
+                >
+                
+                        <CustomToolbar show={!readOnly} name="toolbar" />
+
+                </header>
+            
 
             {readOnly && memberRoll && memberRoll.write ? (
                 <div className="flex justify-end gap-2 items-center">

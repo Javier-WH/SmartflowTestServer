@@ -69,12 +69,16 @@ export default function Guidance({
     id: string;
     readonly: boolean;
 }) {
+
     const editorRef = useRef<Quill | null>(null);
     const quillRef = useRef<HTMLDivElement | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const toolbarRef = useRef<HTMLDivElement>(null);
     const resizing = useRef(false); //awful solution for unknown image resize bug
     const [currentContent, setCurrentContent] = useState(value);
     const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
+    const [mainToolbarElement, setMainToolbarElement] = useState<HTMLElement | null>(null);
+    const [showToolbar, setShowToolbar] = useState(false);
 
     const debouncedSave = useDebouncedCallback((content: string) => {
         saveData(id, content);
@@ -91,6 +95,9 @@ export default function Guidance({
     };
 
     useEffect(() => {
+        const maintolbar = document.getElementById("toolbar")
+        setMainToolbarElement(maintolbar as HTMLElement);
+
         if (quillRef.current && !editorRef.current) {
             const options = {
                 theme: 'snow',
@@ -152,6 +159,7 @@ export default function Guidance({
             });
         }
 
+
         return () => {
             //remove all the listeners to avoid memory leaks
             const editorRoot = editorRef.current?.root;
@@ -172,13 +180,46 @@ export default function Guidance({
         }
     }, [value]);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                quillRef.current && quillRef.current.contains(event.target as Node) ||
+                toolbarRef.current && toolbarRef.current.contains(event.target as Node)
+            ) {
+                setShowToolbar(true); 
+            } else {
+                setShowToolbar(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+
     return (
         <>
-            {!readonly && (
-                <div className="flex justify-center w-full grow relative">
-                    <CustomToolbar name={toolbarId} clean={true} />
-                </div>
-            )}
+            {
+
+                !readonly && (
+                    <div
+                        ref={toolbarRef}
+                        style={{
+                            position: 'fixed',
+                            top: mainToolbarElement?.getBoundingClientRect().top,
+                            left: mainToolbarElement?.getBoundingClientRect().left,
+                            display: showToolbar ? 'block' : 'none',
+                            zIndex: 10000,
+                        }}
+                        className="flex justify-center w-full grow relative bg-gray-100"
+                    >
+                        <CustomToolbar name={toolbarId} clean={true} />
+                    </div>
+                )
+
+
+            }
             <div className="quill-editor-container" ref={containerRef} onPaste={e => e.stopPropagation()}>
                 <div className="collapse-editor min-h-[300px]" ref={quillRef} />
             </div>
