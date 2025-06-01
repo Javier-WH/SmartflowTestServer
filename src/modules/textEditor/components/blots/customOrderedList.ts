@@ -11,22 +11,23 @@ class CustomOrderedList extends List {
   static create(value: string | number) {
     const node = super.create(value) as HTMLElement;
 
-    if ( typeof value === 'number') {
-      node.setAttribute('start', value.toString());
+    if (value === 'ordered' || typeof value === 'number') {
+      if (typeof value === 'number') {
+        node.setAttribute('data-start', value.toString());
+        node.style.counterReset = `quill-list-counter ${value - 1}`;
+      }
     }
 
     return node;
   }
 
   static formats(domNode: HTMLElement) {
-    const format = super.formats(domNode);
-
-    if (format === 'ordered' && domNode.tagName === 'OL') {
-      const start = domNode.getAttribute('start');
+    const tagName = domNode.tagName;
+    if (tagName === CustomOrderedList.ORDERED_TAG) {
+      const start = domNode.getAttribute('data-start');
       return start ? parseInt(start, 10) : 'ordered';
     }
-
-    return format;
+    return super.formats(domNode);
   }
 }
 

@@ -394,13 +394,13 @@ export default function TextEditor() {
         if (!range) return;
 
         // Preparar nueva línea si es necesario
-        const [, offset] = quill.getLine(range.index);
-        if (offset > 0) {
+        const [line, offset] = quill.getLine(range.index);
+        if (offset > 0 && line.length() > 1) {
             quill.insertText(range.index, '\n', "user");
             range.index++;
         }
 
-        // Aplicar formato de lista con atributo start
+        // Aplicar formato de lista con el startIndex
         quill.formatLine(range.index, 1, 'list', startIndex, 'user');
 
         // Mover cursor dentro del nuevo elemento de lista
