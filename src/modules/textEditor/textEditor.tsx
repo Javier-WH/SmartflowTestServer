@@ -436,7 +436,13 @@ export default function TextEditor() {
                     if (match) {
                         e.preventDefault();
                         const numeroEncontrado = match[1]; // El grupo de captura (el número)
-                        console.log("Número encontrado antes del espacio:", numeroEncontrado);
+                        const fullMatch = match[0]; // Esto incluye el número y el punto (ej: "1.")
+
+                        // Calcular la posición de inicio del texto a borrar
+                        const startDeleteIndex = cursorIndex - fullMatch.length;
+
+                        // Borrar el número y el punto
+                        editor.deleteText(startDeleteIndex, fullMatch.length);
 
                         insertCustomNumberedList(Number(numeroEncontrado));
                     }
