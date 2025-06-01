@@ -73,7 +73,7 @@ export default function TextEditor() {
             container: '#toolbar',
             handlers: {
                 'guided-checklist': insertGuidedCheckList,
-                
+
             },
         },
         resize: {
@@ -85,6 +85,13 @@ export default function TextEditor() {
                 restore: 'Restore',
             },
         },
+        keyboard: {
+            bindings: {
+                "list autofill": {
+                    shortKey: true
+                }
+            }
+          },
     };
 
     const debouncedUpdate = useDebouncedCallback(
@@ -405,15 +412,38 @@ export default function TextEditor() {
 
         // Mover cursor dentro del nuevo elemento de lista
         quill.setSelection(range.index + 1, 0);
-      };
+    };
 
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (e.key === 'p') {
-            e.preventDefault();
-            insertCustomNumberedList(90);
+        
+        if (e.key === ' ') {
+            const editor = quillRef.current?.getEditor();
+            
+            if (editor) {
+                const selection = editor.getSelection(); // Obtener la selección actual
+                if (selection) {
+                    const cursorIndex = selection.index; // Posición del cursor
+                    
+                    // Obtener el texto hasta la posición del cursor
+                    const textBeforeCursor = editor.getText(0, cursorIndex);
+                    
+                    // Expresión regular para encontrar un número seguido de un punto al final del texto
+                    // Esto buscará patrones como "1." o "123."
+                    const regex = /(\d+)\.$/;
+                    const match = textBeforeCursor.match(regex);
+                    
+                    if (match) {
+                        e.preventDefault();
+                        const numeroEncontrado = match[1]; // El grupo de captura (el número)
+                        console.log("Número encontrado antes del espacio:", numeroEncontrado);
+
+                        insertCustomNumberedList(Number(numeroEncontrado));
+                    }
+                }
+            }
         }
-      };
+    };
     return (
         <div className="flex flex-col h-full overflow-hidden px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
@@ -457,18 +487,18 @@ export default function TextEditor() {
                 </div>
             </div>
 
-                <header
-                    className={cn({
-                        hidden: readOnly ,
-                        'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100 min-h-14':
-                            !readOnly,
-                    })}
-                >
-                
-                        <CustomToolbar show={!readOnly} name="toolbar" />
+            <header
+                className={cn({
+                    hidden: readOnly,
+                    'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100 min-h-14':
+                        !readOnly,
+                })}
+            >
 
-                </header>
-            
+                <CustomToolbar show={!readOnly} name="toolbar" />
+
+            </header>
+
 
             {readOnly && memberRoll && memberRoll.write ? (
                 <div className="flex justify-end gap-2 items-center">
@@ -533,5 +563,5 @@ export default function TextEditor() {
     );
 
 
-  
+
 }
