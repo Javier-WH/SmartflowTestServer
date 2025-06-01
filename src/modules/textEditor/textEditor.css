@@ -392,3 +392,14 @@ a {
 .action-button:hover .ql-fill {
     @apply !fill-white
 }
+
+.ql-editor ol {
+    counter-reset: quill-list-counter;
+}
+
+.ql-editor ol li {
+    counter-increment: quill-list-counter;
+}
+
+.ql-editor ol li::before {
+    content: counter(quill-list-counter) ". "; }
