@@ -403,3 +403,6 @@ a {
 
 .ql-editor ol[data-start] li::before {
     content: counter(quill-list-counter) ". "; }
+
+
+    
