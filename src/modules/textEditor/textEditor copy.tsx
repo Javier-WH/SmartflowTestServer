@@ -404,7 +404,7 @@ export default function TextEditor() {
         }
     }, []);
 
-   
+
 
 
     const handleListCreation = (editor, range, context) => {
@@ -471,7 +471,7 @@ export default function TextEditor() {
             handleListCreation(editor, range, context);
         }
 
-      }
+    }
 
     if (isLoading && !isInitialContentLoaded) {
         return (
@@ -525,18 +525,18 @@ export default function TextEditor() {
                 </div>
             </div>
 
-                <header
-                    className={cn({
-                        hidden: readOnly ,
-                        'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100 min-h-14':
-                            !readOnly,
-                    })}
-                >
-                
-                        <CustomToolbar show={!readOnly} name="toolbar" />
+            <header
+                className={cn({
+                    hidden: readOnly,
+                    'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100 min-h-14':
+                        !readOnly,
+                })}
+            >
 
-                </header>
-            
+                <CustomToolbar show={!readOnly} name="toolbar" />
+
+            </header>
+
 
             {readOnly && memberRoll && memberRoll.write ? (
                 <div className="flex justify-end gap-2 items-center">

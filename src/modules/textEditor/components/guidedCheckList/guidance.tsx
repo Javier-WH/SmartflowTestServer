@@ -8,7 +8,7 @@ import CustomToolbar from '../toolbar/CustonToolbar';
 import CustomImage from '../utils/CustonImageGuidance';
 import CustomVideo from '../utils/CustonVideoGuidance';
 import { useDebouncedCallback } from 'use-debounce';
-
+const startNumber = 1;
 const fontSizeList = [
     '10px',
     '12px',
@@ -116,7 +116,14 @@ export default function Guidance({
                             center: 'Center',
                             restore: 'Restore',
                         },
-                    },
+                    }, 
+                    keyboard: {
+                        bindings: {
+                            "list autofill": {
+                                shortKey: true
+                            }
+                        }
+                      },
                 },
                 formats: [
                     'header',
@@ -157,19 +164,56 @@ export default function Guidance({
                 setCurrentContent(content);
                 debouncedSave(content);
             });
+
+            quillRef.current.addEventListener('keydown', (e: KeyboardEvent) => {
+
+
+
+                if (e.key === ' ') {
+                    const editor = editorRef.current;
+
+                    if (editor) {
+                        const selection = editor.getSelection(); // Obtener la selección actual
+                        if (selection) {
+                            const cursorIndex = selection.index; // Posición del cursor
+
+                            // Obtener el texto hasta la posición del cursor
+                            const textBeforeCursor = editor.getText(0, cursorIndex);
+
+                            // Expresión regular para encontrar un número seguido de un punto al final del texto
+                            // Esto buscará patrones como "1." o "123."
+                            const regex = /(\d+)\.$/;
+                            const match = textBeforeCursor.match(regex);
+
+                            if (match) {
+                                e.preventDefault();
+                                const numeroEncontrado = match[1]; // El grupo de captura (el número)
+                                const fullMatch = match[0]; // Esto incluye el número y el punto (ej: "1.")
+
+                                // Calcular la posición de inicio del texto a borrar
+                                const startDeleteIndex = cursorIndex - fullMatch.length;
+
+                                // Borrar el número y el punto
+                                editor.deleteText(startDeleteIndex, fullMatch.length);
+                                console.log('Número encontrado:', numeroEncontrado);
+                                //insertCustomNumberedList(Number(numeroEncontrado));
+                            }
+                        }
+                    }
+                }});
+   
+
+            return () => {
+                //remove all the listeners to avoid memory leaks
+                const editorRoot = editorRef.current?.root;
+                if (editorRoot) {
+                    editorRoot.removeEventListener('paste', handlePaste);
+                }
+                if (editorRef.current) {
+                    editorRef.current = null;
+                }
+            };
         }
-
-
-        return () => {
-            //remove all the listeners to avoid memory leaks
-            const editorRoot = editorRef.current?.root;
-            if (editorRoot) {
-                editorRoot.removeEventListener('paste', handlePaste);
-            }
-            if (editorRef.current) {
-                editorRef.current = null;
-            }
-        };
     }, []);
 
     // external changes sync
@@ -186,7 +230,7 @@ export default function Guidance({
                 quillRef.current && quillRef.current.contains(event.target as Node) ||
                 toolbarRef.current && toolbarRef.current.contains(event.target as Node)
             ) {
-                setShowToolbar(true); 
+                setShowToolbar(true);
             } else {
                 setShowToolbar(false);
             }
