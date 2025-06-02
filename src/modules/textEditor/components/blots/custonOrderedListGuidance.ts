@@ -16,7 +16,7 @@ class CustomOrderedListContainerGuidance extends ListContainer {
   // unless you explicitly intend to override 'list-container'.
   // The original blotName 'list' with tagName ['OL', 'UL'] is contradictory
   // in standard Quill, as 'list' is typically for <li> elements.
-  static blotName = 'list';
+  static blotName = 'custom-list-container';
 
   // Define the HTML tags this blot represents. This is correct for a container blot.
   static tagName = ['OL', 'UL'];
