@@ -5,13 +5,17 @@ const List = Quill.import('formats/list');
 
 class CustomOrderedList extends List {
   static blotName = 'list';
-  static tagName = ['OL'];
+  static tagName = ['OL', 'UL'];
   static ORDERED_TAG = 'OL';
 
-  static create(value: string | number) {
-    const node = super.create(value) as HTMLElement;
+static create(  value: string | number) {
+    // this validations must be done before calling super.create because fix a bug of bulletlist and checklist
+    const type = typeof value === 'number'
+      ? "ordered"
+      : (value as string);
+    const node = super.create(type) as HTMLElement;
 
-    if (value === 'ordered' || typeof value === 'number') {
+    if (typeof value === 'number') {
       if (typeof value === 'number') {
         node.setAttribute('data-start', value.toString());
         node.style.counterReset = `quill-list-counter ${value - 1}`;
