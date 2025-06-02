@@ -100,19 +100,19 @@
 /**/
 
 /* Eliminar TODOS los números de las listas */
-/* .collapse-editor .ql-editor ol {
+ .collapse-editor .ql-editor ol {
     list-style-type: none !important;
     counter-reset: none !important;
     padding-left: 1.5em;
-} */
+} 
 
 /* Eliminar pseudo-elementos numéricos generados por Quill */
-/* .collapse-editor .ql-editor li::before {
+ .collapse-editor .ql-editor li::before {
     content: none !important;
-} */
+} 
 
 /* Viñetas personalizadas para listas normales */
-/* .collapse-editor .ql-editor ol[data-list="bullet"] li {
+ .collapse-editor .ql-editor ol[data-list="bullet"] li {
     position: relative;
 }
 
@@ -121,10 +121,10 @@
     position: absolute;
     left: -1.3em;
     color: #333;
-} */
+} 
 
 /* Checks personalizados */
-/* .collapse-editor .ql-editor ol[data-list="check"] li::before {
+ .collapse-editor .ql-editor ol[data-list="check"] li::before {
     content: "☐ ";
     margin-right: 0.5em;
-} */
+} 
