@@ -20,9 +20,38 @@ import './textEditor.css';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
-import CustomOrderedList from './components/blots/customOrderedList.ts';
 
-Quill.register(CustomOrderedList, true);
+const List = Quill.import('formats/list');
+
+class CustomList extends List {
+    static create(value: any) {
+        const node = super.create(value);
+
+        if (value && typeof value === 'object' && value.start) {
+            node.setAttribute('start', value.start);
+        }
+
+        return node;
+    }
+
+    static formats(domNode: HTMLElement) {
+        if (domNode.tagName === 'OL' && domNode.hasAttribute('start')) {
+            return {
+                list: 'ordered',
+                start: parseInt(domNode.getAttribute('start') || '1', 10)
+            };
+        }
+        return super.formats(domNode);
+    }
+}
+
+CustomList.blotName = 'list';
+CustomList.tagName = 'OL';
+Quill.register('formats/list', CustomList);
+
+
+
+
 
 // this is our custom blot
 Quill.register('formats/guided-checklist', GuidedCheckListBlot); // Mismo nombre que el blot
@@ -73,7 +102,6 @@ export default function TextEditor() {
             container: '#toolbar',
             handlers: {
                 'guided-checklist': insertGuidedCheckList,
-
             },
         },
         resize: {
@@ -85,13 +113,6 @@ export default function TextEditor() {
                 restore: 'Restore',
             },
         },
-        keyboard: {
-            bindings: {
-                "list autofill": {
-                    shortKey: true
-                }
-            }
-          },
     };
 
     const debouncedUpdate = useDebouncedCallback(
@@ -383,6 +404,75 @@ export default function TextEditor() {
         }
     }, []);
 
+
+
+
+    const handleListCreation = (editor, range, context) => {
+        console.log('handleListCreation');
+        const lineText = context.prefix.trim();
+        const listNumber = parseInt(lineText.slice(0, -1), 10);
+
+        if (!isNaN(listNumber)) {
+            // Eliminar el texto del disparador
+            editor.deleteText(range.index - lineText.length, lineText.length, 'silent');
+
+            // Aplicar formato de lista con start
+            editor.formatLine(range.index - lineText.length, 1, 'list', {
+                list: 'ordered',
+                indent: 0,
+                start: listNumber
+            });
+
+            // Mover el cursor
+            editor.setSelection(range.index - lineText.length + 1, 0, 'silent');
+            return false;
+        }
+        return true;
+    };
+
+    let startNumber = 1;
+    // hay que interceptar el evento onkeydown del editor para detectar la tecla espacio y la insersion de lista ordenada
+    const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        // Verificar si la tecla presionada es '.'
+        const editor = quillRef.current.getEditor();
+        // Obtener contexto actual del editor
+        const range = editor.getSelection();
+        if (!range) return;
+
+        // Crear contexto manualmente
+        const context = {
+            prefix: editor.getText(range.index - 1, 1) // Último carácter antes del cursor
+        };
+
+        if (e.key === '.') {
+            // Obtener la posición actual del cursor
+            const cursorPosition = editor.getSelection()?.index;
+
+            if (cursorPosition != null) {
+                // Obtener el texto desde el inicio hasta la posición del cursor (sin incluir el '.' recién presionado)
+                const textBeforeCursor = editor.getText(0, cursorPosition);
+
+                // Buscar secuencias de dígitos justo antes del cursor
+                const numbersBeforeDot = textBeforeCursor.match(/\d+$/);
+
+                // Si hay números antes del punto, imprimirlos
+                if (numbersBeforeDot) {
+                    startNumber = parseInt(numbersBeforeDot[0]);
+                    console.log('Número encontrado antes del punto:', startNumber);
+                }
+                else {
+                    startNumber = 1; // Reiniciar a 1 si no hay números
+                }
+            }
+        }
+
+        if (e.key === ' ') {
+            e.preventDefault();
+            handleListCreation(editor, range, context);
+        }
+
+    }
+
     if (isLoading && !isInitialContentLoaded) {
         return (
             <div className="flex justify-center items-center h-full">
@@ -392,64 +482,6 @@ export default function TextEditor() {
     }
 
 
-    // Función para insertar la lista personalizada con un índice específico
-    const insertCustomNumberedList = (startIndex: number) => {
-        const quill = quillRef.current?.getEditor();
-        if (!quill) return;
-
-        const range = quill.getSelection(true);
-        if (!range) return;
-
-        // Preparar nueva línea si es necesario
-        const [line, offset] = quill.getLine(range.index);
-        if (offset > 0 && line.length() > 1) {
-            quill.insertText(range.index, '\n', "user");
-            range.index++;
-        }
-
-        // Aplicar formato de lista con el startIndex
-        quill.formatLine(range.index, 1, 'list', startIndex, 'user');
-
-        // Mover cursor dentro del nuevo elemento de lista
-        quill.setSelection(range.index + 1, 0);
-    };
-
-
-    const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        
-        if (e.key === ' ') {
-            const editor = quillRef.current?.getEditor();
-            
-            if (editor) {
-                const selection = editor.getSelection(); // Obtener la selección actual
-                if (selection) {
-                    const cursorIndex = selection.index; // Posición del cursor
-                    
-                    // Obtener el texto hasta la posición del cursor
-                    const textBeforeCursor = editor.getText(0, cursorIndex);
-                    
-                    // Expresión regular para encontrar un número seguido de un punto al final del texto
-                    // Esto buscará patrones como "1." o "123."
-                    const regex = /(\d+)\.$/;
-                    const match = textBeforeCursor.match(regex);
-                    
-                    if (match) {
-                        e.preventDefault();
-                        const numeroEncontrado = match[1]; // El grupo de captura (el número)
-                        const fullMatch = match[0]; // Esto incluye el número y el punto (ej: "1.")
-
-                        // Calcular la posición de inicio del texto a borrar
-                        const startDeleteIndex = cursorIndex - fullMatch.length;
-
-                        // Borrar el número y el punto
-                        editor.deleteText(startDeleteIndex, fullMatch.length);
-
-                        insertCustomNumberedList(Number(numeroEncontrado));
-                    }
-                }
-            }
-        }
-    };
     return (
         <div className="flex flex-col h-full overflow-hidden px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
@@ -540,10 +572,10 @@ export default function TextEditor() {
                                 configureQuillMatchers();
                             }
                         }}
+                        onKeyDown={onKeyDown}
                         theme="snow"
                         value={content}
                         onChange={handleEditorChange}
-                        onKeyDown={onKeyDown}
                         modules={modules}
                         formats={options.formats}
                         onChangeSelection={handleChangeSelection}
@@ -567,7 +599,5 @@ export default function TextEditor() {
             </div>
         </div>
     );
-
-
 
 }
