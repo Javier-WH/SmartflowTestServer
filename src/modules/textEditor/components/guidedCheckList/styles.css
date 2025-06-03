@@ -100,31 +100,57 @@
 /**/
 
 /* Eliminar TODOS los números de las listas */
-.collapse-editor .ql-editor ol {
+ /*.collapse-editor .ql-editor ol {
     list-style-type: none !important;
     counter-reset: none !important;
     padding-left: 1.5em;
-}
+} */
 
-/* Eliminar pseudo-elementos numéricos generados por Quill */
-.collapse-editor .ql-editor li::before {
+ /*Eliminar pseudo-elementos numéricos generados por Quill */
+ /*.collapse-editor .ql-editor li::before {
+    content: none !important;
+} */
+
+
+
+.collapse-editor li[data-list="bullet"]::before {
     content: none !important;
 }
 
-/* Viñetas personalizadas para listas normales */
-.collapse-editor .ql-editor ol[data-list="bullet"] li {
+.collapse-editor li[data-list="unchecked"]::before {
+    content: none !important;
+}
+
+.collapse-editor li[data-list="checked"]::before {
+    content: none !important;
+}
+
+
+
+.ql-editor li[data-list=ordered]>.ql-ui:before {
+    content: '' !important;
+}
+
+.collapse-editor .ql-editor ol[data-start] {
+    /* Mantenemos el counter-reset que viene del HTML */
+    list-style-type: none;
+    counter-reset: quill-list-counter;
+    /* Valor inicial será sobrescrito por el inline style */
+    padding-left: 1.5em;
+}
+
+/* Elementos de lista */
+.collapse-editor .ql-editor ol[data-start]>li {
+    counter-increment: quill-list-counter;
     position: relative;
+    margin-bottom: 0.5em;
 }
 
-.collapse-editor .ql-editor ol[data-list="bullet"] li::before {
-    content: "•";
+/* Numeración personalizada */
+.collapse-editor .ql-editor ol[data-start]>li::before {
+    content: counter(quill-list-counter) ". ";
     position: absolute;
-    left: -1.3em;
-    color: #333;
-}
-
-/* Checks personalizados */
-.collapse-editor .ql-editor ol[data-list="check"] li::before {
-    content: "☐ ";
-    margin-right: 0.5em;
+   
+    width: 1.5em;
+    text-align: right;
 }

@@ -1,7 +1,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const insertGuidedCheckList = function (this: { quill: any }) {
+const insertGuidedCheckList = function (this: { quill: any}) {
   const selection = this.quill.getSelection();
   if (!selection || !this.quill.root.isConnected) return;
 
