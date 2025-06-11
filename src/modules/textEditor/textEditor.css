@@ -92,10 +92,10 @@
     font-size: 16px !important;
 }
 
-.ant-collapse-content-box .quill-editor-container {
-    max-height: 500px !important;
-    overflow-y: auto !important;
-}
+/* .ant-collapse-content-box .quill-editor-container { */
+/*     max-height: 500px !important; */
+/*     overflow-y: auto !important; */
+/* } */
 
 .ql-container:focus,
 .ql-toolbar:focus {
