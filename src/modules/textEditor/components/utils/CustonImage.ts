@@ -22,7 +22,7 @@ export default class CustomImage extends Image {
             }
         } else {
             node.setAttribute('src', value);
-            node.setAttribute('width', '200'); 
+            // node.setAttribute('width', '200'); 
             node.setAttribute('height', 'auto'); 
         }
 
