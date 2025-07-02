@@ -1,11 +1,11 @@
 import { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import { Spinner } from '@heroui/react';
 import { Button } from '@/components/ui';
 import { IconFilePlus } from '@tabler/icons-react';
-
+import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
 import type { FolderRequestItem } from '../types/folder';
 import type { ContainerElement } from '../types/componets';
 import useFolderManager from '../hooks/useFolderManager';
@@ -16,10 +16,11 @@ import type { FolderNavigatorContextValues } from '../types/folder';
 
 export default function FolderContainer({ folderId, depth = 0 }: { folderId: string | null, depth?: number }) {
     const { organization_id: slug } = useParams();
-    const { Loading, setLoading, updateFolderRequest } = useContext(
+    const { createFile } = useFilesManager();
+    const { Loading, setLoading, updateFolderRequest, memberRoll, setUpdateFolderRequest  } = useContext(
         FolderNavigatorContext,
     ) as FolderNavigatorContextValues;
-
+    const navigate = useNavigate();
     const { getFolderContent, getRootContent } = useFolderManager();
     const [content, setContent] = useState<ContainerElement[] | null>([]);
 
@@ -28,7 +29,7 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
     useEffect(() => {
         async function getContent() {
             if (!slug) return;
- 
+
             const response = await getFolderContent(folderId, slug);
             if (response.error) {
                 message.error(response.message);
@@ -120,12 +121,43 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
             </div>
         );
     }
+    
+    const handleCreatePage = () => {
+        if (!memberRoll?.write) {
+            message.error('You do not have permission to create a page');
+            return;
+        }
+        if (!slug) {
+            message.error('Cant find organization');
+            return;
+        }
+        createFile('untitled', null, slug).then(res => {
+            if (res.error) {
+                message.error('Error creating page');
+                return;
+            }
+
+            getRootContent(slug).then(res => {
+                if (res.error) {
+                    message.error('Error creating page');
+                    return;
+                }
+
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                setUpdateFolderRequest(res.data as any);
+            });
+            const id = res.data;
+            if (id) {
+                navigate(`/${slug}/edit/${id}`);
+            }
+        });
+    };
 
     if (content?.length === 0 && folderId === null) {
         return (
             <div className="flex flex-col gap-2 justify-center items-center w-full h-full ">
                 No documents found
-                <Button variant="light">
+                <Button variant="light" onClick={handleCreatePage}>
                     <IconFilePlus />
                     Create your first document
                 </Button>
