@@ -47,7 +47,7 @@ export default function Browser() {
     }, []);
 
     return (
-        <div className="w-full p-2 h-full">
+        <div className="main-folder-container w-full p-2 h-full">
             <FolderContainer folderId={rootFolder} depth={0} />
         </div>
     );
