@@ -137,7 +137,7 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
         <div>
             {content?.map(item => {
                 return (
-                    <div key={item.id} className="w-full mb-1 cursor-pointer">
+                    <div key={item.id} className="folder-container w-full mb-1 cursor-pointer">
                         {item.type === 1 ? (
                             <FolderComponent folder={item} containerid={folderId} depth={depth} />
                         ) : (

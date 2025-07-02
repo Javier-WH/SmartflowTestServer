@@ -15,7 +15,7 @@
     --navBarHeight: 300px;
     --pageBarColor: hsla(211, 39%, 23%);
     --pageWidth: 700px;
-    --folder-decoration-lines: 2px solid hsl(205, 65%, 55%);
+    --folder-decoration-lines: 2px solid rgb(171, 157, 228);
 }
 
 body {
