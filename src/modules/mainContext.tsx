@@ -27,7 +27,6 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
   const { organization_id, slug } = useParams();
   const {getOrganizationBasicData} = useGetOrganizationData();
   const { user } = useAuth();
-  
   const [inPage, setInPage] = useState(false);
   const [newFolderRequest, setNewFolderRequest] = useState<Folder | null>(null);
   const [updateFolderRequestFromMain, setUpdateFolderRequestFromMain] = useState<FolderResquest | null>(null);
@@ -43,7 +42,6 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     if (!organization_id && !slug) return;
     getOrganizationBasicData(organization_id ?? slug ?? '')
       .then(res => {
-    
         setOrganizationId(res?.data[0]?.id ?? '');
       })
       .catch(err => {

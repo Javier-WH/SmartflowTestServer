@@ -6,8 +6,10 @@ import useOrganizations from './organizations/hook/useOrganizations';
 import useAuth from './auth/hooks/useAuth';
 import UserMenu from '@/components/ui/UserMenu';
 
+
 export default function MainLayout() {
     const { user } = useAuth();
+
 
     const { isLoading } = useOrganizations(user?.id);
 
@@ -26,6 +28,9 @@ export default function MainLayout() {
                     <h1 className="max-md:hidden md:block font-[300] text-[40px] tracking-[0.3rem]">
                         <span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO
                     </h1>
+                    <span className="text-primary text-[18px]">
+                        {localStorage.getItem("OrgName") || ""}
+                    </span>
                     <UserMenu />
                 </header>
 
