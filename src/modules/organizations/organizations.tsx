@@ -7,10 +7,10 @@ import useAuth from '../auth/hooks/useAuth';
 import type { Organization, OrganizationFormData } from './types/organizations';
 import CreateOrganizationModal from './components/CreateOrganizationModal';
 import OrganizationCard from './components/organization-card';
-import UserMenu from '@/components/ui/UserMenu';
+
 
 export default function Organizations() {
-    const { user, signOut } = useAuth();
+    const { user } = useAuth();
     const { data: organizations, isLoading, error, createOrganization, mutate } = useOrganizations(user?.id);
     const [searchTerm, setSearchTerm] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,6 +18,7 @@ export default function Organizations() {
 
     useEffect(() => {
         mutate();
+        { localStorage.removeItem('OrgName'); }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
