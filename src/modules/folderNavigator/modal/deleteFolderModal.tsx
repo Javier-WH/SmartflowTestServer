@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Folder, FolderData, FolderResquest } from '../types/folder';
 import useFolderManager from '../hooks/useFolderManager';
 import './createOrUpdateFolderModal.css';
+import { t } from 'i18next';
 
 export default function DeleteFolderModal({
     folder,
@@ -48,17 +49,18 @@ export default function DeleteFolderModal({
 
     return (
         <Modal
-            title={`Delete Folder ${folder?.name}`}
+            title={`${t('delete_folder_title')} ${folder?.name}`}
             open={folder != null}
             onOk={handleOk}
             onCancel={handleCancel}
-            okText={'Delete'}
+            okText={t('delete_label')}
+            cancelText={t('cancel_label')}
             className="createOrUpdateFolderModal"
             okButtonProps={{ disabled: deleteText.toLocaleLowerCase() !== 'delete', danger: true }}
         >
             <div>
                 <div>
-                    <label htmlFor="">Type "delete" to confirm</label>
+                    <label htmlFor="">{t('type_delete_to_confirm_message')}</label>
                     <Input ref={inputRef} value={deleteText} onChange={e => setDeleteText(e.target.value)} />
                 </div>
             </div>

@@ -1,9 +1,9 @@
 import { RouterProvider } from 'react-router-dom';
 import router from './router';
-
 import supabase from './lib/supabase';
 import { useContext, useEffect } from 'react';
 import { AuthContext } from './modules/auth/context/auth';
+import './i18n';
 
 function App() {
     const { setUser, setToken } = useContext(AuthContext);

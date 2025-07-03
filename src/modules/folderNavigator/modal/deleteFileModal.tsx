@@ -5,7 +5,7 @@ import { FolderData, FolderResquest } from '../types/folder';
 import { File } from '../types/file';
 import useFilesManager from '../hooks/useFileManager';
 import './createOrUpdateFolderModal.css';
-
+import { useTranslation } from 'react-i18next';
 export default function DeleteFolderModal({
     file,
     setFile,
@@ -22,6 +22,7 @@ export default function DeleteFolderModal({
     const { deleteFile } = useFilesManager();
     const [deleteText, setDeleteText] = useState('');
     const inputRef = useRef<any | null>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         setDeleteText('');
@@ -50,17 +51,18 @@ export default function DeleteFolderModal({
 
     return (
         <Modal
-            title={`Delete File ${file?.name}`}
+            title={`${t('delete_file_title')} ${file?.name}`}
             open={file != null}
             onOk={handleOk}
             onCancel={handleCancel}
             okText={'Delete'}
+            cancelText={t('cancel_label')}
             className="createOrUpdateFolderModal"
             okButtonProps={{ disabled: deleteText.toLocaleLowerCase() !== 'delete', danger: true }}
         >
             <div>
                 <div>
-                    <label htmlFor="">Type "delete" to confirm</label>
+                    <label htmlFor="">{t('type_delete_to_confirm_message')}</label>
                     <Input ref={inputRef} value={deleteText} onChange={e => setDeleteText(e.target.value)} />
                 </div>
             </div>

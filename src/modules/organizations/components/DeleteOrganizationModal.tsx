@@ -1,5 +1,6 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
 import type { Organization } from '../types/organizations';
+import { useTranslation } from 'react-i18next';
 
 interface DeleteOrganizationModalProps {
     isOpen: boolean;
@@ -18,25 +19,26 @@ export default function DeleteOrganizationModal({
     isSubmitting,
     formError,
 }: DeleteOrganizationModalProps) {
+    const { t } = useTranslation();
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent>
                 {onClose => (
                     <>
-                        <ModalHeader className="flex flex-col gap-1">Delete Organization</ModalHeader>
+                        <ModalHeader className="flex flex-col gap-1">{t("delete_organization_title")}</ModalHeader>
                         <ModalBody>
                             <p>
-                                Are you sure you want to delete <strong>{selectedOrganization?.name}</strong>?
+                                {t("delete_organization_message")} <strong>{selectedOrganization?.name}</strong>?
                             </p>
-                            <p className="text-sm text-gray-500 mt-2">This action cannot be undone.</p>
+                            <p className="text-sm text-gray-500 mt-2">{t("this_action_cannot_be_undone_message")}</p>
                             {formError && <p className="text-danger text-sm mt-2">{formError}</p>}
                         </ModalBody>
                         <ModalFooter>
                             <Button variant="flat" onPress={onClose}>
-                                Cancel
+                                {t("cancel_label")}
                             </Button>
                             <Button color="danger" onPress={handleDeleteConfirm} isLoading={isSubmitting}>
-                                Delete
+                                {t("delete_label")}
                             </Button>
                         </ModalFooter>
                     </>
