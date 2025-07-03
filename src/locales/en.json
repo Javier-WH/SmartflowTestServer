@@ -61,9 +61,26 @@
   "search_placeholder": "Search...",
   "can_not_create_folder_message": "You do not have permission to create a folder",
   "can_not_create_file_message": "You do not have permission to create a page",
+  "can_not_update_folder_message": "You do not have permission to update this folder",
+  "can_not_delete_folder_message": "You do not have permission to delete this folder",
+  "can_not_delete_file_message": "You do not have permission to delete this page",
+  "can_not_move_folder_message": "You do not have permission to move this folder",
+  "can_not_move_file_message": "You do not have permission to move this page",
+  "can_not_move_folder_or_file_message": "You do not have permission to move a ",
   "can_not_find_organization_message": "Can not find organization",
   "error_creating_file_message": "Error creating page",
   "error_creating_folder_message": "Error creating folder",
-  "document_explorer_title": "Document Explorer"
-
+  "document_explorer_title": "Document Explorer",
+  "no_documents_found_message": "No documents found",
+  "create_your_first_document_message": "Create your first document to get started",
+  "move_to_root_label": "Move to root",
+  "create_new_folder_label": "Create new folder",
+  "rename_folder_label": "Rename folder",
+  "delete_folder_label": "Delete folder",
+  "delete_file_label": "Delete page",
+  "create_new_file_label": "Create new page",
+  "page_label": "page",
+  "pages_label": "pages",
+  "last_updated_label": "Last updated",
+  "unknown_error_message": "An unknown error occurred. Please try again later."
 }

@@ -11,7 +11,7 @@ import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MdFolder } from 'react-icons/md';
-
+import { useTranslation } from 'react-i18next';
 import './folderContainer.css';
 
 export function FolderComponent({
@@ -29,6 +29,7 @@ export function FolderComponent({
         memberRoll,
     } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues;
 
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { moveFolder, moveFolderToRoot, getFilesCount } = useFolderManager();
     const { moveFile, createFile } = useFilesManager();
@@ -63,7 +64,7 @@ export function FolderComponent({
 
     const handleCreateOrUpdateFolder = (update = false) => {
         if (!memberRoll.write) {
-            message.error('You do not have permission to create or update a folder');
+            message.error(t('can_not_create_folder_message'));
             return;
         }
         const container = update ? (containerid ?? undefined) : folder.id;
@@ -77,7 +78,7 @@ export function FolderComponent({
 
     const handleDeleteFolder = () => {
         if (!memberRoll.delete) {
-            message.error('You do not have permission to delete a folder');
+            message.error(t('can_not_delete_folder_message'));
             return;
         }
         const container = containerid ?? undefined;
@@ -91,16 +92,16 @@ export function FolderComponent({
 
     const handleCreateFile = () => {
         if (!memberRoll.write) {
-            message.error('You do not have permission to create a page');
+            message.error(t('can_not_create_file_message'));
             return;
         }
         if (!slug) {
-            message.error('Cant find organization');
+            message.error(t('can_not_find_organization_message'));
             return;
         }
         createFile('untitled', folder.id, slug).then(res => {
             if (res.error) {
-                message.error('Error creating page');
+                message.error(t('error_creating_file_message'));
                 return;
             }
             const id = res.data;
@@ -128,7 +129,7 @@ export function FolderComponent({
 
     const handleMoveToRoot = async () => {
         if (!memberRoll.write) {
-            message.error('You do not have permission to move a folder');
+            message.error(t('can_not_move_folder_message'));
             return;
         }
         const request = await moveFolderToRoot(folder.id);
@@ -140,22 +141,22 @@ export function FolderComponent({
     const menu: MenuProps['items'] = [
         {
             key: '1',
-            label: <div style={{ textAlign: 'left' }}>Move to root</div>,
+            label: <div style={{ textAlign: 'left' }}>{t('move_to_root_label')}</div>,
             onClick: () => handleMoveToRoot(),
         },
         {
             key: '2',
-            label: <div style={{ textAlign: 'left' }}>Create a new folder</div>,
+            label: <div style={{ textAlign: 'left' }}>{t('create_new_folder_label')} </div>,
             onClick: () => handleCreateOrUpdateFolder(),
         },
         {
             key: '3',
-            label: <div style={{ textAlign: 'left' }}> Rename this folder</div>,
+            label: <div style={{ textAlign: 'left' }}>{t('create_new_folder_label')}</div>,
             onClick: () => handleCreateOrUpdateFolder(true),
         },
         {
             key: '4',
-            label: <div style={{ textAlign: 'left' }}>Delete this folder</div>,
+            label: <div style={{ textAlign: 'left' }}>{t('delete_folder_label')}</div>,
             onClick: () => handleDeleteFolder(),
         },
         {
@@ -163,7 +164,7 @@ export function FolderComponent({
         },
         {
             key: '5',
-            label: <div style={{ textAlign: 'left' }}>Create a new file</div>,
+            label: <div style={{ textAlign: 'left' }}>{t('create_new_file_label')}</div>,
             onClick: () => handleCreateFile(),
         },
     ];
@@ -208,7 +209,7 @@ export function FolderComponent({
         const requestFunction = draggedItemType === 0 ? moveFile : moveFolder;
 
         if (!memberRoll.write) {
-            message.error(`You do not have permission to move a ${draggedItemType === 0 ? 'file' : 'folder'}`);
+            message.error(`${t('can_not_move_folder_or_file_message')} ${draggedItemType === 0 ? 'file' : 'folder'}`);
             return;
         }
 
@@ -254,7 +255,7 @@ export function FolderComponent({
                     />
                     <span className="folder-name">{folder.name}</span>
                     <div className="folder-count-container">
-                        <span className="folder-count">{`${filesCount} ${filesCount === '1' ? 'page' : 'pages'} `}</span>
+                        <span className="folder-count">{`${filesCount} ${filesCount === '1' ? t('page_label') : t('pages_label') } `}</span>
                         <MdFolder />
                     </div>
                 </div>
