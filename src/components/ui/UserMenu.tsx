@@ -1,8 +1,10 @@
 import useAuth from '@/modules/auth/hooks/useAuth';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User } from '@heroui/react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function UserMenu() {
+    const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
     const { organization_id } = useParams();
@@ -18,7 +20,7 @@ export default function UserMenu() {
             return (
                 <DropdownMenu aria-label="User Actions" variant="flat">
                     <DropdownItem key="logout" color="danger" onPress={signOut}>
-                        Log Out
+                        {t('logout_button')}
                     </DropdownItem>
                 </DropdownMenu>
             );
@@ -28,15 +30,15 @@ export default function UserMenu() {
             return (
                 <DropdownMenu aria-label="User Actions" variant="flat">
                     <DropdownItem key="organizations" onPress={() => navigate('/organizations')}>
-                        Organizations
+                        {t('organizations_label')}
                     </DropdownItem>
 
                     <DropdownItem key="members" onPress={() => navigate(`/${organization_id}/members`)}>
-                        Members
+                        {t('Members_label')}
                     </DropdownItem>
 
                     <DropdownItem key="logout" color="danger" onPress={signOut}>
-                        Log Out
+                        {t('logout_button')}
                     </DropdownItem>
                 </DropdownMenu>
             );
