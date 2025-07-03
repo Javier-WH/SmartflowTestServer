@@ -4,6 +4,7 @@
   "password_label": "Password",
   "confirm_password_label": "Confirm Password",
   "login_button": "Login",
+  "logout_button": "Logout",
   "forgot_password_message": "Forgot Password?",
   "dont_have_account_message": "Don't have an account?",
   "sign_up_button": "Sign Up",  
@@ -14,6 +15,7 @@
   "send_button": "Send",
   "back_to_signin_button": "Return to login",
   "enter_email_message": "Please enter your email address",
+  "email_required_message": "Email is required",
   "enter_valid_email_message": "Please enter a valid email address",
   "email_sent_message": "An email has been sent to your address with instructions to reset your password.",
   "passwrods_do_not_match_message": "Passwords do not match",
@@ -67,6 +69,8 @@
   "can_not_move_folder_message": "You do not have permission to move this folder",
   "can_not_move_file_message": "You do not have permission to move this page",
   "can_not_move_folder_or_file_message": "You do not have permission to move a ",
+  "can_not_invite_member_message": "You do not have permission to invite members to this organization",
+  "can_not_invite_yourself_message": "You cannot invite yourself",
   "can_not_find_organization_message": "Can not find organization",
   "error_creating_file_message": "Error creating page",
   "error_creating_folder_message": "Error creating folder",
@@ -82,5 +86,7 @@
   "page_label": "page",
   "pages_label": "pages",
   "last_updated_label": "Last updated",
+  "organizations_label": "Organizations",
+  "Members_label": "Members",
   "unknown_error_message": "An unknown error occurred. Please try again later."
 }

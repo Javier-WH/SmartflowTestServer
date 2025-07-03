@@ -13,6 +13,7 @@ import EditMemberModal from './editMemberModal';
 import DeleteMemberModal from './deleteMemberModal';
 import InviteUserModal from '../organizations/components/InviteUserModal';
 import { MainContext, MainContextValues } from '../mainContext';
+import { useTranslation } from 'react-i18next';
 
 export interface Org {
     id: string;
@@ -56,7 +57,7 @@ export default function Menbers() {
     const [inviteEmail, setInviteEmail] = useState<string>('');
     const [isInviting, setIsInviting] = useState<boolean>(false);
     const [inviteError, setInviteError] = useState('');
-
+    const { t } = useTranslation();
     useEffect(() => {
         setLoading(!organization && !members);
     }, [organization, members]);
@@ -112,7 +113,7 @@ export default function Menbers() {
 
     const handleEditMember = (member: Member) => {
         if (organization?.user_id !== user?.id && !memberRoll?.invite) {
-            message.error('You do not have permission to invite members');
+            message.error(t('can_not_invite_member_message'));
             return;
         }
 
@@ -122,11 +123,11 @@ export default function Menbers() {
 
     const handleDeleteMember = (member: Member) => {
         if (organization?.user_id === member.userid) {
-            message.error('You can not delete yourself');
+            message.error(t('can_not_invite_yourself_message'));
             return;
         }
         if (organization?.user_id !== user?.id && !memberRoll?.invite) {
-            message.error('You do not have permission to invite members');
+            message.error(t('can_not_invite_member_message'));
             return;
         }
         cleanMembers();
@@ -137,19 +138,19 @@ export default function Menbers() {
         e.preventDefault();
 
         if (organization?.user_id !== user?.id && !memberRoll?.invite) {
-            message.error('You do not have permission to invite members');
+            message.error(t('can_not_invite_member_message'));
             return;
         }
 
         if (!inviteEmail.trim()) {
-            setInviteError('Email is required');
+            setInviteError(t('email_required_message'));
             return;
         }
 
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(inviteEmail.trim())) {
-            setInviteError('Please enter a valid email address');
+            setInviteError(t('enter_valid_email_message'));
             return;
         }
 
@@ -172,7 +173,7 @@ export default function Menbers() {
 
             // Show success toast or notification here if you have a notification system
         } catch (error) {
-            setInviteError('An unexpected error occurred');
+            setInviteError(t('unexpected_error_message'));
             console.error(error);
         } finally {
             setIsInviting(false);
