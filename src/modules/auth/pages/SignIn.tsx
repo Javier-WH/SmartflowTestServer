@@ -1,17 +1,15 @@
 import { type FormEvent, useState, useEffect } from 'react';
-
 import { Link, useNavigate } from 'react-router-dom';
-
 import AlertMessage from '../components/ErrorMessage';
-
 import { Button, Input } from '@/components/ui';
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import useAuth from '../hooks/useAuth';
 import { Card, CardBody } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
 const SignIn = () => {
     const navigate = useNavigate();
-
+    const { t, i18n } = useTranslation();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -98,14 +96,14 @@ const SignIn = () => {
         >
             <Card className="w-full max-w-md border-none" radius="sm">
                 <CardBody className="flex flex-col gap-5 p-8">
-                    <h1 className="text-2xl font-bold">Iniciar Sesión</h1>
-                    <p className="text-zinc-500">Ingrese los datos de su cuenta de Smartflo</p>
+                    <h1 className="text-2xl font-bold">{t('login_title')}</h1>
+                    <p className="text-zinc-500">{t('login_message')}</p>
                     <div className="space-y-1">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">{t('email_label')}</label>
                         <Input id="email" name="email" autoFocus />
                     </div>
                     <div className="space-y-1">
-                        <label htmlFor="password">Contraseña</label>
+                        <label htmlFor="password">{t('password_label')}</label>
                         <Input
                             id="password"
                             name="password"
@@ -129,21 +127,21 @@ const SignIn = () => {
                     {error && <AlertMessage text={error} />}
 
                     <Button type="submit" isLoading={loading}>
-                        Iniciar Sesion
+                        {t('login_button')}
                     </Button>
 
                     <Link to="/forgot-password" className="text-center text-primary underline">
-                        ¿Olvidaste tu contraseña?
+                        {t('forgot_password_message')}
                     </Link>
 
                     <div className="text-center">
                         <span>
-                            ¿No tienes una cuenta?{' '}
+                            {t('dont_have_account_message')}{' '}
                             <Link
                                 to={`/auth/signup?${redirect ? `redirect=${redirect}` : ''}`}
                                 className="text-center text-primary underline"
                             >
-                                Regístrate
+                                {t('sign_up_button')}
                             </Link>
                         </span>
                     </div>
