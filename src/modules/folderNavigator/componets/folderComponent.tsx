@@ -151,7 +151,7 @@ export function FolderComponent({
         },
         {
             key: '3',
-            label: <div style={{ textAlign: 'left' }}>{t('create_new_folder_label')}</div>,
+            label: <div style={{ textAlign: 'left' }}>{t('rename_folder_label')}</div>,
             onClick: () => handleCreateOrUpdateFolder(true),
         },
         {

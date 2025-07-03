@@ -230,7 +230,7 @@ export default function Menbers() {
                                 }}
                             >
                                 {' '}
-                                Invite user
+                                {t('invite_member_label')}
                             </Button>
                         )}
                     </div>
@@ -238,23 +238,23 @@ export default function Menbers() {
                         className="max-w-[900px]"
                         value={filter}
                         onChange={e => setFilter(e.target.value)}
-                        label="Search members"
-                        placeholder="Search by email"
+                        label={t('search_members_placeholder')}
+                            placeholder={t('search_by_email_placeholder')}
                     />
                     <div className="flex flex-col gap-1">
                         {filteredMembers.map(member => (
                             <div
                                 key={member.userid}
                                 className="
-                  flex items-center 
-                  justify-between 
-                  max-w-[900px]
-                  border border-gray-100
-                  rounded-xl
-                  bg-white
-                  shadow-sm
-                  p-3"
-                            >
+                                    flex items-center 
+                                    justify-between 
+                                    max-w-[900px]
+                                    border border-gray-100
+                                    rounded-xl
+                                    bg-white
+                                    shadow-sm
+                                    p-3"
+                                >
                                 <div className="flex items-center">
                                     <ImUser className="w-10 h-10 rounded-full mr-4" />
                                     <div>
@@ -272,10 +272,10 @@ export default function Menbers() {
 
                                     <DropdownMenu aria-label="Acciones del menú" variant="light">
                                         <DropdownItem key="edit" onClick={() => handleEditMember(member)}>
-                                            Edit roll
+                                            {t('edit_rolle_label')}
                                         </DropdownItem>
                                         <DropdownItem key="delete" onClick={() => handleDeleteMember(member)}>
-                                            Delete member
+                                            {t('delete_member_label')}
                                         </DropdownItem>
                                     </DropdownMenu>
                                 </Dropdown>

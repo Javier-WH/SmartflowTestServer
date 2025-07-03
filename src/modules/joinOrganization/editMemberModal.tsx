@@ -3,7 +3,7 @@ import { Modal, ModalContent, ModalHeader, ModalBody, RadioGroup, Radio, Button 
 import { Member, MemberRoll, Org } from './menbers.tsx';
 import { useEffect, useState } from 'react';
 import useOrganizations from '../organizations/hook/useOrganizations.ts';
-
+import { useTranslation } from 'react-i18next';
 
 interface EditMemberModalProps {
   member: Member | null;
@@ -16,7 +16,7 @@ export default function EditMemberModal({ member, setMember, rolls, organization
 
   const { updateUserRoll } = useOrganizations();
   const [selectedRoll, setSelectedRoll] = useState<string | null>(null);
-
+  const { t } = useTranslation();
 
   useEffect(()=>{
     if (member) {
@@ -54,7 +54,7 @@ export default function EditMemberModal({ member, setMember, rolls, organization
         <ModalHeader className="flex flex-col gap-1">{member ? member.useremail : ''}</ModalHeader>
         <ModalBody>
           {member && (
-            <RadioGroup value={selectedRoll} label="Member Role" onChange={(event) => { setSelectedRoll(event.target.value) }}>
+            <RadioGroup value={selectedRoll} label={t("member_role_label")} onChange={(event) => { setSelectedRoll(event.target.value) }}>
               {
                 rolls.map((roll) => (
                   <Radio key={roll.id} value={roll.id}>
@@ -65,7 +65,7 @@ export default function EditMemberModal({ member, setMember, rolls, organization
             </RadioGroup>
           )}
           <br />
-          <Button color="primary" onClick={handleSave}>Save</Button>
+          <Button color="primary" onClick={handleSave}>{t("save_label")}</Button>
         </ModalBody>
       </ModalContent>
     </Modal>
