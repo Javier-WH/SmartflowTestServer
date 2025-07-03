@@ -1,0 +1,10 @@
+{
+  "login_title": "Login",
+  "login_message": "Please enter your Smartflo account credentials",
+  "email_label": "Email",
+  "password_label": "Password",
+  "login_button": "Login",
+  "forgot_password_message": "Forgot Password?",
+  "dont_have_account_message": "Don't have an account?",
+  "sign_up_button": "Sign Up"
+}

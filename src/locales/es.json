@@ -1,0 +1,10 @@
+{
+  "login_title": "Iniciar Sesión",
+  "login_message": "Ingrese los datos de su cuenta de Smartflo",
+  "email_label": "Email",
+  "password_label": "Contraseña",
+  "login_button": "Iniciar Sesión",
+  "forgot_password_message": "¿Olvidaste tu contraseña?",
+  "dont_have_account_message": "¿No tienes una cuenta?",
+  "sign_up_button": "Regístrate"
+}
