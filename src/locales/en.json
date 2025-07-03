@@ -57,5 +57,13 @@
   "leave_organization_message": "Are you sure you want to leave ",
   "need_to_be_invited_again_message": "You will need to be invited again to rejoin this organization.",
   "invite_user_title": "Invite User to ",
-  "search_organizations_placeholder": "Search organizations..."
+  "search_organizations_placeholder": "Search organizations...",
+  "search_placeholder": "Search...",
+  "can_not_create_folder_message": "You do not have permission to create a folder",
+  "can_not_create_file_message": "You do not have permission to create a page",
+  "can_not_find_organization_message": "Can not find organization",
+  "error_creating_file_message": "Error creating page",
+  "error_creating_folder_message": "Error creating folder",
+  "document_explorer_title": "Document Explorer"
+
 }

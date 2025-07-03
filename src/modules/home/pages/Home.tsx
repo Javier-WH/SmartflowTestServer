@@ -19,6 +19,7 @@ import type { Folder } from '@/modules/folderNavigator/types/folder';
 import { message } from 'antd';
 import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
 import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
+import { useTranslation } from 'react-i18next';
 
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -30,10 +31,11 @@ export default function Home() {
     const { getRootContent } = useFolderManager();
     const { organization_id: slug } = useParams();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const handleCreateFolder = () => {
         if (!memberRoll?.write) {
-            message.error('You do not have permission to create a folder');
+            message.error(t('can_not_create_folder_message'));
             return;
         }
         const newFolder: Folder = {
@@ -45,22 +47,22 @@ export default function Home() {
 
     const handleCreatePage = () => {
         if (!memberRoll?.write) {
-            message.error('You do not have permission to create a page');
+            message.error(t('can_not_create_file_message'));
             return;
         }
         if (!slug) {
-            message.error('Cant find organization');
+            message.error(t('can_not_find_organization_message'));
             return;
         }
         createFile('untitled', null, slug).then(res => {
             if (res.error) {
-                message.error('Error creating page');
+                message.error(t('error_creating_file_message'));
                 return;
             }
 
             getRootContent(slug).then(res => {
                 if (res.error) {
-                    message.error('Error creating page');
+                    message.error(t('error_creating_file_message'));
                     return;
                 }
 
@@ -88,7 +90,7 @@ export default function Home() {
             >
                 <span className="flex gap-2 items-center font-medium text-black">
                     <IconFile className="text-primary" />
-                    Document Explorer
+                    {t('document_explorer_title')}
                 </span>
 
                 {isSidebarCollapsed ? (
