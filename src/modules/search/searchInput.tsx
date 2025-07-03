@@ -5,12 +5,14 @@ import { IoSearchSharp } from 'react-icons/io5';
 import useFilesManager from '../folderNavigator/hooks/useFileManager';
 import type { SearchBoxInterface } from './types/searchBox';
 import SearchBox from './searchBox/searchBox';
+import { useTranslation } from 'react-i18next';
 
 export default function SearchInput() {
     const [searchValue, setSearchValue] = useState('');
     const [searchResults, setSearchResults] = useState<SearchBoxInterface[]>([]);
     const { searchFiles } = useFilesManager();
     const { organization_id: slug } = useParams();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (searchValue.length === 0 || searchValue === '' || !slug) {
@@ -49,7 +51,7 @@ export default function SearchInput() {
                 startContent={<IoSearchSharp />}
                 value={searchValue}
                 onChange={e => setSearchValue(e.target.value)}
-                placeholder="Search..."
+                placeholder={t('search_placeholder')}
             />
             <SearchBox data={searchResults} word={searchValue} closeBox={closeBox} />
         </div>
