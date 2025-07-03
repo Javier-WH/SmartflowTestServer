@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 const SignIn = () => {
     const navigate = useNavigate();
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -37,7 +37,7 @@ const SignIn = () => {
         const password = e.currentTarget.password.value;
 
         if (!email || !password) {
-            setError('Por favor, rellene todos los campos');
+            setError(t('fill_all_fields_message'));
             return;
         }
 
@@ -53,7 +53,7 @@ const SignIn = () => {
             if (error instanceof Error) {
                 setError(error?.message);
             } else {
-                setError('Ocurrió un error inesperado');
+                setError(t('unexpected_error_message'));
             }
         } finally {
             setLoading(false);

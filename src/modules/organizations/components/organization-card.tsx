@@ -1,6 +1,6 @@
 import { type ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useTranslation } from 'react-i18next';
 import {
     CardBody,
     Card,
@@ -12,7 +12,6 @@ import {
     DropdownTrigger,
     Button,
     useDisclosure,
-    PressEvent,
 } from '@heroui/react';
 import {
     MoreOutlined,
@@ -39,7 +38,7 @@ interface OrganizationFormData {
 
 export default function OrganizationCard({ organization }: { organization: Organization }) {
     const navigate = useNavigate();
-
+    const { t } = useTranslation();
     // Modal states
     const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
     const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
@@ -102,12 +101,12 @@ export default function OrganizationCard({ organization }: { organization: Organ
         e.preventDefault();
 
         if (!formData.name.trim()) {
-            setFormError('Organization name is required');
+            setFormError(t('organization_name_required'));
             return;
         }
 
         if (!formData.id) {
-            setFormError('Organization ID is missing');
+            setFormError(t("organnization_id_required"));
             return;
         }
 
@@ -129,7 +128,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
             mutate();
             onEditModalClose();
         } catch (error) {
-            setFormError('An unexpected error occurred');
+            setFormError(t('unexpected_error_message'));
             console.error(error);
         } finally {
             setIsSubmitting(false);
@@ -141,14 +140,14 @@ export default function OrganizationCard({ organization }: { organization: Organ
         e.preventDefault();
 
         if (!inviteEmail.trim()) {
-            setInviteError('Email is required');
+            setInviteError(t('enter_email_message'));
             return;
         }
 
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(inviteEmail.trim())) {
-            setInviteError('Please enter a valid email address');
+            setInviteError(t('enter_valid_email_message'));
             return;
         }
 
@@ -171,7 +170,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
 
             // Show success toast or notification here if you have a notification system
         } catch (error) {
-            setInviteError('An unexpected error occurred');
+            setInviteError(t('unexpected_error_message'));
             console.error(error);
         } finally {
             setIsInviting(false);
@@ -196,7 +195,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
             mutate();
             onDeleteModalClose();
         } catch (error) {
-            setFormError('An unexpected error occurred');
+            setFormError(t('unexpected_error_message'));
             console.error(error);
         } finally {
             setIsSubmitting(false);
@@ -227,7 +226,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
             mutate();
             onLeaveModalClose();
         } catch (error) {
-            setFormError('An unexpected error occurred');
+            setFormError(t('unexpected_error_message'));
             console.error(error);
         } finally {
             setIsSubmitting(false);
@@ -261,12 +260,12 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                 <h3 className="text-xl font-medium">{organization.name}</h3>
                                 {organization.is_creator && (
                                     <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
-                                        Creator
+                                        {t('creator_label')}
                                     </span>
                                 )}
                                 {organization.is_member && !organization.is_creator && (
                                     <span className="text-xs bg-success/20 text-success px-2 py-1 rounded-full">
-                                        Member
+                                        {t('menber_label')}
                                     </span>
                                 )}
                             </div>
@@ -294,7 +293,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                             startContent={<UserAddOutlined />}
                                             onPress={handleInviteUsers}
                                         >
-                                            Invite Users
+                                            {t("invite_user_label")}
                                         </DropdownItem>
                                     )}
 
@@ -304,7 +303,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                             startContent={<EditOutlined />}
                                             onPress={() => handleEditOrganization(organization)}
                                         >
-                                            Edit
+                                            {t("edit_label")}
                                         </DropdownItem>
                                     )}
 
@@ -316,7 +315,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                             startContent={<DeleteOutlined />}
                                             onPress={handleDeleteOrganization}
                                         >
-                                            Delete
+                                            {t("delete_label")}
                                         </DropdownItem>
                                     )}
 
@@ -328,13 +327,13 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                             startContent={<LogoutOutlined />}
                                             onPress={handleLeaveOrganization}
                                         >
-                                            Leave Organization
+                                            {t("leave_organization_label")}
                                         </DropdownItem>
                                     )}
 
                                     {!organization.is_creator && !organization.is_member && (
                                         <DropdownItem key="no-actions-option" isDisabled>
-                                            No actions available
+                                            {t("no_actions_available_message")}
                                         </DropdownItem>
                                     )}
                                 </DropdownMenu>
@@ -349,7 +348,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                     )}
                 </CardBody>
                 <CardFooter className="bg-default-50 border-t-1 p-3">
-                    <p className="text-xs text-gray-500">Click to view organization</p>
+                    <p className="text-xs text-gray-500">{t("click_to_view_organization")}</p>
                 </CardFooter>
             </Card>
 

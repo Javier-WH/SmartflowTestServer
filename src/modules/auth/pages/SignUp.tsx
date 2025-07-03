@@ -1,14 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { type FormEvent, useState, useEffect } from 'react';
-
 import { Link, useNavigate } from 'react-router-dom';
-
 import AlertMessage from '../components/ErrorMessage';
-
 import { Card, CardBody } from '@heroui/react';
 import { Button, Input } from '@/components/ui';
 import { IconEyeOff, IconEye } from '@tabler/icons-react';
-
+import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/useAuth';
 
 const SignUp = () => {
@@ -19,7 +16,7 @@ const SignUp = () => {
     const [loading, setLoading] = useState(false);
     const [redirect, setRedirect] = useState<string | null>(null);
     const { token, signUp } = useAuth();
-
+    const { t } = useTranslation();
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
         const redirectParam = searchParams.get('redirect');
@@ -43,12 +40,12 @@ const SignUp = () => {
         const confirmPassword = e.currentTarget['confirm-password'].value;
 
         if (!name || !email || !password || !confirmPassword || !lastname) {
-            setError('Por favor, rellene todos los campos');
+            setError(t('fill_all_fields_message'));
             return;
         }
 
         if (password !== confirmPassword) {
-            setError('Las contraseñas no coinciden');
+            setError(t('passwrods_do_not_match_message'));
             return;
         }
 
@@ -61,7 +58,7 @@ const SignUp = () => {
             if (error instanceof Error) {
                 setError(error?.message);
             } else {
-                setError('Ocurrió un error inesperado');
+                setError(t('unexpected_error_message'));
             }
         } finally {
             setLoading(false);
@@ -86,22 +83,22 @@ const SignUp = () => {
         >
             <Card className="w-full max-w-md border-none" radius="sm">
                 <CardBody className="flex flex-col gap-5 p-8">
-                    <h1 className="font-bold text-2xl">Crea tu cuenta de Smartflo</h1>
+                    <h1 className="font-bold text-2xl">{t('create_account_title')}</h1>
 
                     <div>
-                        <label htmlFor="user-name">Nombre</label>
+                        <label htmlFor="user-name">{t('name_label')}</label>
                         <Input id="user-name" name="user-name" autoFocus />
                     </div>
                     <div>
-                        <label htmlFor="lastname">Apellido</label>
+                        <label htmlFor="lastname">{t('lastname_label')}</label>
                         <Input id="lastname" name="lastname" />
                     </div>
                     <div>
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">{t('email_label')}</label>
                         <Input id="email" name="email" />
                     </div>
                     <div>
-                        <label htmlFor="password">Contraseña</label>
+                        <label htmlFor="password">{t("password_label")}</label>
                         <Input
                             id="password"
                             name="password"
@@ -122,7 +119,7 @@ const SignUp = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="confirm-password">Confirmar contraseña</label>
+                        <label htmlFor="confirm-password">{t("confirm_password_label")}</label>
                         <Input
                             id="confirm-password"
                             name="confirm-password"
@@ -146,14 +143,14 @@ const SignUp = () => {
                     {error && <AlertMessage text={error} />}
 
                     <Button type="submit" isLoading={loading}>
-                        Registrarse
+                        {t('sign_up_button_label')}
                     </Button>
 
                     <div className="text-center">
                         <span>
-                            ¿Ya tienes una cuenta?{' '}
+                            {t('already_have_account_message')}{' '}
                             <Link to="/auth/signin" className="text-center text-primary underline">
-                                Inicia sesión
+                                {t("login_button")}
                             </Link>
                         </span>
                     </div>
