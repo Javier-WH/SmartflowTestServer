@@ -21,7 +21,7 @@ import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
-
+import { useTranslation } from 'react-i18next';
 Quill.register(CustomOrderedList, true);
 
 // this is our custom blot
@@ -46,7 +46,7 @@ Quill.register(Font, true);
 
 export default function TextEditor() {
     const { id } = useParams();
-
+    const { t } = useTranslation();
     const { setSelectedFileId, setChangleFileNameRequest, memberRoll } = useContext(MainContext) as MainContextValues;
 
     const [title, setTitle] = useState('');
@@ -482,7 +482,7 @@ export default function TextEditor() {
                     {/* </button> */}
                     {fileContent?.updated_at ? (
                         <span className="w-full text-gray-400">
-                            <span>Última actualización: </span>
+                            <span>{t('last_updated_label')}: </span>
                             {Intl.DateTimeFormat('es-ES', {
                                 dateStyle: 'medium',
                                 timeStyle: 'medium',
@@ -515,7 +515,7 @@ export default function TextEditor() {
                                 setReadOnly(false);
                                 quillRef.current?.setEditorContents(quillRef.current?.getEditor(), content);
                             } else {
-                                message.error('You do not have permission to edit this page');
+                                message.error(t('you_do_not_have_permission_to_edit_file_message'));
                             }
                         }}
                     >

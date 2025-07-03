@@ -11,6 +11,7 @@ import './folderContainer.css';
 import type { FolderData, FolderNavigatorContextValues } from '../types/folder';
 import useFilesManager from '../hooks/useFileManager';
 const pageType = import.meta.env.VITE_PAGE_TYPE;
+import { useTranslation } from 'react-i18next';
 
 export function FileComponent({ file }: { file: ContainerElement }) {
     const {
@@ -26,6 +27,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     const navigate = useNavigate();
     const { organization_id } = useParams();
     const [fileName, setFileName] = useState<string>(file.name);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (changleFileNameRequest?.fileId !== file.id) return;
@@ -53,7 +55,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
 
     const handleDelete = async () => {
         if (!memberRoll.delete) {
-            message.error('You do not have permission to delete a file');
+            message.error(t('can_not_delete_file_message'));
             return;
         }
         const newFile: File = {
@@ -66,7 +68,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
 
     const handleMoveToRoot = async () => {
         if (!memberRoll.write) {
-            message.error('You do not have permission to move a file');
+            message.error(t('can_not_move_file_message'));
             return;
         }
         if (!file.id) return;
@@ -83,12 +85,12 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     const menu: MenuProps['items'] = [
         {
             key: '1',
-            label: <div style={{ textAlign: 'left' }}>Delete this file</div>,
+            label: <div style={{ textAlign: 'left' }}>{t('delete_file_label')}</div>,
             onClick: () => handleDelete(),
         },
         {
             key: '2',
-            label: <div style={{ textAlign: 'left' }}>Move this file to root</div>,
+            label: <div style={{ textAlign: 'left' }}>{t('move_to_root_label')}</div>,
             onClick: () => handleMoveToRoot(),
         },
     ];

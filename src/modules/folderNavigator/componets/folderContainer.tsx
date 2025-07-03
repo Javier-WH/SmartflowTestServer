@@ -13,6 +13,7 @@ import { FolderComponent } from './folderComponent';
 import { FileComponent } from './fileComponent';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import type { FolderNavigatorContextValues } from '../types/folder';
+import { useTranslation } from 'react-i18next';
 
 export default function FolderContainer({ folderId, depth = 0 }: { folderId: string | null, depth?: number }) {
     const { organization_id: slug } = useParams();
@@ -23,7 +24,7 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
     const navigate = useNavigate();
     const { getFolderContent, getRootContent } = useFolderManager();
     const [content, setContent] = useState<ContainerElement[] | null>([]);
-
+    const { t } = useTranslation();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
@@ -124,22 +125,22 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
     
     const handleCreatePage = () => {
         if (!memberRoll?.write) {
-            message.error('You do not have permission to create a page');
+            message.error(t('can_not_create_file_message'));
             return;
         }
         if (!slug) {
-            message.error('Cant find organization');
+            message.error(t('can_not_find_organization_message'));
             return;
         }
         createFile('untitled', null, slug).then(res => {
             if (res.error) {
-                message.error('Error creating page');
+                message.error(t('error_creating_file_message'));
                 return;
             }
 
             getRootContent(slug).then(res => {
                 if (res.error) {
-                    message.error('Error creating page');
+                    message.error(t('error_creating_file_message'));
                     return;
                 }
 
@@ -156,10 +157,10 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
     if (content?.length === 0 && folderId === null) {
         return (
             <div className="flex flex-col gap-2 justify-center items-center w-full h-full ">
-                No documents found
+                {t('no_documents_found_message')}
                 <Button variant="light" onClick={handleCreatePage}>
                     <IconFilePlus />
-                    Create your first document
+                    {t('create_your_first_document_message')}
                 </Button>
             </div>
         );

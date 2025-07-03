@@ -4,8 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Folder, FolderResquest, FolderData } from '../types/folder';
 import useFolderManager from '../hooks/useFolderManager';
+import { useTranslation } from 'react-i18next';
 import './createOrUpdateFolderModal.css';
-
 
 export default function CreateOrUpdateFolderModal({
     folder,
@@ -24,9 +24,7 @@ export default function CreateOrUpdateFolderModal({
     const [update, setUpdate] = useState(false);
     const inputRef = useRef<any | null>(null);
     const { organization_id: slug} = useParams();
-
-
-
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (folder) {
@@ -55,7 +53,7 @@ export default function CreateOrUpdateFolderModal({
 
     const handleOk = async () => {
         if (!slug){
-            message.error('Organization not found');
+            message.error(t('no_organizations_found_message'));
             return
         }
 
@@ -65,7 +63,7 @@ export default function CreateOrUpdateFolderModal({
                 const request = await updateRootFolder(containerName, folderId);
                 if (request.error) {
                     if (request.message === 'uroboros') {
-                        message.error('Already exists a folder with this name');
+                        message.error(t('already_exists_folder_message'));
                         return;
                     }
                     message.error(request.message);
@@ -79,7 +77,7 @@ export default function CreateOrUpdateFolderModal({
             const request = await updateFolder(containerName, containerID);
             if (request.error) {
                 if (request.message === 'uroboros') {
-                    message.error('Already exists a folder with this name');
+                    message.error(t('already_exists_folder_message'));
                     return;
                 }
                 message.error(request.message);
@@ -94,7 +92,7 @@ export default function CreateOrUpdateFolderModal({
         const request = await createFolder(containerName, containerID, slug ?? '');
         if (request.error) {
             if (request.message === 'uroboros') {
-                message.error('Already exists a folder with this name');
+                message.error(t('already_exists_folder_message'));
                 return;
             }
             message.error(request.message);
@@ -107,17 +105,17 @@ export default function CreateOrUpdateFolderModal({
 
     return (
         <Modal
-            title={folder?.name ? 'Rename Folder' : 'Create Folder'}
+            title={folder?.name ? t('rename_folder_label') : t('create_folder_label')}
             open={folder != null}
             onOk={handleOk}
             onCancel={handleCancel}
-            okText={folder?.name ? 'Rename' : 'Create'}
+            okText={folder?.name ? t('rename_label') : t('create_label')}
             className="createOrUpdateFolderModal"
             okButtonProps={{ disabled: containerName.length === 0 }}
         >
             <div>
                 <div>
-                    <label htmlFor="">Folder Name</label>
+                    <label htmlFor="">{t('name_label')}</label>
                     <Input ref={inputRef} value={containerName} onChange={e => setcontainerName(e.target.value)} />
                 </div>
             </div>

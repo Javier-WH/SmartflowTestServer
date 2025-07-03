@@ -1,6 +1,7 @@
 import type { ChangeEvent } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Textarea } from '@heroui/react';
 import { Button, Input } from '@/components/ui';
+import { useTranslation } from 'react-i18next';
 
 interface CreateOrganizationModalProps {
     isOpen: boolean;
@@ -24,16 +25,17 @@ export default function CreateOrganizationModal({
     isSubmitting,
     formError,
 }: CreateOrganizationModalProps) {
+    const { t } = useTranslation();
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent>
                 {onClose => (
                     <>
-                        <ModalHeader className="flex flex-col gap-1">Create New Organization</ModalHeader>
+                        <ModalHeader className="flex flex-col gap-1">{t("create_organization_title")}</ModalHeader>
                         <form onSubmit={handleSubmit}>
                             <ModalBody>
                                 <div>
-                                    <label htmlFor="name">Organization Name</label>
+                                    <label htmlFor="name">{t("organization_name_label")}</label>
                                     <Input
                                         id="name"
                                         name="name"
@@ -44,7 +46,7 @@ export default function CreateOrganizationModal({
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="description">Description</label>
+                                    <label htmlFor="description">{t("description_label")}</label>
                                     <Textarea
                                         id="description"
                                         name="description"
@@ -59,10 +61,10 @@ export default function CreateOrganizationModal({
                             </ModalBody>
                             <ModalFooter>
                                 <Button variant="bordered" onPress={onClose}>
-                                    Cancel
+                                    {t("cancel_label")}
                                 </Button>
                                 <Button type="submit" color="primary" isLoading={isSubmitting}>
-                                    Create
+                                    {t("create_label")}
                                 </Button>
                             </ModalFooter>
                         </form>

@@ -2,6 +2,7 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@herou
 import { Button, Input } from '@/components/ui';
 import { MailOutlined, UserAddOutlined } from '@ant-design/icons';
 import type { Organization } from '../types/organizations';
+import { useTranslation } from 'react-i18next';
 
 export interface InviteUserModalProps {
     isOpen: boolean;
@@ -24,18 +25,19 @@ export default function InviteUserModal({
     isInviting,
     inviteError,
 }: InviteUserModalProps) {
+    const { t } = useTranslation();
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent>
                 {onClose => (
                     <>
                         <ModalHeader className="flex flex-col gap-1">
-                            Invite User to {selectedOrganization?.name}
+                            {t('invite_user_title')}{selectedOrganization?.name}
                         </ModalHeader>
                         <form onSubmit={handleSubmit}>
                             <ModalBody>
                                 <div>
-                                    <label htmlFor="email">Email Address</label>
+                                    <label htmlFor="email"> {t('email_label')}</label>
                                     <Input
                                         id="email"
                                         placeholder="email@example.com"
@@ -51,7 +53,7 @@ export default function InviteUserModal({
                             </ModalBody>
                             <ModalFooter>
                                 <Button variant="bordered" onPress={onClose}>
-                                    Cancel
+                                    {t('cancel_label')}
                                 </Button>
                                 <Button
                                     type="submit"
@@ -59,7 +61,7 @@ export default function InviteUserModal({
                                     isLoading={isInviting}
                                     startContent={<UserAddOutlined />}
                                 >
-                                    Send Invitation
+                                    {t('send_button')}
                                 </Button>
                             </ModalFooter>
                         </form>
