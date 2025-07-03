@@ -7,9 +7,10 @@ import useAuth from '../auth/hooks/useAuth';
 import type { Organization, OrganizationFormData } from './types/organizations';
 import CreateOrganizationModal from './components/CreateOrganizationModal';
 import OrganizationCard from './components/organization-card';
-
+import { useTranslation } from 'react-i18next';
 
 export default function Organizations() {
+    const { t } = useTranslation();
     const { user } = useAuth();
     const { data: organizations, isLoading, error, createOrganization, mutate } = useOrganizations(user?.id);
     const [searchTerm, setSearchTerm] = useState('');
@@ -41,7 +42,7 @@ export default function Organizations() {
         e.preventDefault();
 
         if (!formData.name.trim()) {
-            setFormError('Organization name is required');
+            setFormError(t('organization_name_required_message'));
             return;
         }
 
@@ -50,7 +51,7 @@ export default function Organizations() {
 
         try {
             if (!user?.id) {
-                throw new Error('User not authenticated');
+                throw new Error(t('unauthenticated_message'));
             }
 
             const response = await createOrganization(
@@ -69,7 +70,7 @@ export default function Organizations() {
             mutate();
             onCreateModalClose();
         } catch (error) {
-            setFormError('An unexpected error occurred');
+            setFormError(t('unexpected_error_message'));
             console.error(error);
         } finally {
             setIsSubmitting(false);
@@ -106,7 +107,7 @@ export default function Organizations() {
     if (error) {
         return (
             <div className="flex flex-col justify-center items-center h-[calc(100vh-120px)]">
-                <p className="text-danger text-lg">Error loading organizations</p>
+                <p className="text-danger text-lg">{t('error_loading_organizations')}</p>
                 <Button color="primary" className="mt-4" onClick={() => window.location.reload()}>
                     Try Again
                 </Button>
@@ -118,15 +119,15 @@ export default function Organizations() {
         <div className="overflow-y-auto h-full p-4 lg:p-6">
             <section className="pb-8 max-w-7xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-2xl font-semibold">Your Organizations</h1>
+                    <h1 className="text-2xl font-semibold">{t("your_organizations_title")}</h1>
                     <Button color="primary" startContent={<PlusOutlined />} onClick={handleCreateOrganization}>
-                        Create Organization
+                        {t("create_organization_button")}
                     </Button>
                 </div>
 
                 <div className="mb-6 max-w-md">
                     <Input
-                        placeholder="Search organizations..."
+                        placeholder={t("search_organizations_placeholder")}
                         value={searchTerm}
                         type="search"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
@@ -141,15 +142,15 @@ export default function Organizations() {
                     <div className="flex flex-col items-center justify-center py-16 px-4 border-2 border-dashed rounded-lg">
                         <TeamOutlined style={{ fontSize: '48px', color: '#888' }} />
                         <p className="mt-4 text-lg text-gray-600">
-                            {searchTerm ? 'No organizations found matching your search' : 'No organizations found'}
+                            {searchTerm ? t("no_organization_matched_message") : t("no_organizations_found_message")}
                         </p>
                         {searchTerm ? (
                             <Button color="primary" variant="light" onClick={() => setSearchTerm('')} className="mt-2">
-                                Clear Search
+                                {t("clear_search_button")}
                             </Button>
                         ) : (
                             <Button color="primary" className="mt-4" onClick={handleCreateOrganization}>
-                                Create Your First Organization
+                                {t("create_your_first_organization_message")}
                             </Button>
                         )}
                     </div>

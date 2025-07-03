@@ -1,5 +1,6 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
 import type { Organization } from '../types/organizations';
+import { useTranslation } from 'react-i18next';
 
 interface LeaveOrganizationModalProps {
     isOpen: boolean;
@@ -18,27 +19,28 @@ export default function LeaveOrganizationModal({
     isSubmitting,
     formError,
 }: LeaveOrganizationModalProps) {
+    const { t } = useTranslation();
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent>
                 {onClose => (
                     <>
-                        <ModalHeader className="flex flex-col gap-1">Leave Organization</ModalHeader>
+                        <ModalHeader className="flex flex-col gap-1">{t("leave_organization_title")}</ModalHeader>
                         <ModalBody>
                             <p>
-                                Are you sure you want to leave <strong>{selectedOrganization?.name}</strong>?
+                                {t("leave_organization_message")}<strong>{selectedOrganization?.name}</strong>?
                             </p>
                             <p className="text-sm text-gray-500 mt-2">
-                                You will need to be invited again to rejoin this organization.
+                                {t("need_to_be_invited_again_message")}
                             </p>
                             {formError && <p className="text-danger text-sm mt-2">{formError}</p>}
                         </ModalBody>
                         <ModalFooter>
                             <Button variant="flat" onPress={onClose}>
-                                Cancel
+                                {t("cancel_label")}
                             </Button>
                             <Button color="warning" onPress={handleLeaveConfirm} isLoading={isSubmitting}>
-                                Leave
+                                {t("leave_label")}
                             </Button>
                         </ModalFooter>
                     </>
