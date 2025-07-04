@@ -11,7 +11,7 @@ import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.
 import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
-//import './components/guidedCheckList/react_guidedCheckList.tsx';
+import { getParentFoldersForFile  } from '../../utils/pageUtils.ts';
 import { useDebouncedCallback } from 'use-debounce';
 import { Button, Textarea, cn } from '@heroui/react';
 import { Spinner } from '@heroui/react';
@@ -47,7 +47,7 @@ Quill.register(Font, true);
 export default function TextEditor() {
     const { id } = useParams();
     const { t } = useTranslation();
-    const { setSelectedFileId, setChangleFileNameRequest, memberRoll } = useContext(MainContext) as MainContextValues;
+    const { setSelectedFileId, setChangleFileNameRequest, memberRoll, setParentFolders } = useContext(MainContext) as MainContextValues;
 
     const [title, setTitle] = useState('');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -275,11 +275,18 @@ export default function TextEditor() {
     };
 
     // set selected file when file is selected
-
     useEffect(() => {
-        if (!id) return;
+        if (!id || !fileContent) return;
         setSelectedFileId(id);
-    }, [id]);
+
+        // get the file route
+        const { name } = fileContent;
+        const parentFolders = getParentFoldersForFile(id);
+        const fileRoute = ('/' + parentFolders.join('/') + '/' + name).replace(/\/+/g, '/');
+        setParentFolders(fileRoute);
+    }, [id, fileContent]);
+
+
 
     useEffect(() => {
         if (quillRef.current) quillRef.current.focus();
