@@ -51,6 +51,8 @@
   "already_exists_folder_message": "Ya existe una carpeta con este nombre",
   "type_delete_to_confirm_message": "Escribe 'DELETE' para confirmar",
   "are_you_sure_you_want_to_delete_message": "¿Estás seguro de que quieres eliminar?",
+  "give_your_page_a_title_message": "Dale un título a tu página",
+  "write_something_here_placeholder": "Escribe algo aquí...",
   "reset_password_description": "Te enviaremos un correo electrónico con un enlace para restablecer tu contraseña.",
   "login_button": "Iniciar Sesión",
   "logout_button": "Cerrar Sesión",
