@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Modal, Input, message } from 'antd';
-import { useEffect, useState, useRef } from 'react';
+import { Modal, message } from 'antd';
+import { useEffect, useRef } from 'react';
 import { FolderData, FolderResquest } from '../types/folder';
 import { File } from '../types/file';
 import useFilesManager from '../hooks/useFileManager';
-import './createOrUpdateFolderModal.css';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import './createOrUpdateFolderModal.css';
 export default function DeleteFolderModal({
     file,
     setFile,
@@ -20,12 +21,12 @@ export default function DeleteFolderModal({
     setFileCountUpdateRequest: (opt: boolean) => void;
 }) {
     const { deleteFile } = useFilesManager();
-    const [deleteText, setDeleteText] = useState('');
     const inputRef = useRef<any | null>(null);
+    const { organization_id } = useParams();
+    const navigate = useNavigate();
     const { t } = useTranslation();
 
     useEffect(() => {
-        setDeleteText('');
         setTimeout(() => {
             inputRef.current?.focus();   
         }, 100);
@@ -47,6 +48,8 @@ export default function DeleteFolderModal({
         setUpdateFolderRequest(gruppedByContainer);
         setFileCountUpdateRequest(true);
         setFile(null);
+        // Redirect to home page after deletion
+        navigate(`/${organization_id}/home`);
     };
 
     return (
@@ -58,12 +61,11 @@ export default function DeleteFolderModal({
             okText={'Delete'}
             cancelText={t('cancel_label')}
             className="createOrUpdateFolderModal"
-            okButtonProps={{ disabled: deleteText.toLocaleLowerCase() !== 'delete', danger: true }}
+            okButtonProps={{danger: true }}
         >
             <div>
                 <div>
-                    <label htmlFor="">{t('type_delete_to_confirm_message')}</label>
-                    <Input ref={inputRef} value={deleteText} onChange={e => setDeleteText(e.target.value)} />
+                    <label htmlFor="">{t('are_you_sure_you_want_to_delete_message')}</label>
                 </div>
             </div>
         </Modal>

@@ -11,17 +11,17 @@ import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.
 import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
-import './components/guidedCheckList/react_guidedCheckList.tsx';
+//import './components/guidedCheckList/react_guidedCheckList.tsx';
 import { useDebouncedCallback } from 'use-debounce';
 import { Button, Textarea, cn } from '@heroui/react';
 import { Spinner } from '@heroui/react';
-import 'react-quill/dist/quill.snow.css';
-import './textEditor.css';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
 import { useTranslation } from 'react-i18next';
+import 'react-quill/dist/quill.snow.css';
+import './textEditor.css';
 Quill.register(CustomOrderedList, true);
 
 // this is our custom blot
@@ -519,7 +519,7 @@ export default function TextEditor() {
                             }
                         }}
                     >
-                        Editar
+                        {t('edit_label')}
                     </Button>
 
                     <div id="toolbar" className="hidden" />

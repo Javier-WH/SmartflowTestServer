@@ -150,7 +150,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                 const initialTitle = title || '';
                 const initialItems = items ? JSON.parse(items) : [createNewItem()];
 
-                setInternalTitle(initialTitle);
+                setInternalTitle(initialTitle === 'untitled'? '' : initialTitle);
                 setList(
                     initialItems.map((item: ListItem, index: number) => ({
                         ...item,
