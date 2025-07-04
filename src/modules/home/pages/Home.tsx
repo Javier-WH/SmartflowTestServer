@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain } = useContext(
+    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, } = useContext(
         MainContext,
     ) as MainContextValues;
     const { createFile } = useFilesManager();
@@ -33,6 +33,7 @@ export default function Home() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
+ 
     const handleCreateFolder = () => {
         if (!memberRoll?.write) {
             message.error(t('can_not_create_folder_message'));

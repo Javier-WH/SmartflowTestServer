@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal, message } from 'antd';
-import { useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { FolderData, FolderResquest } from '../types/folder';
 import { File } from '../types/file';
 import useFilesManager from '../hooks/useFileManager';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { MainContext, MainContextValues } from '@/modules/mainContext';
 import './createOrUpdateFolderModal.css';
 export default function DeleteFolderModal({
     file,
@@ -20,6 +21,7 @@ export default function DeleteFolderModal({
     groupDataByContainer: (request: { data: FolderData[] }) => FolderResquest;
     setFileCountUpdateRequest: (opt: boolean) => void;
 }) {
+    const { setParentFolders} = useContext(MainContext) as MainContextValues;
     const { deleteFile } = useFilesManager();
     const inputRef = useRef<any | null>(null);
     const { organization_id } = useParams();
@@ -49,6 +51,7 @@ export default function DeleteFolderModal({
         setFileCountUpdateRequest(true);
         setFile(null);
         // Redirect to home page after deletion
+        setParentFolders('');
         navigate(`/${organization_id}/home`);
     };
 
