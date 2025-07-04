@@ -19,6 +19,8 @@ export interface MainContextValues {
   setSelectedFileId: React.Dispatch<React.SetStateAction<string | null>>
   changleFileNameRequest: {fileId: string, fileName: string} | null,
   setChangleFileNameRequest: React.Dispatch<React.SetStateAction<{fileId: string, fileName: string} | null>>
+  parentFolders: string, 
+  setParentFolders: React.Dispatch<React.SetStateAction<string>>
 }
 
 export const MainContext = createContext<MainContextValues | null>(null);
@@ -35,7 +37,10 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
   const { memberRoll } = useRoll({userId: user?.id ?? '', organizationId: organizationId ?? ''});
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
   const [changleFileNameRequest, setChangleFileNameRequest] = useState<{fileId: string, fileName: string} | null>(null);
+  const [parentFolders, setParentFolders] = useState<string>('');
 
+
+  
 
   //get organization name
   useEffect(() => {
@@ -65,7 +70,9 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     selectedFileId, 
     setSelectedFileId,
     changleFileNameRequest, 
-    setChangleFileNameRequest
+    setChangleFileNameRequest,
+    parentFolders, 
+    setParentFolders
   }
 
   return (
