@@ -99,6 +99,8 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
                 <div
+                    key={file.id}
+                    id={file.id}
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => handleClick(file.id)}
                     className={`file hover:bg-primary hover:text-white p-2 rounded-lg ${selectedFileId === file.id ? 'bg-primary text-white' : ''}`}

@@ -11,17 +11,17 @@ import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.
 import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
-import './components/guidedCheckList/react_guidedCheckList.tsx';
+import { getParentFoldersForFile  } from '../../utils/pageUtils.ts';
 import { useDebouncedCallback } from 'use-debounce';
 import { Button, Textarea, cn } from '@heroui/react';
 import { Spinner } from '@heroui/react';
-import 'react-quill/dist/quill.snow.css';
-import './textEditor.css';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
 import { useTranslation } from 'react-i18next';
+import 'react-quill/dist/quill.snow.css';
+import './textEditor.css';
 Quill.register(CustomOrderedList, true);
 
 // this is our custom blot
@@ -47,7 +47,7 @@ Quill.register(Font, true);
 export default function TextEditor() {
     const { id } = useParams();
     const { t } = useTranslation();
-    const { setSelectedFileId, setChangleFileNameRequest, memberRoll } = useContext(MainContext) as MainContextValues;
+    const { setSelectedFileId, setChangleFileNameRequest, memberRoll, setParentFolders } = useContext(MainContext) as MainContextValues;
 
     const [title, setTitle] = useState('');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -275,11 +275,18 @@ export default function TextEditor() {
     };
 
     // set selected file when file is selected
-
     useEffect(() => {
-        if (!id) return;
+        if (!id || !fileContent) return;
         setSelectedFileId(id);
-    }, [id]);
+
+        // get the file route
+        const { name } = fileContent;
+        const parentFolders = getParentFoldersForFile(id);
+        const fileRoute = ('/' + parentFolders.join('/') + '/' + name).replace(/\/+/g, '/');
+        setParentFolders(fileRoute);
+    }, [id, fileContent]);
+
+
 
     useEffect(() => {
         if (quillRef.current) quillRef.current.focus();
@@ -288,7 +295,7 @@ export default function TextEditor() {
     useEffect(() => {
         if (fileContent && !isInitialContentLoaded) {
             setContent(fileContent.content ?? '');
-            setTitle(fileContent.name ?? '');
+            setTitle(fileContent?.name === "untitled" ? '' : fileContent?.name ?? '');
             currentFileId.current = id;
             setIsInitialContentLoaded(true);
         }
@@ -464,7 +471,7 @@ export default function TextEditor() {
                             handleContentOrTitleChange({ newTitle: e.target.value });
                             setChangleFileNameRequest({ fileId: id, fileName: e.target.value });
                         }}
-                        placeholder="Give your page a title"
+                        placeholder={t('give_your_page_a_title_message')}
                         onKeyDown={handleTitleKeyDown}
                         minRows={1}
                         maxRows={4}
@@ -519,7 +526,7 @@ export default function TextEditor() {
                             }
                         }}
                     >
-                        Editar
+                        {t('edit_label')}
                     </Button>
 
                     <div id="toolbar" className="hidden" />
@@ -548,6 +555,7 @@ export default function TextEditor() {
                         formats={options.formats}
                         onChangeSelection={handleChangeSelection}
                         className="w-full h-full pr-12 lg:pr-0"
+                        placeholder={t('write_something_here_placeholder')}
                     />
 
                     <Image
