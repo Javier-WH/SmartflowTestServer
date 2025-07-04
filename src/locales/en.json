@@ -51,6 +51,8 @@
   "already_exists_folder_message": "A folder with this name already exists",
   "type_delete_to_confirm_message": "Type 'DELETE' to confirm",
   "are_you_sure_you_want_to_delete_message": "Are you sure you want to delete?",
+  "give_your_page_a_title_message": "Give your page a title",
+  "write_something_here_placeholder": "Write something here...",
   "reset_password_description": "We will send you an email with a link to reset your password.",
   "login_button": "Login",
   "logout_button": "Logout",

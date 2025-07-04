@@ -288,7 +288,7 @@ export default function TextEditor() {
     useEffect(() => {
         if (fileContent && !isInitialContentLoaded) {
             setContent(fileContent.content ?? '');
-            setTitle(fileContent.name ?? '');
+            setTitle(fileContent?.name === "untitled" ? '' : fileContent?.name ?? '');
             currentFileId.current = id;
             setIsInitialContentLoaded(true);
         }
@@ -464,7 +464,7 @@ export default function TextEditor() {
                             handleContentOrTitleChange({ newTitle: e.target.value });
                             setChangleFileNameRequest({ fileId: id, fileName: e.target.value });
                         }}
-                        placeholder="Give your page a title"
+                        placeholder={t('give_your_page_a_title_message')}
                         onKeyDown={handleTitleKeyDown}
                         minRows={1}
                         maxRows={4}
@@ -548,6 +548,7 @@ export default function TextEditor() {
                         formats={options.formats}
                         onChangeSelection={handleChangeSelection}
                         className="w-full h-full pr-12 lg:pr-0"
+                        placeholder={t('write_something_here_placeholder')}
                     />
 
                     <Image
