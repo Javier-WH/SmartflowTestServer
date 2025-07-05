@@ -278,9 +278,9 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                     <Button
                                         isIconOnly
                                         variant="light"
-                                        className="text-default-400"
+                                        className="text-default-900 scale-120"
                                         radius="full"
-                                        size="sm"
+                                        size="lg"
                                         onClick={e => e.stopPropagation()}
                                     >
                                         <MoreOutlined />
