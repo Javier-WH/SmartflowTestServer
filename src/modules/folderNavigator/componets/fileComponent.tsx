@@ -111,6 +111,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                     <span className="truncate max-h-[50px] w-full" title={fileName}>
                         {fileName}
                     </span>
+                  
                 </div>
             </Dropdown>
         </div>
