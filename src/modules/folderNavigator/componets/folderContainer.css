@@ -12,7 +12,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 250px;
+    width: calc(100% - 145px);
     pointer-events: none;
 }
 

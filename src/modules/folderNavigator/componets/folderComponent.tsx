@@ -254,8 +254,9 @@ export function FolderComponent({
                         width={30}
                     />
                     <span className="folder-name">{folder.name}</span>
+
                     <div className="folder-count-container">
-                        <span className="folder-count">{`${filesCount} ${filesCount === '1' ? t('page_label') : t('pages_label') } `}</span>
+                        <span className="folder-count">{`${filesCount} ${filesCount === '1' ? t('page_label') : t('pages_label')} `}</span>
                         <MdFolder />
                     </div>
                 </div>

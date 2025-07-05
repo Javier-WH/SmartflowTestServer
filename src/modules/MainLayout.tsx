@@ -20,8 +20,8 @@ function Header() {
             <h1 className="max-md:hidden md:block font-[300] text-[40px] tracking-[0.3rem] cursor-pointer" onClick={() => {setParentFolders(''); navigate('/organizations')}}>
                 <span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO
             </h1>
-            <span className="text-primary text-[18px] text-left min-w-[200px] overflow-x-auto whitespace-nowrap">
-                <span className="font-bold">
+            <span className="text-primary text-[18px] text-left min-w-[200px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
+                <span className="font-bold text-[20px]">
                     {`${localStorage.getItem("OrgName") || ""}`}
                 </span>
                 {`${parentFolders}`}
