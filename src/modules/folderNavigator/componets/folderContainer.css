@@ -59,7 +59,6 @@
 
 .folder-container {
     position: relative;
-
 }
 
 .folder-container::before {
@@ -85,9 +84,9 @@
 .folder-container:last-child::after {
     position: absolute;
     content: " ";
-    border-left: 2px solid #E5E7EB;
+    border-left: 2px solid #E5E7EB; 
     top: 21px;
-    bottom: -30px;
+    bottom: -90px;
     left: -10px;
 }
 
