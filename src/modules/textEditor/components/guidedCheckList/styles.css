@@ -25,6 +25,7 @@
     font-size: 1.2rem !important;
     margin-bottom: 16px;
 }
+
 .title-input:focus {
     outline: none !important;
     border: none !important;
@@ -35,6 +36,7 @@
     width: 100%;
     background-color: white;
 }
+
 /*input title*/
 .ant-collapse-header .ant-input {
     background-color: transparent;
@@ -63,6 +65,7 @@
     font-size: 18px;
     color: gray;
 }
+
 /**/
 .item-index {
     background: hsla(209, 23%, 60%, 70%);
@@ -74,6 +77,26 @@
     justify-content: center;
     border-radius: 50%;
     margin-right: 8px;
+    position: relative;
+}
+
+.item-index:hover::before {
+    content: "";
+    background-image: url('./trash.svg');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    scale: 1.2;
 }
 
 .collapse-next-button {
@@ -100,14 +123,14 @@
 /**/
 
 /* Eliminar TODOS los números de las listas */
- /*.collapse-editor .ql-editor ol {
+/*.collapse-editor .ql-editor ol {
     list-style-type: none !important;
     counter-reset: none !important;
     padding-left: 1.5em;
 } */
 
- /*Eliminar pseudo-elementos numéricos generados por Quill */
- /*.collapse-editor .ql-editor li::before {
+/*Eliminar pseudo-elementos numéricos generados por Quill */
+/*.collapse-editor .ql-editor li::before {
     content: none !important;
 } */
 
@@ -150,7 +173,7 @@
 .collapse-editor .ql-editor ol[data-start]>li::before {
     content: counter(quill-list-counter) ". ";
     position: absolute;
-   
+
     width: 1.5em;
     text-align: right;
 }

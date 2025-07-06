@@ -41,6 +41,10 @@ interface ItemProps {
 class Item extends React.Component<ItemProps> {
     render() {
         const { item, dragHandleProps, commonProps } = this.props;
+        const handleClickIndex = (e: React.MouseEvent) => {
+            e.stopPropagation();
+            e.stopPropagation(); commonProps.onDeleteItem(item.id);
+        };
 
         return (
             <div id={item.id} className="disable-select" style={{ display: 'flex' }} contentEditable={false}>
@@ -64,7 +68,7 @@ class Item extends React.Component<ItemProps> {
                             key: item.id,
                             label: (
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <span className="item-index">{item.index + 1}</span>
+                                    <span className="item-index" onClick={handleClickIndex}>{item.index + 1}</span>
                                     <Input
                                         readOnly={commonProps.readonly}
                                         placeholder={`What's the ${item.index === 0 ? 'first' : 'next'} step?`}
