@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import ResizeModule from '@botom/quill-resize-module';
@@ -91,10 +91,70 @@ export default function Guidance({
         Quill.register(CustomVideo, true);
         Quill.register(CustomOrderedListContainerGuidance, true);
     }, []);
+    // **Nueva función para insertar la imagen en Quill**
+    const insertImageIntoQuill = useCallback((imageUrl: string) => {
+        if (editorRef.current) {
+            const editor = editorRef.current;
+            const range = editor.getSelection(true); // Obtiene la posición actual del cursor
+            editor.insertEmbed(range.index, 'image', imageUrl, 'user');
+            editor.setSelection(range.index + 1); // Mueve el cursor después de la imagen
+        }
+    }, []);
 
-    const handlePaste = (e: ClipboardEvent) => {
+
+    const handlePaste = useCallback((event: ClipboardEvent) => {
+        event.stopPropagation(); // Previene el comportamiento por defecto de Quill para el pegado.
+        const items = event.clipboardData?.items;
+        if (items) {
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    if (file) {
+                        // Aquí deberías tener tu lógica para subir la imagen a un servidor
+                        // y obtener la URL. Para este ejemplo, leeremos el archivo como Data URL.
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const imageUrl = e.target?.result as string;
+                            insertImageIntoQuill(imageUrl);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        }
+    }, [insertImageIntoQuill]);
+
+   /* const handlePaste = (e: ClipboardEvent) => {
         e.stopPropagation();
-    };
+    };*/
+
+    const handleDragOver = useCallback((event: DragEvent) => {
+        event.preventDefault(); // Necesario para permitir el 'drop'
+        event.stopPropagation(); // Importante para evitar que Quill maneje el dragover
+    }, []);
+
+    const handleDrop = useCallback((event: DragEvent) => {
+        event.preventDefault(); // Previene el comportamiento por defecto (abrir la imagen en una nueva pestaña)
+        event.stopPropagation(); // Importante para evitar que Quill maneje el drop
+
+        const items = event.dataTransfer?.items;
+        if (items) {
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].kind === 'file' && items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    if (file) {
+                        // Aquí la misma lógica para subir la imagen y obtener la URL
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const imageUrl = e.target?.result as string;
+                            insertImageIntoQuill(imageUrl);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        }
+    }, [insertImageIntoQuill]);
 
     useEffect(() => {
         const maintolbar = document.getElementById("toolbar")
@@ -151,7 +211,10 @@ export default function Guidance({
 
             const editorRoot = editorRef.current.root;
 
-            editorRoot.addEventListener('paste', handlePaste);
+            
+            //editorRoot.addEventListener('paste', handlePaste);
+            editorRoot.addEventListener('dragover', handleDragOver);
+            editorRoot.addEventListener('drop', handleDrop);
 
             if (value) {
                 const delta = editorRef.current.clipboard.convert({ html: value });
@@ -242,6 +305,8 @@ export default function Guidance({
                 const editorRoot = editorRef.current?.root;
                 if (editorRoot) {
                     editorRoot.removeEventListener('paste', handlePaste);
+                    editorRoot.removeEventListener('dragover', handleDragOver);
+                    editorRoot.removeEventListener('drop', handleDrop)
                 }
                 if (editorRef.current) {
                     editorRef.current = null;
