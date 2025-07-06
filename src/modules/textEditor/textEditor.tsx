@@ -105,7 +105,7 @@ export default function TextEditor() {
                 ...(title ? { name: title } : {}),
             });
         },
-        500,
+        400,
         { leading: false, trailing: true },
     );
 
