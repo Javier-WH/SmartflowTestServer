@@ -79,6 +79,14 @@ export default function Guidance({
     const [currentContent, setCurrentContent] = useState(value);
     const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
     const [mainToolbarElement, setMainToolbarElement] = useState<HTMLElement | null>(null);
+    const [mainToolbarRect, setMainToolbarRect] = useState({
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 0,
+        width: 0,
+    });
     const [showToolbar, setShowToolbar] = useState(false);
 
     const debouncedSave = useDebouncedCallback((content: string) => {
@@ -339,6 +347,33 @@ export default function Guidance({
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+ 
+    useEffect(() => {
+        if (!mainToolbarElement) return;
+
+        const updateToolbarRect = () => {
+            const rect = mainToolbarElement.getBoundingClientRect();
+            setMainToolbarRect({
+                top: rect.top,
+                left: rect.left,
+                right: rect.right,
+                bottom: rect.bottom,
+                height: rect.height,
+                width: rect.width,
+            });
+        };
+
+        // Actualizar las dimensiones inicialmente
+        updateToolbarRect();
+
+        // Añadir el event listener para el redimensionamiento de la ventana
+        window.addEventListener('resize', updateToolbarRect);
+
+        // Limpiar el event listener cuando el componente se desmonte
+        return () => {
+            window.removeEventListener('resize', updateToolbarRect);
+        };
+    }, [mainToolbarElement]);
 
 
     return (
@@ -350,8 +385,12 @@ export default function Guidance({
                         ref={toolbarRef}
                         style={{
                             position: 'fixed',
-                            top: mainToolbarElement?.getBoundingClientRect().top,
-                            left: mainToolbarElement?.getBoundingClientRect().left,
+                            top:mainToolbarRect.top,
+                            left:mainToolbarRect.left,
+                            right:mainToolbarRect.right,
+                            bottom:mainToolbarRect.bottom,
+                            height:mainToolbarRect.height,
+                            width:mainToolbarRect.width,
                             display: showToolbar ? 'block' : 'none',
                             zIndex: 10000,
                         }}

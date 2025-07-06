@@ -392,6 +392,7 @@ a {
 .action-button:hover img {
     filter: invert(1);
 }
+
 .action-button:hover > .ql-picker-label > svg > .ql-stroke {
     @apply !stroke-white
 }
@@ -403,6 +404,14 @@ a {
     @apply !stroke-white
 }
 
+.ant-collapse-content-box .action-button img {
+
+}
+.ant-collapse-content-box .action-button img {
+    padding: 0px !important;
+    margin: 0px !important;
+  
+}
 
 .ql-editor ol[data-start] {
     counter-reset: quill-list-counter;
