@@ -58,10 +58,10 @@ export default function CustomToolbar({
             <button className="ql-strike action-button"></button>
             <button className="ql-list action-button" value="ordered"></button>
             <button className="ql-list action-button" value="bullet"></button>
-            <button className="ql-list action-button" value="check"></button>
             <button className="ql-list action-button" value="alpha" title="Lista alfabética">
                 <img src={AlphaListIcon} alt="" />
             </button>
+            <button className="ql-list action-button" value="check"></button>
             <select className="ql-align action-button"></select>
             <select className="ql-color action-button"></select>
             <select className="ql-background action-button"></select>
