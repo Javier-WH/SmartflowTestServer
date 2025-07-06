@@ -177,3 +177,7 @@
     width: 1.5em;
     text-align: right;
 }
+
+.collapse-editor .ql-editor ol li[data-list="alpha"]:before {
+    content: counter(list-0, lower-alpha) '. ' !important;
+}
