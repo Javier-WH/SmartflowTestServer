@@ -385,13 +385,21 @@ a {
     @apply rounded-md hover:!bg-primary hover:!text-white
 }
 
-.action-button:hover .ql-stroke {
+.action-button:hover > svg > .ql-stroke {
+    @apply !stroke-white
+}
+
+.action-button:hover > .ql-picker-label > svg > .ql-stroke {
     @apply !stroke-white
 }
 
 .action-button:hover .ql-fill {
     @apply !fill-white
 }
+.ql-picker-item:hover .ql-stroke {
+    @apply !stroke-white
+}
+
 
 .ql-editor ol[data-start] {
     counter-reset: quill-list-counter;
