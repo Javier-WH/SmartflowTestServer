@@ -55,6 +55,11 @@ class CustomOrderedListContainerGuidance extends ListContainer {
       node.style.counterReset = `quill-list-counter ${value - 1}`;
     }
 
+    if (value === 'alpha') {
+      node.style.listStyleType = 'lower-alpha';
+      node.classList.add('ql-alpha-list');
+    }
+
     return node;
   }
 
@@ -75,6 +80,11 @@ class CustomOrderedListContainerGuidance extends ListContainer {
     // If the node is an ordered list, check for the 'data-start' attribute.
     if (tagName === CustomOrderedListContainerGuidance.ORDERED_TAG) {
       const start = domNode.getAttribute('data-start');
+
+      if (domNode.style.listStyleType === 'lower-alpha' ||
+        domNode.classList.contains('ql-alpha-list')) {
+        return'alpha'
+      }
       // If 'data-start' exists, return its parsed integer value.
       // Otherwise, return 'ordered' as the default format for an OL.
       return start ? parseInt(start, 10) : 'ordered';
