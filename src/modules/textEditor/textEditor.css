@@ -389,6 +389,9 @@ a {
     @apply !stroke-white
 }
 
+.action-button:hover img {
+    filter: invert(1);
+}
 .action-button:hover > .ql-picker-label > svg > .ql-stroke {
     @apply !stroke-white
 }
@@ -410,8 +413,10 @@ a {
 }
 
 .ql-editor ol[data-start] li::before {
-    content: counter(quill-list-counter) ". "; }
+    content: counter(quill-list-counter) ". "; 
+}
 
 
-        .ql-editor .ql-alpha-list li::before {
-            content: counter(list-0, lower-alpha) '. ';   }
+.ql-editor .ql-alpha-list li::before {
+content: counter(list-0, lower-alpha) '. ';   
+}
