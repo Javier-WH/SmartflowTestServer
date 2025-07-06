@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import './components/guidedCheckList/react_guidedCheckList.tsx';
-import { useEffect, useState, useRef, useContext } from 'react';
+import { useEffect, useState, useRef, useContext, useCallback } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import { useParams } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
@@ -389,6 +389,65 @@ export default function TextEditor() {
             };
         }
     }, []);
+
+    // add drag image logic
+    const handleDrop = useCallback((event) => {
+        event.preventDefault(); 
+
+        const items = event.dataTransfer.items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].kind === 'file' && items[i].type.indexOf('image') !== -1) {
+                const file = items[i].getAsFile();
+                if (file) {
+                    console.log('Imagen arrastrada:', file);
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const imageUrl = e.target.result;
+                        insertImageIntoQuill(imageUrl);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+    }, []);
+
+    // Función para manejar el 'dragover'
+    const handleDragOver = useCallback((event) => {
+        event.preventDefault(); 
+    }, []);
+
+    // Función para insertar la imagen en Quill
+    const insertImageIntoQuill = useCallback((imageUrl) => {
+        if (quillRef.current) {
+            const editor = quillRef.current.getEditor();
+            const range = editor.getSelection(true); 
+            editor.insertEmbed(range.index, 'image', imageUrl, 'user');
+            editor.setSelection(range.index + 1, 0); 
+        }
+    }, []);
+
+    useEffect(() => {
+        if (quillRef.current) {
+            const editor = quillRef.current.getEditor();
+            const container = editor.root;
+
+            // Evento de pegado
+            container.addEventListener('paste', handlePaste);
+
+            // Eventos de arrastre
+            container.addEventListener('dragover', handleDragOver);
+            container.addEventListener('drop', handleDrop);
+
+            return () => {
+                container.removeEventListener('paste', handlePaste);
+                container.removeEventListener('dragover', handleDragOver);
+                container.removeEventListener('drop', handleDrop);
+            };
+        }
+    }, [handlePaste, handleDragOver, handleDrop]);
+
+
+
 
     if (isLoading && !isInitialContentLoaded) {
         return (
