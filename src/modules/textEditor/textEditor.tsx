@@ -73,6 +73,7 @@ export default function TextEditor() {
             container: '#toolbar',
             handlers: {
                 'guided-checklist': insertGuidedCheckList,
+             
 
             },
         },

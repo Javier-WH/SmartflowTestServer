@@ -413,4 +413,5 @@ a {
     content: counter(quill-list-counter) ". "; }
 
 
-    
+        .ql-editor .ql-alpha-list li::before {
+            content: counter(list-0, lower-alpha) '. ';   }

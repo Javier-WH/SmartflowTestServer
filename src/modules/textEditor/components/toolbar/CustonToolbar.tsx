@@ -1,4 +1,5 @@
 import GuidedCheckListIcon from '../../assets/svg/addGuidedCheckList';
+import AlphaListIcon from '../../assets/svg/addAlpaList';
 
 export default function CustomToolbar({
     show = true,
@@ -58,6 +59,9 @@ export default function CustomToolbar({
             <button className="ql-list action-button" value="ordered"></button>
             <button className="ql-list action-button" value="bullet"></button>
             <button className="ql-list action-button" value="check"></button>
+            <button className="ql-list action-button" value="alpha" title="Lista alfabética">
+                <AlphaListIcon />
+            </button>
             <select className="ql-align action-button"></select>
             <select className="ql-color action-button"></select>
             <select className="ql-background action-button"></select>
