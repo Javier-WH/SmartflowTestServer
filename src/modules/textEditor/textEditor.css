@@ -429,3 +429,8 @@ a {
 .ql-editor .ql-alpha-list li::before {
 content: counter(list-0, lower-alpha) '. ';   
 }
+
+/*elimina el outline del editor de texto en navegadores como firefox y safari*/
+.ql-editor {
+    outline: none !important;
+}
