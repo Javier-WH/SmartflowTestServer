@@ -106,5 +106,6 @@
   "rename_folder_message": "Renombrar carpeta",
   "rename_file_message": "Renombrar página",
   "create_folder_label": "Crear Carpeta",
-  "unknown_error_message": "Ocurrió un error desconocido. Por favor, inténtalo de nuevo más tarde."
+  "unknown_error_message": "Ocurrió un error desconocido. Por favor, inténtalo de nuevo más tarde.",
+  "searching_message": "Buscando..."
 }

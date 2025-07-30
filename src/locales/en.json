@@ -106,5 +106,6 @@
   "rename_folder_message": "Rename folder",
   "rename_file_message": "Rename page",
   "create_folder_label": "Create Folder",
-  "unknown_error_message": "An unknown error occurred. Please try again later."
+  "unknown_error_message": "An unknown error occurred. Please try again later.",
+  "searching_message": "Searching..."
 }
