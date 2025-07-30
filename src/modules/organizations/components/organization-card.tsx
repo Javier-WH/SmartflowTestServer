@@ -70,6 +70,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
     // Handle card click to navigate to organization home
     const handleCardClick = (organizationSlug: string) => {
         localStorage.setItem('OrgName', organization.name || '');
+        localStorage.setItem('OrgId', organization.id || '');
         navigate(`/${organizationSlug}/home`);
     };
 
