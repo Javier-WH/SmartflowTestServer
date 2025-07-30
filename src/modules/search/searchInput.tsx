@@ -1,6 +1,5 @@
 import { Input } from '@/components/ui';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { IoSearchSharp } from 'react-icons/io5';
 import useFilesManager from '../folderNavigator/hooks/useFileManager';
 import type { SearchBoxInterface } from './types/searchBox';
@@ -11,16 +10,17 @@ export default function SearchInput() {
     const [searchValue, setSearchValue] = useState('');
     const [searchResults, setSearchResults] = useState<SearchBoxInterface[]>([]);
     const { searchFiles } = useFilesManager();
-    const { organization_id: slug } = useParams();
     const { t } = useTranslation();
 
     useEffect(() => {
-        if (searchValue.length === 0 || searchValue === '' || !slug) {
+        const orgId = localStorage.getItem('OrgId');
+        if (searchValue?.length === 0 || searchValue === '' || !orgId) {
             closeBox();
             return;
         }
+  
 
-        searchFiles(searchValue, slug)
+        searchFiles(searchValue, orgId)
             .then(res => setSearchResults(res.data))
             .catch(err => console.log(err));
 
