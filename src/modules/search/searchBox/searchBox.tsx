@@ -136,7 +136,7 @@ export default function SearchBox({
                 zIndex: 1000,
             }}
         >
-            {data.map(item => {
+            {data?.map(item => {
                 const htmlString = getSelectedText(word, item.content) || '';
 
                 return (
