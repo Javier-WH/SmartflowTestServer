@@ -102,6 +102,7 @@ export default function NavBar() {
         setNewFolderRequest(newFolder);
     };
 
+  
     return (
         <header className={`navbar-container ${inPage && 'navbar-page-size'}`}>
             <Dropdown menu={{ items: userMenu }} trigger={['click']}>
