@@ -99,7 +99,7 @@ export default function TextEditor() {
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id || !htmlContent) return;
-            const htmlContentWithImagesLinks = await processAndStoreImages(htmlContent);
+            const htmlContentWithImagesLinks = await processAndStoreImages(htmlContent, id);
           
             await mutate({
                 id,

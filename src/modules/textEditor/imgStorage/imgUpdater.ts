@@ -4,20 +4,23 @@ import { uploadImageToStorage } from "./imgStorage";
  * Procesa una cadena de HTML, sube las imágenes con 'data:' a un servidor
  * y reemplaza su atributo 'src' con la URL pública.
  * @param htmlString El contenido HTML completo de Quill.
+ * @param id El identificador de la organización.
  * @returns Una promesa que se resuelve con el HTML modificado.
  */
-export async function processAndStoreImages(htmlString: string): Promise<string> {
+export async function processAndStoreImages(htmlString: string, id: string): Promise<string> {
   // 1. Crea un contenedor temporal en memoria para analizar el HTML.
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = htmlString;
 
   // 2. Busca todas las etiquetas <img> en el HTML.
-  const images = tempDiv.querySelectorAll('img');
+  const images = tempDiv.querySelectorAll('img:not(guided-checklist *)');
+  //const images = tempDiv.querySelectorAll('img');
 
   // 3. Procesa cada imagen de forma asíncrona.
   const uploadPromises: Promise<void>[] = [];
 
-  images.forEach(img => {
+  images.forEach((img, index) => {
+    console.log(img)
     const src = img.getAttribute('src');
 
     // Verifica si el 'src' es una Data URL.
@@ -28,7 +31,7 @@ export async function processAndStoreImages(htmlString: string): Promise<string>
           const base64Data = src.split(';base64,')[1];
 
           // Sube la cadena Base64 directamente.
-          const publicLink = await uploadImageToStorage(base64Data);
+          const publicLink = await uploadImageToStorage(base64Data, id+index);
 
           // Reemplaza el src original con el nuevo enlace.
           img.setAttribute('src', publicLink);

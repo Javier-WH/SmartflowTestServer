@@ -9,6 +9,7 @@ import CustomImage from '../utils/CustonImageGuidance';
 import CustomVideo from '../utils/CustonVideoGuidance';
 import { useDebouncedCallback } from 'use-debounce';
 import CustomOrderedListContainerGuidance from '../blots/custonOrderedListGuidance';
+import { processAndStoreImages } from '../../imgStorage/imgUpdater';
 
 const fontSizeList = [
     '10px',
@@ -89,8 +90,9 @@ export default function Guidance({
     });
     const [showToolbar, setShowToolbar] = useState(false);
 
-    const debouncedSave = useDebouncedCallback((content: string) => {
-        saveData(id, content);
+    const debouncedSave = useDebouncedCallback(async(content: string) => {
+        const htmlContentWithImagesLinks = await processAndStoreImages(content, id);
+        saveData(id, htmlContentWithImagesLinks);
     }, 300);
 
     useEffect(() => {
@@ -118,7 +120,6 @@ export default function Guidance({
                 if (items[i].type.indexOf('image') !== -1) {
                     const file = items[i].getAsFile();
                     if (file) {
-                        // Aquí deberías tener tu lógica para subir la imagen a un servidor
                         // y obtener la URL. Para este ejemplo, leeremos el archivo como Data URL.
                         const reader = new FileReader();
                         reader.onload = (e) => {
