@@ -19,6 +19,7 @@ import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
+import { processAndStoreImages } from '../textEditor/imgStorage/imgUpdater';
 import { useTranslation } from 'react-i18next';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
@@ -97,11 +98,12 @@ export default function TextEditor() {
 
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
-            if (!id) return;
-
+            if (!id || !htmlContent) return;
+            const htmlContentWithImagesLinks = await processAndStoreImages(htmlContent);
+          
             await mutate({
                 id,
-                ...(htmlContent ? { content: htmlContent } : {}),
+                ...(htmlContentWithImagesLinks ? { content: htmlContentWithImagesLinks } : {}),
                 ...(title ? { name: title } : {}),
             });
         },
@@ -130,25 +132,20 @@ export default function TextEditor() {
         }
     };
 
-    const handleEditorChange = (value: string) => {
+    const handleEditorChange = async (value: string) => {
         setContent(value);
         if (readOnly) return;
         if (!isLoading && !isMutating && quillRef.current) {
             const editor = quillRef.current.getEditor();
             const htmlContent = editor.root.innerHTML;
-
             handleContentOrTitleChange({ newContent: htmlContent });
-            // setTimeout(() => {
-            //     quillContainerRef.current?.scroll({
-            //         top: quillContainerRef.current?.scrollTop,
-            //         behavior: 'instant',
-            //     });
-            // });
         }
     };
 
-    const handleContentOrTitleChange = ({ newContent, newTitle }: { newContent?: string; newTitle?: string }) => {
+    const handleContentOrTitleChange = async({ newContent, newTitle }: { newContent?: string; newTitle?: string }) => {
         let needsDebounce = false;
+
+      
 
         if (newContent !== undefined && newContent !== content) {
             setContent(newContent);
