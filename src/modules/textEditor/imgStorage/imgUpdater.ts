@@ -20,7 +20,6 @@ export async function processAndStoreImages(htmlString: string, id: string): Pro
   const uploadPromises: Promise<void>[] = [];
 
   images.forEach((img, index) => {
-    console.log(img)
     const src = img.getAttribute('src');
 
     // Verifica si el 'src' es una Data URL.

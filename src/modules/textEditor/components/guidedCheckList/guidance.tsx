@@ -72,6 +72,7 @@ export default function Guidance({
     readonly: boolean;
 }) {
 
+    const selectedImageIndexRef = useRef(-1)
     const editorRef = useRef<Quill | null>(null);
     const quillRef = useRef<HTMLDivElement | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -90,7 +91,7 @@ export default function Guidance({
     });
     const [showToolbar, setShowToolbar] = useState(false);
 
-    const debouncedSave = useDebouncedCallback(async(content: string) => {
+    const debouncedSave = useDebouncedCallback(async (content: string) => {
         const htmlContentWithImagesLinks = await processAndStoreImages(content, id);
         saveData(id, htmlContentWithImagesLinks);
     }, 300);
@@ -133,9 +134,9 @@ export default function Guidance({
         }
     }, [insertImageIntoQuill]);
 
-   /* const handlePaste = (e: ClipboardEvent) => {
-        e.stopPropagation();
-    };*/
+    /* const handlePaste = (e: ClipboardEvent) => {
+         e.stopPropagation();
+     };*/
 
     const handleDragOver = useCallback((event: DragEvent) => {
         event.preventDefault(); // Necesario para permitir el 'drop'
@@ -217,10 +218,10 @@ export default function Guidance({
 
             // create the editor
             editorRef.current = new Quill(quillRef.current, options);
-
+            const editor = editorRef.current;
             const editorRoot = editorRef.current.root;
 
-            
+
             //editorRoot.addEventListener('paste', handlePaste);
             editorRoot.addEventListener('dragover', handleDragOver);
             editorRoot.addEventListener('drop', handleDrop);
@@ -238,12 +239,48 @@ export default function Guidance({
                 setCurrentContent(content);
                 debouncedSave(content);
 
-           
-    
+
+
             });
 
+    
+            // CORRECTED: Use click listener to detect image clicks
+            const handleImageClick = (event: MouseEvent) => {
+                const target = event.target as HTMLElement;
+                if (target.tagName.toLowerCase() === 'img') {
+                    const blot = Quill.find(target);
+                    if (blot && blot !== editor) {
+                        const index = editor.getIndex(blot as any);
+                        selectedImageIndexRef.current = index;
+                    }
+                } else {
+                    selectedImageIndexRef.current = -1;
+                }
+            };
+
+            const handleOutsideClick = (event: MouseEvent) => {
+                const target = event.target as Node;
+                if (quillRef.current && !quillRef.current.contains(target)) {
+                    selectedImageIndexRef.current = -1;
+                }
+            };
+
+            editorRoot.addEventListener('click', handleImageClick);
+            document.addEventListener('click', handleOutsideClick);
+
             quillRef.current.addEventListener('keydown', (e: KeyboardEvent) => {
-             
+                // borra la imagen dentro del editor del guidedCheckList
+                if (selectedImageIndexRef.current !== -1 && (e.key === 'Delete' || e.key === 'Backspace')) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const editor = editorRef.current;
+                    console.log(selectedImageIndexRef.current);
+                    editor.deleteText(selectedImageIndexRef.current, 1, 'user');
+                    selectedImageIndexRef.current = -1;
+                    quillRef.current.click();
+                }
+
+
                 if (e.key === ' ') {
                     const editor = editorRef.current;
 
@@ -348,7 +385,7 @@ export default function Guidance({
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
- 
+
     useEffect(() => {
         if (!mainToolbarElement) return;
 
@@ -376,7 +413,6 @@ export default function Guidance({
         };
     }, [mainToolbarElement]);
 
-
     return (
         <>
             {
@@ -386,12 +422,12 @@ export default function Guidance({
                         ref={toolbarRef}
                         style={{
                             position: 'fixed',
-                            top:mainToolbarRect.top,
-                            left:mainToolbarRect.left,
-                            right:mainToolbarRect.right,
-                            bottom:mainToolbarRect.bottom,
-                            height:mainToolbarRect.height,
-                            width:mainToolbarRect.width,
+                            top: mainToolbarRect.top,
+                            left: mainToolbarRect.left,
+                            right: mainToolbarRect.right,
+                            bottom: mainToolbarRect.bottom,
+                            height: mainToolbarRect.height,
+                            width: mainToolbarRect.width,
                             display: showToolbar ? 'block' : 'none',
                             zIndex: 10000,
                         }}
