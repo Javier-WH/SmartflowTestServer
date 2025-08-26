@@ -488,7 +488,7 @@ export default function TextEditor() {
             e.preventDefault();
             const imageElement = selectedImage as HTMLImageElement;
             const imageIndex = findImageIndexBySrc({ srcToFind: imageElement.src, editor: quillRef.current?.getEditor() });
-            console.log(imageIndex);
+            
             if (imageIndex !== -1) {
                 const editor = quillRef.current?.getEditor();
                 if (editor) {
