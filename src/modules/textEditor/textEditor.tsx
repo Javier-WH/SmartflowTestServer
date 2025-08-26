@@ -496,6 +496,8 @@ export default function TextEditor() {
                 }
             }
             setSelectedImage(null);
+        }else {
+            setSelectedImage(null);
         }
 
 

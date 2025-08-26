@@ -147,6 +147,8 @@ export default function Guidance({
     const handleDrop = useCallback((event: DragEvent) => {
         event.preventDefault(); // Previene el comportamiento por defecto (abrir la imagen en una nueva pestaña)
         event.stopPropagation(); // Importante para evitar que Quill maneje el drop
+        event.stopImmediatePropagation();
+        if (resizing.current) return;
 
         const items = event.dataTransfer?.items;
         if (items) {
@@ -224,7 +226,7 @@ export default function Guidance({
 
 
             //editorRoot.addEventListener('paste', handlePaste);
-            editorRoot.addEventListener('dragover', handleDragOver, true);
+            editorRoot.addEventListener('dragover', handleDragOver);
             editorRoot.addEventListener('drop', handleDrop, true);
 
             if (value) {
@@ -352,8 +354,8 @@ export default function Guidance({
                 const editorRoot = editorRef.current?.root;
                 if (editorRoot) {
                     editorRoot.removeEventListener('paste', handlePaste);
-                    editorRoot.removeEventListener('dragover', handleDragOver, true );
-                    editorRoot.removeEventListener('drop', handleDrop, true)
+                    editorRoot.removeEventListener('dragover', handleDragOver);
+                    editorRoot.removeEventListener('drop', handleDrop)
                 }
                 if (editorRef.current) {
                     editorRef.current = null;
