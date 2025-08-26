@@ -102,6 +102,7 @@ export default function Guidance({
         Quill.register(CustomVideo, true);
         Quill.register(CustomOrderedListContainerGuidance, true);
     }, []);
+
     // **Nueva función para insertar la imagen en Quill**
     const insertImageIntoQuill = useCallback((imageUrl: string) => {
         if (editorRef.current) {
@@ -128,19 +129,19 @@ export default function Guidance({
                             insertImageIntoQuill(imageUrl);
                         };
                         reader.readAsDataURL(file);
+                        return;
                     }
                 }
             }
         }
     }, [insertImageIntoQuill]);
 
-    /* const handlePaste = (e: ClipboardEvent) => {
-         e.stopPropagation();
-     };*/
+ 
 
     const handleDragOver = useCallback((event: DragEvent) => {
         event.preventDefault(); // Necesario para permitir el 'drop'
         event.stopPropagation(); // Importante para evitar que Quill maneje el dragover
+        event.stopImmediatePropagation();
     }, []);
 
     const handleDrop = useCallback((event: DragEvent) => {
@@ -223,8 +224,8 @@ export default function Guidance({
 
 
             //editorRoot.addEventListener('paste', handlePaste);
-            editorRoot.addEventListener('dragover', handleDragOver);
-            editorRoot.addEventListener('drop', handleDrop);
+            editorRoot.addEventListener('dragover', handleDragOver, true);
+            editorRoot.addEventListener('drop', handleDrop, true);
 
             if (value) {
                 const delta = editorRef.current.clipboard.convert({ html: value });
@@ -351,8 +352,8 @@ export default function Guidance({
                 const editorRoot = editorRef.current?.root;
                 if (editorRoot) {
                     editorRoot.removeEventListener('paste', handlePaste);
-                    editorRoot.removeEventListener('dragover', handleDragOver);
-                    editorRoot.removeEventListener('drop', handleDrop)
+                    editorRoot.removeEventListener('dragover', handleDragOver, true );
+                    editorRoot.removeEventListener('drop', handleDrop, true)
                 }
                 if (editorRef.current) {
                     editorRef.current = null;

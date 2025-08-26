@@ -19,7 +19,7 @@ export async function processAndStoreImages(htmlString: string, id: string): Pro
   // 3. Procesa cada imagen de forma asíncrona.
   const uploadPromises: Promise<void>[] = [];
 
-  images.forEach((img, index) => {
+  images.forEach(img => {
     const src = img.getAttribute('src');
 
     // Verifica si el 'src' es una Data URL.
@@ -30,7 +30,7 @@ export async function processAndStoreImages(htmlString: string, id: string): Pro
           const base64Data = src.split(';base64,')[1];
 
           // Sube la cadena Base64 directamente.
-          const publicLink = await uploadImageToStorage(base64Data, id+index);
+          const publicLink = await uploadImageToStorage(base64Data, `${id}-${new Date().getTime()}`);
 
           // Reemplaza el src original con el nuevo enlace.
           img.setAttribute('src', publicLink);
