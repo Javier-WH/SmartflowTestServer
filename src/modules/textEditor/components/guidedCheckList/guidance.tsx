@@ -92,7 +92,7 @@ export default function Guidance({
     const [showToolbar, setShowToolbar] = useState(false);
 
     const debouncedSave = useDebouncedCallback(async (content: string) => {
-        const htmlContentWithImagesLinks = await processAndStoreImages(content, id);
+        const htmlContentWithImagesLinks = await processAndStoreImages(content, id, setCurrentContent);
         saveData(id, htmlContentWithImagesLinks);
     }, 300);
 
