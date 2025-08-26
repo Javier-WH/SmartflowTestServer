@@ -24,6 +24,7 @@ import { findImageIndexBySrc } from '../textEditor/utils/findDeltaIndex';
 import { useTranslation } from 'react-i18next';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
+
 Quill.register(CustomOrderedList, true);
 
 // this is our custom blot
@@ -100,13 +101,15 @@ export default function TextEditor() {
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id || !htmlContent) return;
-            const htmlContentWithImagesLinks = await processAndStoreImages(htmlContent, id);
+        
+            const htmlContentWithImagesLinks = await processAndStoreImages(htmlContent, id, setContent);
 
             await mutate({
                 id,
                 ...(htmlContentWithImagesLinks ? { content: htmlContentWithImagesLinks } : {}),
                 ...(title ? { name: title } : {}),
             });
+            //setContent(htmlContentWithImagesLinks);
         },
         400,
         { leading: false, trailing: true },

@@ -1,13 +1,15 @@
 import { uploadImageToStorage } from "./imgStorage";
+import { putUploadMessageOnImages } from "./imgLoadingMessage";
 
 /**
  * Procesa una cadena de HTML, sube las imágenes con 'data:' a un servidor
  * y reemplaza su atributo 'src' con la URL pública.
  * @param htmlString El contenido HTML completo de Quill.
  * @param id El identificador de la organización.
+ * @param callback Función opcional que se llama con el HTML actualizado después de subir las imágenes, debe ser la funcion que actualiza el contenido del editor de quill.
  * @returns Una promesa que se resuelve con el HTML modificado.
  */
-export async function processAndStoreImages(htmlString: string, id: string): Promise<string> {
+export async function processAndStoreImages(htmlString: string, id: string, callback?: (text: string) => void): Promise<string> {
   // 1. Crea un contenedor temporal en memoria para analizar el HTML.
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = htmlString;
@@ -45,6 +47,8 @@ export async function processAndStoreImages(htmlString: string, id: string): Pro
   // 4. Espera a que todas las subidas de imágenes se completen.
   await Promise.all(uploadPromises);
 
+  //actualiza las imagenes cargadas
+  if (callback) callback(tempDiv.innerHTML);
   // 5. Devuelve el HTML modificado.
   return tempDiv.innerHTML;
 }
