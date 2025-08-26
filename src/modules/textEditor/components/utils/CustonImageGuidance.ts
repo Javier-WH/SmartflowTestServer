@@ -11,11 +11,11 @@ export default class CustomImageGuidance extends Image {
         // Only if the image does not already have a defined width, assign the default size
         if (!node.getAttribute("width")) {
             node.setAttribute("width", "300"); 
-            node.style.width = "300px";
+            //node.style.width = "300px";
         }
         if (!node.getAttribute("height")) {
             node.setAttribute("height", "200"); 
-            node.style.height = "200px";
+            //node.style.height = "200px";
         }
 
         return node;
