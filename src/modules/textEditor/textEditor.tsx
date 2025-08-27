@@ -59,17 +59,13 @@ export default function TextEditor() {
     const quillContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState<HTMLElement | null>(null);
-
     const [readOnly, setReadOnly] = useState(true);
-
     const currentFileId = useRef(id);
-
     const { data: fileContent, isLoading, mutate, isMutating } = useFileContent({ fileId: id });
-
     const [content, setContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
-
     const [visible, setVisible] = useState(false);
+    const [upLoadingImages, setUploadingImages] = useState(false);
 
     const modules = {
         toolbar: {
@@ -98,18 +94,20 @@ export default function TextEditor() {
         },
     };
 
+   
+
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id || !htmlContent) return;
-        
+            setUploadingImages(true);
             const htmlContentWithImagesLinks = await processAndStoreImages(htmlContent, id, setContent);
-
+            setUploadingImages(false);
             await mutate({
                 id,
                 ...(htmlContentWithImagesLinks ? { content: htmlContentWithImagesLinks } : {}),
                 ...(title ? { name: title } : {}),
             });
-            //setContent(htmlContentWithImagesLinks);
+            
         },
         400,
         { leading: false, trailing: true },
@@ -538,7 +536,7 @@ export default function TextEditor() {
         }
     };
     return (
-        <div className="flex flex-col h-full overflow-hidden px-[1px]">
+        <div className=" relative flex flex-col h-full overflow-hidden px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
                 <div className="grow">
                     <Textarea
@@ -651,6 +649,13 @@ export default function TextEditor() {
                             },
                         }}
                     />
+                    {
+
+                    upLoadingImages && <div id="uploadingImagesSpinner">
+                        <Spinner />
+                        <p>{t('uploading_image_message')}</p>
+                    </div>
+                    }
                 </div>
             </div>
         </div>

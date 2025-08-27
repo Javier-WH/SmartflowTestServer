@@ -1,5 +1,6 @@
 import { uploadImageToStorage } from "./imgStorage";
-import { putUploadMessageOnImages } from "./imgLoadingMessage";
+
+//import { putUploadMessageOnImages } from "./imgLoadingMessage";
 
 /**
  * Procesa una cadena de HTML, sube las imágenes con 'data:' a un servidor

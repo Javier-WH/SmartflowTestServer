@@ -107,5 +107,6 @@
   "rename_file_message": "Renombrar página",
   "create_folder_label": "Crear Carpeta",
   "unknown_error_message": "Ocurrió un error desconocido. Por favor, inténtalo de nuevo más tarde.",
-  "searching_message": "Buscando..."
+  "searching_message": "Buscando...",
+  "uploading_image_message": "Subiendo imagen..."
 }
