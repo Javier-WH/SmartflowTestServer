@@ -38,7 +38,7 @@ export async function uploadImageToStorage(base64Image: string, originalFilename
     const { error } = await supabase.storage
       .from(bucketName)
       .upload(fileName, imageBlob, {
-        cacheControl: '3600', // Un año
+        cacheControl: '3600',
         upsert: false,
       });
 
