@@ -10,6 +10,8 @@ import CustomVideo from '../utils/CustonVideoGuidance';
 import { useDebouncedCallback } from 'use-debounce';
 import CustomOrderedListContainerGuidance from '../blots/custonOrderedListGuidance';
 import { processAndStoreImages } from '../../imgStorage/imgUpdater';
+import { Spinner } from '@heroui/react';
+import { t } from 'i18next';
 
 const fontSizeList = [
     '10px',
@@ -72,6 +74,7 @@ export default function Guidance({
     readonly: boolean;
 }) {
 
+    const selectedImageIndexRef = useRef(-1)
     const editorRef = useRef<Quill | null>(null);
     const quillRef = useRef<HTMLDivElement | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -89,9 +92,12 @@ export default function Guidance({
         width: 0,
     });
     const [showToolbar, setShowToolbar] = useState(false);
+    const [upLoadingImages, setUpLoadingImages] = useState(false);
 
-    const debouncedSave = useDebouncedCallback(async(content: string) => {
-        const htmlContentWithImagesLinks = await processAndStoreImages(content, id);
+    const debouncedSave = useDebouncedCallback(async (content: string) => {
+        setUpLoadingImages(true);
+        const htmlContentWithImagesLinks = await processAndStoreImages(content, id, setCurrentContent);
+        setUpLoadingImages(false);
         saveData(id, htmlContentWithImagesLinks);
     }, 300);
 
@@ -101,6 +107,7 @@ export default function Guidance({
         Quill.register(CustomVideo, true);
         Quill.register(CustomOrderedListContainerGuidance, true);
     }, []);
+
     // **Nueva función para insertar la imagen en Quill**
     const insertImageIntoQuill = useCallback((imageUrl: string) => {
         if (editorRef.current) {
@@ -127,24 +134,26 @@ export default function Guidance({
                             insertImageIntoQuill(imageUrl);
                         };
                         reader.readAsDataURL(file);
+                        return;
                     }
                 }
             }
         }
     }, [insertImageIntoQuill]);
 
-   /* const handlePaste = (e: ClipboardEvent) => {
-        e.stopPropagation();
-    };*/
+ 
 
     const handleDragOver = useCallback((event: DragEvent) => {
         event.preventDefault(); // Necesario para permitir el 'drop'
         event.stopPropagation(); // Importante para evitar que Quill maneje el dragover
+        event.stopImmediatePropagation();
     }, []);
 
     const handleDrop = useCallback((event: DragEvent) => {
         event.preventDefault(); // Previene el comportamiento por defecto (abrir la imagen en una nueva pestaña)
         event.stopPropagation(); // Importante para evitar que Quill maneje el drop
+        event.stopImmediatePropagation();
+        if (resizing.current) return;
 
         const items = event.dataTransfer?.items;
         if (items) {
@@ -217,13 +226,13 @@ export default function Guidance({
 
             // create the editor
             editorRef.current = new Quill(quillRef.current, options);
-
+            const editor = editorRef.current;
             const editorRoot = editorRef.current.root;
 
-            
+
             //editorRoot.addEventListener('paste', handlePaste);
             editorRoot.addEventListener('dragover', handleDragOver);
-            editorRoot.addEventListener('drop', handleDrop);
+            editorRoot.addEventListener('drop', handleDrop, true);
 
             if (value) {
                 const delta = editorRef.current.clipboard.convert({ html: value });
@@ -238,12 +247,48 @@ export default function Guidance({
                 setCurrentContent(content);
                 debouncedSave(content);
 
-           
-    
+
+
             });
 
+    
+            // CORRECTED: Use click listener to detect image clicks
+            const handleImageClick = (event: MouseEvent) => {
+                const target = event.target as HTMLElement;
+                if (target.tagName.toLowerCase() === 'img') {
+                    const blot = Quill.find(target);
+                    if (blot && blot !== editor) {
+                        const index = editor.getIndex(blot as any);
+                        selectedImageIndexRef.current = index;
+                    }
+                } else {
+                    selectedImageIndexRef.current = -1;
+                }
+            };
+
+            const handleOutsideClick = (event: MouseEvent) => {
+                const target = event.target as Node;
+                if (quillRef.current && !quillRef.current.contains(target)) {
+                    selectedImageIndexRef.current = -1;
+                }
+            };
+
+            editorRoot.addEventListener('click', handleImageClick);
+            document.addEventListener('click', handleOutsideClick);
+
             quillRef.current.addEventListener('keydown', (e: KeyboardEvent) => {
-             
+                // borra la imagen dentro del editor del guidedCheckList
+                if (selectedImageIndexRef.current !== -1 && (e.key === 'Delete' || e.key === 'Backspace')) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const editor = editorRef.current;
+                    console.log(selectedImageIndexRef.current);
+                    editor.deleteText(selectedImageIndexRef.current, 1, 'user');
+                    selectedImageIndexRef.current = -1;
+                    quillRef.current.click();
+                }
+
+
                 if (e.key === ' ') {
                     const editor = editorRef.current;
 
@@ -348,7 +393,7 @@ export default function Guidance({
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
- 
+
     useEffect(() => {
         if (!mainToolbarElement) return;
 
@@ -376,7 +421,6 @@ export default function Guidance({
         };
     }, [mainToolbarElement]);
 
-
     return (
         <>
             {
@@ -386,12 +430,12 @@ export default function Guidance({
                         ref={toolbarRef}
                         style={{
                             position: 'fixed',
-                            top:mainToolbarRect.top,
-                            left:mainToolbarRect.left,
-                            right:mainToolbarRect.right,
-                            bottom:mainToolbarRect.bottom,
-                            height:mainToolbarRect.height,
-                            width:mainToolbarRect.width,
+                            top: mainToolbarRect.top,
+                            left: mainToolbarRect.left,
+                            right: mainToolbarRect.right,
+                            bottom: mainToolbarRect.bottom,
+                            height: mainToolbarRect.height,
+                            width: mainToolbarRect.width,
                             display: showToolbar ? 'block' : 'none',
                             zIndex: 10000,
                         }}
@@ -405,6 +449,12 @@ export default function Guidance({
             }
             <div className="quill-editor-container" ref={containerRef} onPaste={e => e.stopPropagation()}>
                 <div className="collapse-editor min-h-[300px]" ref={quillRef} />
+                {
+                    upLoadingImages && <div id="uploadingImagesSpinner">
+                    <Spinner />
+                    <p>{t('uploading_image_message')}</p>
+                </div>
+                }
             </div>
         </>
     );

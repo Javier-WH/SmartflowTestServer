@@ -11,7 +11,7 @@ import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.
 import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
-import { getParentFoldersForFile  } from '../../utils/pageUtils.ts';
+import { getParentFoldersForFile } from '../../utils/pageUtils.ts';
 import { useDebouncedCallback } from 'use-debounce';
 import { Button, Textarea, cn } from '@heroui/react';
 import { Spinner } from '@heroui/react';
@@ -20,9 +20,11 @@ import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
 import { processAndStoreImages } from '../textEditor/imgStorage/imgUpdater';
+import { findImageIndexBySrc } from '../textEditor/utils/findDeltaIndex';
 import { useTranslation } from 'react-i18next';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
+
 Quill.register(CustomOrderedList, true);
 
 // this is our custom blot
@@ -57,24 +59,20 @@ export default function TextEditor() {
     const quillContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState<HTMLElement | null>(null);
-
     const [readOnly, setReadOnly] = useState(true);
-
     const currentFileId = useRef(id);
-
     const { data: fileContent, isLoading, mutate, isMutating } = useFileContent({ fileId: id });
-
     const [content, setContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
-
     const [visible, setVisible] = useState(false);
+    const [upLoadingImages, setUploadingImages] = useState(false);
 
     const modules = {
         toolbar: {
             container: '#toolbar',
             handlers: {
                 'guided-checklist': insertGuidedCheckList,
-             
+
 
             },
         },
@@ -93,19 +91,23 @@ export default function TextEditor() {
                     shortKey: true
                 }
             }
-          },
+        },
     };
+
+   
 
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id || !htmlContent) return;
-            const htmlContentWithImagesLinks = await processAndStoreImages(htmlContent, id);
-          
+            setUploadingImages(true);
+            const htmlContentWithImagesLinks = await processAndStoreImages(htmlContent, id, setContent);
+            setUploadingImages(false);
             await mutate({
                 id,
                 ...(htmlContentWithImagesLinks ? { content: htmlContentWithImagesLinks } : {}),
                 ...(title ? { name: title } : {}),
             });
+            
         },
         400,
         { leading: false, trailing: true },
@@ -142,10 +144,10 @@ export default function TextEditor() {
         }
     };
 
-    const handleContentOrTitleChange = async({ newContent, newTitle }: { newContent?: string; newTitle?: string }) => {
+    const handleContentOrTitleChange = async ({ newContent, newTitle }: { newContent?: string; newTitle?: string }) => {
         let needsDebounce = false;
 
-      
+
 
         if (newContent !== undefined && newContent !== content) {
             setContent(newContent);
@@ -390,7 +392,7 @@ export default function TextEditor() {
 
     // add drag image logic
     const handleDrop = useCallback((event) => {
-        event.preventDefault(); 
+        event.preventDefault();
 
         const items = event.dataTransfer.items;
         for (let i = 0; i < items.length; i++) {
@@ -411,16 +413,16 @@ export default function TextEditor() {
 
     // Función para manejar el 'dragover'
     const handleDragOver = useCallback((event) => {
-        event.preventDefault(); 
+        event.preventDefault();
     }, []);
 
     // Función para insertar la imagen en Quill
     const insertImageIntoQuill = useCallback((imageUrl) => {
         if (quillRef.current) {
             const editor = quillRef.current.getEditor();
-            const range = editor.getSelection(true); 
+            const range = editor.getSelection(true);
             editor.insertEmbed(range.index, 'image', imageUrl, 'user');
-            editor.setSelection(range.index + 1, 0); 
+            editor.setSelection(range.index + 1, 0);
         }
     }, []);
 
@@ -479,24 +481,43 @@ export default function TextEditor() {
     };
 
 
+
+
     const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        
+        // este evento borra la imagen seleccionada
+        if (selectedImage !== null && (e.key === 'Delete' || e.key === 'Backspace')) {
+            e.preventDefault();
+            const imageElement = selectedImage as HTMLImageElement;
+            const imageIndex = findImageIndexBySrc({ srcToFind: imageElement.src, editor: quillRef.current?.getEditor() });
+            
+            if (imageIndex !== -1) {
+                const editor = quillRef.current?.getEditor();
+                if (editor) {
+                    editor.deleteText(imageIndex, 1, 'user');
+                }
+            }
+            setSelectedImage(null);
+        }else {
+            setSelectedImage(null);
+        }
+
+
         if (e.key === ' ') {
             const editor = quillRef.current?.getEditor();
-            
+
             if (editor) {
                 const selection = editor.getSelection(); // Obtener la selección actual
                 if (selection) {
                     const cursorIndex = selection.index; // Posición del cursor
-                    
+
                     // Obtener el texto hasta la posición del cursor
                     const textBeforeCursor = editor.getText(0, cursorIndex);
-                    
+
                     // Expresión regular para encontrar un número seguido de un punto al final del texto
                     // Esto buscará patrones como "1." o "123."
                     const regex = /(\d+)\.$/;
                     const match = textBeforeCursor.match(regex);
-                    
+
                     if (match) {
                         e.preventDefault();
                         const numeroEncontrado = match[1]; // El grupo de captura (el número)
@@ -515,7 +536,7 @@ export default function TextEditor() {
         }
     };
     return (
-        <div className="flex flex-col h-full overflow-hidden px-[1px]">
+        <div className=" relative flex flex-col h-full overflow-hidden px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
                 <div className="grow">
                     <Textarea
@@ -628,6 +649,13 @@ export default function TextEditor() {
                             },
                         }}
                     />
+                    {
+
+                    upLoadingImages && <div id="uploadingImagesSpinner">
+                        <Spinner />
+                        <p>{t('uploading_image_message')}</p>
+                    </div>
+                    }
                 </div>
             </div>
         </div>
