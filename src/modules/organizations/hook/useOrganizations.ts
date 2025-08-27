@@ -25,7 +25,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
         mutate,
     } = useQuery(
         user_id
-            ? supabase.rpc('get_user_organizations', { p_user_id: user_id, ...(search && { p_name: search }) })
+            ? supabase.rpc('get_user_organizations', { p_user_id: user_id, ...(search && { p_name: search }), p_page: 1, p_page_size: 100 })
             : null,
     );
 
