@@ -302,7 +302,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Organization actions">
-                                    {organization.is_creator && (
+                                    {(organization.is_creator || organization.configure) && (
                                         <DropdownItem
                                             key="invite-option"
                                             startContent={<UserAddOutlined />}
