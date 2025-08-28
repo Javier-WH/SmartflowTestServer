@@ -1,4 +1,4 @@
-import { type ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -28,6 +28,7 @@ import InviteUserModal from './InviteUserModal';
 import LeaveOrganizationModal from './LeaveOrganizationModal';
 import useOrganizations from '../hook/useOrganizations';
 import useAuth from '@/modules/auth/hooks/useAuth';
+import { MainContext, type MainContextValues } from '../../mainContext';
 
 interface OrganizationFormData {
     id?: string;
@@ -37,6 +38,7 @@ interface OrganizationFormData {
 }
 
 export default function OrganizationCard({ organization }: { organization: Organization }) {
+    const { memberRoll } = useContext<MainContextValues>(MainContext);
     const navigate = useNavigate();
     const { t } = useTranslation();
     // Modal states
@@ -64,7 +66,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
         leaveOrganization,
         inviteUserToOrganization,
         mutate,
-        deleteInvitation,
+        deleteInvitation
     } = useOrganizations(user?.id);
 
     // Handle card click to navigate to organization home
@@ -75,7 +77,8 @@ export default function OrganizationCard({ organization }: { organization: Organ
     };
 
     // Handle edit organization
-    const handleEditOrganization = (org: Organization) => {
+    const handleEditOrganization = async (org: Organization) => {
+        console.log(memberRoll);
         setFormData({ id: org.id, name: org.name || '', description: org.description || '' });
         onEditModalOpen();
     };
@@ -259,14 +262,25 @@ export default function OrganizationCard({ organization }: { organization: Organ
                             </div>
                             <div>
                                 <h3 className="text-xl font-medium">{organization.name}</h3>
+                            
                                 {organization.is_creator && (
                                     <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
                                         {t('creator_label')}
                                     </span>
                                 )}
-                                {organization.is_member && !organization.is_creator && (
-                                    <span className="text-xs bg-success/20 text-success px-2 py-1 rounded-full">
-                                        {t('menber_label')}
+                                {organization.leveltitle === "Admin" && !organization.is_creator && (
+                                    <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full">
+                                        {t('admin_label')}
+                                    </span>
+                                )}
+                                {organization.leveltitle === "Editor" && !organization.is_creator && (
+                                    <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full">
+                                        {t('editor_label')}
+                                    </span>
+                                )}
+                                {organization.leveltitle === "Lector" && !organization.is_creator && (
+                                    <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full">
+                                        {t('lector_label')}
                                     </span>
                                 )}
                             </div>

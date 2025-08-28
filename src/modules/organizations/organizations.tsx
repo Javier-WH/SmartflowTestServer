@@ -17,6 +17,7 @@ export default function Organizations() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState('');
 
+   
     useEffect(() => {
         mutate();
         { localStorage.removeItem('OrgName'); }
