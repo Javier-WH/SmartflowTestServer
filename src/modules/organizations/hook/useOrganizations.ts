@@ -51,6 +51,8 @@ export default function useOrganizations(user_id?: string, search?: string) {
             p_page_size: pageSize,
         });
 
+      
+
         if (response.error) return errorManager(response.error);
 
         // The total count is included in each row, so we can get it from the first row

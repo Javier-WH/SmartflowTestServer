@@ -11,7 +11,7 @@ export default function UserMenu() {
     const navigate = useNavigate();
     const { organization_id } = useParams();
     const { setParentFolders } = useContext(MainContext) as  MainContextValues;
-    console.log('[LS] -> src/components/ui/UserMenu.tsx:8 -> organization_id: ', organization_id);
+    //console.log('[LS] -> src/components/ui/UserMenu.tsx:8 -> organization_id: ', organization_id);
 
     const { user, signOut } = useAuth();
 

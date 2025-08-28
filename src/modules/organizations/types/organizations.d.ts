@@ -21,6 +21,12 @@ export interface Organization {
     invited_by?: string;
     organization_id?: string;
     status?: string;
+    leveltitle?: string;
+    read?: boolean;
+    write?: boolean;
+    delete?: boolean;
+    invite?: boolean;
+    configure?: boolean;
     
 }
 
