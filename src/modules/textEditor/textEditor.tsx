@@ -98,16 +98,18 @@ export default function TextEditor() {
 
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
-            if (!id || !htmlContent) return;
-            setUploadingImages(true);
-            const htmlContentWithImagesLinks = await processAndStoreImages(htmlContent, id, setContent);
-            setUploadingImages(false);
+            if (!id) return;
+            let htmlData = htmlContent
+            if (htmlContent) {
+                setUploadingImages(true);
+                htmlData = await processAndStoreImages(htmlContent, id, setContent);
+                setUploadingImages(false);
+            }
             await mutate({
                 id,
-                ...(htmlContentWithImagesLinks ? { content: htmlContentWithImagesLinks } : {}),
+                ...(htmlData ? { content: htmlData } : {}),
                 ...(title ? { name: title } : {}),
             });
-            
         },
         400,
         { leading: false, trailing: true },
@@ -154,13 +156,15 @@ export default function TextEditor() {
             needsDebounce = true;
         }
         if (newTitle !== undefined && newTitle !== title) {
+          
             setTitle(newTitle);
             needsDebounce = true;
         }
-
         // Only schedule update if not read-only, content is loaded, and not currently saving
         // Crucially, also check if the initial content for the *current* ID has been loaded
         if (!readOnly && isInitialContentLoaded && !isMutating && needsDebounce) {
+            
+       
             // Schedule the update with the ID relevant *at this moment*
             console.log(`Scheduling update for ID: ${currentFileId.current}`);
             debouncedUpdate({
@@ -547,7 +551,7 @@ export default function TextEditor() {
                             setTitle(e.target.value);
                             if (readOnly) return;
                             handleContentOrTitleChange({ newTitle: e.target.value });
-                            setChangleFileNameRequest({ fileId: id, fileName: e.target.value });
+                            setChangleFileNameRequest({ fileId: id, fileName: e.target.value });// esto hace una petición para cambiar el archivo en la barra de navegación, no en la base de datos
                         }}
                         placeholder={t('give_your_page_a_title_message')}
                         onKeyDown={handleTitleKeyDown}
