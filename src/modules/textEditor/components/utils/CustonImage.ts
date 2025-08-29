@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Quill } from 'react-quill';
+import { uploadImageToStorage } from '../../imgStorage/imgStorage';
+import PLACEHOLDER_SVG from "./LoadingImageSpinner.svg"
+
+
 // Import the default image blot
 const Image = Quill.import('formats/image');
 export default class CustomImage extends Image {
@@ -7,7 +11,23 @@ export default class CustomImage extends Image {
     static create(value: any) {
         const node = super.create(value);
 
-        if (value && typeof value === 'object') {
+        const handleUpload = async (src: string) => {
+            try {
+                node.classList.add('uploadingImage');
+                const base64Data = src.split(';base64,')[1];
+                node.setAttribute('src', PLACEHOLDER_SVG);
+                const url = await uploadImageToStorage(base64Data, "testImage");
+                node.setAttribute('src', url);
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                node.setAttribute('src', src); // Mantiene base64 si hay error
+            }finally {
+                node.classList.remove('uploadingImage');
+            }
+        };
+        if (typeof value === 'string' && value.startsWith('data:image/')) {
+            handleUpload(value);
+        } else if (value && typeof value === 'object') {
             if (value.src) {
                 node.setAttribute('src', value.src);
             }
