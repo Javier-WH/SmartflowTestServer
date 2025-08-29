@@ -6,24 +6,6 @@
     pointer-events: all !important;
 }
 
-.uploadingImage {
-    position: relative !important;
-}
-
-.uploadingImage::after{
-    position: absolute !important;
-    content: "Uploading images..." !important;
-    color: rgb(78, 72, 72) !important;
-    background-color: rgba(177, 204, 245, 0.432) !important;
-    width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    left: 0 !important;
-    top: 0 !important;
-}
-
 
 #uploadingImagesSpinner i {
     scale: 2;

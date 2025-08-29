@@ -439,13 +439,13 @@ export default function TextEditor() {
             container.addEventListener('paste', handlePaste);
 
             // Eventos de arrastre
-            container.addEventListener('dragover', handleDragOver);
-            container.addEventListener('drop', handleDrop);
+            window.addEventListener('dragover', handleDragOver);
+            window.addEventListener('drop', handleDrop);
 
             return () => {
                 container.removeEventListener('paste', handlePaste);
-                container.removeEventListener('dragover', handleDragOver);
-                container.removeEventListener('drop', handleDrop);
+                window.removeEventListener('dragover', handleDragOver);
+                window.removeEventListener('drop', handleDrop);
             };
         }
     }, [handlePaste, handleDragOver, handleDrop]);
