@@ -61,7 +61,7 @@ class Item extends React.Component<ItemProps> {
                         />
                     )}
                     // Disables accordion behavior, to reenable, uncomment below line
-                    // activeKey={commonProps.activeItemId === item.id ? [item.id] : []}
+                    activeKey={commonProps.activeItemId === item.id ? [item.id] : []}
                     onChange={() => commonProps.onCollapseChange(item.id)}
                     items={[
                         {
