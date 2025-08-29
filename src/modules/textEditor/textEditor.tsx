@@ -100,7 +100,7 @@ export default function TextEditor() {
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id) return;
             let htmlData = htmlContent
-            if (htmlContent) {
+           if (htmlContent) {
                 setUploadingImages(true);
                 htmlData = await processAndStoreImages(htmlContent, id, setContent);
                 setUploadingImages(false);
