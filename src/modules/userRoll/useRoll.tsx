@@ -24,7 +24,8 @@ export default function useRoll({userId, organizationId}: {userId: string, organ
               read,
               write,
               delete,
-              invite
+              invite,
+              configure
             )
       `)
       .eq('user_id', userId)
