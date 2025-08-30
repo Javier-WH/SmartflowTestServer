@@ -19,7 +19,7 @@ import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
-import { processAndStoreImages } from '../textEditor/imgStorage/imgUpdater';
+
 import { findImageIndexBySrc } from '../textEditor/utils/findDeltaIndex';
 import { useTranslation } from 'react-i18next';
 import 'react-quill/dist/quill.snow.css';
@@ -65,7 +65,7 @@ export default function TextEditor() {
     const [content, setContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [visible, setVisible] = useState(false);
-    const [upLoadingImages, setUploadingImages] = useState(false);
+
 
     const modules = {
         toolbar: {
@@ -95,19 +95,13 @@ export default function TextEditor() {
     };
 
    
-
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id) return;
-            let htmlData = htmlContent
-           if (htmlContent) {
-                setUploadingImages(true);
-                htmlData = await processAndStoreImages(htmlContent, id, setContent);
-                setUploadingImages(false);
-            }
+       
             await mutate({
                 id,
-                ...(htmlData ? { content: htmlData } : {}),
+                ...(htmlContent ? { content: htmlContent } : {}),
                 ...(title ? { name: title } : {}),
             });
         },
@@ -653,13 +647,7 @@ export default function TextEditor() {
                             },
                         }}
                     />
-                    {
-
-                    upLoadingImages && <div id="uploadingImagesSpinner">
-                        <Spinner />
-                        <p>{t('uploading_image_message')}</p>
-                    </div>
-                    }
+               
                 </div>
             </div>
         </div>

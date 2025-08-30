@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Quill from "quill";
 import { uploadImageToStorage } from '../../imgStorage/imgStorage';
-import PLACEHOLDER_SVG from "./LoadingImageSpinner.svg"
+//import PLACEHOLDER_SVG from "./LoadingImageSpinner.svg"
 
 const Image = Quill.import('formats/image') as any;
 export default class CustomImageGuidance extends Image {
@@ -11,16 +11,14 @@ export default class CustomImageGuidance extends Image {
         const node = super.create(value);
         const handleUpload = async (src: string) => {
             try {
-                node.classList.add('uploadingImage');
                 const base64Data = src.split(';base64,')[1];
-                node.setAttribute('src', PLACEHOLDER_SVG);
+                //node.setAttribute('src', PLACEHOLDER_SVG);
                 const url = await uploadImageToStorage(base64Data, "testImage");
                 node.setAttribute('src', url);
             } catch (error) {
+                alert("ocurrió un error al subir la imagen");
                 console.error('Error uploading image:', error);
                 node.setAttribute('src', src); // Mantiene base64 si hay error
-            } finally {
-                node.classList.remove('uploadingImage');
             }
         };
         if (typeof value === 'string' && value.startsWith('data:image/')) {
