@@ -77,6 +77,7 @@
   "admin_label": "Administrador",
   "editor_label": "Editor",
   "lector_label": "Lector",
+  "unknown_label": "Desconocido",
   "invite_user_label": "Invitar Usuario",
   "edit_label": "Editar",
   "organization_name_label": "Nombre de la Equipo de Trabajo",
