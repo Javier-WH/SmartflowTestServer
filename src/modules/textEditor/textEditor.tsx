@@ -534,7 +534,7 @@ export default function TextEditor() {
         }
     };
     return (
-        <div className=" relative flex flex-col h-full overflow-hidden px-[1px]">
+        <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
                 <div className="grow">
                     <Textarea
@@ -579,7 +579,7 @@ export default function TextEditor() {
             <header
                 className={cn({
                     hidden: readOnly,
-                    'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100 min-h-14':
+                    'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100 min-h-15':
                         !readOnly,
                 })}
             >
