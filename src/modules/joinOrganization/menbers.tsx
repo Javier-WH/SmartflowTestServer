@@ -36,6 +36,8 @@ export interface MemberRoll {
     read: boolean;
     write: boolean;
     delete: boolean;
+    invite: boolean;
+    configure: boolean;
 }
 
 export default function Menbers() {

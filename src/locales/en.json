@@ -84,6 +84,10 @@
   "leave_organization_label": "Leave Working Group",
   "password_label": "Password",
   "confirm_password_label": "Confirm Password",
+  "invite_label": "Invite",
+  "read_label": "Read",
+  "write_label": "Write",
+  "configure_label": "Configure",
   "delete_label": "Delete",
   "description_label": "Description",
   "create_label": "Create",
@@ -113,4 +117,5 @@
   "unknown_error_message": "An unknown error occurred. Please try again later.",
   "searching_message": "Searching...",
   "uploading_image_message": "Uploading images, please wait..."
+
 }
