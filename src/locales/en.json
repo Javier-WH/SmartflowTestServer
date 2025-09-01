@@ -77,6 +77,7 @@
   "admin_label": "Admin",
   "editor_label": "Editor",
   "lector_label": "Lector",
+  "unknown_label": "Unknown",
   "invite_user_label": "Invite User",
   "edit_label": "Edit",
   "organization_name_label": "Working Group Name",

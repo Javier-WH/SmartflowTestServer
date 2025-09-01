@@ -273,7 +273,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
         }
         else {
             return <span className="text-xs bg-pink-500/20 text-red-500 px-2 py-1 rounded-full">
-               unknown
+                {t('unknown_label')}
             </span>
         }
     }
