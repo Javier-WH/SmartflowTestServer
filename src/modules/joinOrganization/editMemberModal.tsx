@@ -60,7 +60,23 @@ export default function EditMemberModal({ member, setMember, rolls, organization
           {member && (
             <RadioGroup value={selectedRoll} label={t("member_role_label")} onChange={(event) => { setSelectedRoll(event.target.value) }}>
               {
-                rolls.map((roll) => (
+                  rolls.sort((a, b) => {
+                    const order = ["Admin", "Editor"];
+                    const aIndex = order.indexOf(a.level);
+                    const bIndex = order.indexOf(b.level);
+
+                    if (aIndex !== -1 && bIndex !== -1) {
+                      return aIndex - bIndex; 
+                    }
+                    if (aIndex !== -1) {
+                      return -1; 
+                    }
+                    if (bIndex !== -1) {
+                      return 1; 
+                    }
+                    return 0; 
+                  })
+                .map((roll) => (
                   <div style={{ display: 'flex', gap: '8px', flexDirection: 'column', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }} key={roll.id}>
                     <Radio key={roll.id} value={roll.id}>
                       {
