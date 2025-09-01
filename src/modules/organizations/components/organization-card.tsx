@@ -1,4 +1,4 @@
-import { type ChangeEvent, useState, useContext } from 'react';
+import React, { type ChangeEvent, useState, useContext, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -245,6 +245,39 @@ export default function OrganizationCard({ organization }: { organization: Organ
         }));
     };
 
+    const getLevelTitle = (organization: Organization): ReactNode => {
+       
+        if (organization.is_creator){
+            return <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
+                {t('creator_label')}
+            </span>
+
+        }
+        else if (organization.leveltitle === "Admin") {
+            return <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full">
+                {t('admin_label')}
+            </span>
+        }
+  
+       
+        else if (organization.leveltitle === "Editor") {
+            return <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full">
+                {t('editor_label')}
+            </span>
+        }
+       
+        else if (organization.leveltitle === "Lector") {
+            return <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full">
+                {t('lector_label')}
+            </span>
+        }
+        else {
+            return <span className="text-xs bg-pink-500/20 text-red-500 px-2 py-1 rounded-full">
+               unknown
+            </span>
+        }
+    }
+
     return (
         <>
             <Card
@@ -263,26 +296,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
                             <div>
                                 <h3 className="text-xl font-medium">{organization.name}</h3>
                             
-                                {organization.is_creator && (
-                                    <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
-                                        {t('creator_label')}
-                                    </span>
-                                )}
-                                {organization.leveltitle === "Admin" && !organization.is_creator && (
-                                    <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full">
-                                        {t('admin_label')}
-                                    </span>
-                                )}
-                                {organization.leveltitle === "Editor" && !organization.is_creator && (
-                                    <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full">
-                                        {t('editor_label')}
-                                    </span>
-                                )}
-                                {organization.leveltitle === "Lector" && !organization.is_creator && (
-                                    <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full">
-                                        {t('lector_label')}
-                                    </span>
-                                )}
+                                {getLevelTitle(organization)}
                             </div>
                         </div>
 
