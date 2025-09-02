@@ -20,6 +20,7 @@ import {
     UserAddOutlined,
     LogoutOutlined,
     TeamOutlined,
+    UserOutlined
 } from '@ant-design/icons';
 import type { Organization } from '../types/organizations';
 import DeleteOrganizationModal from './DeleteOrganizationModal';
@@ -73,9 +74,9 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
     } = useOrganizations(user?.id);
 
     useEffect(() => {
-        if(!userRolls || userRolls.length === 0) return;
+        if (!userRolls || userRolls.length === 0) return;
         setInviteUserLevelId(userRolls[0].id);
-    },[userRolls]);
+    }, [userRolls]);
 
 
 
@@ -149,7 +150,7 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
         }
     };
 
-  
+
     // Handle invite submit
     const handleInviteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -262,8 +263,8 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
     };
 
     const getLevelTitle = (organization: Organization): ReactNode => {
-       
-        if (organization.is_creator){
+
+        if (organization.is_creator) {
             return <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
                 {t('creator_label')}
             </span>
@@ -274,14 +275,14 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                 {t('admin_label')}
             </span>
         }
-  
-       
+
+
         else if (organization.leveltitle === "Editor") {
             return <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full">
                 {t('editor_label')}
             </span>
         }
-       
+
         else if (organization.leveltitle === "Lector") {
             return <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full">
                 {t('lector_label')}
@@ -311,7 +312,7 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                             </div>
                             <div>
                                 <h3 className="text-xl font-medium">{organization.name}</h3>
-                            
+
                                 {getLevelTitle(organization)}
                             </div>
                         </div>
@@ -332,6 +333,19 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Organization actions">
+
+
+                                    <DropdownItem
+                                        key="leave-option"
+                                        className="text-default-900 scale-120"
+                                        color="warning"
+                                        startContent={<UserOutlined />}
+                                        onPress={() => { navigate(`/${organization.slug}/members`) }}
+                                    >
+                                        {t("Members_label")}
+                                    </DropdownItem>
+
+
                                     {(organization.is_creator || organization.configure) && (
                                         <DropdownItem
                                             key="invite-option"
