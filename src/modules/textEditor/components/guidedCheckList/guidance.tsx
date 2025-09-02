@@ -10,8 +10,7 @@ import CustomVideo from '../utils/CustonVideoGuidance';
 import { useDebouncedCallback } from 'use-debounce';
 import CustomOrderedListContainerGuidance from '../blots/custonOrderedListGuidance';
 import { processAndStoreImages } from '../../imgStorage/imgUpdater';
-import { Spinner } from '@heroui/react';
-import { t } from 'i18next';
+//import { t } from 'i18next';
 
 const fontSizeList = [
     '10px',
@@ -92,13 +91,10 @@ export default function Guidance({
         width: 0,
     });
     const [showToolbar, setShowToolbar] = useState(false);
-    const [upLoadingImages, setUpLoadingImages] = useState(false);
+
 
     const debouncedSave = useDebouncedCallback(async (content: string) => {
-        setUpLoadingImages(true);
-        const htmlContentWithImagesLinks = await processAndStoreImages(content, id, setCurrentContent);
-        setUpLoadingImages(false);
-        saveData(id, htmlContentWithImagesLinks);
+        saveData(id, content);
     }, 300);
 
     useEffect(() => {
@@ -449,12 +445,6 @@ export default function Guidance({
             }
             <div className="quill-editor-container" ref={containerRef} onPaste={e => e.stopPropagation()}>
                 <div className="collapse-editor min-h-[300px]" ref={quillRef} />
-                {
-                    upLoadingImages && <div id="uploadingImagesSpinner">
-                    <Spinner />
-                    <p>{t('uploading_image_message')}</p>
-                </div>
-                }
             </div>
         </>
     );
