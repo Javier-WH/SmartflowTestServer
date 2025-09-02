@@ -116,5 +116,9 @@
   "create_folder_label": "Crear Carpeta",
   "unknown_error_message": "Ocurrió un error desconocido. Por favor, inténtalo de nuevo más tarde.",
   "searching_message": "Buscando...",
-  "uploading_image_message": "Subiendo las imagenes, por favor espera..."
+  "uploading_image_message": "Subiendo las imagenes, por favor espera...",
+  "error_page_title": "¡Algo salió mal!",
+  "error_page_description": "Estamos trabajando para arreglar este problema.",
+  "error_page_details": "Detalles del error",
+  "go_back_button": "Regresar"
 }

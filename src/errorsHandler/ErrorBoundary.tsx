@@ -2,6 +2,7 @@
 import { ErrorBoundary } from 'react-error-boundary';
 import { ReactNode } from 'react';
 import supabase from '@/lib/supabase';
+import { t } from 'i18next';
 
 
 
@@ -10,21 +11,21 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white p-4">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 max-w-lg w-full text-center">
-        <h1 className="text-4xl font-bold text-red-600 mb-4">¡Algo salió mal!</h1>
-        <p className="text-lg mb-6">Estamos trabajando para solucionar este problema. Por favor, inténtelo de nuevo más tarde.</p>
+        <h1 className="text-4xl font-bold text-red-600 mb-4">{t('error_page_title')}</h1>
+        <p className="text-lg mb-6">{t('error_page_description')}</p>
         <details className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-          <summary className="cursor-pointer font-semibold">Detalles del error</summary>
+          <summary className="cursor-pointer font-semibold">{t('error_page_details')}</summary>
           <pre className="mt-2 text-left whitespace-pre-wrap break-words bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
             <code className="block">{error.toString()}</code>
           </pre>
         </details>
 
-        {/* Agregamos un botón para que el usuario pueda reiniciar la app */}
+      
         <button
           className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors"
           onClick={resetErrorBoundary}
         >
-          Reiniciar Aplicación
+          {t('go_back_button')}
         </button>
       </div>
     </div>
@@ -42,7 +43,7 @@ const logErrorToSupabase = async (error) => {
     };
 
     const { data, error: supabaseError } = await supabase
-      .from('errors')
+      .from('errors_log')
       .insert([errorData]);
 
     if (supabaseError) {

@@ -10,7 +10,7 @@ function App() {
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        throw new Error("Error de prueba en App.tsx para verificar ErrorBoundary");
+        
         supabase.auth.onAuthStateChange((event, session) => {
            // console.log('onAuthStateChange: ', { event, session });
             switch (event) {
