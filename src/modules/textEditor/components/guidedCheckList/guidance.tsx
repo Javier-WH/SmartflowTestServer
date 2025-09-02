@@ -9,7 +9,6 @@ import CustomImage from '../utils/CustonImageGuidance';
 import CustomVideo from '../utils/CustonVideoGuidance';
 import { useDebouncedCallback } from 'use-debounce';
 import CustomOrderedListContainerGuidance from '../blots/custonOrderedListGuidance';
-import { processAndStoreImages } from '../../imgStorage/imgUpdater';
 //import { t } from 'i18next';
 
 const fontSizeList = [

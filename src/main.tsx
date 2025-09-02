@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify';
 import { ConfigProvider } from 'antd';
 import 'react-responsive-pagination/themes/classic.css';
 import 'react-toastify/dist/ReactToastify.css';
+import ErrorBoundary from './errorsHandler/ErrorBoundary.tsx';
 import './root.css';
 import './index.css';
 
@@ -15,8 +16,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <HeroUIProvider className="h-full">
             <AuthProvider>
                 <ConfigProvider direction="rtl">
-                    <App />
-                    <ToastContainer />
+                    <ErrorBoundary>
+                        <App />
+                        <ToastContainer />
+                    </ErrorBoundary>
                 </ConfigProvider>
             </AuthProvider>
         </HeroUIProvider>

@@ -10,6 +10,7 @@ function App() {
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
+        throw new Error("Error de prueba en App.tsx para verificar ErrorBoundary");
         supabase.auth.onAuthStateChange((event, session) => {
            // console.log('onAuthStateChange: ', { event, session });
             switch (event) {
@@ -28,9 +29,11 @@ function App() {
                     break;
             }
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return <RouterProvider router={router} />;
 }
 
 export default App;
+
