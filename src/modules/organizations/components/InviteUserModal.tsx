@@ -1,8 +1,9 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, RadioGroup, Radio } from '@heroui/react';
 import { Button, Input } from '@/components/ui';
 import { MailOutlined, UserAddOutlined } from '@ant-design/icons';
 import type { Organization } from '../types/organizations';
 import { useTranslation } from 'react-i18next';
+import { UserRoll } from '../organizations';
 
 export interface InviteUserModalProps {
     isOpen: boolean;
@@ -10,9 +11,12 @@ export interface InviteUserModalProps {
     selectedOrganization: Organization | null;
     inviteEmail: string;
     setInviteEmail: (email: string) => void;
+    setInviteUserLevelId?: (levelId: string) => void;
+    inviteUserLevelId?: string;
     handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
     isInviting: boolean;
     inviteError: string;
+    userRolls?: UserRoll[];
 }
 
 export default function InviteUserModal({
@@ -24,6 +28,9 @@ export default function InviteUserModal({
     handleSubmit,
     isInviting,
     inviteError,
+    setInviteUserLevelId,
+    inviteUserLevelId,
+    userRolls
 }: InviteUserModalProps) {
     const { t } = useTranslation();
     return (
@@ -49,6 +56,58 @@ export default function InviteUserModal({
                                         isRequired
                                     />
                                 </div>
+
+                                <RadioGroup
+                                    label={t("member_role_label")}
+                                    value={inviteUserLevelId}
+                                    onChange={e => setInviteUserLevelId && setInviteUserLevelId(e.target.value)}
+                                >
+                                    {userRolls && userRolls.map((role) => (
+                                        <Radio key={role.id} value={role.id}>
+                                            <div className="flex flex-col gap-1">
+                                                {/* Nombre del Rol */}
+                                                <span >
+                                                    {t(`${role.level.toLowerCase()}_label`)}
+                                                </span>
+
+                                                {/* Acciones del Rol */}
+                                                <div className="flex flex-row flex-wrap gap-1">
+                                                    {
+                                                        role.invite &&
+                                                        <span className="text-xs bg-purple-500/20 text-purple-500 px-1.5 py-0.5 rounded-sm">
+                                                            {t("invite_label")}
+                                                        </span>
+                                                    }
+                                                    {
+                                                        role.read &&
+                                                        <span className="text-xs bg-gray-500/20 text-gray-500 px-1.5 py-0.5 rounded-sm">
+                                                            {t("read_label")}
+                                                        </span>
+                                                    }
+                                                    {
+                                                        role.write &&
+                                                        <span className="text-xs bg-green-500/20 text-green-500 px-1.5 py-0.5 rounded-sm">
+                                                            {t("write_label")}
+                                                        </span>
+                                                    }
+                                                    {
+                                                        role.delete &&
+                                                        <span className="text-xs bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded-sm">
+                                                            {t("delete_label")}
+                                                        </span>
+                                                    }
+                                                    {
+                                                        role.configure &&
+                                                        <span className="text-xs bg-orange-500/20 text-orange-500 px-1.5 py-0.5 rounded-sm">
+                                                            {t("configure_label")}
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </Radio>
+                                    ))}
+                                </RadioGroup>
+
                                 {inviteError && <p className="text-danger text-sm mt-2">{inviteError}</p>}
                             </ModalBody>
                             <ModalFooter>

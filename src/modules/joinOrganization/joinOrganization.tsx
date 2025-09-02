@@ -21,40 +21,21 @@ interface InvitationData{
   invited_by: string;
   organization_id: string;
   status: string;
-  
+  level_id: string | null;
 }
-interface Roll {
-  id: string;
-  level: string;
-  read: boolean;
-  write: boolean;
-}
+
 export default function JoinOrganization() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { id: invitationId } = useParams();
-  const { getOrganizationInvite, joinOrganization, getUserRolls } = useOrganizations();
+  const { getOrganizationInvite, joinOrganization } = useOrganizations();
   const { getOrganizationBasicDataById } = useGetOrganizationData();
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [organization, setOrganization] = useState<Org | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [invitationData, setInvitationData] = useState<InvitationData | null>(null);
-  const [rolls, setRolls] = useState<Roll[]>([]);
 
-  useEffect(() => {
-    if (!user) return;
-    getUserRolls()
-      .then(res => {
-        if (res.error) {
-          message.error(res.message);
-          return
-        }
-        setRolls(res.data as Roll[] || []);
-      })
-      .catch(err => {
-        console.log(err);
-      })
-  }, []);
+ 
 
   useEffect(() => {
     if (!invitationId) return;
@@ -106,7 +87,7 @@ export default function JoinOrganization() {
   const onClickJoin = () => {
     if (!invitationData) return;
 
-    joinOrganization(user?.id as string, invitationData.organization_id, "20d09d54-eb0b-498e-a6fa-910f598eec77")
+    joinOrganization(user?.id as string, invitationData.organization_id, invitationData.level_id || "20d09d54-eb0b-498e-a6fa-910f598eec77")
       .then(res => {
         if (res.error) {
           message.error(res.message);

@@ -1,4 +1,4 @@
-import React, { type ChangeEvent, useState, useContext, ReactNode } from 'react';
+import React, { type ChangeEvent, useState, useContext, ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -29,6 +29,7 @@ import LeaveOrganizationModal from './LeaveOrganizationModal';
 import useOrganizations from '../hook/useOrganizations';
 import useAuth from '@/modules/auth/hooks/useAuth';
 import { MainContext, type MainContextValues } from '../../mainContext';
+import type { UserRoll } from '../organizations';
 
 interface OrganizationFormData {
     id?: string;
@@ -37,7 +38,9 @@ interface OrganizationFormData {
     slug?: string;
 }
 
-export default function OrganizationCard({ organization }: { organization: Organization }) {
+
+
+export default function OrganizationCard({ organization, userRolls }: { organization: Organization, userRolls?: UserRoll[] }) {
     const { memberRoll } = useContext<MainContextValues>(MainContext);
     const navigate = useNavigate();
     const { t } = useTranslation();
@@ -58,7 +61,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
     const [inviteEmail, setInviteEmail] = useState('');
     const [inviteError, setInviteError] = useState('');
     const [isInviting, setIsInviting] = useState(false);
-
+    const [inviteUserLevelId, setInviteUserLevelId] = useState('');
     const { user } = useAuth();
     const {
         updateOrganization,
@@ -68,6 +71,13 @@ export default function OrganizationCard({ organization }: { organization: Organ
         mutate,
         deleteInvitation
     } = useOrganizations(user?.id);
+
+    useEffect(() => {
+        if(!userRolls || userRolls.length === 0) return;
+        setInviteUserLevelId(userRolls[0].id);
+    },[userRolls]);
+
+
 
     // Handle card click to navigate to organization home
     const handleCardClick = (organizationSlug: string) => {
@@ -139,9 +149,15 @@ export default function OrganizationCard({ organization }: { organization: Organ
         }
     };
 
+  
     // Handle invite submit
     const handleInviteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (!inviteUserLevelId || inviteUserLevelId.trim() === '') {
+            setInviteError(t('select_role_message'));
+            return;
+        }
 
         if (!inviteEmail.trim()) {
             setInviteError(t('enter_email_message'));
@@ -161,7 +177,7 @@ export default function OrganizationCard({ organization }: { organization: Organ
         setInviteError('');
 
         try {
-            const response = await inviteUserToOrganization(organization.id, inviteEmail.trim(), user.id);
+            const response = await inviteUserToOrganization(organization.id, inviteEmail.trim(), user.id, inviteUserLevelId);
 
             if (response.error) {
                 setInviteError(response.message);
@@ -418,6 +434,9 @@ export default function OrganizationCard({ organization }: { organization: Organ
                 inviteEmail={inviteEmail}
                 setInviteEmail={setInviteEmail}
                 handleSubmit={handleInviteSubmit}
+                setInviteUserLevelId={setInviteUserLevelId}
+                userRolls={userRolls}
+                inviteUserLevelId={inviteUserLevelId}
                 isInviting={isInviting}
                 inviteError={inviteError}
             />

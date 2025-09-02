@@ -9,18 +9,56 @@ import CreateOrganizationModal from './components/CreateOrganizationModal';
 import OrganizationCard from './components/organization-card';
 import { useTranslation } from 'react-i18next';
 
+export interface UserRoll {
+    id: string;
+    level: string;
+    read: boolean;
+    write: boolean;
+    delete: boolean;
+    invite: boolean;
+    configure: boolean;
+}
+
 export default function Organizations() {
     const { t } = useTranslation();
     const { user } = useAuth();
-    const { data: organizations, isLoading, error, createOrganization, mutate } = useOrganizations(user?.id);
+    const { data: organizations, isLoading, error, createOrganization, mutate, getUserRolls } = useOrganizations(user?.id);
     const [searchTerm, setSearchTerm] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState('');
+    const [userRolls, setUserRolls] = useState<UserRoll[]>([]);
 
-   
+
     useEffect(() => {
         mutate();
         { localStorage.removeItem('OrgName'); }
+
+        getUserRolls().then(res => {
+            if (res.error) {
+                console.error(res.message);
+                return;
+            }
+            const userRolls: UserRoll[] = res.data as UserRoll[] || [];
+            const sortedRolls = userRolls.sort((a, b) => {
+                const order = ["Lector", "Editor"];
+                const aIndex = order.indexOf(a.level);
+                const bIndex = order.indexOf(b.level);
+
+                if (aIndex !== -1 && bIndex !== -1) {
+                    return aIndex - bIndex;
+                }
+                if (aIndex !== -1) {
+                    return -1;
+                }
+                if (bIndex !== -1) {
+                    return 1;
+                }
+                return 0;
+            })
+            setUserRolls(sortedRolls);
+        }).catch(err => {
+            console.error(err);
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -158,7 +196,7 @@ export default function Organizations() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredOrganizations?.map((org: Organization) => (
-                            <OrganizationCard key={org.id} organization={org} />
+                            <OrganizationCard key={org.id} organization={org} userRolls={userRolls} />
                         ))}
                     </div>
                 )}

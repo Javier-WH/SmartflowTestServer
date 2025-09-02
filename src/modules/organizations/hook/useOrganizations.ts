@@ -235,12 +235,14 @@ export default function useOrganizations(user_id?: string, search?: string) {
      * @param {string} organizationId - The ID of the organization to invite to.
      * @param {string} email - The email of the user to invite.
      * @param {string} inviterUserId - The ID of the user sending the invitation.
+     * @param {string} [level_id] - The ID of the role to assign to the invited user upon acceptance.
      * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
      */
     const inviteUserToOrganization = async (
         organizationId: string,
         email: string,
         inviterUserId: string,
+        level_id?: string
     ): Promise<OrganizationActionResponse> => {
         // First, check if the organization exists and the inviter is the creator
         const orgResponse = await supabase
@@ -268,6 +270,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
                 email: email.toLowerCase().trim(),
                 invited_by: inviterUserId,
                 status: 'pending',
+                level_id: level_id || null
             })
             .select();
 
