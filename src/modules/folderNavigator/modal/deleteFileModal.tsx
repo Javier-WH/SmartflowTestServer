@@ -57,11 +57,11 @@ export default function DeleteFolderModal({
 
     return (
         <Modal
-            title={`${t('delete_file_title')} ${file?.name}`}
+            title={`${t('delete_file_title')} "${file?.name === 'untitled' ? t('untitled_file') : file?.name}"`}
             open={file != null}
             onOk={handleOk}
             onCancel={handleCancel}
-            okText={'Delete'}
+            okText={t('delete_label')}
             cancelText={t('cancel_label')}
             className="createOrUpdateFolderModal"
             okButtonProps={{danger: true }}

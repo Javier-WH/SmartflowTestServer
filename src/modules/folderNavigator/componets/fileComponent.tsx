@@ -109,7 +109,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                 >
                     <img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />
                     <span className="truncate max-h-[50px] w-full" title={fileName}>
-                        {fileName}
+                        {fileName === 'untitled' ? t('untitled_file') : fileName}
                     </span>
                   
                 </div>

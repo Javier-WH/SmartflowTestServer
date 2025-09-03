@@ -125,5 +125,6 @@
   "invitation_already_used_message": "Este enlace de invitación ya ha sido utilizado o es inválido",
   "join_button": "Unirse",
   "password_change_title": "Cambiar Contraseña",
-  "please_fill_all_fields_message": "Por favor, rellena todos los campos"
+  "please_fill_all_fields_message": "Por favor, rellena todos los campos",
+  "untitled_file": "Sin título"
 }

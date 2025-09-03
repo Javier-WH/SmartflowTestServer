@@ -125,7 +125,8 @@
   "invitation_already_used_message": "This invitation link has already been used or is invalid",
   "join_button": "Join",
   "password_change_title": "Change Password",
-  "please_fill_all_fields_message": "Please fill all fields"
+  "please_fill_all_fields_message": "Please fill all fields",
+  "untitled_file": "Untitled"
 
 
 }

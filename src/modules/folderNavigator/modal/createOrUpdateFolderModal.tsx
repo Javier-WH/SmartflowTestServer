@@ -110,6 +110,7 @@ export default function CreateOrUpdateFolderModal({
             onOk={handleOk}
             onCancel={handleCancel}
             okText={folder?.name ? t('rename_label') : t('create_label')}
+            cancelText={t('cancel_label')}
             className="createOrUpdateFolderModal"
             okButtonProps={{ disabled: containerName.length === 0 }}
         >
