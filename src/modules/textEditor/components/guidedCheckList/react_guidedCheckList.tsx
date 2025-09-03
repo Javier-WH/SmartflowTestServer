@@ -110,7 +110,7 @@ class Item extends React.Component<ItemProps> {
                                         className="collapse-next-button"
                                         onClick={() => commonProps.onNextItem(item.id)}
                                     >
-                                        Next
+                                        {}{t('next')} 
                                     </Button>
                                 </>
                             ),

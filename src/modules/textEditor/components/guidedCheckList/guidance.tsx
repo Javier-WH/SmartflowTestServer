@@ -9,6 +9,7 @@ import CustomImage from '../utils/CustonImageGuidance';
 import CustomVideo from '../utils/CustonVideoGuidance';
 import { useDebouncedCallback } from 'use-debounce';
 import CustomOrderedListContainerGuidance from '../blots/custonOrderedListGuidance';
+import { t } from 'i18next';
 //import { t } from 'i18next';
 
 const fontSizeList = [
@@ -177,7 +178,7 @@ export default function Guidance({
             const options = {
                 theme: 'snow',
                 readOnly: readonly,
-                placeholder: 'Add a guidance (if needed!)',
+                placeholder: t('guidandece_placeholder'),
                 modules: {
                     toolbar: {
                         container: `#${toolbarId}`,
