@@ -338,7 +338,7 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                                     <DropdownItem
                                         key="leave-option"
                                         className="text-default-900 scale-120"
-                                        color="warning"
+                                      
                                         startContent={<UserOutlined />}
                                         onPress={() => { navigate(`/${organization.slug}/members`) }}
                                     >

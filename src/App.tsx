@@ -10,7 +10,7 @@ function App() {
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        
+       // throw new Error('Esto es un error de pruebas, no te asustes :)');
         supabase.auth.onAuthStateChange((event, session) => {
            // console.log('onAuthStateChange: ', { event, session });
             switch (event) {
