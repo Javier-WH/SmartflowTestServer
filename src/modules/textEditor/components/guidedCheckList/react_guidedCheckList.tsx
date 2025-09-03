@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DraggableList from 'react-draggable-list';
 import { GoGrabber } from 'react-icons/go';
 import { Input, Collapse, Button, Spin, Modal } from 'antd';
-import { RightOutlined } from '@ant-design/icons';
+import { RightOutlined, DeleteOutlined} from '@ant-design/icons';
 import reactToWebComponent from 'react-to-webcomponent';
 import 'antd/dist/reset.css';
 import './styles.css';
@@ -44,7 +44,8 @@ class Item extends React.Component<ItemProps> {
         const { item, dragHandleProps, commonProps } = this.props;
         const handleClickIndex = (e: React.MouseEvent) => {
             e.stopPropagation();
-            e.stopPropagation(); commonProps.onDeleteItem(item.id);
+            e.stopPropagation(); 
+            commonProps.onDeleteItem(item.id);
         };
 
         return (
@@ -69,7 +70,8 @@ class Item extends React.Component<ItemProps> {
                             key: item.id,
                             label: (
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <span className="item-index" onClick={handleClickIndex}>{item.index + 1}</span>
+                                    <span className="item-index">{item.index + 1}</span>
+                                    <Button className='btn-delete-guidance' type="link" icon={<DeleteOutlined />} onClick={handleClickIndex} />
                                     <Input
                                         readOnly={commonProps.readonly}
                                         placeholder={`${t("what's the")} ${item.index === 0 ? t('first') : t('next')} ${t("step")}?`}

@@ -80,7 +80,25 @@
     position: relative;
 }
 
-.item-index:hover::before {
+.ant-collapse-header-text input {
+    max-width: calc(100% - 70px);
+}
+
+.btn-delete-guidance{
+    position: absolute;
+    right: 40px;
+
+
+}
+
+.btn-delete-guidance svg {
+   stroke: gray;
+   fill: gray;
+   color: gray;
+
+}
+
+/*.item-index:hover::before {
     content: "";
     background-image: url('./trash.svg');
     background-size: 100%;
@@ -97,7 +115,7 @@
     justify-content: center;
     border-radius: 50%;
     scale: 1.2;
-}
+}*/
 
 .collapse-next-button {
     color: white;
