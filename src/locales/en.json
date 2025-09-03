@@ -126,7 +126,12 @@
   "join_button": "Join",
   "password_change_title": "Change Password",
   "please_fill_all_fields_message": "Please fill all fields",
-  "untitled_file": "Untitled"
+  "untitled_file": "Untitled",
+  "checklist_title_placeholder": "Optional title",
+  "what's the": "What's the",
+  "first": "first",
+  "next": "next",
+  "step": "step"
 
 
 }

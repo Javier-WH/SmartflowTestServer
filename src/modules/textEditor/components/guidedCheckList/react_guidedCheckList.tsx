@@ -14,6 +14,7 @@ import Guidance from './guidance';
 import { BiCollapseVertical } from 'react-icons/bi';
 import { FaCheckCircle } from 'react-icons/fa';
 import { cn } from '@heroui/react';
+import { t } from 'i18next';
 
 // Definir tipos
 interface ListItem {
@@ -71,7 +72,7 @@ class Item extends React.Component<ItemProps> {
                                     <span className="item-index" onClick={handleClickIndex}>{item.index + 1}</span>
                                     <Input
                                         readOnly={commonProps.readonly}
-                                        placeholder={`What's the ${item.index === 0 ? 'first' : 'next'} step?`}
+                                        placeholder={`${t("what's the")} ${item.index === 0 ? t('first') : t('next')} ${t("step")}?`}
                                         value={item.text}
                                         onClick={e => {
                                             console.log('commonProps.readonly', commonProps.readonly);
@@ -324,7 +325,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                     className="title-input"
                     value={internalTitle}
                     onChange={e => setInternalTitle(e.target.value)}
-                    placeholder="Optional title"
+                    placeholder={t('checklist_title_placeholder') || 'Checklist Title'}
                     onPaste={e => e.stopPropagation()}
                 />
                 <div

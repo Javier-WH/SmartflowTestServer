@@ -126,5 +126,10 @@
   "join_button": "Unirse",
   "password_change_title": "Cambiar Contraseña",
   "please_fill_all_fields_message": "Por favor, rellena todos los campos",
-  "untitled_file": "Sin título"
+  "untitled_file": "Sin título",
+  "checklist_title_placeholder": "Título opcional",
+  "what's the": "¿Cuál es el",
+  "first": "primer",
+  "next": "siguiente",
+  "step": "paso"
 }
