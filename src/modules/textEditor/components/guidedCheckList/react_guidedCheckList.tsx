@@ -4,7 +4,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DraggableList from 'react-draggable-list';
 import { GoGrabber } from 'react-icons/go';
-import { Input, Collapse, Button, Spin } from 'antd';
+import { Input, Collapse, Button, Spin, Modal } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import reactToWebComponent from 'react-to-webcomponent';
 import 'antd/dist/reset.css';
@@ -110,7 +110,7 @@ class Item extends React.Component<ItemProps> {
                                         className="collapse-next-button"
                                         onClick={() => commonProps.onNextItem(item.id)}
                                     >
-                                        {}{t('next')} 
+                                        { }{t('next')}
                                     </Button>
                                 </>
                             ),
@@ -138,6 +138,10 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
     const [isLoading, setIsLoading] = useState(true);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
+    const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
+    //const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+   
 
     useEffect(() => {
         const checkedItemsCopy = JSON.parse(JSON.stringify(checkedItems));
@@ -155,7 +159,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                 const initialTitle = title || '';
                 const initialItems = items ? JSON.parse(items) : [createNewItem()];
 
-                setInternalTitle(initialTitle === 'untitled'? '' : initialTitle);
+                setInternalTitle(initialTitle === 'untitled' ? '' : initialTitle);
                 setList(
                     initialItems.map((item: ListItem, index: number) => ({
                         ...item,
@@ -255,7 +259,9 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
         },
         onDeleteItem: (id: string) => {
             if (readonly) return;
-            setList(currentList => currentList.filter(item => item.id !== id));
+            setDeleteItemId(id);
+            //setOpenDeleteModal(true);
+            // setList(currentList => currentList.filter(item => item.id !== id));
         },
         onAddItem: (id: string) => {
             if (readonly) return;
@@ -311,7 +317,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                 <Spin />
             </div>
         );
-    return (
+    return (<>
         <div
             contentEditable={false}
             className="guided-checklist"
@@ -378,6 +384,20 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                 </div>
             )}
         </div>
+        <Modal
+            title={t("guidance_delete_index_message")}
+            open={deleteItemId !== null}
+            onOk={() => {
+                setList(currentList => currentList.filter(item => item.id !== deleteItemId));
+                setDeleteItemId(null);  
+            }}
+            onCancel={() => setDeleteItemId(null)}
+            okText={t("delete_label")}
+            cancelText={t("cancel_label")}
+            okButtonProps={{ danger: true }}
+        >
+        </Modal>
+    </>
     );
 };
 

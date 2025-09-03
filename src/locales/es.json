@@ -132,5 +132,6 @@
   "first": "primer",
   "next": "siguiente",
   "step": "paso",
-  "guidandece_placeholder": "Añade una guía (si es necesario!)"
+  "guidandece_placeholder": "Añade una guía (si es necesario!)",
+  "guidance_delete_index_message": "Estas seguro de querer eliminar esta guía?"
 }
