@@ -120,6 +120,12 @@
   "error_page_title": "Something went wrong!",
   "error_page_description": "We are working to fix this issue.",
   "error_page_details": "Error Details",
-  "go_back_button": "Go Back"
+  "go_back_button": "Go Back",
+  "do_not_have_permission_join_message": "You do not have permission to join this organization",
+  "invitation_already_used_message": "This invitation link has already been used or is invalid",
+  "join_button": "Join",
+  "password_change_title": "Change Password",
+  "please_fill_all_fields_message": "Please fill all fields"
+
 
 }

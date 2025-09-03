@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import useGetOrganizationData from '../navBar/hooks/useOrganizationData';
 import useOrganizations from '../organizations/hook/useOrganizations';
 import { message } from 'antd';
+import { t } from "i18next";
+
 
 interface Org {
   id: string;
@@ -48,7 +50,7 @@ export default function JoinOrganization() {
         }
 
         if ((res.data as Array<InvitationData>).length === 0) {
-          setErrorMessage('This invitation has already been used or does not exist');
+          setErrorMessage(t('invitation_already_used_message'));
           return
         }
         const data = res.data as InvitationData[];
@@ -79,7 +81,7 @@ export default function JoinOrganization() {
   useEffect(() => {
     if (!invitationData) return;
     if (user?.email !== invitationData.email) {
-      setErrorMessage('You do not have permission to join this organization');
+      setErrorMessage(t('do_not_have_permission_join_message'));
       return
     }
    }, [invitationData]);
@@ -100,9 +102,9 @@ export default function JoinOrganization() {
   }
 
   return <>
-    <header className="w-full flex justify-end items-center px-8 bg-white py-4 fixed top-0">
+    <header className="w-full flex justify-start items-center px-8 bg-white py-4 fixed top-0">
       <Button color="primary" onClick={signOut}>
-        Close session
+        {t("logout_button")}
       </Button>
     </header>
 
@@ -114,7 +116,7 @@ export default function JoinOrganization() {
               <h1 className="text-2xl font-semibold text-white">{errorMessage}</h1>
             </div>
             <Button onClick={() => navigate('/home')}>
-              Go back
+              {t('go_back_button')}
             </Button>
           </div>
           : <div className="bg-white p-6 rounded-lg border border-gray-200 max-w-sm w-full mx-auto my-8">
@@ -128,7 +130,7 @@ export default function JoinOrganization() {
             </div>
             <div className="mb-6 max-w-md flex gap-[10px] items-end ">
               <Button color="primary" onClick={onClickJoin}>
-                Join
+                {t('join_button')}
               </Button>
             </div>
           </div>

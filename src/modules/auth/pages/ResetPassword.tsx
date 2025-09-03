@@ -1,13 +1,11 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
 import AlertMessage from '../components/ErrorMessage';
-
 import { Card, CardBody } from '@heroui/react';
 import { Button, Input } from '@/components/ui';
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
-
 import useAuth from '../hooks/useAuth';
+import { t } from 'i18next';
 
 const ResetPassword = () => {
     const navigate = useNavigate();
@@ -15,33 +13,38 @@ const ResetPassword = () => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const { resetPassword, signOut } = useAuth();
 
-    const { resetPassword } = useAuth();
 
-    // const token = new URLSearchParams(location.search).get('token');
+    // esto se asegura de eliminar la session temporal si el usuario cierra la pestaña o intenta aprovechar la session temporal para navegar por la app
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            signOut();
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-
         setError('');
-
         const password = e.currentTarget.password.value;
         const confirmPassword = e.currentTarget['confirm-password'].value;
 
         if (!password || !confirmPassword) {
-            setError('Por favor, rellene todos los campos');
+            setError(t('please_fill_all_fields_message'));
             return;
         }
 
         if (password !== confirmPassword) {
-            setError('Las contraseñas no coinciden');
+            setError(t('passwrods_do_not_match_message'));
             return;
         }
-
-        // if (!token) {
-        //     setError('Token inválido o expirado');
-        //     return;
-        // }
 
         try {
             setLoading(true);
@@ -57,28 +60,13 @@ const ResetPassword = () => {
             if (error instanceof Error) {
                 setError(error?.message);
             } else {
-                setError('Ocurrió un error inesperado');
+                setError(t('unexpected_error_message'));
             }
         } finally {
             setLoading(false);
         }
     }
 
-    // if (!token) {
-    //     return (
-    //         <div className="flex justify-center items-center h-screen p-4">
-    //             <div className="flex flex-col gap-5 border-1 border-gray-200 rounded-lg p-5 w-full max-w-md">
-    //                 <h1 className="text-center text-xl">
-    //                     Este enlace de restablecimiento de contraseña expiró o no es válido
-    //                 </h1>
-    //
-    //                 <Link to="/forgot-password" className="text-center underline">
-    //                     Solicitar un nuevo enlace
-    //                 </Link>
-    //             </div>
-    //         </div>
-    //     );
-    // }
 
     return (
         <form
@@ -87,10 +75,10 @@ const ResetPassword = () => {
         >
             <Card className="w-full max-w-md border-none" radius="sm">
                 <CardBody className="flex flex-col gap-5 p-8">
-                    <h1 className="font-bold text-2xl">Ingresa tu nueva contraseña</h1>
+                    <h1 className="font-bold text-2xl">{t("password_change_title")}</h1>
 
                     <div>
-                        <label htmlFor="password">Contraseña</label>
+                        <label htmlFor="password">{t("password_label")}</label>
                         <Input
                             id="password"
                             name="password"
@@ -112,7 +100,7 @@ const ResetPassword = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="confirm-password">Confirmar contraseña</label>
+                        <label htmlFor="confirm-password">{t("confirm_password_label")}</label>
                         <Input
                             id="confirm-password"
                             name="confirm-password"
@@ -133,16 +121,14 @@ const ResetPassword = () => {
                         />
                     </div>
 
-                    {/* <input type="hidden" name="token" value={token} /> */}
-
                     {error && <AlertMessage text={error} />}
 
                     <Button type="submit" isLoading={loading}>
-                        Enviar
+                        {t("send_button")}
                     </Button>
 
                     <Link to="/auth/signin" className="text-center text-primary underline">
-                        Volver al inicio de sesión
+                        {t("go_back_button")}
                     </Link>
                 </CardBody>
             </Card>

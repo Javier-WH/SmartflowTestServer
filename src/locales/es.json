@@ -120,5 +120,10 @@
   "error_page_title": "¡Algo salió mal!",
   "error_page_description": "Estamos trabajando para arreglar este problema.",
   "error_page_details": "Detalles del error",
-  "go_back_button": "Regresar"
+  "go_back_button": "Regresar",
+  "do_not_have_permission_join_message": "No tienes permiso para unirte a esta organización",
+  "invitation_already_used_message": "Este enlace de invitación ya ha sido utilizado o es inválido",
+  "join_button": "Unirse",
+  "password_change_title": "Cambiar Contraseña",
+  "please_fill_all_fields_message": "Por favor, rellena todos los campos"
 }
