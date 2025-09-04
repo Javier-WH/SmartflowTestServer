@@ -132,7 +132,7 @@ class Item extends React.Component<ItemProps> {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?: string; readonly?: boolean}) => {
+const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?: string; readonly?: boolean }) => {
     const [internalTitle, setInternalTitle] = useState(title || '');
     const [list, setList] = useState<ListItem[]>([]);
     const componentRef = useRef<HTMLElement>();
@@ -143,8 +143,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
     const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
-    //const [openDeleteModal, setOpenDeleteModal] = useState(false);
-
+    
 
     const handleDeleteBlot = () => {
         const blotNode = componentRef.current;
@@ -166,18 +165,15 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
         const blotIndex = quillInstance.getIndex(blot);
 
         Modal.confirm({
-            title: '¿Estás seguro de que quieres eliminar esta lista?',
-            okText: 'Eliminar',
-            cancelText: 'Cancelar',
+            title: t("guided_checklist_delete_message"),
+            okText: t("delete_label"),
+            cancelText: t("cancel_label"),
             okButtonProps: { danger: true },
             onOk() {
-                // Eliminar el blot usando la API de Quill
                 quillInstance.deleteText(blotIndex, 1);
             },
         });
-      };
-
-
+    };
 
 
     useEffect(() => {
