@@ -334,16 +334,18 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Organization actions">
 
+                                    {
+                                        organization.id !== 'f47ac10b-58cc-4372-a567-0e02b2c3d479' &&
+                                        <DropdownItem
+                                            key="leave-option"
+                                            className="text-default-900 scale-120"
 
-                                    <DropdownItem
-                                        key="leave-option"
-                                        className="text-default-900 scale-120"
-                                      
-                                        startContent={<UserOutlined />}
-                                        onPress={() => { navigate(`/${organization.slug}/members`) }}
-                                    >
-                                        {t("Members_label")}
-                                    </DropdownItem>
+                                            startContent={<UserOutlined />}
+                                            onPress={() => { navigate(`/${organization.slug}/members`) }}
+                                        >
+                                            {t("Members_label")}
+                                        </DropdownItem>
+                                    }
 
 
                                     {(organization.is_creator || organization.configure) && (
