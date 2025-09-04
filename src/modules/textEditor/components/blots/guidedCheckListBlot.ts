@@ -15,7 +15,7 @@ export default class GuidedCheckListBlot extends BlockEmbed {
         // Guardar datos como atributos
         node.setAttribute('title', value.title);
         node.setAttribute('items', JSON.stringify(value.items));
-
+        node.setAttribute('contenteditable', 'false');
         return node;
     }
 
