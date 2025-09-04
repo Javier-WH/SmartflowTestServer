@@ -14,7 +14,7 @@ const insertGuidedCheckList = function (this: { quill: any}) {
 
   this.quill.insertEmbed(selection.index, 'guided-checklist', {
     title: "",
-    items: [initialItem] 
+    items: [initialItem]
   });
 
  // Move cursor to the next line after the checklist and insert a new line

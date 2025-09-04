@@ -12,13 +12,13 @@ export default class GuidedCheckListBlot extends BlockEmbed {
 
     static create(value: { title: string; items: ListItem[] }) {
         const node = super.create();
-
         // Guardar datos como atributos
         node.setAttribute('title', value.title);
         node.setAttribute('items', JSON.stringify(value.items));
 
         return node;
     }
+
     optimize(context: any) {
         super.optimize(context);
 

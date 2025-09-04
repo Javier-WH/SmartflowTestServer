@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DraggableList from 'react-draggable-list';
 import { GoGrabber } from 'react-icons/go';
 import { Input, Collapse, Button, Spin, Modal } from 'antd';
-import { RightOutlined, DeleteOutlined} from '@ant-design/icons';
+import { RightOutlined, DeleteOutlined } from '@ant-design/icons';
 import reactToWebComponent from 'react-to-webcomponent';
 import 'antd/dist/reset.css';
 import './styles.css';
@@ -15,6 +15,8 @@ import { BiCollapseVertical } from 'react-icons/bi';
 import { FaCheckCircle } from 'react-icons/fa';
 import { cn } from '@heroui/react';
 import { t } from 'i18next';
+import { Quill } from 'react-quill';
+
 
 // Definir tipos
 interface ListItem {
@@ -44,7 +46,7 @@ class Item extends React.Component<ItemProps> {
         const { item, dragHandleProps, commonProps } = this.props;
         const handleClickIndex = (e: React.MouseEvent) => {
             e.stopPropagation();
-            e.stopPropagation(); 
+            e.stopPropagation();
             commonProps.onDeleteItem(item.id);
         };
 
@@ -86,9 +88,9 @@ class Item extends React.Component<ItemProps> {
                                                 e.preventDefault();
                                                 commonProps.onAddItem(item.id);
                                             }
-                                            if (e.key === 'Backspace' && item.text === '') {
+                                            /*if (e.key === 'Backspace' && item.text === '') {
                                                 commonProps.onDeleteItem(item.id);
-                                            }
+                                            }*/
                                         }}
                                         onPaste={e => {
                                             e.stopPropagation();
@@ -130,7 +132,7 @@ class Item extends React.Component<ItemProps> {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?: string; readonly?: boolean }) => {
+const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?: string; readonly?: boolean}) => {
     const [internalTitle, setInternalTitle] = useState(title || '');
     const [list, setList] = useState<ListItem[]>([]);
     const componentRef = useRef<HTMLElement>();
@@ -143,7 +145,40 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
     const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
     //const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-   
+
+    const handleDeleteBlot = () => {
+        const blotNode = componentRef.current;
+        if (!blotNode || readonly) return;
+
+        // Obtener la instancia de Quill desde el contenedor principal
+        const editorContainer = blotNode.closest('.ql-editor')?.parentElement;
+        const quillInstance = (editorContainer as any)?.__quill;
+
+        if (!quillInstance) {
+            console.error('No se pudo encontrar la instancia de Quill');
+            return;
+        }
+
+        // Encontrar la posición del blot en el editor
+        const blot = Quill.find(blotNode);
+        if (!blot) return;
+
+        const blotIndex = quillInstance.getIndex(blot);
+
+        Modal.confirm({
+            title: '¿Estás seguro de que quieres eliminar esta lista?',
+            okText: 'Eliminar',
+            cancelText: 'Cancelar',
+            okButtonProps: { danger: true },
+            onOk() {
+                // Eliminar el blot usando la API de Quill
+                quillInstance.deleteText(blotIndex, 1);
+            },
+        });
+      };
+
+
+
 
     useEffect(() => {
         const checkedItemsCopy = JSON.parse(JSON.stringify(checkedItems));
@@ -321,6 +356,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
         );
     return (<>
         <div
+
             contentEditable={false}
             className="guided-checklist"
             ref={el => {
@@ -336,16 +372,19 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                     placeholder={t('checklist_title_placeholder') || 'Checklist Title'}
                     onPaste={e => e.stopPropagation()}
                 />
-                <div
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                        if (isCollapsed && list.length > 0) {
-                            setActiveItemId(list[0].id);
-                        }
-                        setIsCollapsed(!isCollapsed);
-                    }}
-                >
-                    <BiCollapseVertical />
+                <div className='guided-checklist-header-buttons'>
+                    <Button className='btn-delete-gchl' type="link" icon={<DeleteOutlined />} onClick={handleDeleteBlot} /> {/* este boton debe eliminar todo el blot */}
+                    <div
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                            if (isCollapsed && list.length > 0) {
+                                setActiveItemId(list[0].id);
+                            }
+                            setIsCollapsed(!isCollapsed);
+                        }}
+                    >
+                        <BiCollapseVertical />
+                    </div>
                 </div>
             </div>
             {isCollapsed ? (
@@ -391,7 +430,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
             open={deleteItemId !== null}
             onOk={() => {
                 setList(currentList => currentList.filter(item => item.id !== deleteItemId));
-                setDeleteItemId(null);  
+                setDeleteItemId(null);
             }}
             onCancel={() => setDeleteItemId(null)}
             okText={t("delete_label")}
@@ -409,7 +448,7 @@ customElements.define(
         props: {
             title: 'string',
             items: 'string',
-            readonly: 'boolean',
+            readonly: 'boolean'
         },
     }),
 );

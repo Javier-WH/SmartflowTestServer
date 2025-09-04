@@ -80,11 +80,27 @@
     position: relative;
 }
 
+.guided-checklist-header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    justify-content: center;
+    margin-right: 15px;
+    width: 50px;
+}
+
+.guided-checklist-header-buttons svg {
+    stroke: gray;
+    fill: gray;
+    color: gray;
+}
+
 .ant-collapse-header-text input {
     max-width: calc(100% - 70px);
 }
 
-.btn-delete-guidance{
+
+.btn-delete-guidance {
     position: absolute;
     right: 40px;
 
@@ -92,9 +108,9 @@
 }
 
 .btn-delete-guidance svg {
-   stroke: gray;
-   fill: gray;
-   color: gray;
+    stroke: gray;
+    fill: gray;
+    color: gray;
 
 }
 
