@@ -20,6 +20,7 @@ import { RiDeviceRecoverLine } from "react-icons/ri";
 import { useTranslation } from 'react-i18next';
 import useDocumentControlVersion from './controlVersion/useDocumentControlVersion.ts';
 import { useNavigate } from 'react-router-dom';
+import { useDebouncedCallback } from 'use-debounce';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 
@@ -64,12 +65,26 @@ export default function VersionViewer() {
     const inputRef = useRef(null);
     const [readOnly] = useState(true);
     const currentFileId = useRef(id);
-    const { data: fileContent, isLoading } = useFileContent({ fileId: id });
+    const { data: fileContent, isLoading, mutate, isMutating } = useFileContent({ fileId: id });
     const [content, setContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [documentVersions, setDocumentVersions] = useState<DocumentVersionData[]>([]);
     const { getVersions } = useDocumentControlVersion({ documentId: id });
-    const [isLoadingVersions, setIsLoadingVersions] = useState(false);
+    const [isLoadingVersions, setIsLoadingVersions] = useState(false)
+   
+    const debouncedUpdate = useDebouncedCallback(
+        async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
+            if (!id) return;
+
+            await mutate({
+                id,
+                ...(htmlContent ? { content: htmlContent } : {}),
+                ...(title ? { name: title } : {}),
+            });
+        },
+        400,
+        { leading: false, trailing: true },
+    );
 
 
     const modules = {
@@ -136,7 +151,7 @@ export default function VersionViewer() {
 
 
     useEffect(() => {
-        if (fileContent && !isInitialContentLoaded) {
+        if (fileContent && !isInitialContentLoaded && !isMutating) {
             setContent(fileContent.content ?? '');
             setTitle(fileContent?.name === "untitled" ? '' : fileContent?.name ?? '');
             currentFileId.current = id;
@@ -164,7 +179,7 @@ export default function VersionViewer() {
     }, [])
 
 
-
+ 
 
     if (isLoading && !isInitialContentLoaded) {
         return (
@@ -247,6 +262,7 @@ export default function VersionViewer() {
                     <RiDeviceRecoverLine
                         title={t("recover_button")}
                         className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
+                        onClick={() => debouncedUpdate({ id: currentFileId.current, htmlContent: content, title: title })}
                     />
                 </div>
                 <h3 className='text-[14px] text-gray-500 font-bold mb-[15px] mt-[15px]'>{t("versions")}</h3>

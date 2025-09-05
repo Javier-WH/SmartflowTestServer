@@ -352,12 +352,12 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
         );
     return (<>
         <div
-
             contentEditable={false}
             className="guided-checklist"
             ref={el => {
                 if (el) componentRef.current = el.closest('guided-checklist') as HTMLElement | undefined;
             }}
+            //ref={componentRef as React.RefObject<HTMLDivElement>}
         >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center' }}>
                 <Input
