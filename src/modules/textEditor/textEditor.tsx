@@ -23,6 +23,7 @@ import { GoVersions } from "react-icons/go";
 import { findImageIndexBySrc } from '../textEditor/utils/findDeltaIndex';
 import { useTranslation } from 'react-i18next';
 import useDocumentControlVersion from './controlVersion/useDocumentControlVersion.ts';
+import { useNavigate } from 'react-router-dom';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 
@@ -50,7 +51,8 @@ Font.whitelist = options.fontList;
 Quill.register(Font, true);
 
 export default function TextEditor() {
-    const { id } = useParams();
+    const { id, organization_id } = useParams();
+    const navigate = useNavigate();
     const { t } = useTranslation();
     const { setSelectedFileId, setChangleFileNameRequest, memberRoll, setParentFolders } = useContext(MainContext) as MainContextValues;
     const [isSavingVersion, setIsSavingVersion] = useState(false);
@@ -603,6 +605,7 @@ export default function TextEditor() {
                                         <GoVersions
                                             title={t('document_version_history')}
                                             className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
+                                            onClick={()=>navigate(`/${organization_id}/history/${id}`, { state: { readOnly: !memberRoll.write } })}
                                         />
                                         <GiSave
                                             onClick={handleOnPressSaveButton}

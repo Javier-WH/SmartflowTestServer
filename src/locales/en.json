@@ -139,7 +139,9 @@
   "save_document": "Save Document",
   "document_version_history": "Document Version History",
   "error_saving_version_message": "An error occurred while saving the version. Please try again later.",
-  "version_saved_successfully_message": "The version was saved successfully."
+  "version_saved_successfully_message": "The version was saved successfully.",
+  "back_to_document_button": "Back to Document",
+  "recover_button": "Recover this version"
 
 
 
