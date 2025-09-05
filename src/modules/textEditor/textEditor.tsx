@@ -13,17 +13,20 @@ import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import { getParentFoldersForFile } from '../../utils/pageUtils.ts';
 import { useDebouncedCallback } from 'use-debounce';
-import { Button, Textarea, cn } from '@heroui/react';
-import { Spinner } from '@heroui/react';
+import { Button, Textarea, cn, Spinner } from '@heroui/react';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
-
+import { GiSave } from "react-icons/gi"
+import { GoVersions } from "react-icons/go";
 import { findImageIndexBySrc } from '../textEditor/utils/findDeltaIndex';
 import { useTranslation } from 'react-i18next';
+import useDocumentControlVersion from './controlVersion/useDocumentControlVersion.ts';
+import { useNavigate } from 'react-router-dom';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
+
 
 Quill.register(CustomOrderedList, true);
 
@@ -48,10 +51,11 @@ Font.whitelist = options.fontList;
 Quill.register(Font, true);
 
 export default function TextEditor() {
-    const { id } = useParams();
+    const { id, organization_id } = useParams();
+    const navigate = useNavigate();
     const { t } = useTranslation();
     const { setSelectedFileId, setChangleFileNameRequest, memberRoll, setParentFolders } = useContext(MainContext) as MainContextValues;
-
+    const [isSavingVersion, setIsSavingVersion] = useState(false);
     const [title, setTitle] = useState('');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [showToolbar, setShowToolbar] = useState(true);
@@ -65,7 +69,7 @@ export default function TextEditor() {
     const [content, setContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [visible, setVisible] = useState(false);
-
+    const { addVersion } = useDocumentControlVersion({ documentId: id });
 
     const modules = {
         toolbar: {
@@ -94,11 +98,11 @@ export default function TextEditor() {
         },
     };
 
-   
+
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id) return;
-       
+
             await mutate({
                 id,
                 ...(htmlContent ? { content: htmlContent } : {}),
@@ -150,15 +154,15 @@ export default function TextEditor() {
             needsDebounce = true;
         }
         if (newTitle !== undefined && newTitle !== title) {
-          
+
             setTitle(newTitle);
             needsDebounce = true;
         }
         // Only schedule update if not read-only, content is loaded, and not currently saving
         // Crucially, also check if the initial content for the *current* ID has been loaded
         if (!readOnly && isInitialContentLoaded && !isMutating && needsDebounce) {
-            
-       
+
+
             // Schedule the update with the ID relevant *at this moment*
             console.log(`Scheduling update for ID: ${currentFileId.current}`);
             debouncedUpdate({
@@ -487,7 +491,7 @@ export default function TextEditor() {
             e.preventDefault();
             const imageElement = selectedImage as HTMLImageElement;
             const imageIndex = findImageIndexBySrc({ srcToFind: imageElement.src, editor: quillRef.current?.getEditor() });
-            
+
             if (imageIndex !== -1) {
                 const editor = quillRef.current?.getEditor();
                 if (editor) {
@@ -495,7 +499,7 @@ export default function TextEditor() {
                 }
             }
             setSelectedImage(null);
-        }else {
+        } else {
             setSelectedImage(null);
         }
 
@@ -533,6 +537,20 @@ export default function TextEditor() {
             }
         }
     };
+
+    // add a new document version to the database
+    const handleOnPressSaveButton = async () => {
+        setIsSavingVersion(true);
+        await handleEditorChange(content);
+        const saveVersion = await addVersion({ name: title, content });
+        if (!saveVersion) {
+            message.error(t('error_saving_version_message'))
+            return
+        }
+        message.success(t('version_saved_successfully_message'))
+        setIsSavingVersion(false);
+    }
+
     return (
         <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
@@ -550,19 +568,19 @@ export default function TextEditor() {
                         placeholder={t('give_your_page_a_title_message')}
                         onKeyDown={handleTitleKeyDown}
                         minRows={1}
-                        maxRows={4}
+                        maxRows={2}
                         radius="none"
                         classNames={{
-                            inputWrapper: '!bg-transparent shadow-none p-0',
+                            inputWrapper: '!bg-transparent shadow-none p-0 ',
                             input: 'bg-transparent shadow-none focus:bg-transparent text-4xl font-bold',
                         }}
                     />
                 </div>
 
-                <div>
-                    {/* <button type="button" style={styles.homeButton} onClick={() => navigate(-1)}> */}
-                    {/*     <img src={homeIcon} alt="" /> {'>'} */}
-                    {/* </button> */}
+        
+
+
+                <div className="grid grid-rows-2 h-[60px]">
                     {fileContent?.updated_at ? (
                         <span className="w-full text-gray-400">
                             <span>{t('last_updated_label')}: </span>
@@ -573,6 +591,34 @@ export default function TextEditor() {
                             }).format(new Date(fileContent?.updated_at))}
                         </span>
                     ) : null}
+                    <div className="flex justify-between gap-[5px] mr-[10px]">
+
+                        <div className="flex items-baseline gap-[20px] text-primary">
+                            {
+                                isMutating || isSavingVersion ? <span className="text-[18px]"><Spinner size="sm" />{t('saving_message')}</span> : null
+                            }
+                        </div>
+                        <div className="w-[80px] flex justify-between">
+                            {
+                                readOnly ? null :
+                                    <>
+                                        <GoVersions
+                                            title={t('document_version_history')}
+                                            className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
+                                            onClick={async ()=>{
+                                                //await handleOnPressSaveButton();
+                                                navigate(`/${organization_id}/history/${id}`, { state: { readOnly: !memberRoll.write } })
+                                            }}
+                                        />
+                                        <GiSave
+                                            onClick={handleOnPressSaveButton}
+                                            title={t('save_document')}
+                                            className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
+                                        />
+                                    </>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -647,7 +693,7 @@ export default function TextEditor() {
                             },
                         }}
                     />
-               
+
                 </div>
             </div>
         </div>

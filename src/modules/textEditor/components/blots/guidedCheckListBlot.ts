@@ -18,6 +18,7 @@ export default class GuidedCheckListBlot extends BlockEmbed {
         node.setAttribute('contenteditable', 'false');
         return node;
     }
+    
 
     optimize(context: any) {
         super.optimize(context);
@@ -44,6 +45,7 @@ export default class GuidedCheckListBlot extends BlockEmbed {
     static value(domNode: HTMLElement) {
         return this.formats(domNode);
     }
+
 
     format(name: string, value: any) {
         if (name === 'title' || name === 'items') {
