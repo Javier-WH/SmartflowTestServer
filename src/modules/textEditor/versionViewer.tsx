@@ -262,7 +262,10 @@ export default function VersionViewer() {
                     <RiDeviceRecoverLine
                         title={t("recover_button")}
                         className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                        onClick={() => debouncedUpdate({ id: currentFileId.current, htmlContent: content, title: title })}
+                        onClick={async () => {
+                            await debouncedUpdate({ id: currentFileId.current, htmlContent: content, title: title })
+                           
+                        }}
                     />
                 </div>
                 <h3 className='text-[14px] text-gray-500 font-bold mb-[15px] mt-[15px]'>{t("versions")}</h3>

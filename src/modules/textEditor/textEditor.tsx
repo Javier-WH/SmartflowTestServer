@@ -605,7 +605,10 @@ export default function TextEditor() {
                                         <GoVersions
                                             title={t('document_version_history')}
                                             className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                                            onClick={()=>navigate(`/${organization_id}/history/${id}`, { state: { readOnly: !memberRoll.write } })}
+                                            onClick={async ()=>{
+                                                //await handleOnPressSaveButton();
+                                                navigate(`/${organization_id}/history/${id}`, { state: { readOnly: !memberRoll.write } })
+                                            }}
                                         />
                                         <GiSave
                                             onClick={handleOnPressSaveButton}
