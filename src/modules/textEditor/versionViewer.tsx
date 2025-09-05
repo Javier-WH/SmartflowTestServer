@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import './components/guidedCheckList/react_guidedCheckList.tsx';
-import { useEffect, useState, useRef, useContext, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import { useParams } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
@@ -11,21 +11,25 @@ import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.
 import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
-import { getParentFoldersForFile } from '../../utils/pageUtils.ts';
-import { useDebouncedCallback } from 'use-debounce';
 import { Textarea, cn, Spinner } from '@heroui/react';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
-import { Image, message } from 'antd';
-import { MainContext, type MainContextValues } from '../mainContext.tsx';
+import { message } from 'antd';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
 import { MdOutlineDocumentScanner } from "react-icons/md";
 import { RiDeviceRecoverLine } from "react-icons/ri";
-import { findImageIndexBySrc } from './utils/findDeltaIndex.ts';
 import { useTranslation } from 'react-i18next';
 import useDocumentControlVersion from './controlVersion/useDocumentControlVersion.ts';
 import { useNavigate } from 'react-router-dom';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
+
+export interface DocumentVersionData {
+    name: string;
+    content: string;
+    created_at: string;
+    id: string;
+    document_id: string
+}
 
 
 Quill.register(CustomOrderedList, true);
@@ -54,18 +58,18 @@ export default function VersionViewer() {
     const { id, organization_id } = useParams();
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { setSelectedFileId, setParentFolders } = useContext(MainContext) as MainContextValues;
     const [title, setTitle] = useState('');
     const quillRef = useRef<ReactQuill>(null);
     const quillContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef(null);
-    const [selectedImage, setSelectedImage] = useState<HTMLElement | null>(null);
-    const [readOnly, setReadOnly] = useState(true);
+    const [readOnly] = useState(true);
     const currentFileId = useRef(id);
-    const { data: fileContent, isLoading, mutate } = useFileContent({ fileId: id });
+    const { data: fileContent, isLoading } = useFileContent({ fileId: id });
     const [content, setContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
-    const [visible, setVisible] = useState(false);
+    const [documentVersions, setDocumentVersions] = useState<DocumentVersionData[]>([]);
+    const { getVersions } = useDocumentControlVersion({ documentId: id });
+    const [isLoadingVersions, setIsLoadingVersions] = useState(false);
 
 
     const modules = {
@@ -73,61 +77,7 @@ export default function VersionViewer() {
             container: '#toolbar',
             handlers: {
                 'guided-checklist': insertGuidedCheckList,
-
-
             },
-        },
-        resize: {
-            toolbar: {},
-            locale: {
-                floatLeft: 'Left',
-                floatRight: 'Right',
-                center: 'Center',
-                restore: 'Restore',
-            },
-        },
-        keyboard: {
-            bindings: {
-                "list autofill": {
-                    shortKey: true
-                }
-            }
-        },
-    };
-
-
-    const debouncedUpdate = useDebouncedCallback(
-        async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
-            if (!id) return;
-
-            await mutate({
-                id,
-                ...(htmlContent ? { content: htmlContent } : {}),
-                ...(title ? { name: title } : {}),
-            });
-        },
-        400,
-        { leading: false, trailing: true },
-    );
-
-    const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const editor = quillRef.current?.getEditor();
-            if (!editor) return;
-            const contents = editor.getContents();
-
-            // Check if the first element is a checklist
-            const hasChecklistFirst = contents.ops?.[0]?.insert?.['guided-checklist'];
-
-            // Insert a new line at the start if the first element is a checklist
-            if (hasChecklistFirst) {
-                editor.insertText(0, '\n', 'user');
-            }
-
-            // Set the cursor at the start
-            editor.focus();
-            editor.setSelection(0, 0);
         }
     };
 
@@ -184,23 +134,6 @@ export default function VersionViewer() {
         });
     };
 
-    // set selected file when file is selected
-    useEffect(() => {
-        if (!id || !fileContent) return;
-        setSelectedFileId(id);
-
-        // get the file route
-        const { name } = fileContent;
-        const parentFolders = getParentFoldersForFile(id);
-        const fileRoute = ('/' + parentFolders.join('/') + '/' + name).replace(/\/+/g, '/');
-        setParentFolders(fileRoute);
-    }, [id, fileContent]);
-
-
-
-    useEffect(() => {
-        if (quillRef.current) quillRef.current.focus();
-    }, [quillRef.current]);
 
     useEffect(() => {
         if (fileContent && !isInitialContentLoaded) {
@@ -211,82 +144,26 @@ export default function VersionViewer() {
         }
     }, [fileContent, id, isInitialContentLoaded]);
 
+
+
+
+    //obtiene las versiones
     useEffect(() => {
-        // This cleanup function runs when the component unmounts OR
-        // when 'id' changes *before* the next render's effect runs.
-        return () => {
-            console.log(`ID changed to ${id} or component unmounting. Cancelling pending updates.`);
-            debouncedUpdate.cancel();
-            // Update the ref *immediately* when ID changes, so subsequent checks are accurate
-            currentFileId.current = id;
-            setIsInitialContentLoaded(false);
-            setReadOnly(true);
-        };
-    }, [id, debouncedUpdate]);
+        setIsLoadingVersions(true);
+        getVersions()
+            .then((versions) => {
+                setDocumentVersions(versions);
+            })
+            .catch((error) => {
+                message.error('Error al obtener las versiones');
+                console.error('Error al obtener las versiones:', error);
+            })
+            .finally(() => {
+                setIsLoadingVersions(false);
+            });
+    }, [])
 
-    // get selected image
-    useEffect(() => {
-        const handleElementClick = (e: MouseEvent) => {
-            const target = e.target as HTMLElement;
-            if (
-                target.id === 'editor-resizer' ||
-                target.classList.contains('ant-image-preview-wrap') ||
-                target.classList.contains('ant-image-preview-operations-operation') ||
-                target.classList.contains('ant-image-preview-operations') ||
-                target.classList.contains('ant-image-preview-img') ||
-                target.tagName === 'svg' ||
-                target.tagName === 'path'
-            )
-                return;
-            const element = target.closest('img');
-            if (element && !element.classList.contains('ant-image-preview-img')) {
-                setSelectedImage(element as HTMLElement);
 
-                return;
-            }
-            setSelectedImage(null);
-        };
-        window.addEventListener('click', handleElementClick);
-        return () => {
-            window.removeEventListener('click', handleElementClick);
-        };
-    }, []);
-
-    // event to open image preview
-    useEffect(() => {
-        const resizer = document.getElementById('editor-resizer');
-        if (!selectedImage) {
-            resizer?.classList.remove('showResizer');
-            return;
-        }
-        resizer?.classList.add('showResizer');
-        const openImagePreview = (e: Event) => {
-            const target = e.target as HTMLImageElement;
-
-            if (target.id === 'editor-resizer') {
-                setVisible(true);
-            }
-        };
-        document.addEventListener('click', openImagePreview);
-        return () => {
-            document.removeEventListener('click', openImagePreview);
-        };
-    }, [selectedImage]);
-
-    // adjust resizer to prevent edition while readonly
-    useEffect(() => {
-        const imageToolbar = document.getElementsByClassName('toolbar')[0];
-        const imagehandler = document.getElementsByClassName('handler')[0];
-        // if readOnly cant change image size, so we have to hide the toolbar
-        if (readOnly) {
-            if (imageToolbar) {
-                imageToolbar.classList.add('hidden');
-            }
-            if (imagehandler) {
-                imagehandler.classList.add('hidden');
-            }
-        }
-    }, [selectedImage]);
 
 
     if (isLoading && !isInitialContentLoaded) {
@@ -299,8 +176,9 @@ export default function VersionViewer() {
 
 
     return (
-        <div style={{display: "grid", gridTemplateColumns: "1fr 200px", height: "100%"}}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 250px", height: "100%" }}>
             <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
+
                 <div className="flex justify-between items-center flex-wrap gap-4">
                     <div className="grow">
                         <Textarea
@@ -308,7 +186,6 @@ export default function VersionViewer() {
                             ref={inputRef}
                             value={title}
                             placeholder={t('give_your_page_a_title_message')}
-                            onKeyDown={handleTitleKeyDown}
                             minRows={1}
                             maxRows={2}
                             radius="none"
@@ -354,40 +231,62 @@ export default function VersionViewer() {
                             placeholder={t('write_something_here_placeholder')}
                         />
 
-                        <Image
-                            // Ant Design Image component for image preview
-                            width={200}
-                            style={{ display: 'none' }}
-                            src=""
-                            preview={{
-                                visible: visible,
-                                src: (selectedImage as HTMLImageElement)?.src || '',
-                                onVisibleChange: value => {
-                                    setVisible(value);
-                                },
-                            }}
-                        />
-
                     </div>
                 </div>
+
             </div>
 
             <div style={{ width: '100%', height: '100%' }}>
+
                 <div style={{ width: '100%', height: '40px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
                     <MdOutlineDocumentScanner
                         title={t("back_to_document_button")}
-                        className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]" 
-                        onClick = {()=>navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: true } })}
+                        className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
+                        onClick={() => navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: true } })}
                     />
-                    <RiDeviceRecoverLine 
+                    <RiDeviceRecoverLine
                         title={t("recover_button")}
-                        className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]" 
+                        className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
                     />
                 </div>
-
+                <h3 className='text-[14px] text-gray-500 font-bold mb-[15px] mt-[15px]'>{t("versions")}</h3>
+                <div className="flex flex-col gap-2 overflow-y-auto h-[calc(100vh-200px)]">
+                    {
+                        isLoadingVersions 
+                        ?<div className="flex justify-center items-center h-full">
+                                <Spinner size="lg" />
+                            </div>
+                            :documentVersions?.map((version) => (
+                                <div
+                                    onClick={() => setContent(version.content)}
+                                    key={version.id}
+                                    className="
+                                    flex items-center justify-between
+                                    text-gray-700 text-sm
+                                    p-2 rounded-lg
+                                    transition-all duration-200
+                                    cursor-pointer
+                                    hover:bg-gray-100 hover:text-primary
+                                "
+                                >
+                                    <span className="font-medium">
+                                        {new Date(version.created_at).toLocaleString(navigator.language, {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                            hour: 'numeric',
+                                            minute: 'numeric',
+                                        })}
+                                    </span>
+                                </div>
+                            ))
+                    }
+                </div>
 
             </div>
+
         </div>
+
     );
 
 

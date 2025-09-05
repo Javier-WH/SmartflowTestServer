@@ -67,8 +67,24 @@ export default function useDocumentControlVersion({ documentId: document_id }: {
     return true
   }
 
+  const getVersions = async () => {
+    const { data, error } = await supabase
+      .from('document_version_history')
+      .select('*')
+      .eq('document_id', document_id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error al obtener las versiones:', error);
+      return [];
+    }
+
+    return data || [];
+  };
+
   return {
-    addVersion
+    addVersion,
+    getVersions
   }
 }
 

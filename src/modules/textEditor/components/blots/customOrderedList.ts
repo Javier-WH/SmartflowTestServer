@@ -15,7 +15,6 @@ class CustomOrderedList extends List {
         value;
 
     const node = super.create(type === 'alpha' ? 'ordered' : type) as HTMLElement;
-    console.log(value)
     // Manejar listas numéricas con inicio personalizado
     if (typeof value === 'number') {
       node.setAttribute('data-start', value.toString());

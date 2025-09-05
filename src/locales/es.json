@@ -141,5 +141,6 @@
   "error_saving_version_message": "Ha ocurrido un error al guardar la version. Por favor, reinténtalo de nuevo mas tarde.",
   "version_saved_successfully_message": "La version se ha guardado correctamente.",
   "back_to_document_button": "Volver al Documento",
-  "recover_button": "Recuperar esta version"
+  "recover_button": "Recuperar esta version",
+  "versions": "Versiones"
 }
