@@ -53,7 +53,7 @@ export default function TextEditor() {
     const { id } = useParams();
     const { t } = useTranslation();
     const { setSelectedFileId, setChangleFileNameRequest, memberRoll, setParentFolders } = useContext(MainContext) as MainContextValues;
-
+    const [isSavingVersion, setIsSavingVersion] = useState(false);
     const [title, setTitle] = useState('');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [showToolbar, setShowToolbar] = useState(true);
@@ -67,7 +67,7 @@ export default function TextEditor() {
     const [content, setContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [visible, setVisible] = useState(false);
-    const {addVersion} = useDocumentControlVersion({ documentId: id });
+    const { addVersion } = useDocumentControlVersion({ documentId: id });
 
     const modules = {
         toolbar: {
@@ -538,13 +538,15 @@ export default function TextEditor() {
 
     // add a new document version to the database
     const handleOnPressSaveButton = async () => {
-        await  handleEditorChange(content);
-        const saveVersion  = await addVersion({name: title, content});
-       if(!saveVersion) {
-         message.error(t('error_saving_version_message'))
-         return
-       }
-       message.success(t('version_saved_successfully_message'))
+        setIsSavingVersion(true);
+        await handleEditorChange(content);
+        const saveVersion = await addVersion({ name: title, content });
+        if (!saveVersion) {
+            message.error(t('error_saving_version_message'))
+            return
+        }
+        message.success(t('version_saved_successfully_message'))
+        setIsSavingVersion(false);
     }
 
     return (
@@ -573,25 +575,10 @@ export default function TextEditor() {
                     />
                 </div>
 
-                <div className="w-[80px] flex justify-between">
-                    {
-                        readOnly ? null :
-                            <>
-                                <GoVersions
-                                    title={t('document_version_history')}
-                                    className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                                />
-                                <GiSave
-                                onClick={handleOnPressSaveButton}
-                                    title={t('save_document')}
-                                    className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                                />
-                            </>
-                    }
-                </div>
+        
 
 
-                <div className="grid grid-rows-2 h-[50px]">
+                <div className="grid grid-rows-2 h-[60px]">
                     {fileContent?.updated_at ? (
                         <span className="w-full text-gray-400">
                             <span>{t('last_updated_label')}: </span>
@@ -602,10 +589,29 @@ export default function TextEditor() {
                             }).format(new Date(fileContent?.updated_at))}
                         </span>
                     ) : null}
-                    <div className="flex items-baseline gap-[10px] text-primary">
-                        {
-                            isMutating ? <span><Spinner size="sm" />{t('saving_message')}</span> : null
-                        }
+                    <div className="flex justify-between gap-[5px] mr-[10px]">
+
+                        <div className="flex items-baseline gap-[20px] text-primary">
+                            {
+                                isMutating || isSavingVersion ? <span className="text-[18px]"><Spinner size="sm" />{t('saving_message')}</span> : null
+                            }
+                        </div>
+                        <div className="w-[80px] flex justify-between">
+                            {
+                                readOnly ? null :
+                                    <>
+                                        <GoVersions
+                                            title={t('document_version_history')}
+                                            className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
+                                        />
+                                        <GiSave
+                                            onClick={handleOnPressSaveButton}
+                                            title={t('save_document')}
+                                            className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
+                                        />
+                                    </>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
