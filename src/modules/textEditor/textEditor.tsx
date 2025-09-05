@@ -13,7 +13,7 @@ import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import { getParentFoldersForFile } from '../../utils/pageUtils.ts';
 import { useDebouncedCallback } from 'use-debounce';
-import { Button, Textarea, cn, Spinner, spinner } from '@heroui/react';
+import { Button, Textarea, cn, Spinner } from '@heroui/react';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
@@ -566,11 +566,11 @@ export default function TextEditor() {
                         readOnly ? null :
                             <>
                                 <GoVersions
-                                    title="Save document"
+                                    title={t('document_version_history')}
                                     className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
                                 />
                                 <GiSave
-                                    title="Save document"
+                                    title={t('save_document')}
                                     className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
                                 />
                             </>
@@ -589,9 +589,9 @@ export default function TextEditor() {
                             }).format(new Date(fileContent?.updated_at))}
                         </span>
                     ) : null}
-                    <div className="flex items-baseline gap-[5px] text-primary">
+                    <div className="flex items-baseline gap-[10px] text-primary">
                         {
-                            isMutating ? <span><Spinner size="sm" /> Saving...</span> : null
+                            isMutating ? <span><Spinner size="sm" />{t('saving_message')}</span> : null
                         }
                     </div>
                 </div>

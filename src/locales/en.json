@@ -134,7 +134,11 @@
   "step": "step",
   "guidandece_placeholder": "Add a guidance (if needed!)",
   "guidance_delete_index_message": "Are you sure you want to delete this guidance?",
-  "guided_checklist_delete_message": "Are you sure you want to delete this guided checklist?"
+  "guided_checklist_delete_message": "Are you sure you want to delete this guided checklist?",
+  "saving_message": "Saving...",
+  "save_document": "Save Document",
+  "document_version_history": "Document Version History"
+
 
 
 }

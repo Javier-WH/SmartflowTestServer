@@ -134,5 +134,8 @@
   "step": "paso",
   "guidandece_placeholder": "Añade una guía (si es necesario!)",
   "guidance_delete_index_message": "Estas seguro de querer eliminar esta guía?",
-  "guided_checklist_delete_message": "¿Estas seguro de querer eliminar este lista de verificación guiada?"
+  "guided_checklist_delete_message": "¿Estas seguro de querer eliminar este lista de verificación guiada?",
+  "saving_message": "Guardando...",
+  "save_document": "Guardar Documento",
+  "document_version_history": "Historial de Versiones del Documento"
 }
