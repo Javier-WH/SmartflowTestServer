@@ -137,5 +137,7 @@
   "guided_checklist_delete_message": "¿Estas seguro de querer eliminar este lista de verificación guiada?",
   "saving_message": "Guardando...",
   "save_document": "Guardar Documento",
-  "document_version_history": "Historial de Versiones del Documento"
+  "document_version_history": "Historial de Versiones del Documento",
+  "error_saving_version_message": "Ha ocurrido un error al guardar la version. Por favor, reinténtalo de nuevo mas tarde.",
+  "version_saved_successfully_message": "La version se ha guardado correctamente."
 }

@@ -22,6 +22,7 @@ import { GiSave } from "react-icons/gi"
 import { GoVersions } from "react-icons/go";
 import { findImageIndexBySrc } from '../textEditor/utils/findDeltaIndex';
 import { useTranslation } from 'react-i18next';
+import useDocumentControlVersion from './controlVersion/useDocumentControlVersion.ts';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 
@@ -66,7 +67,7 @@ export default function TextEditor() {
     const [content, setContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [visible, setVisible] = useState(false);
-
+    const {addVersion} = useDocumentControlVersion({ documentId: id });
 
     const modules = {
         toolbar: {
@@ -535,6 +536,17 @@ export default function TextEditor() {
         }
     };
 
+    // add a new document version to the database
+    const handleOnPressSaveButton = async () => {
+        await  handleEditorChange(content);
+        const saveVersion  = await addVersion({name: title, content});
+       if(!saveVersion) {
+         message.error(t('error_saving_version_message'))
+         return
+       }
+       message.success(t('version_saved_successfully_message'))
+    }
+
     return (
         <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
@@ -570,6 +582,7 @@ export default function TextEditor() {
                                     className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
                                 />
                                 <GiSave
+                                onClick={handleOnPressSaveButton}
                                     title={t('save_document')}
                                     className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
                                 />

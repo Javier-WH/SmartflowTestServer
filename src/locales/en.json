@@ -137,7 +137,9 @@
   "guided_checklist_delete_message": "Are you sure you want to delete this guided checklist?",
   "saving_message": "Saving...",
   "save_document": "Save Document",
-  "document_version_history": "Document Version History"
+  "document_version_history": "Document Version History",
+  "error_saving_version_message": "An error occurred while saving the version. Please try again later.",
+  "version_saved_successfully_message": "The version was saved successfully."
 
 
 
