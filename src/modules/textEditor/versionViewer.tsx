@@ -13,7 +13,7 @@ import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import { Textarea, cn, Spinner } from '@heroui/react';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
 import { MdOutlineDocumentScanner } from "react-icons/md";
 import { RiDeviceRecoverLine } from "react-icons/ri";
@@ -195,6 +195,26 @@ export default function VersionViewer() {
         );
     }
 
+    const handleRecoverClick = () => {
+        Modal.confirm({
+            title: t("recovery_version_modal_title"),
+            content: t("recovery_version_modal_description"),
+            okText: t('recovery_version_modal_button'),
+            cancelText: t('cancel_label'),
+            okButtonProps: {
+                style: {
+                    backgroundColor: 'rgba(109, 74, 255, 1)',
+                    borderColor: 'rgba(109, 74, 255, 1)',
+                    color: 'white',
+                    outline: 'none'
+                },
+            },
+            onOk: async () => {
+                await debouncedUpdate({ id: currentFileId.current, htmlContent: content, title: title });
+            },
+        });
+    };
+
 
     return (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 250px", height: "100%" }}>
@@ -268,9 +288,7 @@ export default function VersionViewer() {
                     <RiDeviceRecoverLine
                         title={t("recover_button")}
                         className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                        onClick={async () => {
-                            await debouncedUpdate({ id: currentFileId.current, htmlContent: content, title: title })
-                        }}
+                        onClick={handleRecoverClick}
                     />
                 </div>
                 <h3 className='text-[14px] text-gray-500 font-bold mb-[15px] mt-[15px]'>{t("versions")}</h3>
@@ -291,8 +309,8 @@ export default function VersionViewer() {
                             <IoAddCircleSharp
                                 title={t("add_version_button")}
                                 className='text-[20px] text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]'
-                                onClick={async() => {
-                                    if(isLoadingVersions) return
+                                onClick={async () => {
+                                    if (isLoadingVersions) return
                                     setIsLoadingVersions(true)
                                     await addVersion({ name: title, content: CurrentContent })
                                     updateVersionList()

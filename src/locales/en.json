@@ -144,7 +144,11 @@
   "recover_button": "Recover this version",
   "versions": "Versions",
   "current_version": "Current Version",
-  "add_version_button": "Add Version"
+  "add_version_button": "Add Version",
+  "recovery_version_modal_title": "Are you sure you want to recover this version?",
+  "recovery_version_modal_description": "This will replace the current version and you will lose any unsaved changes.",
+  "recovery_version_modal_button": "Recover Version"
+ 
 
 
 
