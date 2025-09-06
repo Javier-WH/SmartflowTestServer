@@ -144,5 +144,8 @@
   "recover_button": "Recuperar esta version",
   "versions": "Versiones",
   "current_version": "Versión Actual",
-  "add_version_button": "Agregar esta Version"
+  "add_version_button": "Agregar esta Version",
+  "recovery_version_modal_title": "¿Estas seguro de querer recuperar esta version?",
+  "recovery_version_modal_description": "Esto reemplazara la version actual y perderas cualquier cambio sin guardar.",
+  "recovery_version_modal_button": "Recuperar Version"
 }
