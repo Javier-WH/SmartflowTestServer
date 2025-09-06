@@ -142,5 +142,7 @@
   "version_saved_successfully_message": "La version se ha guardado correctamente.",
   "back_to_document_button": "Volver al Documento",
   "recover_button": "Recuperar esta version",
-  "versions": "Versiones"
+  "versions": "Versiones",
+  "current_version": "Versión Actual",
+  "add_version_button": "Agregar esta Version"
 }

@@ -142,7 +142,9 @@
   "version_saved_successfully_message": "The version was saved successfully.",
   "back_to_document_button": "Back to Document",
   "recover_button": "Recover this version",
-  "versions": "Versions"
+  "versions": "Versions",
+  "current_version": "Current Version",
+  "add_version_button": "Add Version"
 
 
 

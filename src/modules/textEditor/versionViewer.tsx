@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import useDocumentControlVersion from './controlVersion/useDocumentControlVersion.ts';
 import { useNavigate } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
+import { IoAddCircleSharp } from "react-icons/io5";
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 
@@ -67,20 +68,22 @@ export default function VersionViewer() {
     const currentFileId = useRef(id);
     const { data: fileContent, isLoading, mutate, isMutating } = useFileContent({ fileId: id });
     const [content, setContent] = useState(fileContent?.content ?? '');
+    const [CurrentContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [documentVersions, setDocumentVersions] = useState<DocumentVersionData[]>([]);
-    const { getVersions } = useDocumentControlVersion({ documentId: id });
+    const { getVersions, addVersion } = useDocumentControlVersion({ documentId: id });
     const [isLoadingVersions, setIsLoadingVersions] = useState(false)
-   
+
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id) return;
-
             await mutate({
                 id,
                 ...(htmlContent ? { content: htmlContent } : {}),
                 ...(title ? { name: title } : {}),
-            });
+            })
+            navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: true } })
+
         },
         400,
         { leading: false, trailing: true },
@@ -161,9 +164,7 @@ export default function VersionViewer() {
 
 
 
-
-    //obtiene las versiones
-    useEffect(() => {
+    const updateVersionList = () => {
         setIsLoadingVersions(true);
         getVersions()
             .then((versions) => {
@@ -176,12 +177,17 @@ export default function VersionViewer() {
             .finally(() => {
                 setIsLoadingVersions(false);
             });
+    }
+
+    //obtiene las versiones
+    useEffect(() => {
+        updateVersionList();
     }, [])
 
 
- 
 
-    if (isLoading && !isInitialContentLoaded) {
+
+    if (isMutating || (isLoading && !isInitialContentLoaded)) {
         return (
             <div className="flex justify-center items-center h-full">
                 <Spinner size="lg" />
@@ -264,18 +270,43 @@ export default function VersionViewer() {
                         className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
                         onClick={async () => {
                             await debouncedUpdate({ id: currentFileId.current, htmlContent: content, title: title })
-                           
                         }}
                     />
                 </div>
                 <h3 className='text-[14px] text-gray-500 font-bold mb-[15px] mt-[15px]'>{t("versions")}</h3>
                 <div className="flex flex-col gap-2 overflow-y-auto h-[calc(100vh-200px)]">
+                    <div
+                        onClick={() => setContent(CurrentContent)}
+                        className="
+                                    flex items-center justify-between
+                                    text-gray-700 text-sm
+                                    p-2 rounded-lg
+                                    transition-all duration-200
+                                    cursor-pointer
+                                    hover:bg-gray-100 hover:text-primary
+                                "
+                    >
+                        <span className="font-medium flex gap-4 items-center">
+                            {t("current_version")}
+                            <IoAddCircleSharp
+                                title={t("add_version_button")}
+                                className='text-[20px] text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]'
+                                onClick={async() => {
+                                    if(isLoadingVersions) return
+                                    setIsLoadingVersions(true)
+                                    await addVersion({ name: title, content: CurrentContent })
+                                    updateVersionList()
+                                }}
+                            />
+                        </span>
+                    </div>
+
                     {
-                        isLoadingVersions 
-                        ?<div className="flex justify-center items-center h-full">
+                        isLoadingVersions
+                            ? <div className="flex justify-center items-center h-full">
                                 <Spinner size="lg" />
                             </div>
-                            :documentVersions?.map((version) => (
+                            : documentVersions?.map((version) => (
                                 <div
                                     onClick={() => setContent(version.content)}
                                     key={version.id}
