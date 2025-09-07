@@ -23,8 +23,8 @@ import { useTranslation } from 'react-i18next';
 
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-
-    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, } = useContext(
+  
+    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, parentFolders } = useContext(
         MainContext,
     ) as MainContextValues;
     const { createFile } = useFilesManager();
@@ -113,8 +113,16 @@ export default function Home() {
                         className={`flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'hidden absolute md:opacity-100 md:visible md:relative' : 'relative'}`}
                     >
                         <SearchInput />
-
                         <div className="bg-gray-200 shadow-gray-100 ring-gray-200 ring-1 shadow-md h-full py-1 rounded-md flex flex-col mt-2 overflow-hidden">
+                            <span className="ml-3 text-primary text-[13px] text-left min-w-[200px] min-h-[30px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
+                                <span className='font-bold'>
+                                    {`${localStorage.getItem("OrgName") || ""}`}
+                                </span>
+                                {`${parentFolders}`}
+
+                            </span>
+
+
                             <div className="flex justify-end gap-1 px-1">
                                 <Button variant="light" isIconOnly onPress={handleCreatePage}>
                                     <IconFilePlus />
