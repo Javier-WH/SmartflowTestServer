@@ -71,6 +71,7 @@ export default function TextEditor() {
     const [visible, setVisible] = useState(false);
     const { addVersion } = useDocumentControlVersion({ documentId: id });
 
+    
     const modules = {
         toolbar: {
             container: '#toolbar',
