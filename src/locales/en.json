@@ -147,9 +147,23 @@
   "add_version_button": "Add Version",
   "recovery_version_modal_title": "Are you sure you want to recover this version?",
   "recovery_version_modal_description": "This will replace the current version and you will lose any unsaved changes.",
-  "recovery_version_modal_button": "Recover Version"
- 
-
+  "recovery_version_modal_button": "Recover Version",
+  "Organizations_retrieved_successfully": "Organizations retrieved successfully",
+  "Organization_created_successfully": "Organization created successfully",
+  "No_data_provided": "At least one field must be provided",
+  "Organization_updated_successfully": "Organization updated successfully",
+  "Roles_retrieved_successfully": "Roles retrieved successfully",
+  "Role_updated_successfully": "Role updated successfully",
+  "You_have_joined_the_organization": "You have joined the organization",
+  "You_have_left_the_organization": "You have left the organization",
+  "organization_not_found": "Organization not found",
+  "Something_went_wrong": "Something went wrong",
+  "User_already_in_organization": "User already in organization",
+  "invitation_already_exists": "An invitation already sends to this email",
+  "Invitation_deleted_successfully": "Invitation deleted successfully",
+  "Organization_deleted_successfully": "Organization deleted successfully",
+  "Invitation_retrieved_successfully": "Invitation retrieved successfully",
+  "Members_retrieved_successfully": "Members retrieved successfully"
 
 
 }
