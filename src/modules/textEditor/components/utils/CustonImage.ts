@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Quill } from 'react-quill';
 import { uploadImageToStorage } from '../../imgStorage/imgStorage';
-//import PLACEHOLDER_SVG from "./LoadingImageSpinner1.svg"
+
 
 
 // Import the default image blot
@@ -9,12 +9,27 @@ const Image = Quill.import('formats/image');
 export default class CustomImage extends Image {
     // When creating the image, we check if 'value' is an object that includes src, width and height
     static create(value: any) {
+      
+        // comento esta opcion para prevenir posibles perdidas de información en imagenes antiguas que esten en el formato viejo
+        /*if (typeof value === 'string' && value.startsWith('data:image/')) {
+            const base64Data = value.split(';base64,')[1];
+            // 5 MB = 5 * 1024 * 1024 bytes
+            const maxSizeInBytes = 5 * 1024 * 1024;
+            // calculate the size of the image
+            const imageSizeInBytes = (base64Data.length / 4) * 3;
+
+            if (imageSizeInBytes > maxSizeInBytes) {
+                alert("La imagen es demasiado grande. Por favor, selecciona una imagen de menos de 5MB.");
+                return null;
+            }
+        }*/
+
         const node = super.create(value);
+
 
         const handleUpload = async (src: string) => {
             try {
                 const base64Data = src.split(';base64,')[1];
-                //node.setAttribute('src', PLACEHOLDER_SVG);
                 const url = await uploadImageToStorage(base64Data, "testImage");
                 node.setAttribute('src', url);
             } catch (error) {
