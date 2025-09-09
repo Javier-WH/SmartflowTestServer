@@ -147,5 +147,21 @@
   "add_version_button": "Agregar esta Version",
   "recovery_version_modal_title": "¿Estas seguro de querer recuperar esta version?",
   "recovery_version_modal_description": "Esto reemplazara la version actual y perderas cualquier cambio sin guardar.",
-  "recovery_version_modal_button": "Recuperar Version"
+  "recovery_version_modal_button": "Recuperar Version",
+  "Organizations_retrieved_successfully": "Organizaciones recuperadas correctamente",
+  "Organization_created_successfully": "Organización creada correctamente",
+  "No_data_provided": "Debe proporcionar al menos un campo",
+  "Organization_updated_successfully": "Organización actualizada correctamente",
+  "Roles_retrieved_successfully": "Roles recuperados correctamente",
+  "Role_updated_successfully": "Rol actualizado correctamente",
+  "You_have_joined_the_organization": "Te has unido a la organización",
+  "You_have_left_the_organization": "Te has retirado de la organización",
+  "organization_not_found": "Organización no encontrada",
+  "Something_went_wrong": "Algo salió mal",
+  "User_already_in_organization": "El usuario ya pertenece a la organización",
+  "invitation_already_exists": "Una invitación ya ha sido enviada a este correo",
+  "Invitation_deleted_successfully": "Invitación eliminada correctamente",
+  "Organization_deleted_successfully": "Organización eliminada correctamente",
+  "Invitation_retrieved_successfully": "Invitación recuperada correctamente",
+  "Members_retrieved_successfully": "Miembros recuperados correctamente"
 }
