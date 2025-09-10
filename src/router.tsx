@@ -9,6 +9,7 @@ import { Navigate } from 'react-router-dom';
 import MainLayout from './modules/MainLayout';
 import PrivateRoute from './PrivateRoute';
 import TextEditor from './modules/textEditor/textEditor';
+import TextEditor2 from './modules/textEditor/textEditor2';
 import Organizations from './modules/organizations/organizations';
 import JoinOrganization from './modules/onboarding/join-org';
 import Members from './modules/joinOrganization/menbers';
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
                     { path: 'page/:id', element: <Page /> },
                     { path: 'edit/:id', element: <TextEditor /> },
                     { path: 'history/:id', element: <VersionViewer /> },
+                    { path: 'edit2/:id', element: <TextEditor2 /> },
                 ],
             },
             {

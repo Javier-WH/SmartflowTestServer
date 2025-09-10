@@ -682,7 +682,6 @@ export default function TextEditor() {
                     />
 
                     <Image
-                        // Ant Design Image component for image preview
                         width={200}
                         style={{ display: 'none' }}
                         src=""
