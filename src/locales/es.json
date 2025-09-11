@@ -163,5 +163,7 @@
   "Invitation_deleted_successfully": "Invitación eliminada correctamente",
   "Organization_deleted_successfully": "Organización eliminada correctamente",
   "Invitation_retrieved_successfully": "Invitación recuperada correctamente",
-  "Members_retrieved_successfully": "Miembros recuperados correctamente"
+  "Members_retrieved_successfully": "Miembros recuperados correctamente",
+  "quill_header": "Titulo",
+  "quill_paragraph": "Parrafo"
 }

@@ -622,7 +622,7 @@ export default function TextEditor() {
                         </div>
                         <div className="w-[80px] flex justify-between">
                             {
-                                /*readOnly ? null :
+                                readOnly ? null :
                                     <>
                                         <GoVersions
                                             title={t('document_version_history')}
@@ -637,7 +637,7 @@ export default function TextEditor() {
                                             title={t('save_document')}
                                             className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
                                         />
-                                    </>*/
+                                    </>
                             }
                         </div>
                     </div>
