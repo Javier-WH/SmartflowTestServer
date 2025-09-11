@@ -108,7 +108,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                     draggable
                     onDragStart={event => handleDragStart(event, file.id, file.type)}
                 >
-                    {/*<img src={file.published ? publishedIcon*/}
+                    <img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />
                     <span className="truncate max-h-[50px] w-full" title={fileName}>
                         {fileName === 'untitled' ? t('untitled_file') : fileName}
                     </span>
