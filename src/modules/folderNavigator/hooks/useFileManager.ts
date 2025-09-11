@@ -31,9 +31,7 @@ const moveFile = async (fileId: string, newContainerId: string | null): Promise<
 }
 
 const createFile = async (fileName: string, containerId: string | null = null, slug: string): Promise<FileResponse> => {
-
   const functionName = pageType === 'quill' ? 'create_file_quill' : 'create_file';
-
   const { data, error } = await supabase
     .rpc(functionName, {
       p_name: fileName,

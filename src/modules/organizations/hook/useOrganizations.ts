@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import supabase from '../../../lib/supabase';
 import errorManager from '../errorManager/errorManager';
 import type { OrganizationsResponse } from '../types/organizations';
@@ -60,7 +61,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
 
         return {
             error: false,
-            message: 'Organizations retrieved successfully',
+            message: t('Organizations_retrieved_successfully'),
             data: response.data,
             count: totalCount,
         };
@@ -102,7 +103,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
 
         if (joinResponse.error) return errorManager(joinResponse.error);
 
-        return { error: false, message: 'Organization created successfully', data: response.data };
+        return { error: false, message: t('Organization_created_successfully'), data: response.data };
     };
 
     /**
@@ -119,7 +120,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
         if (Object.keys(data).length === 0) {
             return {
                 error: true,
-                message: 'At least one field must be provided for update',
+                message: t('No_data_provided'),
                 data: null,
             };
         }
@@ -131,7 +132,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
         mutate();
         return {
             error: false,
-            message: 'Organization updated successfully',
+            message: t('Organization_updated_successfully'),
             data: response.data,
         };
     };
@@ -146,7 +147,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
     const getUserRolls = async (): Promise<OrganizationsResponse> => {
         const response = await supabase.from('rolls').select('*');
         if (response.error) return errorManager(response.error);
-        return { error: false, message: 'content retrieved successfully', data: response.data };
+        return { error: false, message: t('Roles_retrieved_successfully'), data: response.data };
     };
 
     /**
@@ -164,7 +165,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
             .eq('organization_id', organization_id)
             .select('*');
         if (response.error) return errorManager(response.error);
-        return { error: false, message: 'Member role updated successfully', data: response.data };
+        return { error: false, message: t('Role_updated_successfully'), data: response.data };
     };
 
     /**
@@ -205,7 +206,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
 
         if (updateResponse.error) return errorManager(updateResponse.error);
 
-        return { error: false, message: 'content retrieved successfully', data: response.data };
+        return { error: false, message: t('You_have_joined_the_organization'), data: response.data };
     };
 
     /**
@@ -226,7 +227,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
         if (response.error) return errorManager(response.error);
 
         mutate();
-        return { error: false, message: 'You have left the organization', data: response.data };
+        return { error: false, message: t('You_have_left_the_organization'), data: response.data };
     };
 
     /**
@@ -257,10 +258,31 @@ export default function useOrganizations(user_id?: string, search?: string) {
             return {
                 error: true,
                 //message: 'You do not have permission to invite users to this organization',
-                message: 'Organization not found',
+                message: t('organization_not_found'),
                 data: null,
             };
         }
+
+   
+        const isUserInOrganization = await supabase.rpc('is_user_in_organization', {
+            p_email: email.toLowerCase().trim(),
+            p_organization_id: organizationId,
+          });
+
+          if (isUserInOrganization.error) {
+            return {
+              error: true,
+              message: t('Something_went_wrong'),
+              data: null,
+            };
+          }
+          if (isUserInOrganization.data) {
+            return {
+              error: true,
+              message: t('User_already_in_organization'),
+              data: null,
+            };
+          }
 
         // Create an invitation record
         const invitationResponse = await supabase
@@ -280,7 +302,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
             if (invitationResponse.error.code === '23505') {
                 return {
                     error: true,
-                    message: 'An invitation has already been sent to this email',
+                    message: t('invitation_already_exists'),
                     data: null,
                 };
             }
@@ -310,7 +332,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
             .delete().eq('organization_id', organization_id)
             .eq('email', email)
         if (response.error) return errorManager(response.error);
-        return { error: false, message: 'Invitation deleted successfully', data: response.data };
+        return { error: false, message: t('Invitation_deleted_successfully'), data: response.data };
     };
 
     /**
@@ -324,7 +346,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
 
         if (response.error) return errorManager(response.error);
 
-        return { error: false, message: 'Organization deleted successfully', data: response.data };
+        return { error: false, message: t('Organization_deleted_successfully'), data: response.data };
     };
 
     /**
@@ -342,7 +364,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
             .eq('status', 'pending');
 
         if (response.error) return errorManager(response.error);
-        return { error: false, message: 'content retrieved successfully', data: response.data }
+        return { error: false, message: t('Invitation_retrieved_successfully'), data: response.data }
     };
 
 
@@ -363,7 +385,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
             console.log(error);
             return errorManager(error)
         } else {
-            return { error: false, message: 'Organization members retrieved successfully', data: response.data };
+            return { error: false, message: t("Members_retrieved_successfully"), data: response.data };
         }
     }
 

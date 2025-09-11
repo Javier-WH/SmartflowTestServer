@@ -162,6 +162,8 @@ export default function Menbers() {
         setInviteError('');
 
         try {
+
+            
             const response = await inviteUserToOrganization(organization.id, inviteEmail.trim(), user.id);
 
             if (response.error) {

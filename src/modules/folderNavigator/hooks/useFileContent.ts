@@ -18,17 +18,7 @@ export default function useFileContent({ fileId }: { fileId: string }) {
         ['id'],
         'content, name, updated_at',
     );
-    //     const tableName = pageType === 'quill' ? 'filesquill' : 'files';
-    // if (name === '') name = 'untitled';
-    // const response = await supabase
-    //   .from(tableName)
-    //   .update({
-    //     name,
-    //     content
-    //   })
-    //   .eq('id', fileId)
-    //   .select('content, name, updated_at')
-    //   .single();
+
 
     return {
         data: fileContent,

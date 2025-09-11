@@ -13,6 +13,8 @@ import Organizations from './modules/organizations/organizations';
 import JoinOrganization from './modules/onboarding/join-org';
 import Members from './modules/joinOrganization/menbers';
 import UserJoinOrganization from './modules/joinOrganization/joinOrganization';
+import VersionViewer from './modules/textEditor/versionViewer';
+import ErrorPage from './errorsHandler/errorPage';
 
 const router = createBrowserRouter([
     {
@@ -22,7 +24,7 @@ const router = createBrowserRouter([
                 <MainLayout />
             </PrivateRoute>
         ),
-        errorElement: <span>NothingFound</span>,
+        errorElement: <ErrorPage />,
         children: [
             {
                 index: true,
@@ -35,6 +37,7 @@ const router = createBrowserRouter([
                     { path: 'home' },
                     { path: 'page/:id', element: <Page /> },
                     { path: 'edit/:id', element: <TextEditor /> },
+                    { path: 'history/:id', element: <VersionViewer /> },
                 ],
             },
             {

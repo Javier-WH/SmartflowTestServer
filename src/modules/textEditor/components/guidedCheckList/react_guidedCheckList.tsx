@@ -73,7 +73,7 @@ class Item extends React.Component<ItemProps> {
                             label: (
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <span className="item-index">{item.index + 1}</span>
-                                    <Button className='btn-delete-guidance' type="link" icon={<DeleteOutlined />} onClick={handleClickIndex} />
+                                     {!commonProps.readonly && <Button className='btn-delete-guidance' type="link" icon={<DeleteOutlined />} onClick={handleClickIndex} />}
                                     <Input
                                         readOnly={commonProps.readonly}
                                         placeholder={`${t("what's the")} ${item.index === 0 ? t('first') : t('next')} ${t("step")}?`}
@@ -352,12 +352,12 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
         );
     return (<>
         <div
-
             contentEditable={false}
             className="guided-checklist"
             ref={el => {
                 if (el) componentRef.current = el.closest('guided-checklist') as HTMLElement | undefined;
             }}
+            //ref={componentRef as React.RefObject<HTMLDivElement>}
         >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center' }}>
                 <Input
@@ -369,7 +369,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                     onPaste={e => e.stopPropagation()}
                 />
                 <div className='guided-checklist-header-buttons'>
-                    <Button className='btn-delete-gchl' type="link" icon={<DeleteOutlined />} onClick={handleDeleteBlot} /> {/* este boton debe eliminar todo el blot */}
+                    {!commonProps.readonly && <Button className='btn-delete-gchl' type="link" icon={<DeleteOutlined />} onClick={handleDeleteBlot} />} {/* este boton debe eliminar todo el blot */}
                     <div
                         style={{ cursor: 'pointer' }}
                         onClick={() => {

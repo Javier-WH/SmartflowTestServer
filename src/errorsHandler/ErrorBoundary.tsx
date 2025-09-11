@@ -20,7 +20,6 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
           </pre>
         </details>
 
-      
         <button
           className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors"
           onClick={resetErrorBoundary}
@@ -34,7 +33,6 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
 
 // Define a function to log the error to Supabase
 const logErrorToSupabase = async (error) => {
-  console.error("Error capturado por Error Boundary:", error);
   try {
     const errorData = {
       message: error.message,
