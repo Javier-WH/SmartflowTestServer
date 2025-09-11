@@ -463,7 +463,6 @@ export default function TextEditor() {
         if (toolbar) {
             toolbar.addEventListener('mousedown', preventScroll);
         }
-        
         return () => {
             if (toolbar) {
                 toolbar.removeEventListener('mousedown', preventScroll);

@@ -170,6 +170,10 @@ export default function Guidance({
         }
     }, [insertImageIntoQuill]);
 
+
+    
+
+
     useEffect(() => {
         const maintolbar = document.getElementById("toolbar")
         setMainToolbarElement(maintolbar as HTMLElement);
@@ -242,9 +246,6 @@ export default function Guidance({
                 if (content === currentContent) return;
                 setCurrentContent(content);
                 debouncedSave(content);
-
-
-
             });
 
     
@@ -348,8 +349,8 @@ export default function Guidance({
                     }
                 }
             });
-
-
+            
+        
             return () => {
                 //remove all the listeners to avoid memory leaks
                 const editorRoot = editorRef.current?.root;
@@ -357,6 +358,7 @@ export default function Guidance({
                     editorRoot.removeEventListener('paste', handlePaste);
                     editorRoot.removeEventListener('dragover', handleDragOver);
                     editorRoot.removeEventListener('drop', handleDrop)
+                   
                 }
                 if (editorRef.current) {
                     editorRef.current = null;
@@ -385,6 +387,8 @@ export default function Guidance({
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
+      
+   
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -416,6 +420,8 @@ export default function Guidance({
             window.removeEventListener('resize', updateToolbarRect);
         };
     }, [mainToolbarElement]);
+
+
 
     return (
         <>
@@ -449,3 +455,5 @@ export default function Guidance({
         </>
     );
 }
+
+
