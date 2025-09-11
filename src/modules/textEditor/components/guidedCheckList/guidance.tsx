@@ -137,7 +137,7 @@ export default function Guidance({
         }
     }, [insertImageIntoQuill]);
 
- 
+
 
     const handleDragOver = useCallback((event: DragEvent) => {
         event.preventDefault(); // Necesario para permitir el 'drop'
@@ -171,7 +171,7 @@ export default function Guidance({
     }, [insertImageIntoQuill]);
 
 
-    
+
 
 
     useEffect(() => {
@@ -248,7 +248,7 @@ export default function Guidance({
                 debouncedSave(content);
             });
 
-    
+
             // CORRECTED: Use click listener to detect image clicks
             const handleImageClick = (event: MouseEvent) => {
                 const target = event.target as HTMLElement;
@@ -349,8 +349,8 @@ export default function Guidance({
                     }
                 }
             });
-            
-        
+
+
             return () => {
                 //remove all the listeners to avoid memory leaks
                 const editorRoot = editorRef.current?.root;
@@ -358,7 +358,7 @@ export default function Guidance({
                     editorRoot.removeEventListener('paste', handlePaste);
                     editorRoot.removeEventListener('dragover', handleDragOver);
                     editorRoot.removeEventListener('drop', handleDrop)
-                   
+
                 }
                 if (editorRef.current) {
                     editorRef.current = null;
@@ -387,8 +387,9 @@ export default function Guidance({
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
-      
-   
+
+
+
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -414,10 +415,21 @@ export default function Guidance({
 
         // Añadir el event listener para el redimensionamiento de la ventana
         window.addEventListener('resize', updateToolbarRect);
+        
+        // esto previene un bug de redimensionamiento de imagenes, se debe buscar una solución mejor
+        const save = () => {
+            const content = editorRef.current?.root.innerHTML || '';
+            if (content === currentContent) return;
+            setCurrentContent(content);
+            debouncedSave(content);
+
+        }
+        window.addEventListener('mouseup', save);
 
         // Limpiar el event listener cuando el componente se desmonte
         return () => {
             window.removeEventListener('resize', updateToolbarRect);
+            window.removeEventListener('mouseup', save);
         };
     }, [mainToolbarElement]);
 
