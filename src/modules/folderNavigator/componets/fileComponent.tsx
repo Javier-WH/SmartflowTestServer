@@ -12,6 +12,7 @@ import type { FolderData, FolderNavigatorContextValues } from '../types/folder';
 import useFilesManager from '../hooks/useFileManager';
 const pageType = import.meta.env.VITE_PAGE_TYPE;
 import { useTranslation } from 'react-i18next';
+import { CiFileOn } from "react-icons/ci";
 
 export function FileComponent({ file }: { file: ContainerElement }) {
     const {
@@ -107,7 +108,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                     draggable
                     onDragStart={event => handleDragStart(event, file.id, file.type)}
                 >
-                    <img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />
+                    {/*<img src={file.published ? publishedIcon*/}
                     <span className="truncate max-h-[50px] w-full" title={fileName}>
                         {fileName === 'untitled' ? t('untitled_file') : fileName}
                     </span>

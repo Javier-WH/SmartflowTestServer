@@ -12,6 +12,8 @@ import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MdFolder } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
+import { BsFolder2Open } from "react-icons/bs";
+import { BsFolder } from "react-icons/bs";
 import './folderContainer.css';
 
 export function FolderComponent({
@@ -247,12 +249,14 @@ export function FolderComponent({
                     onDragLeave={handleDragLeave}
                     title={folder.name}
                 >
-                    <img
+                    {<img
                         style={{ pointerEvents: 'none' }}
                         src={contentId ? openedFolder : closedFolder}
                         alt=""
                         width={30}
-                    />
+                    />}
+
+                    {/*contentId ? <BsFolder2Open className='folder-icon' /> : <BsFolder className='folder-icon' />*/}
                     <span className="folder-name">{folder.name}</span>
 
                     <div className="folder-count-container">

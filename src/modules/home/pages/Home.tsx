@@ -114,13 +114,13 @@ export default function Home() {
                     >
                         <SearchInput />
                         <div className="bg-gray-200 shadow-gray-100 ring-gray-200 ring-1 shadow-md h-full py-1 rounded-md flex flex-col mt-2 overflow-hidden">
-                            <span className="ml-3 text-primary text-[13px] text-left min-w-[200px] min-h-[30px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
+                            {/*<span className="ml-3 text-primary text-[13px] text-left min-w-[200px] min-h-[30px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
                                 <span className='font-bold'>
                                     {`${localStorage.getItem("OrgName") || ""}`}
                                 </span>
                                 {`${parentFolders}`}
 
-                            </span>
+                            </span>*/}
 
 
                             <div className="flex justify-end gap-1 px-1">

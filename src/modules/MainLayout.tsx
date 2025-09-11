@@ -13,7 +13,8 @@ import logo from "../assets/png/smartfloLogoB.png"
 
 
 function Header() {
-    const {setParentFolders} = useContext(MainContext) as MainContextValues;
+
+    const {setParentFolders, parentFolders} = useContext(MainContext) as MainContextValues;
     const navigate = useNavigate();
     //throw new Error('Function not implemented.');
     return (
@@ -22,12 +23,12 @@ function Header() {
                { /*<span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO*/}
                <img src={logo} alt="logo" style={{width: "400px", height: "70px"}}/>
             </h1>
-            {/*<span className="text-primary text-[18px] text-left min-w-[200px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
+            {<span className="text-primary text-[18px] text-left min-w-[200px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
                 <span className="font-bold text-[20px]">
                     {`${localStorage.getItem("OrgName") || ""}`}
                 </span>
                 {`${parentFolders}`}
-            </span>*/}
+            </span>}
             <UserMenu />
         </header>
     );
