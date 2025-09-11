@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import GuidedCheckListIcon from '../../assets/svg/addGuidedCheckList';
 import AlphaListIcon from '../../assets/svg/alpha.svg';
 
@@ -51,6 +52,15 @@ export default function CustomToolbar({
                 <option value="44px">44</option>
                 <option value="46px">46</option>
                 <option value="48px">48</option>
+            </select>
+            <select className="ql-header" defaultValue="normal">
+                <option value="1">{`${t('quill_header')} 1`}</option>
+                <option value="2">{`${t('quill_header')} 2`}</option>
+                <option value="3">{`${t('quill_header')} 3`}</option>
+                <option value="4">{`${t('quill_header')} 4`}</option>
+                <option value="5">{`${t('quill_header')} 5`}</option>
+                <option value="6">{`${t('quill_header')} 6`}</option>
+                <option value="normal">{`${t('quill_paragraph')}`}</option>
             </select>
             <button className="ql-bold action-button"></button>
             <button className="ql-italic action-button"></button>

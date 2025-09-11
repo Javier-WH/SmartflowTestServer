@@ -163,7 +163,9 @@
   "Invitation_deleted_successfully": "Invitation deleted successfully",
   "Organization_deleted_successfully": "Organization deleted successfully",
   "Invitation_retrieved_successfully": "Invitation retrieved successfully",
-  "Members_retrieved_successfully": "Members retrieved successfully"
+  "Members_retrieved_successfully": "Members retrieved successfully",
+  "quill_header": "Header",
+  "quill_paragraph": "Paragraph"
 
 
 }
