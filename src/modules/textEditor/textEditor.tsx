@@ -28,6 +28,7 @@ import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 
 
+
 Quill.register(CustomOrderedList, true);
 
 // this is our custom blot
@@ -97,6 +98,7 @@ export default function TextEditor() {
                 }
             }
         },
+       
     };
 
 
@@ -450,6 +452,23 @@ export default function TextEditor() {
     }, [handlePaste, handleDragOver, handleDrop]);
 
 
+    // temporary and awfully fix for involuntary scroll when text editor is readonly
+    useEffect(() => {
+        const preventScroll = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+ 
+        const toolbar = document.getElementById('toolbar');
+        if (toolbar) {
+            toolbar.addEventListener('mousedown', preventScroll);
+        }
+        return () => {
+            if (toolbar) {
+                toolbar.removeEventListener('mousedown', preventScroll);
+            }
+        }
+    }, [readOnly]);
 
 
     if (isLoading && !isInitialContentLoaded) {
@@ -551,6 +570,8 @@ export default function TextEditor() {
         message.success(t('version_saved_successfully_message'))
         setIsSavingVersion(false);
     }
+
+    
 
     return (
         <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
@@ -666,7 +687,7 @@ export default function TextEditor() {
                         ref={ref => {
                             if (ref) {
                                 quillRef.current = ref;
-
+                                
                                 configureQuillMatchers();
                             }
                         }}
@@ -682,7 +703,6 @@ export default function TextEditor() {
                     />
 
                     <Image
-                        // Ant Design Image component for image preview
                         width={200}
                         style={{ display: 'none' }}
                         src=""

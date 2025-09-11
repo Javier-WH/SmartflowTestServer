@@ -87,7 +87,7 @@ importers:
         specifier: ^5.4.0
         version: 5.4.0(react@18.2.0)
       react-quill:
-        specifier: 2.0.0
+        specifier: ^2.0.0
         version: 2.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-responsive-pagination:
         specifier: 2.5.0
