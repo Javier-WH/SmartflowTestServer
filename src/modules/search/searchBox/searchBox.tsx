@@ -126,7 +126,7 @@ export default function SearchBox({
             style={{
                 position: 'absolute',
                 width: '100%',
-                border: '1px solid #ccc',
+                border: '2px solid #3d3b3bff',
                 top: '100%',
                 maxHeight: '250px',
                 overflowY: 'auto',
@@ -134,6 +134,7 @@ export default function SearchBox({
                 backgroundColor: 'white',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 zIndex: 1000,
+
             }}
         >
             {data?.map(item => {
