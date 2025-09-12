@@ -102,17 +102,18 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                 <div
                     key={file.id}
                     id={file.id}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10,  }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, }}
                     onClick={() => handleClick(file.id)}
                     className={`file hover:bg-primary hover:text-white p-2 rounded-lg ${selectedFileId === file.id ? 'bg-primary text-white' : ''}`}
                     draggable
                     onDragStart={event => handleDragStart(event, file.id, file.type)}
                 >
-                    {/*<img src={file.published ? publishedIcon*/}
+
+                    <img src={file.published ? publishedIcon : unPublishedIcon} width={30}/>
                     <span className="truncate max-h-[50px] w-full" title={fileName}>
                         {fileName === 'untitled' ? t('untitled_file') : fileName}
                     </span>
-                  
+
                 </div>
             </Dropdown>
         </div>
