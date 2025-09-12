@@ -617,7 +617,7 @@ export default function TextEditor() {
 
                         <div className="flex items-baseline gap-[20px] text-primary">
                             {
-                               /* isMutating || isSavingVersion ? <span className="text-[18px]"><Spinner size="sm" />{t('saving_message')}</span> : null*/
+                                isMutating || isSavingVersion ? <span className="text-[18px]"><Spinner size="sm" />{t('saving_message')}</span> : null
                             }
                         </div>
                         <div className="w-[80px] flex justify-between">

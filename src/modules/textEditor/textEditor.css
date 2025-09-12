@@ -1,6 +1,12 @@
+
+.search-continer div{
+    border: none !important;
+    box-shadow: none !important;
+}
 .ql-container.ql-snow {
     border: none !important;
 }
+
 
 .handler {
     pointer-events: all !important;

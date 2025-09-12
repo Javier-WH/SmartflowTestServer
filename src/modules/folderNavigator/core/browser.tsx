@@ -5,7 +5,7 @@ import { MainContext, type MainContextValues } from '@/modules/mainContext';
 
 export default function Browser() {
     const { rootFolder } = useContext(MainContext) as MainContextValues;
-    const observerRef = useRef<MutationObserver | null>(null);
+    /*const observerRef = useRef<MutationObserver | null>(null);
     const processedFolders = useRef<Set<string>>(new Set());
 
     const openFolders = (depth: number) => {
@@ -44,7 +44,7 @@ export default function Browser() {
         return () => {
             observerRef.current?.disconnect();
         };
-    }, []);
+    }, []);*/
 
     return (
         <div className="main-folder-container w-full p-2 h-full max-w-[99%]">
