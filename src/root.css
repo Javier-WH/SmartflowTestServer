@@ -22,6 +22,6 @@ body {
     background-color: var(--backGroundColor) !important;
 }
 ::selection {
-    background-color: rgb(109 74 255);;
+    background-color: rgb(109 74 255);
     color: white; 
 }
