@@ -3,15 +3,17 @@ import type { MenuProps } from 'antd';
 import type { ContainerElement } from '../types/componets';
 import FolderContainer from './folderContainer';
 import { useState, useContext, useEffect } from 'react';
-import openedFolder from '../assets/svg/opened_folder.svg';
-import closedFolder from '../assets/svg/closed_folder.svg';
+//import openedFolder from '../assets/svg/opened_folder.svg';
+//import closedFolder from '../assets/svg/closed_folder.svg';
 import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
 import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MdFolder } from 'react-icons/md';
+//import { MdFolder } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
+import { BsFolder2Open } from "react-icons/bs";
+import { BsFolder } from "react-icons/bs";
 import './folderContainer.css';
 
 export function FolderComponent({
@@ -35,7 +37,7 @@ export function FolderComponent({
     const { moveFile, createFile } = useFilesManager();
     const [contentId, setContentId] = useState<string | null>(null);
     const { organization_id: slug } = useParams();
-    const [filesCount, setFilesCount] = useState<string | number>('0');
+    const [/*filesCount*/, setFilesCount] = useState<string | number>('0');
 
     // updates the number of files when a file is moved
     useEffect(() => {
@@ -247,18 +249,20 @@ export function FolderComponent({
                     onDragLeave={handleDragLeave}
                     title={folder.name}
                 >
-                    <img
+                    {/*<img
                         style={{ pointerEvents: 'none' }}
                         src={contentId ? openedFolder : closedFolder}
                         alt=""
                         width={30}
-                    />
+                    />*/}
+
+                    {contentId ? <BsFolder2Open className='folder-icon' /> : <BsFolder className='folder-icon' />}
                     <span className="folder-name">{folder.name}</span>
 
-                    <div className="folder-count-container">
+                    {/*<div className="folder-count-container">
                         <span className="folder-count">{`${filesCount} ${filesCount === '1' ? t('page_label') : t('pages_label')} `}</span>
                         <MdFolder />
-                    </div>
+                    </div>*/}
                 </div>
             </Dropdown>
             <div className="ml-5">

@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import { MainContextValues, MainContext } from './mainContext';
 import { useNavigate } from 'react-router-dom';
 import logo from "../assets/png/smartfloLogoB.png"
-
+import SearchInput from './search/searchInput';
 
 
 function Header() {
@@ -22,6 +22,9 @@ function Header() {
                { /*<span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO*/}
                <img src={logo} alt="logo" style={{width: "400px", height: "70px"}}/>
             </h1>
+            <div className="search-continer ml-auto w-[300px] bg-gray-200 rounded-3xl border border-gray-400">
+                <SearchInput />
+            </div>
             {/*<span className="text-primary text-[18px] text-left min-w-[200px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
                 <span className="font-bold text-[20px]">
                     {`${localStorage.getItem("OrgName") || ""}`}

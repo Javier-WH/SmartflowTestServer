@@ -1,5 +1,14 @@
+
+.search-continer div{
+    border: none !important;
+    box-shadow: none !important;
+}
 .ql-container.ql-snow {
     border: none !important;
+}
+.ql-active,
+.ql-selected {
+    color: rgb(109 74 255) !important;
 }
 
 .handler {

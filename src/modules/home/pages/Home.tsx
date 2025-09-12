@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import FolderNavigator from '@/modules/folderNavigator/folderNavigator';
 import '../css/home.css';
-import SearchInput from '@/modules/search/searchInput';
+//import SearchInput from '@/modules/search/searchInput';
 import { Button } from '@/components/ui';
 import {
     IconChevronDown,
@@ -23,8 +23,8 @@ import { useTranslation } from 'react-i18next';
 
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  
-    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, parentFolders } = useContext(
+
+    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, /*parentFolders*/ } = useContext(
         MainContext,
     ) as MainContextValues;
     const { createFile } = useFilesManager();
@@ -33,7 +33,7 @@ export default function Home() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
- 
+
     const handleCreateFolder = () => {
         if (!memberRoll?.write) {
             message.error(t('can_not_create_folder_message'));
@@ -112,16 +112,12 @@ export default function Home() {
                     <div
                         className={`flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'hidden absolute md:opacity-100 md:visible md:relative' : 'relative'}`}
                     >
-                        <SearchInput />
-                        <div className="bg-gray-200 shadow-gray-100 ring-gray-200 ring-1 shadow-md h-full py-1 rounded-md flex flex-col mt-2 overflow-hidden">
-                            <span className="ml-3 text-primary text-[13px] text-left min-w-[200px] min-h-[30px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
-                                <span className='font-bold'>
-                                    {`${localStorage.getItem("OrgName") || ""}`}
-                                </span>
-                                {`${parentFolders}`}
+                       {/* <SearchInput /> */}
+                        <div className="bg-gray-200 shadow-gray-100 ring-gray-200 ring-1 shadow-md h-full py-1 rounded-md flex flex-col mt-[20px] relative pt-6">
 
+                            <span className='bg-gray-300 rounded-3xl border border-gray-400 block max-w-fit mx-auto p-2.5 min-w-[300px] text-center absolute top-[-20px]  left-1/2 -translate-x-1/2'>
+                                {`${localStorage.getItem("OrgName") || ""}`}
                             </span>
-
 
                             <div className="flex justify-end gap-1 px-1">
                                 <Button variant="light" isIconOnly onPress={handleCreatePage}>
@@ -172,9 +168,8 @@ export default function Home() {
             </div>
 
             <section
-                className={`grow transition-all duration-200 ease-in-out ${
-                    isSidebarCollapsed ? 'w-full md:w-[calc(100%-4rem-0.5rem)]' : 'w-full md:w-[calc(75%-0.5rem)]'
-                } ${isSidebarCollapsed ? 'mt-0' : 'mt-2 md:mt-0'}`}
+                className={`grow transition-all duration-200 ease-in-out ${isSidebarCollapsed ? 'w-full md:w-[calc(100%-4rem-0.5rem)]' : 'w-full md:w-[calc(75%-0.5rem)]'
+                    } ${isSidebarCollapsed ? 'mt-0' : 'mt-2 md:mt-0'}`}
             >
                 <Outlet />
             </section>

@@ -51,7 +51,7 @@ class Item extends React.Component<ItemProps> {
         };
 
         return (
-            <div id={item.id} className="disable-select" style={{ display: 'flex' }} contentEditable={false}>
+            <div id={item.id} /*className="disable-select"*/ style={{ display: 'flex' }} contentEditable={false}>
                 <Collapse
                     ghost
                     expandIconPosition="end"
@@ -71,9 +71,9 @@ class Item extends React.Component<ItemProps> {
                         {
                             key: item.id,
                             label: (
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                     <span className="item-index">{item.index + 1}</span>
-                                     {!commonProps.readonly && <Button className='btn-delete-guidance' type="link" icon={<DeleteOutlined />} onClick={handleClickIndex} />}
+                                    {!commonProps.readonly && <Button className='btn-delete-guidance' type="link" icon={<DeleteOutlined />} onClick={handleClickIndex} />}
                                     <Input
                                         readOnly={commonProps.readonly}
                                         placeholder={`${t("what's the")} ${item.index === 0 ? t('first') : t('next')} ${t("step")}?`}
@@ -110,12 +110,16 @@ class Item extends React.Component<ItemProps> {
                                         id={item.id}
                                         readonly={commonProps.readonly}
                                     />
-                                    <Button
-                                        className="collapse-next-button"
-                                        onClick={() => commonProps.onNextItem(item.id)}
-                                    >
-                                        { }{t('next')}
-                                    </Button>
+                                    <div style={{width: "100%", display: "flex", justifyContent: "flex-start"}}>
+
+                                        <Button
+                                            className="collapse-next-button"
+                                            onClick={() => commonProps.onNextItem(item.id)}
+
+                                        >
+                                            { }{t('next')}
+                                        </Button>
+                                    </div>
                                 </>
                             ),
                         },
@@ -143,7 +147,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
     const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
-    
+
 
     const handleDeleteBlot = () => {
         const blotNode = componentRef.current;
@@ -357,7 +361,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
             ref={el => {
                 if (el) componentRef.current = el.closest('guided-checklist') as HTMLElement | undefined;
             }}
-            //ref={componentRef as React.RefObject<HTMLDivElement>}
+        //ref={componentRef as React.RefObject<HTMLDivElement>}
         >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center' }}>
                 <Input
