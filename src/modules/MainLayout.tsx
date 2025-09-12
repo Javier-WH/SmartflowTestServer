@@ -8,7 +8,7 @@ import UserMenu from '@/components/ui/UserMenu';
 import { useContext } from 'react';
 import { MainContextValues, MainContext } from './mainContext';
 import { useNavigate } from 'react-router-dom';
-import logo from "../assets/png/smartfloLogoB.png"
+import logo from "../assets/svg/Logo_Smartflo.svg"
 import SearchInput from './search/searchInput';
 
 
@@ -20,7 +20,7 @@ function Header() {
         <header className="flex justify-end md:justify-between items-center px-8 w-full h-[70px] top-0 bg-gray-100 shadow-md">
             <h1 className="max-md:hidden md:block font-[300] text-[40px] tracking-[0.3rem] cursor-pointer" onClick={() => {setParentFolders(''); navigate('/organizations')}}>
                { /*<span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO*/}
-               <img src={logo} alt="logo" style={{width: "400px", height: "70px"}}/>
+               <img src={logo} alt="logo" style={{width: "200px", height: "35px"}}/>
             </h1>
             <div className="search-continer ml-auto w-[300px] bg-gray-200 rounded-3xl border border-gray-400">
                 <SearchInput />
