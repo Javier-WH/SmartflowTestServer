@@ -126,7 +126,7 @@ export default function SearchBox({
             style={{
                 position: 'absolute',
                 width: '100%',
-                border: '2px solid #3d3b3bff',
+             
                 top: '100%',
                 maxHeight: '250px',
                 overflowY: 'auto',
