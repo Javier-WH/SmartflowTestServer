@@ -93,16 +93,30 @@ export default function SearchInput() {
     };
 
     return (
-        <div style={{ width: '100%', position: 'relative' }}>
-            <Input
-                id='searchInput'
-                startContent={<IoSearchSharp />} 
-                value={searchValue}
-                onChange={e => setSearchValue(e.target.value)} 
-                placeholder={t('search_placeholder')} 
-            // Opcional: Deshabilita el input mientras se está cargando
-            // disabled={isLoading}
-            />
+        <div style={{ width: '100%', position: 'relative', border: '1px solid black'}}>
+            <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 1, }}>
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5a6.5 6.5 0 1 0-6.5 6.5c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                    </svg>
+                </span>
+                <input
+                    id='searchInput'
+                    value={searchValue}
+                    onChange={e => setSearchValue(e.target.value)}
+                    placeholder={t('search_placeholder')}
+                    disabled={isLoading}
+                    style={{
+                        height: '30px',
+                        width: '100%',
+                        padding: '10px 10px 10px 40px',
+                        border: '1px solid #d9d9d9',
+                        borderRadius: '15px',
+                        outline: 'none',
+                        boxShadow: 'none'
+                    }}
+                />
+            </div>
             {/* Muestra el indicador de carga */}
             {isLoading && searchValue.length > 0 && (
                 <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1 p-2 text-center text-gray-500">
