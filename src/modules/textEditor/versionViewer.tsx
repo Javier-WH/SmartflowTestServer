@@ -287,7 +287,7 @@ export default function VersionViewer() {
 
             <div className="flex flex-col h-full bg-white shadow-lg p-4">
                 <div className="flex justify-between items-center pb-4 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold text-gray-800">Historial de versiones</h2>
+                    <h2 className="text-xl font-semibold text-gray-800">{t('versions_history_label')}</h2>
                     <div className="flex gap-2">
                         <button
                             title={t("back_to_document_button")}
