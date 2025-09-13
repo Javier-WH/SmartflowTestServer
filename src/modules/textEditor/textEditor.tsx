@@ -26,6 +26,7 @@ import useDocumentControlVersion from './controlVersion/useDocumentControlVersio
 import { useNavigate } from 'react-router-dom';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
+import useAuth from '../auth/hooks/useAuth.ts';
 
 
 
@@ -71,7 +72,9 @@ export default function TextEditor() {
     const [content, setContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [visible, setVisible] = useState(false);
-    const { addVersion } = useDocumentControlVersion({ documentId: id });
+    const { user } = useAuth();
+    const {  addVersion } = useDocumentControlVersion({ documentId: id, userName: `${user?.user_metadata?.name} ${user?.user_metadata?.lastname}` });
+  
 
 
     const modules = {

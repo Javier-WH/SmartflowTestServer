@@ -5,7 +5,7 @@ export interface DocumentVersionData {
   content: string;
 }
 
-export default function useDocumentControlVersion({ documentId: document_id }: { documentId: string }) {
+export default function useDocumentControlVersion({ documentId: document_id, userName }: { documentId: string, userName: string }) {
   /**
    * Add a new version to the document
    * @param {{name: string, content: string}} data - name and content of the new version
@@ -17,7 +17,8 @@ export default function useDocumentControlVersion({ documentId: document_id }: {
     .insert({
       document_id,
       name,
-      content
+      content,
+      created_by: userName
     })
     .single();
 
