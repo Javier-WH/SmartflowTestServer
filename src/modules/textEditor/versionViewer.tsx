@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import useDocumentControlVersion from './controlVersion/useDocumentControlVersion.ts';
 import { useNavigate } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
-import { IoAddCircleSharp } from "react-icons/io5";
+import useAuth from '@/modules/auth/hooks/useAuth';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 
@@ -30,7 +30,8 @@ export interface DocumentVersionData {
     content: string;
     created_at: string;
     id: string;
-    document_id: string
+    document_id: string,
+    created_by: string
 }
 
 
@@ -61,6 +62,7 @@ export default function VersionViewer() {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [title, setTitle] = useState('');
+    const [currentTitle, setCurrentTitle] = useState('');
     const quillRef = useRef<ReactQuill>(null);
     const quillContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef(null);
@@ -68,11 +70,13 @@ export default function VersionViewer() {
     const currentFileId = useRef(id);
     const { data: fileContent, isLoading, mutate, isMutating } = useFileContent({ fileId: id });
     const [content, setContent] = useState(fileContent?.content ?? '');
-    const [CurrentContent] = useState(fileContent?.content ?? '');
+    const [currentContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [documentVersions, setDocumentVersions] = useState<DocumentVersionData[]>([]);
-    const { getVersions, addVersion } = useDocumentControlVersion({ documentId: id });
+    const { user } = useAuth();
+    const { getVersions } = useDocumentControlVersion({ documentId: id, userName: `${user?.user_metadata?.name} ${user?.user_metadata?.lastname}` });
     const [isLoadingVersions, setIsLoadingVersions] = useState(false)
+    const [selectedVersionId, setSelectedVersionId] = useState<string>('');
 
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
@@ -157,6 +161,7 @@ export default function VersionViewer() {
         if (fileContent && !isInitialContentLoaded && !isMutating) {
             setContent(fileContent.content ?? '');
             setTitle(fileContent?.name === "untitled" ? '' : fileContent?.name ?? '');
+            setCurrentTitle(fileContent?.name === "untitled" ? '' : fileContent?.name ?? '');
             currentFileId.current = id;
             setIsInitialContentLoaded(true);
         }
@@ -187,13 +192,6 @@ export default function VersionViewer() {
 
 
 
-    if (isMutating || (isLoading && !isInitialContentLoaded)) {
-        return (
-            <div className="flex justify-center items-center h-full">
-                <Spinner size="lg" />
-            </div>
-        );
-    }
 
     const handleRecoverClick = () => {
         Modal.confirm({
@@ -215,6 +213,16 @@ export default function VersionViewer() {
         });
     };
 
+
+
+
+    if (isMutating || (isLoading && !isInitialContentLoaded)) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <Spinner size="lg" />
+            </div>
+        );
+    }
 
     return (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 250px", height: "100%" }}>
@@ -277,67 +285,66 @@ export default function VersionViewer() {
 
             </div>
 
-            <div style={{ width: '100%', height: '100%' }}>
-
-                <div style={{ width: '100%', height: '40px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
-                    <MdOutlineDocumentScanner
-                        title={t("back_to_document_button")}
-                        className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                        onClick={() => navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: true } })}
-                    />
-                    <RiDeviceRecoverLine
-                        title={t("recover_button")}
-                        className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                        onClick={handleRecoverClick}
-                    />
-                </div>
-                <h3 className='text-[14px] text-gray-500 font-bold mb-[15px] mt-[15px]'>{t("versions")}</h3>
-                <div className="flex flex-col gap-2 overflow-y-auto h-[calc(100vh-200px)]">
-                    <div
-                        onClick={() => setContent(CurrentContent)}
-                        className="
-                                    flex items-center justify-between
-                                    text-gray-700 text-sm
-                                    p-2 rounded-lg
-                                    transition-all duration-200
-                                    cursor-pointer
-                                    hover:bg-gray-100 hover:text-primary
-                                "
-                    >
-                        <span className="font-medium flex gap-4 items-center">
-                            {t("current_version")}
-                            <IoAddCircleSharp
-                                title={t("add_version_button")}
-                                className='text-[20px] text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]'
-                                onClick={async () => {
-                                    if (isLoadingVersions) return
-                                    setIsLoadingVersions(true)
-                                    await addVersion({ name: title, content: CurrentContent })
-                                    updateVersionList()
-                                }}
-                            />
-                        </span>
+            <div className="flex flex-col h-full bg-white shadow-lg p-4">
+                <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                    <h2 className="text-xl font-semibold text-gray-800">Historial de versiones</h2>
+                    <div className="flex gap-2">
+                        <button
+                            title={t("back_to_document_button")}
+                            onClick={() => navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: true } })}
+                            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                        >
+                            <MdOutlineDocumentScanner className="text-2xl text-gray-500 hover:text-gray-700" />
+                        </button>
+                        <button
+                            title={t("recover_button")}
+                            onClick={handleRecoverClick}
+                            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                        >
+                            <RiDeviceRecoverLine className="text-2xl text-gray-500 hover:text-gray-700" />
+                        </button>
                     </div>
+                </div>
 
-                    {
-                        isLoadingVersions
-                            ? <div className="flex justify-center items-center h-full">
-                                <Spinner size="lg" />
-                            </div>
-                            : documentVersions?.map((version) => (
+                <div
+                   
+                    onClick={() => { setContent(currentContent); setTitle(currentTitle), setSelectedVersionId("current") }}
+                    className={`mt-4 flex flex-col gap-1 p-2 rounded-lg border-2 shadow-sm cursor-pointer transition-all duration-200
+                        ${selectedVersionId === "current"
+                            ? 'border-primary'
+                            : 'border-gray-200 hover:bg-blue-50 hover:border-blue-300'
+                        }`}
+                >
+                  
+                     <span className={'text-[12px] line-clamp-2 text-gray-500'}>{t("current_version")}</span>
+                
+                </div>
+
+
+
+                <h3 className="text-sm font-bold text-gray-500 mb-2 mt-2 uppercase tracking-wide">{t("versions")}</h3>
+
+                <div className="flex flex-col gap-3 overflow-y-auto flex-grow pr-1 custom-scrollbar h-[calc(100vh-280px)] ">
+                    {isLoadingVersions ? (
+                        <div className="flex justify-center items-center h-full">
+                            <Spinner size="lg" />
+                        </div>
+                    ) : (
+                        documentVersions?.map((version) => (
+                            <div
+                                key={version.id}
+                                onClick={() => { setContent(version.content); setTitle(version.name), setSelectedVersionId(version.id) }}
+                                className={`flex flex-col gap-1 p-2 rounded-lg border-2 shadow-sm cursor-pointer transition-all duration-200
+                                    ${selectedVersionId === version.id
+                                        ? 'border-primary'
+                                        : 'border-gray-200 hover:bg-blue-50 hover:border-blue-300'
+                                    }`}
+                            >
+
                                 <div
-                                    onClick={() => setContent(version.content)}
                                     key={version.id}
-                                    className="
-                                    flex items-center justify-between
-                                    text-gray-700 text-sm
-                                    p-2 rounded-lg
-                                    transition-all duration-200
-                                    cursor-pointer
-                                    hover:bg-gray-100 hover:text-primary
-                                "
-                                >
-                                    <span className="font-medium">
+                                    className="flex items-center justify-betweentext-gray-700 text-[12px]">
+                                    <span>
                                         {new Date(version.created_at).toLocaleString(navigator.language, {
                                             year: 'numeric',
                                             month: 'long',
@@ -347,10 +354,14 @@ export default function VersionViewer() {
                                         })}
                                     </span>
                                 </div>
-                            ))
-                    }
+                                <div className="flex flex-col gap-0.5">
+                                    <span className={'text-[12px] line-clamp-2 text-gray-500'}>{version?.name || t("untitled_file")}</span>
+                                    <span className={'text-[12px] font-light text-gray-500'}>Created by: {version?.created_by || "unknown"}</span>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
-
             </div>
 
         </div>

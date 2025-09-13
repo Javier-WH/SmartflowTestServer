@@ -26,6 +26,7 @@ import useDocumentControlVersion from './controlVersion/useDocumentControlVersio
 import { useNavigate } from 'react-router-dom';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
+import useAuth from '../auth/hooks/useAuth.ts';
 
 
 
@@ -56,6 +57,7 @@ export default function TextEditor() {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { setSelectedFileId, setChangleFileNameRequest, memberRoll, setParentFolders } = useContext(MainContext) as MainContextValues;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isSavingVersion, setIsSavingVersion] = useState(false);
     const [title, setTitle] = useState('');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -70,9 +72,11 @@ export default function TextEditor() {
     const [content, setContent] = useState(fileContent?.content ?? '');
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [visible, setVisible] = useState(false);
-    const { addVersion } = useDocumentControlVersion({ documentId: id });
+    const { user } = useAuth();
+    const {  addVersion } = useDocumentControlVersion({ documentId: id, userName: `${user?.user_metadata?.name} ${user?.user_metadata?.lastname}` });
+  
 
-    
+
     const modules = {
         toolbar: {
             container: '#toolbar',
@@ -98,7 +102,7 @@ export default function TextEditor() {
                 }
             }
         },
-       
+
     };
 
 
@@ -458,7 +462,7 @@ export default function TextEditor() {
             event.preventDefault();
             event.stopPropagation();
         }
- 
+
         const toolbar = document.getElementById('toolbar');
         if (toolbar) {
             toolbar.addEventListener('mousedown', preventScroll);
@@ -501,9 +505,6 @@ export default function TextEditor() {
         // Mover cursor dentro del nuevo elemento de lista
         quill.setSelection(range.index + 1, 0);
     };
-
-
-
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         // este evento borra la imagen seleccionada
@@ -571,12 +572,12 @@ export default function TextEditor() {
         setIsSavingVersion(false);
     }
 
-    
+
 
     return (
         <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
-                <div className="grow">
+                <div className="grow ">
                     <Textarea
                         {...(readOnly && { readOnly: true })}
                         ref={inputRef}
@@ -590,92 +591,90 @@ export default function TextEditor() {
                         placeholder={t('give_your_page_a_title_message')}
                         onKeyDown={handleTitleKeyDown}
                         minRows={1}
-                        maxRows={2}
+                        maxRows={1}
                         radius="none"
                         classNames={{
                             inputWrapper: '!bg-transparent shadow-none p-0 ',
-                            input: 'bg-transparent shadow-none focus:bg-transparent text-4xl font-bold',
+                            input: 'bg-transparent shadow-none focus:bg-transparent text-2xl font-bold',
                         }}
                     />
                 </div>
 
-        
-
-
-                <div className="grid grid-rows-2 h-[60px]">
+                <div >
                     {fileContent?.updated_at ? (
-                        <span className="w-full text-gray-400">
+                        <span className="w-full text-gray-400 flex flex-col items-center text-[13px]">
                             <span>{t('last_updated_label')}: </span>
+                            <span>
+
                             {Intl.DateTimeFormat('es-ES', {
                                 dateStyle: 'medium',
                                 timeStyle: 'medium',
                                 hour12: true,
                             }).format(new Date(fileContent?.updated_at))}
+                            </span>
                         </span>
                     ) : null}
-                    <div className="flex justify-between gap-[5px] mr-[10px]">
-
-                        <div className="flex items-baseline gap-[20px] text-primary">
-                            {
-                                isMutating || isSavingVersion ? <span className="text-[18px]"><Spinner size="sm" />{t('saving_message')}</span> : null
-                            }
-                        </div>
-                        <div className="w-[80px] flex justify-between">
-                            {
-                                readOnly ? null :
-                                    <>
-                                        <GoVersions
-                                            title={t('document_version_history')}
-                                            className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                                            onClick={async ()=>{
-                                                //await handleOnPressSaveButton();
-                                                navigate(`/${organization_id}/history/${id}`, { state: { readOnly: !memberRoll.write } })
-                                            }}
-                                        />
-                                        <GiSave
-                                            onClick={handleOnPressSaveButton}
-                                            title={t('save_document')}
-                                            className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                                        />
-                                    </>
-                            }
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            <header
-                className={cn({
-                    hidden: readOnly,
-                    'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100 min-h-15':
-                        !readOnly,
-                })}
-            >
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 120px" }}>
+                <div>
 
-                <CustomToolbar show={!readOnly} name="toolbar" />
-
-            </header>
-
-
-            {readOnly && memberRoll && memberRoll.write ? (
-                <div className="flex justify-end gap-2 items-center">
-                    <Button
-                        color="primary"
-                        onPress={() => {
-                            if (memberRoll?.write) {
-                                setReadOnly(false);
-                                quillRef.current?.setEditorContents(quillRef.current?.getEditor(), content);
-                            } else {
-                                message.error(t('you_do_not_have_permission_to_edit_file_message'));
-                            }
-                        }}
+                    <header
+                        className={cn({
+                            hidden: readOnly,
+                            'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2 bg-gray-100 min-h-15':
+                                !readOnly,
+                        })}
                     >
-                        {t('edit_label')}
-                    </Button>
 
-                    <div id="toolbar" className="hidden" />
+                        <CustomToolbar show={!readOnly} name="toolbar" />
+
+                    </header>
                 </div>
-            ) : null}
+
+
+                <div className="flex justify-end gap-2 items-center">
+                    {memberRoll?.write && (
+                        readOnly ?
+                        <Button
+                            color="primary"
+                                className="rounded-[15px]"
+                            onPress={() => {
+                                if (memberRoll?.write) {
+                                    setReadOnly(false);
+                                    quillRef.current?.setEditorContents(quillRef.current?.getEditor(), content);
+                                } else {
+                                    message.error(t('you_do_not_have_permission_to_edit_file_message'));
+                                }
+                            }}
+                        >
+                            {t('edit_label')}
+                        </Button>
+                            : <div className="w-full flex justify-evenly">
+                                {
+                                    readOnly ? null :
+                                        <>
+                                            <GoVersions
+                                                title={t('document_version_history')}
+                                                className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
+                                                onClick={async () => {
+                                                    //await handleOnPressSaveButton();
+                                                    navigate(`/${organization_id}/history/${id}`, { state: { readOnly: !memberRoll.write } })
+                                                }}
+                                            />
+                                            <GiSave
+                                                onClick={handleOnPressSaveButton}
+                                                title={t('save_document')}
+                                                className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
+                                            />
+                                        </>
+                                }
+                            </div>
+
+                    ) }
+                </div>
+            </div>
 
             <div
                 ref={quillContainerRef}
@@ -687,7 +686,7 @@ export default function TextEditor() {
                         ref={ref => {
                             if (ref) {
                                 quillRef.current = ref;
-                                
+
                                 configureQuillMatchers();
                             }
                         }}

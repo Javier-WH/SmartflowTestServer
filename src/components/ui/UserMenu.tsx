@@ -56,12 +56,13 @@ export default function UserMenu() {
                 <DropdownTrigger>
                     <User
                         as="button"
-                        className="transition-transform hover:bg-primary/10 py-1 px-2"
+                        className="transition-transform hover:bg-primary/10 py-1 px-2 mr-"
                         //description={user?.email}
                         name={`${user?.user_metadata?.name} ${user?.user_metadata?.lastname}`}
                         avatarProps={{ color: 'primary', size: 'sm' }}
                         classNames={{
-                            name: 'capitalize text-md',
+                            name: 'capitalize text-md ml-[10px]',
+                            
                         }}
                     />
                 </DropdownTrigger>

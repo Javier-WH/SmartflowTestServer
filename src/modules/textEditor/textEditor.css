@@ -1,7 +1,10 @@
 
-.search-continer div{
-    border: none !important;
-    box-shadow: none !important;
+.ant-input-affix-wrapper{
+    border-radius: 15px !important;
+}
+#searchInput{
+    direction: ltr !important;
+    border-radius: 15px !important;
 }
 .ql-container.ql-snow {
     border: none !important;
