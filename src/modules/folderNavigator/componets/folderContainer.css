@@ -40,7 +40,7 @@
 }
 
 
-.folder::before {
+/*.folder::before {
     content: " ";
     position: absolute;
     border-bottom: var(--folder-decoration-lines);
@@ -61,20 +61,6 @@
 }
 
 
-.folder-container {
-    position: relative;
-}
-
-.folder-container::before {
-    position: absolute;
-    content: " ";
-    height: 100%;
-    width: 30px;
-    left: -20px;
-    top: -1px;
-}
-
-/* this is the line on the left of the folder */
 .folder-container::before {
     position: absolute;
     content: " ";
@@ -82,7 +68,33 @@
     height: 110%;
     top: -7px;
     left: -10px;
+}*/
+
+
+.main-folder-container .folder-container .folder-container .folder::before {
+    content: " ";
+    position: absolute;
+    border-bottom: var(--folder-decoration-lines);
+    width: 9px;
+    height: 20px;
+    left: -10px;
+    top: -1px;
 }
+
+.main-folder-container .folder-container .folder-container .file::before {
+    content: " ";
+    position: absolute;
+    border-bottom: var(--folder-decoration-lines);
+    width: 15px;
+    height: 20px;
+    left: -10px;
+    top: -1px;
+}
+
+.folder-container {
+    position: relative;
+}
+
 
 /* this places a line of the same color of background in order to hide the last line on the left of the folder on the last folder or file */
 .folder-container:last-child::after {
@@ -97,6 +109,11 @@
 .main-folder-container {
     margin-left: 2px;
 }
+
+/**.main-folder-container>.folder::before {
+    content: none !important;
+    border-bottom: none !important;
+}*/
 
 /* illuminate the folder when it's being dragged over */
 .folder.drag-over {
