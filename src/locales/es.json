@@ -165,5 +165,6 @@
   "Invitation_retrieved_successfully": "Invitación recuperada correctamente",
   "Members_retrieved_successfully": "Miembros recuperados correctamente",
   "quill_header": "Titulo",
-  "quill_paragraph": "Parrafo"
+  "quill_paragraph": "Parrafo",
+  "versions_history_label": "Historial de Versiones"
 }
