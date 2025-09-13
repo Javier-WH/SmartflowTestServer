@@ -574,7 +574,7 @@ export default function TextEditor() {
     return (
         <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
-                <div className="grow">
+                <div className="grow ">
                     <Textarea
                         {...(readOnly && { readOnly: true })}
                         ref={inputRef}
@@ -592,14 +592,14 @@ export default function TextEditor() {
                         radius="none"
                         classNames={{
                             inputWrapper: '!bg-transparent shadow-none p-0 ',
-                            input: 'bg-transparent shadow-none focus:bg-transparent text-4xl font-bold',
+                            input: 'bg-transparent shadow-none focus:bg-transparent text-2xl font-bold',
                         }}
                     />
                 </div>
 
                 <div >
                     {fileContent?.updated_at ? (
-                        <span className="w-full text-gray-400 flex flex-col items-center">
+                        <span className="w-full text-gray-400 flex flex-col items-center text-[13px]">
                             <span>{t('last_updated_label')}: </span>
                             <span>
 
@@ -636,6 +636,7 @@ export default function TextEditor() {
                         readOnly ?
                         <Button
                             color="primary"
+                                className="rounded-[15px]"
                             onPress={() => {
                                 if (memberRoll?.write) {
                                     setReadOnly(false);
