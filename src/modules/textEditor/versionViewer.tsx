@@ -15,8 +15,7 @@ import { Textarea, cn, Spinner } from '@heroui/react';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { message, Modal } from 'antd';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
-import { MdOutlineDocumentScanner } from "react-icons/md";
-import { RiDeviceRecoverLine } from "react-icons/ri";
+import { IoIosArrowRoundBack } from "react-icons/io";
 import { useTranslation } from 'react-i18next';
 import useDocumentControlVersion from './controlVersion/useDocumentControlVersion.ts';
 import { useNavigate } from 'react-router-dom';
@@ -191,9 +190,7 @@ export default function VersionViewer() {
 
 
 
-
-
-    const handleRecoverClick = () => {
+    const handleRecoverClick2 = ({ htmlContent, documentTitle }: { htmlContent: string; documentTitle: string }) => {
         Modal.confirm({
             title: t("recovery_version_modal_title"),
             content: t("recovery_version_modal_description"),
@@ -208,11 +205,10 @@ export default function VersionViewer() {
                 },
             },
             onOk: async () => {
-                await debouncedUpdate({ id: currentFileId.current, htmlContent: content, title: title });
+                await debouncedUpdate({ id, htmlContent, title: documentTitle });
             },
         });
     };
-
 
 
 
@@ -286,28 +282,20 @@ export default function VersionViewer() {
             </div>
 
             <div className="flex flex-col h-full bg-white shadow-lg p-4">
-                <div className="flex justify-between items-center pb-4 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold text-gray-800">{t('versions_history_label')}</h2>
-                    <div className="flex gap-2">
-                        <button
-                            title={t("back_to_document_button")}
-                            onClick={() => navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: true } })}
-                            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-                        >
-                            <MdOutlineDocumentScanner className="text-2xl text-gray-500 hover:text-gray-700" />
-                        </button>
-                        <button
-                            title={t("recover_button")}
-                            onClick={handleRecoverClick}
-                            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-                        >
-                            <RiDeviceRecoverLine className="text-2xl text-gray-500 hover:text-gray-700" />
-                        </button>
-                    </div>
+                <div className="flex items-center ml-[-15px] w-[200px]">
+                    <button
+                        title={t("back_to_document_button")}
+                        onClick={() => navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: true } })}
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 back-button"
+                    >
+                        <IoIosArrowRoundBack className="text-2xl text-gray-500 hover:text-gray-700" />
+                    </button>
+                    <h2 className="text-lg font-semibold text-gray-800 w-full text-center">{t('versions_history_label')}</h2>
                 </div>
 
+
                 <div
-                   
+
                     onClick={() => { setContent(currentContent); setTitle(currentTitle), setSelectedVersionId("current") }}
                     className={`mt-4 flex flex-col gap-1 p-2 rounded-lg border-2 shadow-sm cursor-pointer transition-all duration-200
                         ${selectedVersionId === "current"
@@ -315,9 +303,9 @@ export default function VersionViewer() {
                             : 'border-gray-200 hover:bg-blue-50 hover:border-blue-300'
                         }`}
                 >
-                  
-                     <span className={'text-[12px] line-clamp-2 text-gray-500'}>{t("current_version")}</span>
-                
+
+                    <span className={'text-[12px] line-clamp-2 text-gray-500'}>{t("current_version")}</span>
+
                 </div>
 
 
@@ -334,10 +322,10 @@ export default function VersionViewer() {
                             <div
                                 key={version.id}
                                 onClick={() => { setContent(version.content); setTitle(version.name), setSelectedVersionId(version.id) }}
-                                className={`flex flex-col gap-1 p-2 rounded-lg border-2 shadow-sm cursor-pointer transition-all duration-200
+                                className={`h-[120px] flex flex-col gap-1 p-2 rounded-lg border-2 shadow-sm cursor-pointer transition-all duration-200
                                     ${selectedVersionId === version.id
-                                        ? 'border-primary'
-                                        : 'border-gray-200 hover:bg-blue-50 hover:border-blue-300'
+                                        ? 'border-gray-500'
+                                        : 'border-gray-200 hover:bg-gray-100 hover:border-gray-400'
                                     }`}
                             >
 
@@ -356,7 +344,20 @@ export default function VersionViewer() {
                                 </div>
                                 <div className="flex flex-col gap-0.5">
                                     <span className={'text-[12px] line-clamp-2 text-gray-500'}>{version?.name || t("untitled_file")}</span>
-                                    <span className={'text-[12px] font-light text-gray-500'}>Created by: {version?.created_by || "unknown"}</span>
+                                    <span className={'created-by text-[12px] font-light text-gray-500'}>{version?.created_by || "unknown"}</span>
+                                    {
+                                        selectedVersionId === version.id &&
+                                        <span
+                                        className="retore-button text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full w-fit ml-auto mt-[10px]"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleRecoverClick2({ htmlContent: version.content, documentTitle: version.name });
+                                        }}
+                                        >
+                                        Restore
+                                    </span>
+                                    }
                                 </div>
                             </div>
                         ))
