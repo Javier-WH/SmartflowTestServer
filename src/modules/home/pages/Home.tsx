@@ -110,25 +110,26 @@ export default function Home() {
                 <nav className="w-full h-full overflow-hidden">
                     {/* Content visible when sidebar is expanded */}
                     <div
-                        className={`flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'hidden absolute md:opacity-100 md:visible md:relative' : 'relative'}`}
+                        className={` flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'hidden absolute md:opacity-100 md:visible md:relative' : 'relative'}`}
                     >
-                       {/* <SearchInput /> */}
-                        <div className="bg-gray-200 shadow-gray-100 ring-gray-200 ring-1 shadow-md h-full py-1 rounded-md flex flex-col mt-[20px] relative pt-6">
+                        {/* <SearchInput /> */}
+                        <div className="border-2 h-full py-1 rounded-lg flex flex-col mt-[0px] relative pt-6 custom-shadow">
 
-                            <span className='bg-gray-300 rounded-3xl border border-gray-400 block max-w-fit mx-auto p-2.5 min-w-[300px] text-center absolute top-[-20px]  left-1/2 -translate-x-1/2'>
+                            <div className="rounded-tl-lg rounded-tr-lg text-center leading-[40px] absolute top-0 left-0 w-full h-[40px] pl-10 pr-10 truncate overflow-hidden whitespace-nowrap text-gray-500 bg-default-50 border-b-1 ">
                                 {`${localStorage.getItem("OrgName") || ""}`}
-                            </span>
+                            </div>
 
-                            <div className="flex justify-end gap-1 px-1">
+
+                            <div className="flex justify-end gap-1 px-1 mt-5">
                                 <Button variant="light" isIconOnly onPress={handleCreatePage}>
-                                    <IconFilePlus />
+                                    <IconFilePlus style={{ strokeWidth: "1" }} />
                                 </Button>
                                 <Button variant="light" isIconOnly onPress={handleCreateFolder}>
-                                    <IconFolderPlus />
+                                    <IconFolderPlus style={{ strokeWidth: "1" }} />
                                 </Button>
                             </div>
 
-                            <div className="grow overflow-y-auto overflow-x-auto scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
+                            <div className=" grow overflow-y-auto overflow-x-auto scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
                                 <FolderNavigator />
                             </div>
                         </div>

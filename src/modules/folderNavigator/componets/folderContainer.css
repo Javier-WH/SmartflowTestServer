@@ -61,6 +61,7 @@
 }
 
 
+
 .folder-container::before {
     position: absolute;
     content: " ";
@@ -98,13 +99,13 @@
 
 .main-folder-container::after {
     content: " ";
-    width: 15px;
+    width: 12px;
     position: absolute;
-    top: 0;
+    top: 50px;
     left: 0;
-    background: #E5E7EB;
-    left: -5px;
-    bottom: -0px;
+    background: #ffffff;
+    left: 0px;
+    bottom: 5px;
 }
 
 
@@ -114,7 +115,7 @@
 .folder-container:last-child::after {
     position: absolute;
     content: " ";
-    border-left: 2px solid #E5E7EB; 
+    border-left: 2px solid #ffffff; 
     top: 21px;
     bottom: -90px;
     left: -10px;
