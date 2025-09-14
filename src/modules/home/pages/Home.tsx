@@ -13,13 +13,14 @@ import {
     IconFolderPlus,
 } from '@tabler/icons-react';
 import { cn } from '@heroui/react';
-import { useContext, useState } from 'react';
+import { ReactNode, useContext, useState } from 'react';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import type { Folder } from '@/modules/folderNavigator/types/folder';
 import { message } from 'antd';
 import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
 import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
 import { useTranslation } from 'react-i18next';
+
 
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -32,6 +33,45 @@ export default function Home() {
     const { organization_id: slug } = useParams();
     const navigate = useNavigate();
     const { t } = useTranslation();
+
+
+
+
+
+    const getLevelTitle = (level: string): ReactNode => {
+
+        if (level.toLocaleLowerCase() === "creator") {
+            return <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
+                {t('creator_label')}
+            </span>
+
+        }
+        else if (level.toLocaleLowerCase() === "admin") {
+            return <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full tracking-tight">
+                {t('admin_label')}
+            </span>
+        }
+
+
+        else if (level.toLocaleLowerCase() === "editor") {
+            return <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full tracking-tight">
+                {t('editor_label')}
+            </span>
+        }
+
+        else if (level.toLocaleLowerCase() === "lector") {
+            return <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full tracking-tight">
+                {t('lector_label')}
+            </span>
+        }
+        else {
+            return <span className="text-xs bg-pink-500/20 text-red-500 px-2 py-1 rounded-full tracking-tight">
+                {t('unknown_label')}
+            </span>
+        }
+    }
+
+
 
 
     const handleCreateFolder = () => {
@@ -110,7 +150,7 @@ export default function Home() {
                 <nav className="w-full h-full overflow-hidden">
                     {/* Content visible when sidebar is expanded */}
                     <div
-                        className={` flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'hidden absolute md:opacity-100 md:visible md:relative' : 'relative'}`}
+                        className={`flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'hidden absolute md:opacity-100 md:visible md:relative' : 'relative'}`}
                     >
                         {/* <SearchInput /> */}
                         <div className="border-2 h-full py-1 rounded-lg flex flex-col mt-[0px] relative pt-6 custom-shadow">
@@ -118,8 +158,11 @@ export default function Home() {
                             <div className="rounded-tl-lg rounded-tr-lg text-center leading-[40px] absolute top-0 left-0 w-full h-[40px] pl-10 pr-10 truncate overflow-hidden whitespace-nowrap text-gray-500 bg-default-50 border-b-1 ">
                                 {`${localStorage.getItem("OrgName") || ""}`}
                             </div>
-
-
+                            <div className='absolute top-[50px] left-[50%] transform -translate-x-1/2'>
+                                {
+                                    getLevelTitle(memberRoll?.level || "")
+                                }
+                            </div>
                             <div className="flex justify-end gap-1 px-1 mt-5">
                                 <Button variant="light" isIconOnly onPress={handleCreatePage}>
                                     <IconFilePlus style={{ strokeWidth: "1" }} />
