@@ -40,38 +40,7 @@
 }
 
 
-/*.folder::before {
-    content: " ";
-    position: absolute;
-    border-bottom: var(--folder-decoration-lines);
-    width: 9px;
-    height: 20px;
-    left: -10px;
-    top: -1px;
-}
-
-.file::before {
-    content: " ";
-    position: absolute;
-    border-bottom: var(--folder-decoration-lines);
-    width: 15px;
-    height: 20px;
-    left: -10px;
-    top: -1px;
-}
-
-
-.folder-container::before {
-    position: absolute;
-    content: " ";
-    border-left: var(--folder-decoration-lines);
-    height: 110%;
-    top: -7px;
-    left: -10px;
-}*/
-
-
-.main-folder-container .folder-container .folder-container .folder::before {
+.folder::before {
     content: " ";
     position: absolute;
     border-bottom: var(--folder-decoration-lines);
@@ -91,16 +60,62 @@
     top: -1px;
 }
 
+
+
+.folder-container::before {
+    position: absolute;
+    content: " ";
+    border-left: var(--folder-decoration-lines);
+    height: 110%;
+    top: -7px;
+    left: -10px;
+}
+
+
+
+/*.main-folder-container .folder-container .folder-container .folder::before {
+    content: " ";
+    position: absolute;
+    border-bottom: var(--folder-decoration-lines);
+    width: 9px;
+    height: 20px;
+    left: -10px;
+    top: -1px;
+}*/
+
+.main-folder-container .folder-container .folder-container .file::before {
+    content: " ";
+    position: absolute;
+    border-bottom: var(--folder-decoration-lines);
+    width: 15px;
+    height: 20px;
+    left: -10px;
+    top: -1px;
+}
+
 .folder-container {
     position: relative;
 }
+
+.main-folder-container::after {
+    content: " ";
+    width: 12px;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background: #ffffff;
+    left: 0px;
+    bottom: 5px;
+}
+
+
 
 
 /* this places a line of the same color of background in order to hide the last line on the left of the folder on the last folder or file */
 .folder-container:last-child::after {
     position: absolute;
     content: " ";
-    border-left: 2px solid #E5E7EB; 
+    border-left: 2px solid #ffffff; 
     top: 21px;
     bottom: -90px;
     left: -10px;
@@ -110,10 +125,7 @@
     margin-left: 2px;
 }
 
-/**.main-folder-container>.folder::before {
-    content: none !important;
-    border-bottom: none !important;
-}*/
+
 
 /* illuminate the folder when it's being dragged over */
 .folder.drag-over {
