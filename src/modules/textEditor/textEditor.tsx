@@ -595,7 +595,7 @@ export default function TextEditor() {
                         radius="none"
                         classNames={{
                             inputWrapper: '!bg-transparent shadow-none p-0 ',
-                            input: 'bg-transparent shadow-none focus:bg-transparent text-2xl font-bold',
+                            input: 'bg-transparent shadow-none focus:bg-transparent text-2xl font-bold text-center',
                         }}
                     />
                 </div>
