@@ -1,3 +1,12 @@
+.ant-space-compact .ant-btn:first-child {
+    width: 100px;
+}
+
+.ant-dropdown-menu {
+    /* Ajusta estos valores según tus necesidades */
+    margin-left: 50px !important;
+    margin-top: 20px; }
+
 .created-by{
     position: relative;
     margin-left: 15px;
