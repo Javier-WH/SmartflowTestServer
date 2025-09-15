@@ -631,7 +631,7 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: "30px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 150px", marginTop: "20px", marginRight: "20px" }}>
                 <div className='w-full flex justify-center items-center h-[20px]'>
 
                     <header
@@ -645,7 +645,7 @@ export default function TextEditor() {
                     </header>
                 </div>
 
-                <div className="flex justify-end gap-2 items-center">
+                <div className="  flex justify-end gap-2 items-center  ">
                     {memberRoll?.write && (
                         <Dropdown.Button style={{ direction: "ltr" }} menu={{ items, onClick: onMenuClick }} onClick={() => {
                             if (memberRoll?.write && readOnly) {
@@ -664,7 +664,7 @@ export default function TextEditor() {
                 ref={quillContainerRef}
                 className="flex justify-center h-full overflow-y-auto mt-4 scrollbar-thumb-rounded-full scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin"
             >
-                <div className="h-full w-full max-w-[70%] mr-[150px]">
+                <div className="h-full w-full max-w-[70%] mr-[130px]">
                     <ReactQuill
                         readOnly={readOnly}
                         ref={ref => {
