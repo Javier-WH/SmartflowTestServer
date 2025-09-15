@@ -104,7 +104,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                     id={file.id}
                     style={{ display: 'flex', alignItems: 'center', gap: 10,  }}
                     onClick={() => handleClick(file.id)}
-                    className={`file hover:bg-primary hover:text-white p-2 rounded-lg ${selectedFileId === file.id ? 'bg-primary text-white' : ''}`}
+                    className={`file p-2 rounded-lg ${selectedFileId === file.id ? 'selected-file' : ''}`}
                     draggable
                     onDragStart={event => handleDragStart(event, file.id, file.type)}
                 >
