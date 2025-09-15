@@ -12,7 +12,7 @@ export default function CustomToolbar({
             id={name}
             style={{ display: show ? 'flex' : 'none' }}
             defaultValue="arial"
-            className="flex gap-0.5 justify-center allign-center  w-full rounded-[15px] h-[20px]"
+            className="flex gap-0.5 justify-center allign-center  w-full rounded-[15px] h-[20px] "
         >
             <select className="ql-font lg:!w-[180px]">
                 <option value="arial">Arial</option>
