@@ -1,3 +1,19 @@
+.selected-file{
+    background-color: var(--selectedFileColor) !important;
+    border-radius: 15px !important;
+
+}
+
+.folder{
+    padding-left: 10px;
+}
+
+
+.folder:hover,
+.file:hover{
+    border: 1px solid var(--strokeColor);
+    border-radius: 15px;
+}
 .folder-icon {
     font-size: 25px;
 }
@@ -7,7 +23,7 @@
     height: 40px;
     cursor: pointer;
     position: relative;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
 
 }
 
@@ -54,7 +70,7 @@
     content: " ";
     position: absolute;
     border-bottom: var(--folder-decoration-lines);
-    width: 15px;
+    width: 10px;
     height: 20px;
     left: -10px;
     top: -1px;
@@ -67,7 +83,7 @@
     content: " ";
     border-left: var(--folder-decoration-lines);
     height: 110%;
-    top: -7px;
+    top: -1px;
     left: -10px;
 }
 
@@ -81,7 +97,7 @@
     height: 20px;
     left: -10px;
     top: -1px;
-}*/
+}
 
 .main-folder-container .folder-container .folder-container .file::before {
     content: " ";
@@ -91,7 +107,7 @@
     height: 20px;
     left: -10px;
     top: -1px;
-}
+}*/
 
 .folder-container {
     position: relative;
@@ -99,7 +115,7 @@
 
 .main-folder-container::after {
     content: " ";
-    width: 12px;
+    width: 10px;
     position: absolute;
     top: 50px;
     left: 0;

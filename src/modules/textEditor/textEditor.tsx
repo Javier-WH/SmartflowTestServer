@@ -616,7 +616,7 @@ export default function TextEditor() {
 
                 <div >
                     {fileContent?.updated_at ? (
-                        <span className="w-full text-gray-400 flex flex-col items-center text-[13px]">
+                        <span className="w-full text-gray-400 flex flex-col items-center text-[13px] mr-[35px]">
                             <span>{t('last_updated_label')}: </span>
                             <span>
 

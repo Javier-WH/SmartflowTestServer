@@ -241,7 +241,7 @@ export function FolderComponent({
                     data-depth={depth}
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => toggleFolder(folder.id ?? null)}
-                    className={`hover:bg-primary-50 folder ${contentId === null ? '' : 'opened'}`}
+                    className={`folder ${contentId === null ? '' : 'opened'}`}
                     draggable
                     onDragStart={event => handleDragStart(event, folder.id, folder.type)}
                     onDragOver={handleDragOver}
@@ -265,7 +265,7 @@ export function FolderComponent({
                     </div>*/}
                 </div>
             </Dropdown>
-            <div className="ml-5">
+            <div className="ml-8">
                 {contentId && (
                     <div>
                         <FolderContainer folderId={contentId} depth={depth + 1} />
