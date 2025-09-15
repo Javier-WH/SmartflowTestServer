@@ -13,13 +13,11 @@ import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import { getParentFoldersForFile } from '../../utils/pageUtils.ts';
 import { useDebouncedCallback } from 'use-debounce';
-import { Button, Textarea, cn, Spinner } from '@heroui/react';
+import {Textarea, cn, Spinner } from '@heroui/react';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
-import { GiSave } from "react-icons/gi"
-import { GoVersions } from "react-icons/go";
 import { findImageIndexBySrc } from '../textEditor/utils/findDeltaIndex';
 import { useTranslation } from 'react-i18next';
 import useDocumentControlVersion from './controlVersion/useDocumentControlVersion.ts';
@@ -27,6 +25,8 @@ import { useNavigate } from 'react-router-dom';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
 import useAuth from '../auth/hooks/useAuth.ts';
+import { Dropdown } from 'antd';
+import type { MenuProps } from 'antd';
 
 
 
@@ -73,8 +73,8 @@ export default function TextEditor() {
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [visible, setVisible] = useState(false);
     const { user } = useAuth();
-    const {  addVersion } = useDocumentControlVersion({ documentId: id, userName: `${user?.user_metadata?.name} ${user?.user_metadata?.lastname}` });
-  
+    const { addVersion } = useDocumentControlVersion({ documentId: id, userName: `${user?.user_metadata?.name} ${user?.user_metadata?.lastname}` });
+
 
 
     const modules = {
@@ -572,6 +572,20 @@ export default function TextEditor() {
         setIsSavingVersion(false);
     }
 
+    const onMenuClick: MenuProps['onClick'] = (e) => {
+        if (e.key === '1') {
+            navigate(`/${organization_id}/history/${id}`, { state: { readOnly: !memberRoll.write } })
+        }
+    };
+
+
+    const items = [
+        {
+            key: '1',
+            label: 'History',
+        }
+
+    ];
 
 
     return (
@@ -606,11 +620,11 @@ export default function TextEditor() {
                             <span>{t('last_updated_label')}: </span>
                             <span>
 
-                            {Intl.DateTimeFormat('es-ES', {
-                                dateStyle: 'medium',
-                                timeStyle: 'medium',
-                                hour12: true,
-                            }).format(new Date(fileContent?.updated_at))}
+                                {Intl.DateTimeFormat('es-ES', {
+                                    dateStyle: 'medium',
+                                    timeStyle: 'medium',
+                                    hour12: true,
+                                }).format(new Date(fileContent?.updated_at))}
                             </span>
                         </span>
                     ) : null}
@@ -627,52 +641,22 @@ export default function TextEditor() {
                                 !readOnly,
                         })}
                     >
-
                         <CustomToolbar show={!readOnly} name="toolbar" />
-
                     </header>
                 </div>
 
-
                 <div className="flex justify-end gap-2 items-center">
                     {memberRoll?.write && (
-                        readOnly ?
-                        <Button
-                            color="primary"
-                                className="rounded-[15px]"
-                            onPress={() => {
-                                if (memberRoll?.write) {
-                                    setReadOnly(false);
-                                    quillRef.current?.setEditorContents(quillRef.current?.getEditor(), content);
-                                } else {
-                                    message.error(t('you_do_not_have_permission_to_edit_file_message'));
-                                }
-                            }}
-                        >
-                            {t('edit_label')}
-                        </Button>
-                            : <div className="w-full flex justify-evenly">
-                                {
-                                    readOnly ? null :
-                                        <>
-                                            <GoVersions
-                                                title={t('document_version_history')}
-                                                className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                                                onClick={async () => {
-                                                    //await handleOnPressSaveButton();
-                                                    navigate(`/${organization_id}/history/${id}`, { state: { readOnly: !memberRoll.write } })
-                                                }}
-                                            />
-                                            <GiSave
-                                                onClick={handleOnPressSaveButton}
-                                                title={t('save_document')}
-                                                className="text-4xl cursor-pointer text-gray-500 hover:text-primary transform transition-transform duration-200 hover:scale-[1.2]"
-                                            />
-                                        </>
-                                }
-                            </div>
+                        <Dropdown.Button style={{ direction: "ltr" }} menu={{ items, onClick: onMenuClick }} onClick={() => {
+                            if (memberRoll?.write && readOnly) {
+                                setReadOnly(false);
+                                quillRef.current?.setEditorContents(quillRef.current?.getEditor(), content);
+                            } else {
+                                handleOnPressSaveButton();
+                            }
+                        }} >{readOnly ? t('edit_label') : "Publish"}</Dropdown.Button >
 
-                    ) }
+                    )}
                 </div>
             </div>
 
