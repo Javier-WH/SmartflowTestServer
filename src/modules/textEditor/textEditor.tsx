@@ -631,13 +631,13 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 120px" }}>
-                <div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: "30px" }}>
+                <div className='w-full flex justify-center items-center h-[20px]'>
 
                     <header
                         className={cn({
                             hidden: readOnly,
-                            'w-full p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2  min-h-15':
+                            'w-[1000px] p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2  min-h-15 ':
                                 !readOnly,
                         })}
                     >
@@ -664,7 +664,7 @@ export default function TextEditor() {
                 ref={quillContainerRef}
                 className="flex justify-center h-full overflow-y-auto mt-4 scrollbar-thumb-rounded-full scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin"
             >
-                <div className="h-full w-full max-w-[70%]">
+                <div className="h-full w-full max-w-[70%] mr-[150px]">
                     <ReactQuill
                         readOnly={readOnly}
                         ref={ref => {
