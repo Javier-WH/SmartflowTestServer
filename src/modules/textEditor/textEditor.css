@@ -1,3 +1,7 @@
+.ant-space-compact .ant-btn {
+    height: 40px;
+    margin-top: 10px;
+}
 .ant-space-compact .ant-btn:first-child {
     width: 100%;
     border-bottom-left-radius: 15px !important;
@@ -5,7 +9,6 @@
 }
 
 .ant-space-compact .ant-btn:last-child {
-
     border-bottom-right-radius: 15px !important;
     border-top-right-radius: 15px !important;
 }
