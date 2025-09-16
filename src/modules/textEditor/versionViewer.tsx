@@ -232,11 +232,11 @@ export default function VersionViewer() {
                             value={title}
                             placeholder={t('give_your_page_a_title_message')}
                             minRows={1}
-                            maxRows={2}
+                            maxRows={1}
                             radius="none"
                             classNames={{
                                 inputWrapper: '!bg-transparent shadow-none p-0 ',
-                                input: 'bg-transparent shadow-none focus:bg-transparent text-4xl font-bold',
+                                input: 'bg-transparent shadow-none focus:bg-transparent text-4xl font-bold text-center',
                             }}
                         />
                     </div>
@@ -257,7 +257,7 @@ export default function VersionViewer() {
 
                 <div
                     ref={quillContainerRef}
-                    className="flex justify-center h-full overflow-y-auto mt-4 scrollbar-thumb-rounded-full scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin"
+                    className="flex justify-center h-full overflow-y-auto mt-4 scrollbar-thumb-rounded-full scrollbar-thumb-[var(--strokeColor:)] scrollbar-track-transparent scrollbar-thin"
                 >
                     <div className="h-full w-full max-w-[70%]">
                         <ReactQuill
@@ -297,10 +297,10 @@ export default function VersionViewer() {
                 <div
 
                     onClick={() => { setContent(currentContent); setTitle(currentTitle), setSelectedVersionId("current") }}
-                    className={`mt-4 flex flex-col gap-1 p-2 rounded-lg border-2 shadow-sm cursor-pointer transition-all duration-200
+                    className={`mt-2 flex flex-col gap-1 p-2 rounded-lg border-2 shadow-sm cursor-pointer transition-all duration-200
                         ${selectedVersionId === "current"
-                            ? 'border-primary'
-                            : 'border-gray-200 hover:bg-blue-50 hover:border-blue-300'
+                        ? 'border-gray-500'
+                            : 'border-gray-200 hover:bg-gray-100 hover:border-gray-400'
                         }`}
                 >
 
@@ -310,9 +310,9 @@ export default function VersionViewer() {
 
 
 
-                <h3 className="text-sm font-bold text-gray-500 mb-2 mt-2 uppercase tracking-wide">{t("versions")}</h3>
+                <h3 className="text-sm font-bold text-gray-500 mb-2 mt-10 uppercase tracking-wide">{t("versions")}</h3>
 
-                <div className="flex flex-col gap-3 overflow-y-auto flex-grow pr-1 custom-scrollbar h-[calc(100vh-280px)] ">
+                <div className="flex flex-col gap-3 overflow-y-auto flex-grow pr-1 custom-scrollbar h-[calc(100vh-280px)] scrollbar-track-transparent scrollbar-thin">
                     {isLoadingVersions ? (
                         <div className="flex justify-center items-center h-full">
                             <Spinner size="lg" />
