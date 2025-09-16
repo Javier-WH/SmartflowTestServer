@@ -1,4 +1,4 @@
-import { Input } from '@/components/ui';
+import { Input } from 'antd';
 import { useEffect, useState, useCallback } from 'react';
 import { IoSearchSharp } from 'react-icons/io5';
 import useFilesManager from '../folderNavigator/hooks/useFileManager';
@@ -16,43 +16,43 @@ const debounce = (func, delay) => {
 };
 
 export default function SearchInput() {
-    const [searchValue, setSearchValue] = useState(''); 
-    const [searchResults, setSearchResults] = useState<SearchBoxInterface[]>([]); 
-    const [isLoading, setIsLoading] = useState(false); 
-    const [error, setError] = useState<string | null>(null); 
-    const { searchFiles } = useFilesManager(); 
-    const { t } = useTranslation(); 
+    const [searchValue, setSearchValue] = useState('');
+    const [searchResults, setSearchResults] = useState<SearchBoxInterface[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const { searchFiles } = useFilesManager();
+    const { t } = useTranslation();
 
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedSearch = useCallback(
         debounce(async (term, orgId) => {
-    
+
             if (!term) {
-                closeBox(); 
+                closeBox();
                 return;
             }
 
-            setIsLoading(true); 
-            setError(null); 
+            setIsLoading(true);
+            setError(null);
 
             try {
-                const res = await searchFiles(term, orgId); 
-                setSearchResults(res.data); 
+                const res = await searchFiles(term, orgId);
+                setSearchResults(res.data);
             } catch (err) {
                 console.error("Error al obtener los resultados de la búsqueda:", err);
-                setError(t('search_error_message')); 
-                setSearchResults([]); 
+                setError(t('search_error_message'));
+                setSearchResults([]);
             } finally {
-                setIsLoading(false); 
+                setIsLoading(false);
             }
-        }, 300), 
-        [searchFiles, t] 
+        }, 300),
+        [searchFiles, t]
     );
 
     // Efecto para disparar la búsqueda cuando cambia el valor del input
     useEffect(() => {
-        const orgId = localStorage.getItem('OrgId'); 
+        const orgId = localStorage.getItem('OrgId');
         if (!orgId) {
             setError(t('org_id_missing_error'));
             closeBox();
@@ -62,24 +62,24 @@ export default function SearchInput() {
         // Dispara la búsqueda "debounced" cuando searchValue cambia
         debouncedSearch(searchValue, orgId);
 
-    }, [searchValue, debouncedSearch, t]); 
+    }, [searchValue, debouncedSearch, t]);
 
     // Efecto para manejar eventos de teclado (ej. tecla 'Escape' para cerrar la caja de búsqueda)
     useEffect(() => {
         const keyEvent = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
-                closeBox(); 
+                closeBox();
             }
         };
         const clickEvent = (e) => {
             if (e.target.id === 'searchInput' || e.target.id === 'searchBox') return;
-            closeBox(); 
+            closeBox();
         };
 
-        window.addEventListener('keydown', keyEvent); 
+        window.addEventListener('keydown', keyEvent);
         window.addEventListener('click', clickEvent);
         return () => {
-            window.removeEventListener('keydown', keyEvent); 
+            window.removeEventListener('keydown', keyEvent);
             window.removeEventListener('click', clickEvent);
         };
     }, []);
@@ -87,26 +87,26 @@ export default function SearchInput() {
     // Función para cerrar la caja de resultados y resetear el estado
     const closeBox = () => {
         setSearchResults([]);
-        setSearchValue(''); 
-        setIsLoading(false); 
-        setError(null); 
+        setSearchValue('');
+        setIsLoading(false);
+        setError(null);
     };
 
     return (
-        <div style={{ width: '100%', position: 'relative' }}>
+        <div style={{ width: '100%', position: 'relative'}}>
             <Input
                 id='searchInput'
-                startContent={<IoSearchSharp />} 
+                suffix={<IoSearchSharp />}
                 value={searchValue}
-                onChange={e => setSearchValue(e.target.value)} 
-                placeholder={t('search_placeholder')} 
+                onChange={e => setSearchValue(e.target.value)}
+                placeholder={t('search_placeholder')}
             // Opcional: Deshabilita el input mientras se está cargando
             // disabled={isLoading}
             />
             {/* Muestra el indicador de carga */}
             {isLoading && searchValue.length > 0 && (
                 <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1 p-2 text-center text-gray-500">
-                    {t('searching_message') }
+                    {t('searching_message')}
                 </div>
             )}
             {/* Muestra el mensaje de error */}

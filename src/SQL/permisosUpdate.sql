@@ -153,3 +153,13 @@ create table public.errors_log (
 ALTER TABLE auth.users DISABLE TRIGGER on_auth_user_created;
 
 ALTER TABLE auth.users ENABLE TRIGGER on_auth_user_created;
+
+
+
+-- estas funciones habilitan el tutorial
+
+ALTER TABLE auth.users DISABLE TRIGGER on_auth_user_created;
+
+ALTER TABLE auth.users ENABLE TRIGGER on_auth_user_created;
+
+SELECT spreadTutorial();

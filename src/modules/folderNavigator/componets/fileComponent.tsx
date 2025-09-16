@@ -1,8 +1,8 @@
 import { Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
 import type { ContainerElement } from '../types/componets';
-import publishedIcon from '../assets/svg/publishedFile.svg';
-import unPublishedIcon from '../assets/svg/unPublishedFile.svg';
+//import publishedIcon from '../assets/svg/publishedFile.svg';
+//import unPublishedIcon from '../assets/svg/unPublishedFile.svg';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useContext, useEffect, useState } from 'react';
@@ -104,13 +104,13 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                     id={file.id}
                     style={{ display: 'flex', alignItems: 'center', gap: 10, }}
                     onClick={() => handleClick(file.id)}
-                    className={`file hover:bg-primary hover:text-white p-2 rounded-lg ${selectedFileId === file.id ? 'bg-primary text-white' : ''}`}
+                    className={`file p-2 rounded-lg ${selectedFileId === file.id ? 'selected-file' : ''}`}
                     draggable
                     onDragStart={event => handleDragStart(event, file.id, file.type)}
                 >
-
-                    <img src={file.published ? publishedIcon : unPublishedIcon} width={30}/>
-                    <span className="truncate max-h-[50px] w-full" title={fileName}>
+                    {/*<img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />*/}
+                    <CiFileOn size={25} />
+                    <span className="truncate max-h-[50px] w-full file-name" title={fileName}>
                         {fileName === 'untitled' ? t('untitled_file') : fileName}
                     </span>
 

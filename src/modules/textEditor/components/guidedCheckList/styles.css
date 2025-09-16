@@ -1,6 +1,7 @@
-.disable-select {
+/*.disable-select {
     user-select: none;
-}
+}*/
+
 
 .drag-handle {
     cursor: grab;
@@ -14,8 +15,9 @@
     padding: 10px;
     padding-left: 30px;
     width: 100%;
-    user-select: none;
-    -webkit-user-select: none;
+    border-radius: 15px;
+    /* user-select: none;
+    -webkit-user-select: none;*/
 }
 
 .title-input {
@@ -137,6 +139,8 @@
     color: white;
     border: none;
     background: hsla(205, 76%, 39%);
+    user-select: none !important;
+    -webkit-user-select: none !important;
 }
 
 .collapse-next-button:hover {
@@ -145,10 +149,10 @@
     background: rgb(60, 143, 202) !important;
 }
 
-.guided-checklist *:not(input):not(textarea) {
+/*.guided-checklist *:not(input):not(textarea) {
     user-select: none;
     -webkit-user-select: none;
-}
+}*/
 
 .drag-handle {
     scale: 1.5;

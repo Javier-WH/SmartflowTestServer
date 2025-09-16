@@ -15,9 +15,54 @@
     --navBarHeight: 300px;
     --pageBarColor: hsla(211, 39%, 23%);
     --pageWidth: 700px;
-    --folder-decoration-lines: 2px solid rgb(171, 157, 228);
+    /*--folder-decoration-lines: 2px solid rgb(171, 157, 228);*/
+    --folder-decoration-lines: 1px dotted rgb(182, 180, 180);
+    --fillColor: rgb(222, 222, 222);
+    --strokeColor: rgb(135, 135, 135);
+    --selectedFileColor: rgb(233, 232, 232);
+    --hoverColor: rgb(231, 231, 231);
+   
 }
+
 
 body {
     background-color: var(--backGroundColor) !important;
 }
+
+* {
+    font-family: "Inter", sans-serif;
+}
+/*
+.users__avatar span span  {
+    background-color: rgb(243, 148, 238);
+}
+*/
+.users__avatar svg{
+   color: gray;
+}
+::selection {
+    background-color: var(--strokeColor);
+    color: var(--selectedFileColor); 
+}
+
+.folder-nav-button {
+    border-radius: 15px;
+}
+.folder-nav-button:hover {
+   background-color: rgb(109 74 255 / 10%) !important;
+}
+.folder-nav-icon {
+    stroke-width: 1px;
+    stroke: rgb(109 74 255 / 99%) !important;
+}
+/*
+#searchBox::before{
+    content: " ";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border: 1px solid gray;
+    pointer-events: none;
+}*/

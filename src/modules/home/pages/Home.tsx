@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import FolderNavigator from '@/modules/folderNavigator/folderNavigator';
 import '../css/home.css';
-import SearchInput from '@/modules/search/searchInput';
+//import SearchInput from '@/modules/search/searchInput';
 import { Button } from '@/components/ui';
 import {
     IconChevronDown,
@@ -13,7 +13,7 @@ import {
     IconFolderPlus,
 } from '@tabler/icons-react';
 import { cn } from '@heroui/react';
-import { useContext, useState } from 'react';
+import { ReactNode, useContext, useState } from 'react';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import type { Folder } from '@/modules/folderNavigator/types/folder';
 import { message } from 'antd';
@@ -21,10 +21,11 @@ import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
 import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
 import { useTranslation } from 'react-i18next';
 
+
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  
-    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, parentFolders } = useContext(
+
+    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, /*parentFolders*/ } = useContext(
         MainContext,
     ) as MainContextValues;
     const { createFile } = useFilesManager();
@@ -33,7 +34,44 @@ export default function Home() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
- 
+
+
+
+
+    const getLevelTitle = (level: string): ReactNode => {
+
+        if (level.toLocaleLowerCase() === "creator") {
+            return <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
+                {t('creator_label')}
+            </span>
+
+        }
+        else if (level.toLocaleLowerCase() === "admin") {
+            return <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full tracking-tight">
+                {t('admin_label')}
+            </span>
+        }
+
+
+        else if (level.toLocaleLowerCase() === "editor") {
+            return <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full tracking-tight">
+                {t('editor_label')}
+            </span>
+        }
+
+        else if (level.toLocaleLowerCase() === "lector") {
+            return <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full tracking-tight">
+                {t('lector_label')}
+            </span>
+        }
+        else {
+            return <div></div>
+        }
+    }
+
+
+
+
     const handleCreateFolder = () => {
         if (!memberRoll?.write) {
             message.error(t('can_not_create_folder_message'));
@@ -112,27 +150,27 @@ export default function Home() {
                     <div
                         className={`flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'hidden absolute md:opacity-100 md:visible md:relative' : 'relative'}`}
                     >
-                        <SearchInput />
-                        <div className="bg-gray-200 shadow-gray-100 ring-gray-200 ring-1 shadow-md h-full py-1 rounded-md flex flex-col mt-2 overflow-hidden">
-                            {/*<span className="ml-3 text-primary text-[13px] text-left min-w-[200px] min-h-[30px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
-                                <span className='font-bold'>
-                                    {`${localStorage.getItem("OrgName") || ""}`}
-                                </span>
-                                {`${parentFolders}`}
+                        {/* <SearchInput /> */}
+                        <div className="border-2 h-full py-1 rounded-lg flex flex-col mt-[0px] relative pt-6 custom-shadow">
 
-                            </span>*/}
-
-
-                            <div className="flex justify-end gap-1 px-1">
-                                <Button variant="light" isIconOnly onPress={handleCreatePage}>
-                                    <IconFilePlus />
+                            <div className="rounded-tl-lg rounded-tr-lg text-center leading-[40px] absolute top-0 left-0 w-full h-[40px] pl-10 pr-10 truncate overflow-hidden whitespace-nowrap text-gray-500 bg-default-50 border-b-1 ">
+                                {`${localStorage.getItem("OrgName") || ""}`}
+                            </div>
+                            <div className='absolute top-[50px] left-[50%] transform -translate-x-1/2'>
+                                {
+                                    getLevelTitle(memberRoll?.level || "")
+                                }
+                            </div>
+                            <div className="flex justify-end gap-1 px-1 mt-5">
+                                <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreatePage}>
+                                    <IconFilePlus className='folder-nav-icon' />
                                 </Button>
-                                <Button variant="light" isIconOnly onPress={handleCreateFolder}>
-                                    <IconFolderPlus />
+                                <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreateFolder}>
+                                    <IconFolderPlus className='folder-nav-icon' />
                                 </Button>
                             </div>
 
-                            <div className="grow overflow-y-auto overflow-x-auto scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
+                            <div className=" grow overflow-y-auto overflow-x-auto scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-[var(--strokeColor:)] scrollbar-track-transparent scrollbar-thin">
                                 <FolderNavigator />
                             </div>
                         </div>
@@ -172,9 +210,8 @@ export default function Home() {
             </div>
 
             <section
-                className={`grow transition-all duration-200 ease-in-out ${
-                    isSidebarCollapsed ? 'w-full md:w-[calc(100%-4rem-0.5rem)]' : 'w-full md:w-[calc(75%-0.5rem)]'
-                } ${isSidebarCollapsed ? 'mt-0' : 'mt-2 md:mt-0'}`}
+                className={`grow transition-all duration-200 ease-in-out ${isSidebarCollapsed ? 'w-full md:w-[calc(100%-4rem-0.5rem)]' : 'w-full md:w-[calc(75%-0.5rem)]'
+                    } ${isSidebarCollapsed ? 'mt-0' : 'mt-2 md:mt-0'}`}
             >
                 <Outlet />
             </section>

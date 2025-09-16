@@ -453,7 +453,7 @@ export default function Guidance({
                             display: showToolbar ? 'block' : 'none',
                             zIndex: 10000,
                         }}
-                        className="flex justify-center w-full grow relative bg-gray-100"
+                        className="flex justify-center w-full grow relative"
                     >
                         <CustomToolbar name={toolbarId} clean={true} />
                     </div>

@@ -12,7 +12,7 @@ export default function CustomToolbar({
             id={name}
             style={{ display: show ? 'flex' : 'none' }}
             defaultValue="arial"
-            className="flex flex-wrap gap-2 h-full lg:h-auto w-full"
+            className="flex gap-0.5 justify-center allign-center  w-full rounded-[15px] h-[20px] "
         >
             <select className="ql-font lg:!w-[180px]">
                 <option value="arial">Arial</option>
@@ -79,7 +79,7 @@ export default function CustomToolbar({
             <button className="ql-image action-button"></button>
             <button className="ql-video action-button"></button>
             <button className="ql-clean action-button"></button>
-            <button disabled={clean} className="ql-guided-checklist action-button">
+            <button disabled={clean} className="guidend-checklist-toolbar-button ql-guided-checklist action-button">
                 <GuidedCheckListIcon />
             </button>
         </div>
