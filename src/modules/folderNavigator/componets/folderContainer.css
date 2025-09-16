@@ -26,7 +26,11 @@
     border: 1px solid transparent;
 
 }
-
+.folder-name,
+.file-name {
+    font-size: 15px;
+    
+}
 
 .folder-name {
     white-space: nowrap;
