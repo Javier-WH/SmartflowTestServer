@@ -7,9 +7,12 @@ export default function Input(props: InputProps) {
             {...props}
             variant={variant}
             size="md"
-            radius="sm"
+            radius="full"
             color="primary"
-            classNames={props.classNames ?? { inputWrapper: variant === 'bordered' ? 'border' : '' }}
+            classNames={{
+                ...props.classNames,
+                inputWrapper: 'focus-within:!border-gray-300',
+            }}
         />
     );
 }
