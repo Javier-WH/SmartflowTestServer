@@ -149,5 +149,6 @@
 
 /* illuminate the folder when it's being dragged over */
 .folder.drag-over {
-    border-color: hsl(205, 65%, 55%);
+    border-color: var(--strokeColor) !important;
+    border-radius: 15px !important;
 }

@@ -237,7 +237,7 @@ export default function VersionViewer() {
                             radius="none"
                             classNames={{
                                 inputWrapper: '!bg-transparent shadow-none p-0 ',
-                                input: 'bg-transparent shadow-none focus:bg-transparent text-4xl font-bold text-center',
+                                input: 'bg-transparent shadow-none focus:bg-transparent text-2xl font-bold text-center',
                             }}
                         />
                     </div>
