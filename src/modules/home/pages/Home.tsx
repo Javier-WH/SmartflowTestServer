@@ -164,11 +164,11 @@ export default function Home() {
                                 }
                             </div>
                             <div className="flex justify-end gap-1 px-1 mt-5">
-                                <Button variant="light" isIconOnly onPress={handleCreatePage}>
-                                    <IconFilePlus style={{ strokeWidth: "1" }} />
+                                <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreatePage}>
+                                    <IconFilePlus className='folder-nav-icon' />
                                 </Button>
-                                <Button variant="light" isIconOnly onPress={handleCreateFolder}>
-                                    <IconFolderPlus style={{ strokeWidth: "1" }} />
+                                <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreateFolder}>
+                                    <IconFolderPlus className='folder-nav-icon' />
                                 </Button>
                             </div>
 

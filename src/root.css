@@ -42,7 +42,16 @@ body {
     color: var(--selectedFileColor); 
 }
 
-
+.folder-nav-button {
+    border-radius: 15px;
+}
+.folder-nav-button:hover {
+    background-color: var(--selectedFileColor) !important;
+}
+.folder-nav-icon {
+    stroke-width: 1px;
+    stroke: var(--strokeColor);
+}
 /*
 #searchBox::before{
     content: " ";
