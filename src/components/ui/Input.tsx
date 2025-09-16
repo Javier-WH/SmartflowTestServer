@@ -6,7 +6,7 @@ export default function Input(props: InputProps) {
         <InputComponent
             {...props}
             variant={variant}
-            size="lg"
+            size="md"
             radius="sm"
             color="primary"
             classNames={props.classNames ?? { inputWrapper: variant === 'bordered' ? 'border' : '' }}

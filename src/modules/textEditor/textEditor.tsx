@@ -631,7 +631,7 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 150px", marginTop: "20px", marginRight: "20px", alignItems: "center" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 150px", marginTop: "1px", marginRight: "20px", alignItems: "center" }}>
                 <div className='w-full flex justify-center items-center h-[20px]'>
 
                     <header
@@ -645,7 +645,7 @@ export default function TextEditor() {
                     </header>
                 </div>
 
-                <div className="  flex justify-end gap-2 items-center  ">
+                <div className=" flex justify-end gap-2 items-center  ">
                     {memberRoll?.write && (
                         <Dropdown.Button style={{ direction: "ltr" }} menu={{ items, onClick: onMenuClick }} onClick={() => {
                             if (memberRoll?.write && readOnly) {
