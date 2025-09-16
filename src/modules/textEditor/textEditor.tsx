@@ -662,7 +662,7 @@ export default function TextEditor() {
 
             <div
                 ref={quillContainerRef}
-                className="flex justify-center h-full overflow-y-auto mt-4 scrollbar-thumb-rounded-full scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin"
+                className="flex justify-center h-full overflow-y-auto mt-4 scrollbar-thumb-rounded-full scrollbar-thumb-[var(--strokeColor:)] scrollbar-track-transparent scrollbar-thin"
             >
                 <div className="h-full w-full max-w-[70%] mr-[130px]">
                     <ReactQuill

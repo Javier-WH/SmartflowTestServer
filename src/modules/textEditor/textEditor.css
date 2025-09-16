@@ -1,3 +1,8 @@
+.ant-space-compact .ant-btn:hover {
+    border-color: var(--strokeColor) !important;
+    color: black !important;
+}
+
 .ant-space-compact .ant-btn {
     height: 40px;
     margin-top: 10px;
@@ -64,7 +69,7 @@
 }
 .ql-active,
 .ql-selected {
-    color: rgb(109 74 255) !important;
+    color: var(--selectedFileColor) !important;
 }
 
 .handler {
@@ -473,11 +478,30 @@ a {
     color: rgb(98, 220, 236);
 }
 
-.action-button {
-    @apply rounded-md hover:!bg-primary hover:!text-white
+.action-button:hover {
+    border-radius: 10px !important;
+    background-color: var(--selectedFileColor) !important;
+  
 }
 
-.action-button:hover > svg > .ql-stroke {
+.action-button:hover * {
+    stroke: var(--strokeColor)!important;
+}
+
+.action-button:hover img {
+    filter: sepia(1);
+}
+
+.ql-picker-item:hover .ql-stroke {
+    stroke: var(--strokeColor) !important;
+}
+
+
+/*.action-button {
+    @apply rounded-md hover:!bg-primary hover:!text-white
+}*/
+
+/*.action-button:hover > svg > .ql-stroke {
     @apply !stroke-white
 }
 
@@ -494,7 +518,7 @@ a {
 }
 .ql-picker-item:hover .ql-stroke {
     @apply !stroke-white
-}
+}*/
 
 .ant-collapse-content-box .action-button img {
 

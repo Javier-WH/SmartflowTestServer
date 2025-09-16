@@ -20,8 +20,10 @@
     --fillColor: rgb(222, 222, 222);
     --strokeColor: rgb(135, 135, 135);
     --selectedFileColor: rgb(233, 232, 232);
+    --hoverColor: rgb(231, 231, 231);
    
 }
+
 
 body {
     background-color: var(--backGroundColor) !important;
