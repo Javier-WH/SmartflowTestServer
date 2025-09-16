@@ -1,6 +1,6 @@
 import type { SearchBoxInterface } from '../types/searchBox';
-import unPublishedFile from '../../folderNavigator/assets/svg/unPublishedFile.svg';
-import folderIcon from '../../folderNavigator/assets/svg/closed_folder.svg';
+//import unPublishedFile from '../../folderNavigator/assets/svg/unPublishedFile.svg';
+//import folderIcon from '../../folderNavigator/assets/svg/closed_folder.svg';
 import { useNavigate, useParams } from 'react-router-dom';
 import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
 import groupDataByContainer from '../../folderNavigator/context/utils/groupDataByContainer';
@@ -8,6 +8,8 @@ import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import './searhBox.css';
 import { message } from 'antd';
 import { useContext } from 'react';
+import { CiFileOn } from "react-icons/ci";
+import { PiFolderLight } from "react-icons/pi";
 
 export default function SearchBox({
     data,
@@ -153,7 +155,10 @@ export default function SearchBox({
                             columnGap: '10px',
                         }}
                     >
-                        <img src={item.type === 1 ? unPublishedFile : folderIcon} alt="File icon" width={37} />
+                        {/*
+                            <img src={item.type === 1 ? unPublishedFile : folderIcon} alt="File icon" width={37} />
+                        */}
+                        { item.type === 1  ? <CiFileOn size={25} /> : <PiFolderLight className='folder-icon' />}
                         <div style={{ flex: 1 }}>
                             <div
                                 style={{
