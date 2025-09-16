@@ -69,7 +69,7 @@
 }
 .ql-active,
 .ql-selected {
-    color: var(--selectedFileColor) !important;
+    color: var(--strokeColor) !important;
 }
 
 .handler {
