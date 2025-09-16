@@ -29,6 +29,9 @@ body {
     background-color: var(--backGroundColor) !important;
 }
 
+/** {
+    font-family: 'NombreDeTuFuente', sans-serif;
+}
 /*
 .users__avatar span span  {
     background-color: rgb(243, 148, 238);
@@ -46,11 +49,11 @@ body {
     border-radius: 15px;
 }
 .folder-nav-button:hover {
-    background-color: var(--selectedFileColor) !important;
+   /* background-color: var(--selectedFileColor) !important;*/
 }
 .folder-nav-icon {
     stroke-width: 1px;
-    stroke: var(--strokeColor);
+   /* stroke: var(--strokeColor);*/
 }
 /*
 #searchBox::before{

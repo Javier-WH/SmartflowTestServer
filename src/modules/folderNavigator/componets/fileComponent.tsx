@@ -110,7 +110,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                 >
                     {/*<img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />*/}
                     <CiFileOn size={25} />
-                    <span className="truncate max-h-[50px] w-full" title={fileName}>
+                    <span className="truncate max-h-[50px] w-full file-name" title={fileName}>
                         {fileName === 'untitled' ? t('untitled_file') : fileName}
                     </span>
                   
