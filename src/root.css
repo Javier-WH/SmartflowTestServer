@@ -49,11 +49,11 @@ body {
     border-radius: 15px;
 }
 .folder-nav-button:hover {
-   /* background-color: var(--selectedFileColor) !important;*/
+   background-color: rgb(109 74 255 / 10%) !important;
 }
 .folder-nav-icon {
     stroke-width: 1px;
-   /* stroke: var(--strokeColor);*/
+    stroke: rgb(109 74 255 / 99%) !important;
 }
 /*
 #searchBox::before{
