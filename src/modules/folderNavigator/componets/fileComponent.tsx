@@ -102,7 +102,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                 <div
                     key={file.id}
                     id={file.id}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10,  }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, }}
                     onClick={() => handleClick(file.id)}
                     className={`file p-2 rounded-lg ${selectedFileId === file.id ? 'selected-file' : ''}`}
                     draggable
@@ -113,7 +113,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                     <span className="truncate max-h-[50px] w-full file-name" title={fileName}>
                         {fileName === 'untitled' ? t('untitled_file') : fileName}
                     </span>
-                  
+
                 </div>
             </Dropdown>
         </div>
