@@ -196,6 +196,7 @@ export default function VersionViewer() {
             content: t("recovery_version_modal_description"),
             okText: t('recovery_version_modal_button'),
             cancelText: t('cancel_label'),
+            icon: null,
             okButtonProps: {
                 style: {
                     backgroundColor: 'rgba(109, 74, 255, 1)',
