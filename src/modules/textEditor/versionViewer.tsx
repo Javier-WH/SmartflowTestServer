@@ -73,7 +73,7 @@ export default function VersionViewer() {
     const [isInitialContentLoaded, setIsInitialContentLoaded] = useState(false);
     const [documentVersions, setDocumentVersions] = useState<DocumentVersionData[]>([]);
     const { user } = useAuth();
-    const { getVersions } = useDocumentControlVersion({ documentId: id, userName: `${user?.user_metadata?.name} ${user?.user_metadata?.lastname}` });
+    const { getVersions, addVersion } = useDocumentControlVersion({ documentId: id, userName: `${user?.user_metadata?.name} ${user?.user_metadata?.lastname}` });
     const [isLoadingVersions, setIsLoadingVersions] = useState(false)
     const [selectedVersionId, setSelectedVersionId] = useState<string>('');
 
@@ -349,9 +349,14 @@ export default function VersionViewer() {
                                         selectedVersionId === version.id &&
                                         <span
                                         className="retore-button text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full w-fit ml-auto mt-[10px]"
-                                        onClick={(e) => {
+                                        onClick={async(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
+                                            const saveVersion = await addVersion({ name: currentTitle, content: currentContent });
+                                            if (!saveVersion) {
+                                                message.error(t('error_saving_version_message'))
+                                                return
+                                            }
                                             handleRecoverClick2({ htmlContent: version.content, documentTitle: version.name });
                                         }}
                                         >

@@ -28,12 +28,30 @@
 body {
     background-color: var(--backGroundColor) !important;
 }
-/*::selection {
-    background-color: rgb(109 74 255);
-    color: white; 
-}*/
 
+/*
+.users__avatar span span  {
+    background-color: rgb(243, 148, 238);
+}
+*/
+.users__avatar svg{
+   color: gray;
+}
+::selection {
+    background-color: var(--strokeColor);
+    color: var(--selectedFileColor); 
+}
 
+.folder-nav-button {
+    border-radius: 15px;
+}
+.folder-nav-button:hover {
+    background-color: var(--selectedFileColor) !important;
+}
+.folder-nav-icon {
+    stroke-width: 1px;
+    stroke: var(--strokeColor);
+}
 /*
 #searchBox::before{
     content: " ";

@@ -79,7 +79,7 @@ export default function CustomToolbar({
             <button className="ql-image action-button"></button>
             <button className="ql-video action-button"></button>
             <button className="ql-clean action-button"></button>
-            <button disabled={clean} className="ql-guided-checklist action-button">
+            <button disabled={clean} className="guidend-checklist-toolbar-button ql-guided-checklist action-button">
                 <GuidedCheckListIcon />
             </button>
         </div>

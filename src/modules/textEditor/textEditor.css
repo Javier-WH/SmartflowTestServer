@@ -69,7 +69,7 @@
 }
 .ql-active,
 .ql-selected {
-    color: var(--selectedFileColor) !important;
+    color: var(--strokeColor) !important;
 }
 
 .handler {
@@ -232,8 +232,20 @@
 }
 
 
-.ql-snow .ql-picker-label {
+/*.ql-snow .ql-picker-label {
     @apply text-black cursor-pointer hover:!bg-primary/90 hover:!text-white rounded-md
+}*/
+
+.ql-snow .ql-picker-label {
+    color: black;
+    cursor: pointer;
+    border-radius: 0.375rem;
+    /* Equivalente a rounded-md */
+}
+
+.ql-snow .ql-picker-label:hover {
+    background-color: var(--selectedFileColor);
+    color: black !important;
 }
 
 /* invertir menus*/
@@ -253,8 +265,12 @@
     @apply !stroke-black;
 }
 
-.ql-picker-item:hover {
+/*.ql-picker-item:hover {
     @apply bg-primary !text-white
+}*/
+.ql-picker-item:hover {
+    background-color: var(--selectedFileColor);
+    color: black !important;
 }
 
 .ql-snow .ql-color-picker .ql-picker-options {
@@ -478,30 +494,14 @@ a {
     color: rgb(98, 220, 236);
 }
 
-.action-button:hover {
-    border-radius: 10px !important;
-    background-color: var(--selectedFileColor) !important;
-  
-}
 
-.action-button:hover * {
-    stroke: var(--strokeColor)!important;
-}
-
-.action-button:hover img {
-    filter: sepia(1);
-}
-
-.ql-picker-item:hover .ql-stroke {
-    stroke: var(--strokeColor) !important;
-}
 
 
 /*.action-button {
     @apply rounded-md hover:!bg-primary hover:!text-white
-}*/
+}
 
-/*.action-button:hover > svg > .ql-stroke {
+.action-button:hover > svg > .ql-stroke {
     @apply !stroke-white
 }
 
@@ -520,9 +520,49 @@ a {
     @apply !stroke-white
 }*/
 
-.ant-collapse-content-box .action-button img {
-
+.guidend-checklist-toolbar-button:hover svg {
+    fill: black !important;
+  
 }
+
+.action-button {
+    border-radius: 0.375rem;
+ 
+}
+
+/* Estado al pasar el mouse por encima */
+.action-button:hover {
+    background-color: var(--selectedFileColor) !important;
+}
+
+.action-button:hover * {
+   /* stroke: var(--strokeColor) !important;*/
+}
+
+.action-button:hover>svg>.ql-stroke {
+    stroke: rgb(0, 0, 0) !important;
+ 
+}
+
+
+
+.action-button:hover>.ql-picker-label>svg>.ql-stroke {
+    /*stroke: white !important;*/
+    stroke: rgb(0, 0, 0) !important;
+}
+
+.action-button:hover .ql-fill {
+    /*fill: white !important;*/
+    fill: black !important;
+    /* !fill-white */
+}
+
+.ql-picker-item:hover .ql-stroke {
+    stroke: rgb(0, 0, 0) !important;
+    /* !stroke-white */
+}
+
+
 .ant-collapse-content-box .action-button img {
     padding: 0px !important;
     margin: 0px !important;
@@ -543,7 +583,7 @@ a {
 
 
 .ql-editor .ql-alpha-list li::before {
-content: counter(list-0, lower-alpha) '. ';   
+    content: counter(list-0, lower-alpha) '. ';   
 }
 
 /*elimina el outline del editor de texto en navegadores como firefox y safari*/
