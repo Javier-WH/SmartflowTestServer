@@ -28,6 +28,10 @@
 body {
     background-color: var(--backGroundColor) !important;
 }
+
+.users__avatar svg{
+   color: gray;
+}
 /*::selection {
     background-color: rgb(109 74 255);
     color: white; 
