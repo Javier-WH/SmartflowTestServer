@@ -334,7 +334,7 @@ export default function VersionViewer() {
                                     key={version.id}
                                     className="flex items-center justify-betweentext-gray-700 text-[12px]">
                                     <span>
-                                        {new Date(version.created_at + 'Z').toLocaleString(navigator.language, {
+                                        {new Date(version.created_at).toLocaleString(navigator.language, {
                                             year: 'numeric',
                                             month: 'long',
                                             day: 'numeric',
