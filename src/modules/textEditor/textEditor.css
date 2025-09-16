@@ -1,3 +1,8 @@
+.create-workgroup-button button {
+    background-color: rgb(109 74 255 /80%) !important;  
+    color: white !important;
+}
+
 .ant-space-compact .ant-btn:hover {
     border-color: var(--strokeColor) !important;
     color: black !important;
@@ -59,11 +64,22 @@
 
 .ant-input-affix-wrapper{
     border-radius: 15px !important;
+    
 }
 #searchInput{
     direction: ltr !important;
     border-radius: 15px !important;
+    outline: none !important;
 }
+
+.ant-input-affix-wrapper:focus-within {
+    border-color: var(--strokeColor) !important;
+}
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper:hover {
+    border-color: var(--strokeColor) !important; 
+}
+
 .ql-container.ql-snow {
     border: none !important;
 }

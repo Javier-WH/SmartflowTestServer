@@ -10,10 +10,13 @@ import { MainContextValues, MainContext } from './mainContext';
 import { useNavigate } from 'react-router-dom';
 import logo from "../assets/svg/Logo_Smartflo.svg"
 import SearchInput from './search/searchInput';
+import { useParams } from 'react-router-dom';
 
 
 function Header() {
     const {setParentFolders} = useContext(MainContext) as MainContextValues;
+    const parms = useParams();
+  
     const navigate = useNavigate();
     //throw new Error('Function not implemented.');
     return (
@@ -22,9 +25,12 @@ function Header() {
                { /*<span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO*/}
                <img src={logo} alt="logo" style={{width: "200px", height: "35px"}}/>
             </h1>
-            <div className="search-continer ml-auto w-[300px] mr-[60px] ">
+            {
+                parms?.organization_id &&
+                <div className="search-continer ml-auto w-[300px] mr-[60px] ">
                 <SearchInput />
             </div>
+            }
             {/*<span className="text-primary text-[18px] text-left min-w-[200px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
                 <span className="font-bold text-[20px]">
                     {`${localStorage.getItem("OrgName") || ""}`}

@@ -29,8 +29,8 @@ body {
     background-color: var(--backGroundColor) !important;
 }
 
-/** {
-    font-family: 'NombreDeTuFuente', sans-serif;
+* {
+    font-family: "Inter", sans-serif;
 }
 /*
 .users__avatar span span  {
