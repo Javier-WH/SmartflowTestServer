@@ -157,24 +157,27 @@ export default function Organizations() {
     return (
         <div className="overflow-y-auto h-full p-4 lg:p-6">
             <section className="pb-8 max-w-7xl mx-auto">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-2xl font-semibold">{t("your_organizations_title")}</h1>
-                    <Button color="primary" startContent={<PlusOutlined />} onClick={handleCreateOrganization}>
-                        {t("create_organization_button")}
-                    </Button>
-                </div>
+                <h1 className="text-2xl font-semibold">{t("your_organizations_title")}</h1>
 
-                <div className="mb-6 max-w-md">
-                    <Input
-                        placeholder={t("search_organizations_placeholder")}
-                        value={searchTerm}
-                        type="search"
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-                        startContent={<SearchOutlined className="text-gray-400" />}
-                        onClear={() => setSearchTerm('')}
-                        isClearable
-                        autoFocus
-                    />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", height: "100px", marginTop: "20px", marginBottom: "-40px" }}>
+                    <div className="max-w-md h-10">
+                        <Input
+                            size='sm'
+                            placeholder={t("search_organizations_placeholder")}
+                            value={searchTerm}
+                            type="search"
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                            startContent={<SearchOutlined className="text-gray-400" />}
+                            onClear={() => setSearchTerm('')}
+                            isClearable
+                            autoFocus
+                        />
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <Button color="primary" startContent={<PlusOutlined />} onClick={handleCreateOrganization}>
+                            {t("create_organization_button")}
+                        </Button>
+                    </div>
                 </div>
 
                 {filteredOrganizations?.length === 0 ? (
