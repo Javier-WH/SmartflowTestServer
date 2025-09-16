@@ -311,7 +311,7 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                                 <TeamOutlined style={{ fontSize: '24px', color: 'var(--heroui-colors-primary)' }} />
                             </div>
                             <div>
-                                <h3 className="text-xl font-medium">{organization.name}</h3>
+                                <h3 className="text-xl font-medium w-[270px]">{organization.name}</h3>
 
                                 {getLevelTitle(organization)}
                             </div>
