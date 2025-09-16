@@ -65,9 +65,7 @@ export default function Home() {
             </span>
         }
         else {
-            return <span className="text-xs bg-pink-500/20 text-red-500 px-2 py-1 rounded-full tracking-tight">
-                {t('unknown_label')}
-            </span>
+            return <div></div>
         }
     }
 
