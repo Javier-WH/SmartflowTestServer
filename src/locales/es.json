@@ -166,5 +166,6 @@
   "Members_retrieved_successfully": "Miembros recuperados correctamente",
   "quill_header": "Titulo",
   "quill_paragraph": "Parrafo",
-  "versions_history_label": "Historial de Versiones"
+  "versions_history_label": "Historial de Versiones",
+  "duplicate_file_label": "Duplicar Página"
 }

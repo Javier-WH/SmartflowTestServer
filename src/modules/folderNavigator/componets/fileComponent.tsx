@@ -10,6 +10,7 @@ import type { File } from '../types/file';
 import './folderContainer.css';
 import type { FolderData, FolderNavigatorContextValues } from '../types/folder';
 import useFilesManager from '../hooks/useFileManager';
+import useFolderManager from '../hooks/useFolderManager';
 const pageType = import.meta.env.VITE_PAGE_TYPE;
 import { useTranslation } from 'react-i18next';
 import { CiFileOn } from "react-icons/ci";
@@ -24,7 +25,8 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         selectedFileId,
         changleFileNameRequest,
     } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues;
-    const { moveFileToRoot } = useFilesManager();
+    const { moveFileToRoot, duplicateFile } = useFilesManager();
+    const { getFolderContent } = useFolderManager();
     const navigate = useNavigate();
     const { organization_id } = useParams();
     const [fileName, setFileName] = useState<string>(file.name);
@@ -83,6 +85,42 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         setFileCountUpdateRequest(true);
     };
 
+    const handleDuplicate = async () => {
+        if (!memberRoll.write) {
+            message.error(t('can_not_rename_file_message'));
+            return;
+        }
+        if (!file.id) return;
+        const request = await duplicateFile(file.id);
+        if (request.error) {
+            message.error(request.message);
+            return;
+        }
+
+        const currentFolder = document.getElementById(request?.data);
+        if (currentFolder) {
+            if (currentFolder.classList.contains('opened')) {
+                currentFolder.click();
+                setTimeout(() => {
+                    currentFolder.click();
+                }, 10);
+            } else {
+                currentFolder.click();
+            }
+            return;
+        }
+
+        const folder = await getFolderContent(request?.data ?? null, organization_id);
+        if (folder.error) {
+            message.error(folder.message);
+            return;
+        }
+
+        const gruppedByContainer = groupDataByContainer(folder as { data: FolderData[] });
+        setUpdateFolderRequest(gruppedByContainer);
+
+    };
+
     const menu: MenuProps['items'] = [
         {
             key: '1',
@@ -94,6 +132,11 @@ export function FileComponent({ file }: { file: ContainerElement }) {
             label: <div style={{ textAlign: 'left' }}>{t('move_to_root_label')}</div>,
             onClick: () => handleMoveToRoot(),
         },
+        {
+            key: '3',
+            label: <div style={{ textAlign: 'left' }}>{t('duplicate_file_label')}</div>,
+            onClick: () => handleDuplicate(),
+        },
     ];
 
     return (
@@ -102,7 +145,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                 <div
                     key={file.id}
                     id={file.id}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10,  }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, }}
                     onClick={() => handleClick(file.id)}
                     className={`file p-2 rounded-lg ${selectedFileId === file.id ? 'selected-file' : ''}`}
                     draggable
@@ -113,7 +156,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                     <span className="truncate max-h-[50px] w-full file-name" title={fileName}>
                         {fileName === 'untitled' ? t('untitled_file') : fileName}
                     </span>
-                  
+
                 </div>
             </Dropdown>
         </div>
