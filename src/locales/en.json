@@ -166,7 +166,8 @@
   "Members_retrieved_successfully": "Members retrieved successfully",
   "quill_header": "Header",
   "quill_paragraph": "Paragraph",
-  "versions_history_label": "Versions History"
+  "versions_history_label": "Versions History",
+  "duplicate_file_label": "Duplicate page"
 
 
 }
