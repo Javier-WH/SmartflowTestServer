@@ -101,7 +101,6 @@
     max-width: calc(100% - 70px);
 }
 
-
 .btn-delete-guidance {
     position: absolute;
     right: 40px;
@@ -113,7 +112,6 @@
     stroke: gray;
     fill: gray;
     color: gray;
-
 }
 
 /*.item-index:hover::before {
@@ -172,8 +170,6 @@
     content: none !important;
 } */
 
-
-
 .collapse-editor li[data-list="bullet"]::before {
     content: none !important;
 }
@@ -185,8 +181,6 @@
 .collapse-editor li[data-list="checked"]::before {
     content: none !important;
 }
-
-
 
 .ql-editor li[data-list=ordered]>.ql-ui:before {
     content: '' !important;
