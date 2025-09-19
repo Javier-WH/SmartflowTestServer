@@ -474,6 +474,44 @@ export default function TextEditor() {
         }
     }, [readOnly]);
 
+    useEffect(() => {
+        const editor = quillRef.current?.getEditor();
+        if (!editor) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Backspace') {
+                const selection = editor.getSelection();
+
+                if (selection && selection.length === 0 && selection.index > 0) {
+                    try {
+                        const [previousBlot] = editor.getLeaf(selection.index - 1);
+
+                        // Verificar si el blot anterior es un guided-checklist-block
+                        if (previousBlot?.domNode?.classList?.contains('guided-checklist-block')) {
+                            console.log('Preventing deletion of guided-checklist-block');
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            editor.setSelection(selection.index, 0, 'silent');
+
+                            return false;
+                        }
+                    } catch (error) {
+                        console.error('Error checking previous blot:', error);
+                    }
+                }
+            }
+        };
+
+        // Agregar el event listener con capture para interceptar el evento temprano
+        editor.root.addEventListener('keydown', handleKeyDown, true);
+
+        return () => {
+            editor.root.removeEventListener('keydown', handleKeyDown, true);
+        };
+    }, [quillRef.current]);
+
+
+
 
     if (isLoading && !isInitialContentLoaded) {
         return (
@@ -506,7 +544,12 @@ export default function TextEditor() {
         quill.setSelection(range.index + 1, 0);
     };
 
+
+    
+
     const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+
+
         // este evento borra la imagen seleccionada
         if (selectedImage !== null && (e.key === 'Delete' || e.key === 'Backspace')) {
             e.preventDefault();
