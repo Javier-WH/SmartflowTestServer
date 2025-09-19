@@ -412,8 +412,8 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                 <div className='guided-checklist-header-buttons'>
                     {!commonProps.readonly &&
                         <>
-                            <Button className='btn-delete-gchl' type="link" icon={< CopyOutlined />} onClick={handleDuplicateBlot} />
-                            <Button className='btn-delete-gchl' type="link" icon={<DeleteOutlined />} onClick={handleDeleteBlot} />
+                        <Button className='btn-delete-gchl' title={t('duplicate_label')} type="link" icon={< CopyOutlined />} onClick={handleDuplicateBlot} />
+                        <Button className='btn-delete-gchl' title={t('delete_label')} type="link" icon={<DeleteOutlined />} onClick={handleDeleteBlot} />
                         </>
                     }
                     <div

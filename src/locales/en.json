@@ -167,7 +167,8 @@
   "quill_header": "Header",
   "quill_paragraph": "Paragraph",
   "versions_history_label": "Versions History",
-  "duplicate_file_label": "Duplicate page"
+  "duplicate_file_label": "Duplicate page",
+  "duplicate_label": "Duplicate"
 
 
 }
