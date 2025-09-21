@@ -60,6 +60,7 @@ export default function Menbers() {
     const [inviteEmail, setInviteEmail] = useState<string>('');
     const [isInviting, setIsInviting] = useState<boolean>(false);
     const [inviteError, setInviteError] = useState('');
+    const [inviteUserLevelId, setInviteUserLevelId] = useState('');
     const { t } = useTranslation();
     useEffect(() => {
         setLoading(!organization && !members);
@@ -193,6 +194,7 @@ export default function Menbers() {
 
     return (
         <>
+          
             <InviteUserModal
                 isOpen={inviteUserOpen}
                 onClose={handleCloseInviteModal}
@@ -203,6 +205,8 @@ export default function Menbers() {
                 isInviting={isInviting}
                 inviteError={inviteError}
                 userRolls={rolls}
+                setInviteUserLevelId={setInviteUserLevelId}
+                inviteUserLevelId={inviteUserLevelId}
             />
             <EditMemberModal
                 organization={organization}

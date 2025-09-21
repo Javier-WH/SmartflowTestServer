@@ -171,7 +171,8 @@
   "duplicate_label": "Duplicate",
   "members_list_heading": "Members List",
   "total_members": "Total Members",
-  "edit_role_subtitle": "Select the role of this member in the organization"
+  "edit_role_subtitle": "Select the role of this member in the organization",
+  "invite_user_subtitle": "Invite a new member to the organization"
 
 
 }
