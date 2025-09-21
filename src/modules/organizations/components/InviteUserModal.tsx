@@ -1,9 +1,9 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, RadioGroup, Radio } from '@heroui/react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
 import { Button, Input } from '@/components/ui';
-import { MailOutlined, UserAddOutlined } from '@ant-design/icons';
-import type { Organization } from '../types/organizations';
 import { useTranslation } from 'react-i18next';
+import type { Organization } from '../types/organizations';
 import { UserRoll } from '../organizations';
+import { FiMail, FiUserPlus, FiX, FiCheck, FiUsers } from 'react-icons/fi';
 
 export interface InviteUserModalProps {
     isOpen: boolean;
@@ -33,93 +33,146 @@ export default function InviteUserModal({
     userRolls
 }: InviteUserModalProps) {
     const { t } = useTranslation();
+
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalContent>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            classNames={{
+                base: "rounded-[15px]",
+                wrapper: "z-[100]"
+            }}
+        >
+            <ModalContent className="rounded-[15px] p-4 bg-white border border-gray-200 shadow-lg">
                 {onClose => (
                     <>
-                        <ModalHeader className="flex flex-col gap-1">
-                            {t('invite_user_title')}{selectedOrganization?.name}
+                        <ModalHeader className="flex flex-col gap-1 p-5 border-b border-gray-100">
+                            <div className="flex items-center">
+                                <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3">
+                                    <FiUsers className="text-gray-600" />
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-medium text-gray-800">
+                                        {t('invite_user_title')} {selectedOrganization?.name}
+                                    </h2>
+                                    <p className="text-sm text-gray-500">
+                                        {t('invite_user_subtitle')}
+                                    </p>
+                                </div>
+                            </div>
                         </ModalHeader>
                         <form onSubmit={handleSubmit}>
-                            <ModalBody>
-                                <div>
-                                    <label htmlFor="email"> {t('email_label')}</label>
-                                    <Input
-                                        id="email"
-                                        placeholder="email@example.com"
-                                        value={inviteEmail}
-                                        onChange={e => setInviteEmail(e.target.value)}
-                                        startContent={<MailOutlined className="text-gray-400" />}
-                                        type="email"
-                                        autoFocus
-                                        isRequired
-                                    />
+                            <ModalBody className="p-5">
+                                <div className="mb-6">
+                                    <label htmlFor="email" className="text-sm font-medium text-gray-700 block mb-2">
+                                        {t('email_label')}
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <FiMail className="text-gray-400" />
+                                        </div>
+                                        <Input
+                                            id="email"
+                                            className="pl-10 rounded-[15px] border-gray-300 focus:border-gray-400 transition-colors"
+                                            placeholder="email@example.com"
+                                            value={inviteEmail}
+                                            onChange={e => setInviteEmail(e.target.value)}
+                                            type="email"
+                                            autoFocus
+                                            isRequired
+                                        />
+                                    </div>
                                 </div>
 
-                                <RadioGroup
-                                    label={t("member_role_label")}
-                                    value={inviteUserLevelId}
-                                    onChange={e => setInviteUserLevelId && setInviteUserLevelId(e.target.value)}
-                                >
-                                    {userRolls && userRolls.map((role) => (
-                                        <Radio key={role.id} value={role.id}>
-                                            <div className="flex flex-col gap-1">
-                                                {/* Nombre del Rol */}
-                                                <span >
-                                                    {t(`${role.level.toLowerCase()}_label`)}
-                                                </span>
+                                <div className="mb-4">
+                                    <h3 className="text-sm font-medium text-gray-700 mb-4">{t("member_role_label")}</h3>
+                                    <div className="space-y-3">
+                                        {userRolls && userRolls
+                                            .sort((a, b) => {
+                                                const order = ["Admin", "Editor"];
+                                                const aIndex = order.indexOf(a.level);
+                                                const bIndex = order.indexOf(b.level);
 
-                                                {/* Acciones del Rol */}
-                                                <div className="flex flex-row flex-wrap gap-1">
-                                                    {
-                                                        role.invite &&
-                                                        <span className="text-xs bg-purple-500/20 text-purple-500 px-1.5 py-0.5 rounded-sm">
-                                                            {t("invite_label")}
-                                                        </span>
-                                                    }
-                                                    {
-                                                        role.read &&
-                                                        <span className="text-xs bg-gray-500/20 text-gray-500 px-1.5 py-0.5 rounded-sm">
-                                                            {t("read_label")}
-                                                        </span>
-                                                    }
-                                                    {
-                                                        role.write &&
-                                                        <span className="text-xs bg-green-500/20 text-green-500 px-1.5 py-0.5 rounded-sm">
-                                                            {t("write_label")}
-                                                        </span>
-                                                    }
-                                                    {
-                                                        role.delete &&
-                                                        <span className="text-xs bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded-sm">
-                                                            {t("delete_label")}
-                                                        </span>
-                                                    }
-                                                    {
-                                                        role.configure &&
-                                                        <span className="text-xs bg-orange-500/20 text-orange-500 px-1.5 py-0.5 rounded-sm">
-                                                            {t("configure_label")}
-                                                        </span>
-                                                    }
+                                                if (aIndex !== -1 && bIndex !== -1) {
+                                                    return aIndex - bIndex;
+                                                }
+                                                if (aIndex !== -1) {
+                                                    return -1;
+                                                }
+                                                if (bIndex !== -1) {
+                                                    return 1;
+                                                }
+                                                return 0;
+                                            })
+                                            .map((role) => (
+                                                <div
+                                                    key={role.id}
+                                                    className={`border rounded-[15px] p-4 transition-all cursor-pointer ${inviteUserLevelId === role.id
+                                                            ? 'border-gray-400 bg-gray-100'
+                                                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                                        }`}
+                                                    onClick={() => setInviteUserLevelId && setInviteUserLevelId(role.id)}
+                                                >
+                                                    <div className="flex items-start justify-between">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-medium font-medium text-gray-800">
+                                                                {t(`${role.level.toLowerCase()}_label`)}
+                                                            </span>
+                                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                                {role.invite && (
+                                                                    <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-md">
+                                                                        {t("invite_label")}
+                                                                    </span>
+                                                                )}
+                                                                {role.read && (
+                                                                    <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-md">
+                                                                        {t("read_label")}
+                                                                    </span>
+                                                                )}
+                                                                {role.write && (
+                                                                    <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-md">
+                                                                        {t("write_label")}
+                                                                    </span>
+                                                                )}
+                                                                {role.delete && (
+                                                                    <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-md">
+                                                                        {t("delete_label")}
+                                                                    </span>
+                                                                )}
+                                                                {role.configure && (
+                                                                    <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-md">
+                                                                        {t("configure_label")}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        {inviteUserLevelId === role.id && (
+                                                            <div className="w-5 h-5 rounded-full bg-gray-400 flex items-center justify-center">
+                                                                <FiCheck className="text-white text-xs" />
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </Radio>
-                                    ))}
-                                </RadioGroup>
+                                            ))}
+                                    </div>
+                                </div>
 
                                 {inviteError && <p className="text-danger text-sm mt-2">{inviteError}</p>}
                             </ModalBody>
-                            <ModalFooter>
-                                <Button variant="bordered" onPress={onClose}>
+                            <ModalFooter className="p-5 pt-4 border-t border-gray-100">
+                                <Button
+                                    className="rounded-[15px] px-5 bg-gray-100 text-gray-700 font-medium hover:bg-gray-200"
+                                    onPress={onClose}
+                                >
+                                    <FiX className="mr-2" />
                                     {t('cancel_label')}
                                 </Button>
                                 <Button
                                     type="submit"
-                                    color="primary"
+                                    className="bg-white text-gray-800 border border-gray-300 rounded-[15px] px-6 py-2 font-medium transition-colors duration-200 hover:bg-gray-100"
                                     isLoading={isInviting}
-                                    startContent={<UserAddOutlined />}
                                 >
+                                    <FiUserPlus className="mr-2" />
                                     {t('send_button')}
                                 </Button>
                             </ModalFooter>

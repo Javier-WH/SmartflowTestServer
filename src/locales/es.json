@@ -168,5 +168,9 @@
   "quill_paragraph": "Parrafo",
   "versions_history_label": "Historial de Versiones",
   "duplicate_file_label": "Duplicar Página",
-  "duplicate_label": "Duplicar"
+  "duplicate_label": "Duplicar",
+  "members_list_heading": "Lista de Miembros",
+  "total_members": "Total de Miembros",
+  "edit_role_subtitle": "Selecciona el rol de este miembro en la organización",
+  "invite_user_subtitle": "Invita a un nuevo miembro a la organización"
 }

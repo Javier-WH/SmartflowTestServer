@@ -51,7 +51,7 @@ class Item extends React.Component<ItemProps> {
         };
 
         return (
-            <div id={item.id} /*className="disable-select"*/ style={{ display: 'flex' }} contentEditable={false}>
+            <div id={item.id} style={{ display: 'flex' }} contentEditable={false}>
                 <Collapse
                     ghost
                     expandIconPosition="end"
@@ -311,6 +311,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const handleListChange = useCallback(
         (newList: readonly unknown[], _movedItem: unknown, _oldIndex: number, _newIndex: number) => {
+           // console.log({_movedItem, _oldIndex, _newIndex}),
             setList(prev => {
                 const updatedList = newList.map((item, index) => ({
                     ...(item as ListItem),

@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Modal, ModalContent, ModalHeader, ModalBody, RadioGroup, Radio, Button } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, Button } from "@heroui/react";
 import { Member, MemberRoll, Org } from './menbers.tsx';
 import { useEffect, useState } from 'react';
 import useOrganizations from '../organizations/hook/useOrganizations.ts';
 import { useTranslation } from 'react-i18next';
+import { FiUser, FiSave, FiX, FiCheck } from 'react-icons/fi';
 
 interface EditMemberModalProps {
   member: Member | null;
@@ -13,7 +14,6 @@ interface EditMemberModalProps {
 }
 
 export default function EditMemberModal({ member, setMember, rolls, organization }: EditMemberModalProps) {
-
   const { updateUserRoll } = useOrganizations();
   const [selectedRoll, setSelectedRoll] = useState<string | null>(null);
   const { t } = useTranslation();
@@ -42,88 +42,122 @@ export default function EditMemberModal({ member, setMember, rolls, organization
       })
   }
 
-
-
-  /*<span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-md w-fit">
-    {t('admin_label')}
-  </span>*/
-
   return (
     <Modal
       isOpen={!!member}
       onClose={() => setMember(null)}
       aria-labelledby="modal-title"
+      classNames={{
+        base: "rounded-[15px]",
+        wrapper: "z-[100]"
+      }}
     >
-      <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">{member ? member.useremail : ''}</ModalHeader>
-        <ModalBody>
-          {member && (
-            <RadioGroup value={selectedRoll} label={t("member_role_label")} onChange={(event) => { setSelectedRoll(event.target.value) }}>
-              {
-                  rolls.sort((a, b) => {
-                    const order = ["Admin", "Editor"];
-                    const aIndex = order.indexOf(a.level);
-                    const bIndex = order.indexOf(b.level);
+      <ModalContent className="rounded-[15px] p-4 bg-white border border-gray-200 shadow-lg">
+       
+          <>
+            <ModalHeader className="flex flex-col gap-1 p-5 border-b border-gray-100">
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3">
+                  <FiUser className="text-gray-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-medium text-gray-800">{member ? member.useremail : ''}</h2>
+                  <p className="text-sm text-gray-500">{t("edit_role_subtitle")}</p>
+                </div>
+              </div>
+            </ModalHeader>
+            <ModalBody className="p-5">
+              {member && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-4">{t("member_role_label")}</h3>
+                  <div className="space-y-3">
+                    {rolls.sort((a, b) => {
+                      const order = ["Admin", "Editor"];
+                      const aIndex = order.indexOf(a.level);
+                      const bIndex = order.indexOf(b.level);
 
-                    if (aIndex !== -1 && bIndex !== -1) {
-                      return aIndex - bIndex; 
-                    }
-                    if (aIndex !== -1) {
-                      return -1; 
-                    }
-                    if (bIndex !== -1) {
-                      return 1; 
-                    }
-                    return 0; 
-                  })
-                .map((roll) => (
-                  <div style={{ display: 'flex', gap: '8px', flexDirection: 'column', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }} key={roll.id}>
-                    <Radio key={roll.id} value={roll.id}>
-                      {
-                        t(`${roll.level.toLowerCase()}_label`)
+                      if (aIndex !== -1 && bIndex !== -1) {
+                        return aIndex - bIndex;
                       }
-                    </Radio>
-                    <div style={{ display: 'flex', gap: '8px', flexDirection: 'row', marginLeft: '24px' }}>
-                      {
-                        roll.invite &&
-                        <span className="text-xs bg-purple-500/20 text-purple-500 px-2 py-1 rounded-md w-fit">
-                            {t("invite_label")}
-                        </span>
+                      if (aIndex !== -1) {
+                        return -1;
                       }
-                      {
-                        roll.read &&
-                        <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-md w-fit">
-                            {t("read_label")}
-                        </span>
+                      if (bIndex !== -1) {
+                        return 1;
                       }
-                      {
-                        roll.write &&
-                        <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-md w-fit">
-                            {t("write_label")}
-                        </span>
-                      }
-                      {
-                        roll.delete &&
-                        <span className="text-xs bg-red-500/20 text-red-500 px-2 py-1 rounded-md w-fit">
-                            {t("delete_label")}
-                        </span>
-                      }
-                      {
-                        roll.configure &&
-                        <span className="text-xs bg-orange-500/20 text-orange-500 px-2 py-1 rounded-md w-fit">
-                            {t("configure_label")}
-                        </span>
-                      }
-                 
-                    </div>
+                      return 0;
+                    }).map((roll) => (
+                      <div
+                        key={roll.id}
+                        className={`border rounded-[15px] p-4 transition-all cursor-pointer ${selectedRoll === roll.id
+                            ? 'border-gray-400 bg-gray-100'
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                          }`}
+                        onClick={() => setSelectedRoll(roll.id)}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex flex-col">
+                            <span className="text-medium font-medium text-gray-800">
+                              {t(`${roll.level.toLowerCase()}_label`)}
+                            </span>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {roll.invite && (
+                                <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-md">
+                                  {t("invite_label")}
+                                </span>
+                              )}
+                              {roll.read && (
+                                <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-md">
+                                  {t("read_label")}
+                                </span>
+                              )}
+                              {roll.write && (
+                                <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-md">
+                                  {t("write_label")}
+                                </span>
+                              )}
+                              {roll.delete && (
+                                <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-md">
+                                  {t("delete_label")}
+                                </span>
+                              )}
+                              {roll.configure && (
+                                <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-md">
+                                  {t("configure_label")}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          {selectedRoll === roll.id && (
+                            <div className="w-5 h-5 rounded-full bg-gray-400 flex items-center justify-center">
+                              <FiCheck className="text-white text-xs" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))
-              }
-            </RadioGroup>
-          )}
-          <br />
-          <Button color="primary" onClick={handleSave}>{t("save_label")}</Button>
-        </ModalBody>
+                </div>
+              )}
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                <Button
+                  className="rounded-[15px] px-5 bg-gray-100 text-gray-700 font-medium hover:bg-gray-200"
+                  onClick={() => setMember(null)}
+                >
+                  <FiX className="mr-2" />
+                  {t("cancel_label")}
+                </Button>
+                <Button
+                
+                  className="bg-white text-gray-800 border border-gray-300 rounded-[15px] px-6 py-2 font-medium transition-colors duration-200 hover:bg-gray-100"
+                  onClick={handleSave}
+                >
+                  <FiSave className="mr-2" />
+                  {t("save_label")}
+                </Button>
+              </div>
+            </ModalBody>
+          </>
       </ModalContent>
     </Modal>
   );
