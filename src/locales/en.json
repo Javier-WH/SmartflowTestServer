@@ -168,7 +168,10 @@
   "quill_paragraph": "Paragraph",
   "versions_history_label": "Versions History",
   "duplicate_file_label": "Duplicate page",
-  "duplicate_label": "Duplicate"
+  "duplicate_label": "Duplicate",
+  "members_list_heading": "Members List",
+  "total_members": "Total Members",
+  "edit_role_subtitle": "Select the role of this member in the organization"
 
 
 }
