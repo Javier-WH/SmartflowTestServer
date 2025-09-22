@@ -10,12 +10,14 @@ import { MainContextValues, MainContext } from './mainContext';
 import { useNavigate } from 'react-router-dom';
 import logo from "../assets/svg/Logo_Smartflo.svg"
 import SearchInput from './search/searchInput';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
 
 function Header() {
     const {setParentFolders} = useContext(MainContext) as MainContextValues;
     const parms = useParams();
+    const location = useLocation();
+    const isMembersPage = location.pathname.endsWith('/members');
   
     const navigate = useNavigate();
     //throw new Error('Function not implemented.');
@@ -26,24 +28,16 @@ function Header() {
                <img src={logo} alt="logo" style={{width: "200px", height: "35px"}}/>
             </h1>
             {
-                parms?.organization_id &&
+                parms?.organization_id && !isMembersPage &&
                 <div className="search-continer ml-auto w-[300px] mr-[60px] ">
                 <SearchInput />
             </div>
             }
-            {/*<span className="text-primary text-[18px] text-left min-w-[200px] overflow-x-auto whitespace-nowrap scrollbar-thumb-primary scrollbar-track-transparent scrollbar-thin">
-                <span className="font-bold text-[20px]">
-                    {`${localStorage.getItem("OrgName") || ""}`}
-                </span>
-                {`${parentFolders}`}
-            </span>*/}
-            <div>
-
-            </div>
             <UserMenu />
         </header>
     );
 }
+
 
 export default function MainLayout() {
     const { user } = useAuth();

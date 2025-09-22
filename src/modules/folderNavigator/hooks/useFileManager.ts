@@ -123,6 +123,21 @@ const searchFiles = async (text: string, slug: string): Promise<FileResponse> =>
   }
 }
 
+const duplicateFile = async (p_id: string): Promise<FileResponse> => {
+  const functionName = "duplicate_filesquill_record"
+  const { data, error } = await supabase
+    .rpc(functionName, {
+      p_id
+    });
+
+  if (error) {
+    console.log(error);
+    return errorManager(error)
+  } else {
+    return { error: false, message: 'Files duplicated successfully', data };
+  }
+}
+
 
 
 export default function useFilesManager() {
@@ -134,6 +149,7 @@ export default function useFilesManager() {
     updateFileContent,
     deleteFile,
     moveFileToRoot,
-    searchFiles
+    searchFiles,
+    duplicateFile
   }
 }

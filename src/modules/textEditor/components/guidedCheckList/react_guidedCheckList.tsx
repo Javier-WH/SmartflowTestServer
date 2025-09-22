@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DraggableList from 'react-draggable-list';
 import { GoGrabber } from 'react-icons/go';
 import { Input, Collapse, Button, Spin, Modal } from 'antd';
-import { RightOutlined, DeleteOutlined } from '@ant-design/icons';
+import { RightOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons';
 import reactToWebComponent from 'react-to-webcomponent';
 import 'antd/dist/reset.css';
 import './styles.css';
@@ -51,7 +51,7 @@ class Item extends React.Component<ItemProps> {
         };
 
         return (
-            <div id={item.id} /*className="disable-select"*/ style={{ display: 'flex' }} contentEditable={false}>
+            <div id={item.id} style={{ display: 'flex' }} contentEditable={false}>
                 <Collapse
                     ghost
                     expandIconPosition="end"
@@ -110,7 +110,7 @@ class Item extends React.Component<ItemProps> {
                                         id={item.id}
                                         readonly={commonProps.readonly}
                                     />
-                                    <div style={{width: "100%", display: "flex", justifyContent: "flex-start"}}>
+                                    <div style={{ width: "100%", display: "flex", justifyContent: "flex-start" }}>
 
                                         <Button
                                             className="collapse-next-button"
@@ -173,12 +173,49 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
             okText: t("delete_label"),
             cancelText: t("cancel_label"),
             okButtonProps: { danger: true },
+            icon: null,
             onOk() {
                 quillInstance.deleteText(blotIndex, 1);
             },
         });
     };
 
+    const handleDuplicateBlot = () => {
+        const blotNode = componentRef.current;
+        if (!blotNode || readonly) return;
+
+        // Obtener la instancia de Quill
+        const editorContainer = blotNode.closest('.ql-editor')?.parentElement;
+        const quillInstance = (editorContainer as any)?.__quill;
+
+        if (!quillInstance) {
+            console.error('No se pudo encontrar la instancia de Quill');
+            return;
+        }
+
+        // Obtener datos actuales del blot
+        const currentTitle = blotNode.getAttribute('title') || '';
+        const currentItems = blotNode.getAttribute('items') || '[]';
+
+        // Encontrar la posición del blot actual
+        const blot = Quill.find(blotNode);
+        if (!blot) return;
+
+        const blotIndex = quillInstance.getIndex(blot);
+
+        // Insertar nuevo blot duplicado en la posición siguiente
+        quillInstance.insertText(blotIndex + 1, '\n');
+        quillInstance.insertEmbed(
+            blotIndex + 2,
+            'guided-checklist',
+            {
+                title: currentTitle,
+                items: list,
+            }
+        );
+        quillInstance.insertText(blotIndex + 3, '\n');
+        quillInstance.setSelection(blotIndex + 4, 0);
+    };
 
     useEffect(() => {
         const checkedItemsCopy = JSON.parse(JSON.stringify(checkedItems));
@@ -274,6 +311,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const handleListChange = useCallback(
         (newList: readonly unknown[], _movedItem: unknown, _oldIndex: number, _newIndex: number) => {
+           // console.log({_movedItem, _oldIndex, _newIndex}),
             setList(prev => {
                 const updatedList = newList.map((item, index) => ({
                     ...(item as ListItem),
@@ -373,7 +411,12 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                     onPaste={e => e.stopPropagation()}
                 />
                 <div className='guided-checklist-header-buttons'>
-                    {!commonProps.readonly && <Button className='btn-delete-gchl' type="link" icon={<DeleteOutlined />} onClick={handleDeleteBlot} />} {/* este boton debe eliminar todo el blot */}
+                    {!commonProps.readonly &&
+                        <>
+                        <Button className='btn-delete-gchl' title={t('duplicate_label')} type="link" icon={< CopyOutlined />} onClick={handleDuplicateBlot} />
+                        <Button className='btn-delete-gchl' title={t('delete_label')} type="link" icon={<DeleteOutlined />} onClick={handleDeleteBlot} />
+                        </>
+                    }
                     <div
                         style={{ cursor: 'pointer' }}
                         onClick={() => {

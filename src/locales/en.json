@@ -105,6 +105,7 @@
   "last_updated_label": "Last updated",
   "organizations_label": "Working Groups",
   "Members_label": "Members",
+  "Editor_label": "Documents Editor",
   "edit_rolle_label": "Edit Roll",
   "delete_member_label": "Delete Member",
   "invite_member_label": "Invite Member",
@@ -166,7 +167,13 @@
   "Members_retrieved_successfully": "Members retrieved successfully",
   "quill_header": "Header",
   "quill_paragraph": "Paragraph",
-  "versions_history_label": "Versions History"
+  "versions_history_label": "Versions History",
+  "duplicate_file_label": "Duplicate page",
+  "duplicate_label": "Duplicate",
+  "members_list_heading": "Members List",
+  "total_members": "Total Members",
+  "edit_role_subtitle": "Select the role of this member in the organization",
+  "invite_user_subtitle": "Invite a new member to the organization"
 
 
 }
