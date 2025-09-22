@@ -1,7 +1,7 @@
 import { useContext, /*useEffect, useRef*/ } from 'react';
-
 import FolderContainer from '../componets/folderContainer';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
+import './browser.css';
 
 export default function Browser() {
     const { rootFolder } = useContext(MainContext) as MainContextValues;
@@ -46,8 +46,12 @@ export default function Browser() {
         };
     }, []);*/
 
+
+ 
+
     return (
         <div className="main-folder-container w-full p-2 h-full max-w-[99%]">
+     
             <FolderContainer folderId={rootFolder} depth={0} />
         </div>
     );

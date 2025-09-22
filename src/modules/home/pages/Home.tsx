@@ -11,6 +11,7 @@ import {
     IconFile,
     IconFilePlus,
     IconFolderPlus,
+    IconFolderCode
 } from '@tabler/icons-react';
 import { cn } from '@heroui/react';
 import { ReactNode, useContext, useState } from 'react';
@@ -119,6 +120,11 @@ export default function Home() {
         setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
+    const colapseAllFolders = () => {
+        const openedRootFolder = document.querySelectorAll('.folder[data-depth="0"].opened');
+        openedRootFolder.forEach(folder => (folder as HTMLElement).click());
+    }
+
     return (
         <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
             {/* Mobile Header Container */}
@@ -156,18 +162,28 @@ export default function Home() {
                             <div className="rounded-tl-lg rounded-tr-lg text-center leading-[40px] absolute top-0 left-0 w-full h-[40px] pl-10 pr-10 truncate overflow-hidden whitespace-nowrap text-gray-500 bg-default-50 border-b-1 ">
                                 {`${localStorage.getItem("OrgName") || ""}`}
                             </div>
+
                             <div className='absolute top-[50px] left-[50%] transform -translate-x-1/2'>
                                 {
                                     getLevelTitle(memberRoll?.level || "")
                                 }
                             </div>
-                            <div className="flex justify-end gap-1 px-1 mt-5">
-                                <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreatePage}>
-                                    <IconFilePlus className='folder-nav-icon' />
-                                </Button>
-                                <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreateFolder}>
-                                    <IconFolderPlus className='folder-nav-icon' />
-                                </Button>
+                            <div className="flex justify-between gap-1 px-1 mt-5">
+                               <div>
+                                    {/*<Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
+                                        <IconFolderCode className='folder-nav-icon' />
+                                    </Button>*/}
+                                </div>
+
+                                <div>
+
+                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreatePage}>
+                                        <IconFilePlus className='folder-nav-icon' />
+                                    </Button>
+                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreateFolder}>
+                                        <IconFolderPlus className='folder-nav-icon' />
+                                    </Button>
+                                </div>
                             </div>
 
                             <div className=" grow overflow-y-auto overflow-x-auto scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-[var(--strokeColor:)] scrollbar-track-transparent scrollbar-thin">
