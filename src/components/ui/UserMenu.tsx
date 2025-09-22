@@ -10,9 +10,8 @@ export default function UserMenu() {
     const location = useLocation();
     const navigate = useNavigate();
     const { organization_id } = useParams();
-    const { setParentFolders } = useContext(MainContext) as  MainContextValues;
-    //console.log('[LS] -> src/components/ui/UserMenu.tsx:8 -> organization_id: ', organization_id);
-
+    const { setParentFolders } = useContext(MainContext) as MainContextValues;
+    const isMembersPage = location.pathname.endsWith('/members');
     const { user, signOut } = useAuth();
 
     const isHomePage = location.pathname === '/home';
@@ -32,15 +31,19 @@ export default function UserMenu() {
         if (organization_id) {
             return (
                 <DropdownMenu aria-label="User Actions" variant="flat">
-                    <DropdownItem key="organizations" onPress={() => {navigate('/organizations'); setParentFolders('');}}>
+                    <DropdownItem key="organizations" onPress={() => { navigate('/organizations'); setParentFolders(''); }}>
                         {t('organizations_label')}
                     </DropdownItem>
+                    {!isMembersPage ?
+                        <DropdownItem key="members" onPress={() => { navigate(`/${organization_id}/members`); setParentFolders(''); }}>
+                            {t('Members_label')}
+                        </DropdownItem>
+                        : <DropdownItem key="members" onPress={() => { navigate(`/${organization_id}/home`); setParentFolders(''); }}>
+                            {t('Editor_label')}
+                        </DropdownItem>
+                    }
 
-                    <DropdownItem key="members" onPress={() => {navigate(`/${organization_id}/members`); setParentFolders('');}}>
-                        {t('Members_label')}
-                    </DropdownItem>
-
-                    <DropdownItem key="logout" color="danger" onPress={() => {setParentFolders(''); signOut()}}>
+                    <DropdownItem key="logout" color="danger" onPress={() => { setParentFolders(''); signOut() }}>
                         {t('logout_button')}
                     </DropdownItem>
                 </DropdownMenu>
