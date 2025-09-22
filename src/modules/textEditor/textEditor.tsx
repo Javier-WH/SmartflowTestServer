@@ -479,6 +479,14 @@ export default function TextEditor() {
         if (!editor) return;
 
         const handleKeyDown = (e: KeyboardEvent) => {
+
+            const target = e.target as Node;
+            if (target && target instanceof Element) {
+                // Buscar un ancestro que tenga la clase 'quill-editor-container'
+                if (target.closest('.quill-editor-container')) {
+                    return; // Ignorar el evento si está dentro de un editor interior
+                }
+            }
             if (e.key === 'Backspace') {
                 const selection = editor.getSelection();
 
