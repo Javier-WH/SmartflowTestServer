@@ -6,7 +6,7 @@ import useGetOrganizationData from '../navBar/hooks/useOrganizationData';
 import { useEffect, useState, useContext } from 'react';
 import { Button, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
 import { message } from 'antd';
-import { IoMdArrowRoundBack } from 'react-icons/io';
+//import { IoMdArrowRoundBack } from 'react-icons/io';
 import { ImUser } from 'react-icons/im';
 import { CiMenuKebab } from 'react-icons/ci';
 import EditMemberModal from './editMemberModal';
@@ -15,6 +15,7 @@ import InviteUserModal from '../organizations/components/InviteUserModal';
 import { MainContext, MainContextValues } from '../mainContext';
 import { useTranslation } from 'react-i18next';
 import { FiSearch, FiUsers } from 'react-icons/fi';
+
 
 export interface Org {
     id: string;
@@ -194,7 +195,7 @@ export default function Menbers() {
 
     return (
         <>
-          
+
             <InviteUserModal
                 isOpen={inviteUserOpen}
                 onClose={handleCloseInviteModal}
@@ -221,25 +222,19 @@ export default function Menbers() {
                 setMember={setMemberToDelete}
                 key={memberToDelete?.userid || 'modal'}
             />
-            <header className="w-full flex justify-between items-center px-8 bg-gray-50 py-4 fixed top-0 z-10 border-b border-gray-200">
-                <Button
-                    color="default"
-                    onClick={() => navigate(-1)}
-                    className="rounded-[15px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-                >
-                    <IoMdArrowRoundBack />
-                </Button>
-            </header>
+
+
+
             {loading ? (
                 <div className="flex justify-center items-center h-screen">Loading...</div>
             ) : (
                 <section className="py-8 max-w-4xl mx-auto mt-16 px-4">
                     <div className="flex justify-between items-center mb-8">
-                        <div className="flex items-center">
+                        <div className="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded-[15px]" onClick={() => navigate(`/${organization_id}/home`)}>
                             <div className="p-3 bg-gray-100 rounded-[15px] mr-3">
                                 <FiUsers className="text-gray-600 text-xl" />
                             </div>
-                            <h1 className="text-2xl font-semibold text-gray-800">{organization?.name}</h1>
+                            <h1 className="text-2xl font-semibold text-gray-800 " >{organization?.name}</h1>
                         </div>
                         {(organization?.user_id === user?.id || memberRoll?.invite) && (
                             <Button
