@@ -219,7 +219,7 @@
 /*video and image toolbar*/
 .toolbar {
     pointer-events: all !important;
-    z-index: 10000000001;
+    z-index: 99999 !important;
     background-color: var(--pageBarColor) !important;
     color: white !important;
 }
@@ -263,6 +263,10 @@
     background-color: var(--selectedFileColor);
     color: black !important;
 }
+.ql-background,
+.ql-picker-options {
+    z-index: 9999999 !important;
+}
 
 /* invertir menus*/
 .ql-snow .ql-picker-options {
@@ -270,7 +274,7 @@
     /* bottom: auto !important; */
     /* transform: translateY(0) !important; */
     @apply bg-gray-100 !text-black; 
-    z-index: 1001 !important;
+    /*z-index: 1001 !important;*/
 }
 
 .ql-picker-item {
