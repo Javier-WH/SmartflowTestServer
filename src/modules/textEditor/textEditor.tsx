@@ -682,13 +682,13 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 150px", marginTop: "1px", marginRight: "20px", alignItems: "center" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr minmax(0, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
                 <div className='w-full flex justify-center items-center h-[20px]'>
 
                     <header
                         className={cn({
                             hidden: readOnly,
-                            'w-[1000px] p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2  min-h-15 ':
+                            'w-full max-w-[1000px] py-2 px-0 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2  min-h-15 ':
                                 !readOnly,
                         })}
                     >

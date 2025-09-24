@@ -156,7 +156,7 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
 
     if (content?.length === 0 && folderId === null) {
         return (
-            <div className="flex flex-col gap-2 justify-center items-center w-full h-full ">
+            <div className="flex flex-col gap-2 justify-center items-center w-full h-full max-w-[580px]">
                 {t('no_documents_found_message')}
                 <Button variant="light" onClick={handleCreatePage}>
                     <IconFilePlus />

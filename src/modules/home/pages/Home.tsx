@@ -11,7 +11,7 @@ import {
     IconFile,
     IconFilePlus,
     IconFolderPlus,
-    IconFolderCode
+    //IconFolderCode
 } from '@tabler/icons-react';
 import { cn } from '@heroui/react';
 import { ReactNode, useContext, useState } from 'react';
@@ -120,10 +120,10 @@ export default function Home() {
         setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
-    const colapseAllFolders = () => {
+    /*const colapseAllFolders = () => {
         const openedRootFolder = document.querySelectorAll('.folder[data-depth="0"].opened');
         openedRootFolder.forEach(folder => (folder as HTMLElement).click());
-    }
+    }*/
 
     return (
         <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">

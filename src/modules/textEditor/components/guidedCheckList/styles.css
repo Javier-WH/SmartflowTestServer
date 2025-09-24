@@ -38,7 +38,9 @@
     width: 100%;
     background-color: white;
 }
-
+.action-button{
+    z-index: 99999999 !important;
+}
 /*input title*/
 .ant-collapse-header .ant-input {
     background-color: transparent;
