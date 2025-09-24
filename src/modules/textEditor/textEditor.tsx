@@ -682,7 +682,7 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr minmax(0, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
+            <div style={{ zIndex: 999999999, display: "grid", gridTemplateColumns: "1fr minmax(0, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
                 <div className='w-full flex justify-center items-center h-[20px]'>
 
                     <header
