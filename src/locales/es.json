@@ -47,7 +47,7 @@
   "error_creating_folder_message": "Error al crear la carpeta",
   "error_loading_organizations": "Error al cargar Equipos de Trabajo",
   "no_documents_found_message": "No se encontraron documentos",
-  "create_your_first_document_message": "Crea tu primer documento para empezar",
+  "create_your_first_document_message": "Crea tu primer documento",
   "already_exists_folder_message": "Ya existe una carpeta con este nombre",
   "type_delete_to_confirm_message": "Escribe 'DELETE' para confirmar",
   "are_you_sure_you_want_to_delete_message": "¿Estás seguro de que quieres eliminar?",

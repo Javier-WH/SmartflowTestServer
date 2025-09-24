@@ -156,10 +156,12 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
 
     if (content?.length === 0 && folderId === null) {
         return (
-            <div className="flex flex-col gap-2 justify-center items-center w-full h-full max-w-[580px]">
-                {t('no_documents_found_message')}
-                <Button variant="light" onClick={handleCreatePage}>
-                    <IconFilePlus />
+            <div className="flex flex-col gap-2 justify-center items-center w-full h-full max-w-[580px] cursor-pointer" onClick={handleCreatePage}>
+                <IconFilePlus className='folder-nav-icon' />
+                <Button
+                    variant="light"
+                    className=" max-w-[580px] w-full h-auto whitespace-normal break-words"
+                >
                     {t('create_your_first_document_message')}
                 </Button>
             </div>
