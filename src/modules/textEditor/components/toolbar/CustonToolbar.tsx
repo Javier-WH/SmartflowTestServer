@@ -12,9 +12,9 @@ export default function CustomToolbar({
             id={name}
             style={{ display: show ? 'flex' : 'none' }}
             defaultValue="arial"
-            className="flex gap-0.4 justify-center allign-center  w-full rounded-[15px] h-[20px] z-110 bg-white dark:bg-[#1E1E2F] p-0 sticky top-0"
+            className="flex gap-0.4 justify-center allign-center w-full rounded-[15px] h-[20px] z-110 bg-white dark:bg-[#1E1E2F] p-0 sticky top-0"
         >
-            <select className="ql-font lg:w-[120px]" defaultValue="arial">
+            <select className="ql-font" defaultValue="arial" style={{ width: '100%', minWidth: '150px' }}>
                 <option value="arial">Arial</option>
                 <option value="times-new-roman">Times New Roman</option>
                 <option value="courier-new">Courier New</option>
@@ -31,7 +31,7 @@ export default function CustomToolbar({
                 <option value="monospace">Monospace</option>
                 <option value="serif">Serif</option>
             </select>
-            <select className="ql-size" style={{ width: '100%', maxWidth: '45px' }} defaultValue="16px">
+            <select className="ql-size" style={{ width: '100%', maxWidth: '45px', minWidth: '45px' }} defaultValue="16px">
                 <option value="10px">10</option>
                 <option value="12px">12</option>
                 <option value="14px">14</option>
@@ -53,7 +53,7 @@ export default function CustomToolbar({
                 <option value="46px">46</option>
                 <option value="48px">48</option>
             </select>
-            <select className="ql-header" defaultValue="normal">
+            <select className="ql-header" defaultValue="normal" style={{ width: '100%', minWidth: '100px', maxWidth: '120px' }}>
                 <option value="1">{`${t('quill_header')} 1`}</option>
                 <option value="2">{`${t('quill_header')} 2`}</option>
                 <option value="3">{`${t('quill_header')} 3`}</option>
