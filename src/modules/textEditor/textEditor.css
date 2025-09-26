@@ -603,3 +603,8 @@ a {
     outline: none !important;
 }
 
+.ql-align > span,
+.ql-background > span,
+.ql-color > span {
+    width: 30px !important;
+}
