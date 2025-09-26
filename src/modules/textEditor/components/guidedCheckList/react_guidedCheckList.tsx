@@ -276,8 +276,8 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
         const baseZIndex = 1000;
         const items = document.querySelectorAll('.guided-checklist > div > div > div');
         items.forEach((item, index) => {
-            (item as HTMLElement).style.zIndex = ((baseZIndex - index)).toString();
-            //(item as HTMLElement).style.zIndex = "1";
+            //(item as HTMLElement).style.zIndex = ((baseZIndex - index)).toString();
+            (item as HTMLElement).style.zIndex = "1";
         });
     }, [list, list.length]);
 

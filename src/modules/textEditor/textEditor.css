@@ -603,6 +603,9 @@ a {
     outline: none !important;
 }
 
+.ql-list {
+    width: 50px !important;
+}
 .ql-align > span,
 .ql-background > span,
 .ql-color > span {
