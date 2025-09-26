@@ -641,7 +641,7 @@ export default function TextEditor() {
 
 
     return (
-        <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
+        <div className="relative flex flex-col h-full overflow-y-hidden overflow-x-auto o px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
                 <div className="grow ">
                     <Textarea
