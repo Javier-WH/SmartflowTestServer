@@ -454,6 +454,7 @@ export default function Guidance({
 
 
 
+
     return (
         <>
             {
@@ -470,26 +471,26 @@ export default function Guidance({
                             height: mainToolbarRect.height,
                             width: mainToolbarRect.width,
                             display: showToolbar ? 'block' : 'none',
-                            zIndex: showToolbar ? 9999999 : -1,
-                       
+                            zIndex: 10000,
                         }}
                         className=" flex justify-center w-full grow relative"
                     >
-                      
+                        <div style={{ zIndex: "99999999 !important" }} >
 
-                        <CustomToolbar name={toolbarId} clean={true} />
-                        
+                            <CustomToolbar name={toolbarId} clean={true} />
+                        </div>
                     </div>
                 )
 
 
             }
-       
+         
             <div className="quill-editor-container" ref={containerRef} onPaste={e => e.stopPropagation()}>
                 <div className="collapse-editor min-h-[300px]" ref={quillRef} />
             </div>
         </>
     );
 }
+
 
 
