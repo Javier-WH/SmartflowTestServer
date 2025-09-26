@@ -476,7 +476,6 @@ export default function Guidance({
                         className=" flex justify-center w-full grow relative"
                     >
                         <div style={{ zIndex: "99999999 !important" }} >
-
                             <CustomToolbar name={toolbarId} clean={true} />
                         </div>
                     </div>
