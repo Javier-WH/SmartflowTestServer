@@ -452,30 +452,6 @@ export default function Guidance({
         };
     }, [mainToolbarElement, updateToolbarPosition]);
 
-    const QuillTooltipPortal = () => {
-        useEffect(() => {
-            const moveTooltipsToBody = () => {
-                const tooltips = document.querySelectorAll('.ql-tooltip');
-                tooltips.forEach(tooltip => {
-                    if (tooltip.parentNode !== document.body) {
-                        document.body.appendChild(tooltip);
-                        (tooltip as HTMLElement).style.zIndex = '10001';
-                        (tooltip as HTMLElement).style.position = 'fixed';
-                    }
-                });
-            };
-
-            const observer = new MutationObserver(moveTooltipsToBody);
-            observer.observe(document.body, { childList: true, subtree: true });
-
-            moveTooltipsToBody();
-
-            return () => observer.disconnect();
-        }, []);
-
-        return null;
-    };
-
 
 
     return (
@@ -494,7 +470,8 @@ export default function Guidance({
                             height: mainToolbarRect.height,
                             width: mainToolbarRect.width,
                             display: showToolbar ? 'block' : 'none',
-                            zIndex: showToolbar ? 9999999 : -1
+                            zIndex: showToolbar ? 9999999 : -1,
+                       
                         }}
                         className=" flex justify-center w-full grow relative"
                     >
@@ -507,7 +484,7 @@ export default function Guidance({
 
 
             }
-            <QuillTooltipPortal />
+       
             <div className="quill-editor-container" ref={containerRef} onPaste={e => e.stopPropagation()}>
                 <div className="collapse-editor min-h-[300px]" ref={quillRef} />
             </div>
