@@ -254,10 +254,30 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
     // update z-index
     useEffect(() => {
         if (list.length === 0) return;
+        const blotNode = componentRef.current;
+        if (!blotNode) return;
+
+        const editorContainer = blotNode.closest('.ql-editor')?.parentElement;
+        const quillInstance = (editorContainer as any)?.__quill;
+
+        if (!quillInstance) {
+            console.error('No se pudo encontrar la instancia de Quill');
+            return;
+        }
+
+        // Encontrar la posición del blot actual
+        const blot = Quill.find(blotNode);
+        if (!blot) return;
+
+        const blotIndex = quillInstance.getIndex(blot) + 1;
+        console.log('blotIndex', blotIndex);
+
+
         const baseZIndex = 1000;
         const items = document.querySelectorAll('.guided-checklist > div > div > div');
         items.forEach((item, index) => {
-            (item as HTMLElement).style.zIndex = (baseZIndex - index).toString();
+            (item as HTMLElement).style.zIndex = ((baseZIndex - index)).toString();
+            //(item as HTMLElement).style.zIndex = "1";
         });
     }, [list, list.length]);
 
@@ -311,7 +331,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const handleListChange = useCallback(
         (newList: readonly unknown[], _movedItem: unknown, _oldIndex: number, _newIndex: number) => {
-           // console.log({_movedItem, _oldIndex, _newIndex}),
+            // console.log({_movedItem, _oldIndex, _newIndex}),
             setList(prev => {
                 const updatedList = newList.map((item, index) => ({
                     ...(item as ListItem),
@@ -396,6 +416,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
         <div
             contentEditable={false}
             className="guided-checklist"
+            style={{ zIndex: "1" }}
             ref={el => {
                 if (el) componentRef.current = el.closest('guided-checklist') as HTMLElement | undefined;
             }}
@@ -413,8 +434,8 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                 <div className='guided-checklist-header-buttons'>
                     {!commonProps.readonly &&
                         <>
-                        <Button className='btn-delete-gchl' title={t('duplicate_label')} type="link" icon={< CopyOutlined />} onClick={handleDuplicateBlot} />
-                        <Button className='btn-delete-gchl' title={t('delete_label')} type="link" icon={<DeleteOutlined />} onClick={handleDeleteBlot} />
+                            <Button className='btn-delete-gchl' title={t('duplicate_label')} type="link" icon={< CopyOutlined />} onClick={handleDuplicateBlot} />
+                            <Button className='btn-delete-gchl' title={t('delete_label')} type="link" icon={<DeleteOutlined />} onClick={handleDeleteBlot} />
                         </>
                     }
                     <div
@@ -443,9 +464,10 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                     })}
                 </div>
             ) : (
-                <div>
-                    <div contentEditable={false} ref={containerRef}>
+                <div style={{ zIndex: "1" }}>
+                    <div contentEditable={false} ref={containerRef} style={{ zIndex: "1" }}>
                         <DraggableList
+
                             itemKey="id"
                             template={Item}
                             list={list}
