@@ -12,9 +12,9 @@ export default function CustomToolbar({
             id={name}
             style={{ display: show ? 'flex' : 'none' }}
             defaultValue="arial"
-            className="flex gap-0.5 justify-center allign-center  w-full rounded-[15px] h-[20px] z-110 bg-white dark:bg-[#1E1E2F] p-2 sticky top-0"
+            className="flex gap-0.4 justify-center allign-center  w-full rounded-[15px] h-[20px] z-110 bg-white dark:bg-[#1E1E2F] p-0 sticky top-0"
         >
-            <select className="ql-font lg:!w-[180px]">
+            <select className="ql-font lg:w-[120px]" defaultValue="arial">
                 <option value="arial">Arial</option>
                 <option value="times-new-roman">Times New Roman</option>
                 <option value="courier-new">Courier New</option>
@@ -31,7 +31,7 @@ export default function CustomToolbar({
                 <option value="monospace">Monospace</option>
                 <option value="serif">Serif</option>
             </select>
-            <select className="ql-size" style={{ width: '50px' }} defaultValue="16px">
+            <select className="ql-size" style={{ width: '100%', maxWidth: '45px' }} defaultValue="16px">
                 <option value="10px">10</option>
                 <option value="12px">12</option>
                 <option value="14px">14</option>
@@ -66,12 +66,14 @@ export default function CustomToolbar({
             <button className="ql-italic action-button"></button>
             <button className="ql-underline action-button"></button>
             <button className="ql-strike action-button"></button>
+
             <button className="ql-list action-button" value="ordered"></button>
             <button className="ql-list action-button" value="bullet"></button>
             <button className="ql-list action-button" value="alpha" title="Lista alfabética">
                 <img src={AlphaListIcon} alt="" />
             </button>
             <button className="ql-list action-button" value="check"></button>
+
             <select className="ql-align action-button"></select>
             <select className="ql-color action-button"></select>
             <select className="ql-background action-button"></select>

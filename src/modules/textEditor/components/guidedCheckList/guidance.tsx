@@ -494,14 +494,14 @@ export default function Guidance({
                             height: mainToolbarRect.height,
                             width: mainToolbarRect.width,
                             display: showToolbar ? 'block' : 'none',
-                            zIndex: 10000,
+                            zIndex: showToolbar ? 9999999 : -1
                         }}
                         className=" flex justify-center w-full grow relative"
                     >
-                        <div style={{zIndex: "99999999 !important"}} >
+                      
 
                         <CustomToolbar name={toolbarId} clean={true} />
-                        </div>
+                        
                     </div>
                 )
 

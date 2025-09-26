@@ -188,11 +188,12 @@ export default function TextEditor() {
         const toolbarContainer = document.getElementById('toolbar-guided-checklist');
 
         const isToolbarElement = toolbarContainer?.contains(activeElement);
-
+  
+        //ant-collapse-content-box
         if (editorRoot && activeElement && !isToolbarElement) {
             const isCollapseEditorFocused =
                 editorRoot.contains(activeElement) &&
-                (activeElement.classList.contains('collapse-editor') || activeElement.closest('.collapse-editor'));
+                (activeElement.classList.contains('collapse-editor') || activeElement.closest('.collapse-editor') || activeElement.classList.contains('ant-collapse-content-box') || activeElement.closest('.ant-collapse-content-box'));
 
             if (isCollapseEditorFocused) {
                 setShowToolbar(false);
@@ -640,7 +641,7 @@ export default function TextEditor() {
 
 
     return (
-        <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
+        <div className="relative flex flex-col h-full overflow-y-hidden overflow-x-auto o px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
                 <div className="grow ">
                     <Textarea
@@ -682,7 +683,7 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <div style={{ zIndex: 999999999, display: "grid", gridTemplateColumns: "1fr minmax(0, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
+            <div style={{ zIndex: showToolbar ? 9999999 : -1, display: "grid", gridTemplateColumns: "minmax(650px, 1fr) minmax(0, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
                 <div className='w-full flex justify-center items-center h-[20px]'>
 
                     <header
