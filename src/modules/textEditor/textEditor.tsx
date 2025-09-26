@@ -683,7 +683,7 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <div style={{ zIndex: showToolbar ? 9999999 : -1, display: "grid", gridTemplateColumns: "minmax(720px, 1fr) minmax(50px, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
+            <div style={{ zIndex: showToolbar ? 100 : -1, display: "grid", gridTemplateColumns: "minmax(720px, 1fr) minmax(50px, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
                 <div className='w-full flex justify-center items-center h-[20px]'>
 
                     <header
