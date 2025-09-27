@@ -14,6 +14,7 @@ import { FileComponent } from './fileComponent';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import type { FolderNavigatorContextValues } from '../types/folder';
 import { useTranslation } from 'react-i18next';
+import { MainContext, type MainContextValues } from '@/modules/mainContext';
 
 export default function FolderContainer({ folderId, depth = 0 }: { folderId: string | null, depth?: number }) {
     const { organization_id: slug } = useParams();
@@ -21,11 +22,13 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
     const { Loading, setLoading, updateFolderRequest, memberRoll, setUpdateFolderRequest  } = useContext(
         FolderNavigatorContext,
     ) as FolderNavigatorContextValues;
+    const {sortOrder} = useContext(MainContext) as MainContextValues;
     const navigate = useNavigate();
     const { getFolderContent, getRootContent } = useFolderManager();
     const [content, setContent] = useState<ContainerElement[] | null>([]);
     const { t } = useTranslation();
-
+    
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         async function getContent() {
@@ -48,12 +51,14 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
                     filesnumber: item.filesnumber,
                 };
             });
-            setContent(newContent);
+            const sortedItemes = sortContainerElements(newContent ?? [], sortOrder, 'type1First');
+            setContent(sortedItemes);
+           //setContent(newContent);
             setLoading('x');
         }
         getContent();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [folderId]);
+    }, [folderId, sortOrder]);
 
 
 
@@ -76,6 +81,10 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
                 filesnumber: item.filesnumber,
             };
         });
+
+        //const sortedItemes = sortContainerElements(newItems ?? [], 'asc');
+        //setContent(sortedItemes ?? []);
+    
         //console.log(newItems)
         setContent(newItems ?? []);
     }
@@ -184,3 +193,49 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
         </div>
     );
 }
+
+
+function sortContainerElements(
+    array: ContainerElement[],
+    order: 'asc' | 'desc',
+    typePriority?: 'type1First' | 'type0First'
+): ContainerElement[] {
+    // Creamos una copia del array para no modificar el original (inmutabilidad)
+    const sortedArray = [...array];
+
+    sortedArray.sort((a, b) => {
+        // 1. Ordenación por 'type' (si se especifica)
+        if (typePriority) {
+            const typeA = a.type;
+            const typeB = b.type;
+
+            if (typePriority === 'type1First') {
+                // Queremos type: 1 primero. Si A es 1 y B es 0, A va antes (-1).
+                if (typeA === 1 && typeB === 0) return -1;
+                // Si B es 1 y A es 0, B va antes (1).
+                if (typeA === 0 && typeB === 1) return 1;
+            } else if (typePriority === 'type0First') {
+                // Queremos type: 0 primero. Si A es 0 y B es 1, A va antes (-1).
+                if (typeA === 0 && typeB === 1) return -1;
+                // Si B es 0 y A es 1, B va antes (1).
+                if (typeA === 1 && typeB === 0) return 1;
+            }
+        }
+
+        // 2. Ordenación alfabética por 'name' (desempate o principal si no hay typePriority)
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+
+        let comparison = 0;
+        if (nameA > nameB) {
+            comparison = 1;
+        } else if (nameA < nameB) {
+            comparison = -1;
+        }
+
+        // Aplicar el orden 'asc' o 'desc' al resultado de la comparación de nombres
+        return order === 'desc' ? comparison * -1 : comparison;
+    });
+
+    return sortedArray;
+  }

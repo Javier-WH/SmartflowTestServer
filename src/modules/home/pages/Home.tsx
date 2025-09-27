@@ -11,7 +11,9 @@ import {
     IconFile,
     IconFilePlus,
     IconFolderPlus,
-    //IconFolderCode
+    IconFolderCode,
+    IconSortAscendingLetters,
+    IconSortDescendingLetters,
 } from '@tabler/icons-react';
 import { cn } from '@heroui/react';
 import { ReactNode, useContext, useState } from 'react';
@@ -26,7 +28,7 @@ import { useTranslation } from 'react-i18next';
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, /*parentFolders*/ } = useContext(
+    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, setSortOrder/*parentFolders*/ } = useContext(
         MainContext,
     ) as MainContextValues;
     const { createFile } = useFilesManager();
@@ -120,10 +122,10 @@ export default function Home() {
         setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
-    /*const colapseAllFolders = () => {
+    const colapseAllFolders = () => {
         const openedRootFolder = document.querySelectorAll('.folder[data-depth="0"].opened');
         openedRootFolder.forEach(folder => (folder as HTMLElement).click());
-    }*/
+    }
 
     return (
         <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
@@ -168,11 +170,19 @@ export default function Home() {
                                     getLevelTitle(memberRoll?.level || "")
                                 }
                             </div>
-                            <div className="flex justify-between gap-1 px-1 mt-5">
+                            <div className="flex justify-between gap-1 px-1 mt-5 ml-2">
                                <div>
-                                    {/*<Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
+                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
                                         <IconFolderCode className='folder-nav-icon' />
-                                    </Button>*/}
+                                    </Button>
+
+                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('asc')}>
+                                        <IconSortAscendingLetters className='folder-nav-icon' />
+                                    </Button>
+
+                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('desc')}>
+                                        <IconSortDescendingLetters className='folder-nav-icon' />
+                                    </Button>
                                 </div>
 
                                 <div>
