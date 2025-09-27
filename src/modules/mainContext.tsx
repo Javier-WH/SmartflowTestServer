@@ -21,6 +21,8 @@ export interface MainContextValues {
   setChangleFileNameRequest: React.Dispatch<React.SetStateAction<{fileId: string, fileName: string} | null>>
   parentFolders: string, 
   setParentFolders: React.Dispatch<React.SetStateAction<string>>
+  isSaving: boolean,
+  setIsSaving: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const MainContext = createContext<MainContextValues | null>(null);
@@ -38,7 +40,7 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
   const [changleFileNameRequest, setChangleFileNameRequest] = useState<{fileId: string, fileName: string} | null>(null);
   const [parentFolders, setParentFolders] = useState<string>('');
-
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   
 
@@ -72,7 +74,9 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     changleFileNameRequest, 
     setChangleFileNameRequest,
     parentFolders, 
-    setParentFolders
+    setParentFolders,
+    isSaving, 
+    setIsSaving
   }
 
   return (

@@ -286,7 +286,6 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
        
         const containers = document.querySelectorAll('.guided-checklist > div > div > div > div');
         containers.forEach((container) => {
-            console.log(container);
             (container as HTMLElement).style.position = "relative";
             (container as HTMLElement).style.zIndex = "auto";
         });
