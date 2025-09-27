@@ -31,7 +31,7 @@ export default function CustomToolbar({
                 <option value="monospace">Monospace</option>
                 <option value="serif">Serif</option>
             </select>
-            <select className="ql-size" style={{ width: '100%', maxWidth: '45px', minWidth: '45px' }} defaultValue="16px">
+            <select className="ql-size" style={{ width: '100%', maxWidth: '45px', minWidth: '45px'}} defaultValue="16px">
                 <option value="10px">10</option>
                 <option value="12px">12</option>
                 <option value="14px">14</option>
