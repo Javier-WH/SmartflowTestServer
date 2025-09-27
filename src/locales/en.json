@@ -173,7 +173,13 @@
   "members_list_heading": "Members List",
   "total_members": "Total Members",
   "edit_role_subtitle": "Select the role of this member in the organization",
-  "invite_user_subtitle": "Invite a new member to the organization"
+  "invite_user_subtitle": "Invite a new member to the organization",
+  "navigate_without_saving": "Continue without saving",
+  "saving_changes_title": "Saving changes",
+  "saving_in_progress": "Saving in progress",
+  "please_wait_saving": "please wait...",
+  "saving_completed": "Saving completed, redirecting..."
+  
 
 
 }
