@@ -1,0 +1,9 @@
+.gcl-item {
+  position: relative;
+  z-index: 1;
+}
+.itemTop {
+  position: relative;
+  z-index: 100 !important;
+}
+
