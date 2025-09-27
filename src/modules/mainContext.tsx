@@ -22,7 +22,9 @@ export interface MainContextValues {
   parentFolders: string, 
   setParentFolders: React.Dispatch<React.SetStateAction<string>>
   isSaving: boolean,
-  setIsSaving: React.Dispatch<React.SetStateAction<boolean>>
+  setIsSaving: React.Dispatch<React.SetStateAction<boolean>>,
+  sortOrder: 'asc' | 'desc', 
+  setSortOrder: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>,
 }
 
 export const MainContext = createContext<MainContextValues | null>(null);
@@ -41,6 +43,7 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [changleFileNameRequest, setChangleFileNameRequest] = useState<{fileId: string, fileName: string} | null>(null);
   const [parentFolders, setParentFolders] = useState<string>('');
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   
 
@@ -76,7 +79,9 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     parentFolders, 
     setParentFolders,
     isSaving, 
-    setIsSaving
+    setIsSaving,
+    sortOrder, 
+    setSortOrder
   }
 
   return (
