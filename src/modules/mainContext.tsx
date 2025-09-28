@@ -25,6 +25,8 @@ export interface MainContextValues {
   setIsSaving: React.Dispatch<React.SetStateAction<boolean>>,
   sortOrder: 'asc' | 'desc', 
   setSortOrder: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>,
+  selectedFolderId: string | null, 
+  setSelectedFolderId: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 export const MainContext = createContext<MainContextValues | null>(null);
@@ -44,6 +46,7 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [parentFolders, setParentFolders] = useState<string>('');
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
 
   
 
@@ -81,7 +84,9 @@ export const MainContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     isSaving, 
     setIsSaving,
     sortOrder, 
-    setSortOrder
+    setSortOrder,
+    selectedFolderId, 
+    setSelectedFolderId
   }
 
   return (
