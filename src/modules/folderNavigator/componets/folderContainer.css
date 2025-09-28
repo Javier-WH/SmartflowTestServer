@@ -8,6 +8,10 @@
     padding-left: 10px;
 }
 
+.selected-folder{
+    border: 1px dashed var(--hoverColor) !important;
+    border-radius: 15px;
+}
 
 .folder:hover,
 .file:hover{
@@ -15,6 +19,7 @@
     border-radius: 15px;
 }
 .folder-icon {
+    pointer-events: none;
     font-size: 25px;
 }
 

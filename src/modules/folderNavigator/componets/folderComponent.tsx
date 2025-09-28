@@ -14,6 +14,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PiFolderLight } from "react-icons/pi";
 import { PiFolderOpenLight } from "react-icons/pi";
+import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import './folderContainer.css';
 
 export function FolderComponent({
@@ -30,7 +31,7 @@ export function FolderComponent({
         setFileCountUpdateRequest,
         memberRoll,
     } = useContext(FolderNavigatorContext) as FolderNavigatorContextValues;
-
+    const { selectedFolderId } = useContext(MainContext) as MainContextValues;
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { moveFolder, moveFolderToRoot, getFilesCount } = useFolderManager();
@@ -241,7 +242,7 @@ export function FolderComponent({
                     data-depth={depth}
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => toggleFolder(folder.id ?? null)}
-                    className={`folder ${contentId === null ? '' : 'opened'}`}
+                    className={`folder ${contentId === null ? '' : 'opened'} ${folder.id === selectedFolderId ? 'selected-folder' : ''}`}
                     draggable
                     onDragStart={event => handleDragStart(event, folder.id, folder.type)}
                     onDragOver={handleDragOver}
