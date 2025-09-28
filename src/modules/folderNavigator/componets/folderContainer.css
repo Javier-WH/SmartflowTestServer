@@ -15,7 +15,7 @@
 
 .folder:hover,
 .file:hover{
-    border: 1px solid var(--hoverColor);
+    border: 1px solid var(--hoverColor) !important;
     border-radius: 15px;
 }
 .folder-icon {
