@@ -178,5 +178,6 @@
   "saving_changes_title": "Guardando cambios",
   "saving_in_progress": "Guardando en progreso",
   "please_wait_saving": "por favor espera...",
-  "saving_completed": "Saving completed, redirecting..."
+  "saving_completed": "Saving completed, redirecting...",
+  "can_not_duplicate_file_message": "No tienes permiso para duplicar esta página"
 }

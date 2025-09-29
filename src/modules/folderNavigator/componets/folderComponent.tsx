@@ -242,7 +242,7 @@ export function FolderComponent({
                     data-depth={depth}
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => toggleFolder(folder.id ?? null)}
-                    className={`folder ${contentId === null ? '' : 'opened'} ${folder.id === selectedFolderId ? 'selected-folder' : ''}`}
+                    className={`folder ${contentId === null ? '' : 'opened'}` /*${folder.id === selectedFolderId ? 'selected-folder' : ''}`*/}
                     draggable
                     onDragStart={event => handleDragStart(event, folder.id, folder.type)}
                     onDragOver={handleDragOver}
@@ -258,7 +258,7 @@ export function FolderComponent({
                     />*/}
 
                     {contentId ? <PiFolderOpenLight className='folder-icon' /> : <PiFolderLight className='folder-icon' />}
-                    <span className="folder-name">{folder.name}</span>
+                    <span className="folder-name">{`${folder.id === selectedFolderId ? '•' : ''} ${folder.name}`}</span>
 
                     {/*<div className="folder-count-container">
                         <span className="folder-count">{`${filesCount} ${filesCount === '1' ? t('page_label') : t('pages_label')} `}</span>
