@@ -178,7 +178,8 @@
   "saving_changes_title": "Saving changes",
   "saving_in_progress": "Saving in progress",
   "please_wait_saving": "please wait...",
-  "saving_completed": "Saving completed, redirecting..."
+  "saving_completed": "Saving completed, redirecting...",
+  "can_not_duplicate_file_message": "You do not have permission to duplicate this file"
   
 
 

@@ -144,7 +144,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
 
     const handleDuplicate = async () => {
         if (!memberRoll.write) {
-            message.error(t('can_not_rename_file_message'));
+            message.error(t('can_not_duplicate_file_message'));
             return;
         }
         if (!file.id) return;
