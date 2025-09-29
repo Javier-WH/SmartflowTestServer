@@ -187,7 +187,7 @@ export default function Home() {
                             </div>
                             <div className="flex justify-between gap-1 px-1 mt-5 ml-2">
                                <div>
-                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
+                                   {/* <Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
                                         <IconFolderCode className='folder-nav-icon' />
                                     </Button>
 
@@ -197,7 +197,7 @@ export default function Home() {
 
                                     <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('desc')}>
                                         <IconSortDescendingLetters className='folder-nav-icon' />
-                                    </Button>
+                                    </Button>*/}
                                 </div>
 
                                 <div>
