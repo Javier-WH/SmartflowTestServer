@@ -92,6 +92,20 @@ export default function Guidance({
     });
     const [showToolbar, setShowToolbar] = useState(false);
 
+    const updateToolbarPosition = useCallback(() => {
+        if (!mainToolbarElement) return;
+
+        const rect = mainToolbarElement.getBoundingClientRect();
+        setMainToolbarRect({
+            top: rect.top,
+            left: rect.left,
+            right: rect.right,
+            bottom: rect.bottom,
+            height: rect.height,
+            width: rect.width,
+        });
+    }, [mainToolbarElement]);
+
 
     const debouncedSave = useDebouncedCallback(async (content: string) => {
         saveData(id, content);
@@ -398,40 +412,46 @@ export default function Guidance({
     useEffect(() => {
         if (!mainToolbarElement) return;
 
-        const updateToolbarRect = () => {
-            const rect = mainToolbarElement.getBoundingClientRect();
-            setMainToolbarRect({
-                top: rect.top,
-                left: rect.left,
-                right: rect.right,
-                bottom: rect.bottom,
-                height: rect.height,
-                width: rect.width,
-            });
-        };
+        // **Observer para cambios de tamaño del contenedor del editor**
+        const containerObserver = new ResizeObserver(() => {
+            updateToolbarPosition();
+        });
+
+        if (containerRef.current) {
+            containerObserver.observe(containerRef.current);
+        }
+
+        // **Observer para cambios de tamaño de la toolbar principal**
+        const toolbarObserver = new ResizeObserver(() => {
+            updateToolbarPosition();
+        });
+
+        toolbarObserver.observe(mainToolbarElement);
 
         // Actualizar las dimensiones inicialmente
-        updateToolbarRect();
+        updateToolbarPosition();
 
-        // Añadir el event listener para el redimensionamiento de la ventana
-        window.addEventListener('resize', updateToolbarRect);
-        
-        // esto previene un bug de redimensionamiento de imagenes, se debe buscar una solución mejor
+        // Añadir event listener para el redimensionamiento de la ventana
+        window.addEventListener('resize', updateToolbarPosition);
+
+        // esto previene un bug de redimensionamiento de imagenes
         const save = () => {
             const content = editorRef.current?.root.innerHTML || '';
             if (content === currentContent) return;
             setCurrentContent(content);
             debouncedSave(content);
-
         }
         window.addEventListener('mouseup', save);
 
-        // Limpiar el event listener cuando el componente se desmonte
+        // Limpiar los observers y event listeners cuando el componente se desmonte
         return () => {
-            window.removeEventListener('resize', updateToolbarRect);
+            window.removeEventListener('resize', updateToolbarPosition);
             window.removeEventListener('mouseup', save);
+            containerObserver.disconnect();
+            toolbarObserver.disconnect();
         };
-    }, [mainToolbarElement]);
+    }, [mainToolbarElement, updateToolbarPosition]);
+
 
 
 
@@ -453,19 +473,23 @@ export default function Guidance({
                             display: showToolbar ? 'block' : 'none',
                             zIndex: 10000,
                         }}
-                        className="flex justify-center w-full grow relative"
+                        className=" flex justify-center w-full grow relative"
                     >
-                        <CustomToolbar name={toolbarId} clean={true} />
+                        <div style={{ zIndex: "99999999 !important" }} >
+                            <CustomToolbar name={toolbarId} clean={true} />
+                        </div>
                     </div>
                 )
 
 
             }
+         
             <div className="quill-editor-container" ref={containerRef} onPaste={e => e.stopPropagation()}>
                 <div className="collapse-editor min-h-[300px]" ref={quillRef} />
             </div>
         </>
     );
 }
+
 
 

@@ -63,6 +63,12 @@ export default function Menbers() {
     const [inviteError, setInviteError] = useState('');
     const [inviteUserLevelId, setInviteUserLevelId] = useState('');
     const { t } = useTranslation();
+
+    useEffect(() => {
+        if (!rolls || rolls.length === 0) return;
+        setInviteUserLevelId(rolls[rolls.length - 1].id);
+    }, [rolls]);
+
     useEffect(() => {
         setLoading(!organization && !members);
     }, [organization, members]);
@@ -195,6 +201,7 @@ export default function Menbers() {
 
     return (
         <>
+
 
             <InviteUserModal
                 isOpen={inviteUserOpen}

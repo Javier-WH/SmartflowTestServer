@@ -47,7 +47,7 @@
   "error_creating_folder_message": "Error creating folder",
   "error_loading_organizations": "Error loading Working Groups",
   "no_documents_found_message": "No documents found",
-  "create_your_first_document_message": "Create your first document to get started",
+  "create_your_first_document_message": "Create your first document",
   "already_exists_folder_message": "A folder with this name already exists",
   "type_delete_to_confirm_message": "Type 'DELETE' to confirm",
   "are_you_sure_you_want_to_delete_message": "Are you sure you want to delete?",
@@ -173,7 +173,14 @@
   "members_list_heading": "Members List",
   "total_members": "Total Members",
   "edit_role_subtitle": "Select the role of this member in the organization",
-  "invite_user_subtitle": "Invite a new member to the organization"
+  "invite_user_subtitle": "Invite a new member to the organization",
+  "navigate_without_saving": "Continue without saving",
+  "saving_changes_title": "Saving changes",
+  "saving_in_progress": "Saving in progress",
+  "please_wait_saving": "please wait...",
+  "saving_completed": "Saving completed, redirecting...",
+  "can_not_duplicate_file_message": "You do not have permission to duplicate this file"
+  
 
 
 }

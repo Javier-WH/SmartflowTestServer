@@ -1,10 +1,10 @@
-import { useContext, /*useEffect, useRef*/ } from 'react';
+import { useContext, useEffect, /*useEffect, useRef*/ } from 'react';
 import FolderContainer from '../componets/folderContainer';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import './browser.css';
 
 export default function Browser() {
-    const { rootFolder } = useContext(MainContext) as MainContextValues;
+    const { rootFolder, setSelectedFolderId } = useContext(MainContext) as MainContextValues;
     /*const observerRef = useRef<MutationObserver | null>(null);
     const processedFolders = useRef<Set<string>>(new Set());
 
@@ -46,11 +46,26 @@ export default function Browser() {
         };
     }, []);*/
 
+    const checkClick = (e: MouseEvent) => {
+        if ((e.target as HTMLElement).classList?.contains('folder')) {
+            setSelectedFolderId((e.target as HTMLElement).id);
+            return;
+        }
+        setSelectedFolderId(null);
+    };
 
+    useEffect(() => {
+        window.addEventListener('click', checkClick);
+
+        return () => {
+            window.removeEventListener('click', checkClick);
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
  
 
     return (
-        <div className="main-folder-container w-full p-2 h-full max-w-[99%]">
+        <div className="main-folder-container w-full p-2 h-full max-w-[99%]" >
      
             <FolderContainer folderId={rootFolder} depth={0} />
         </div>

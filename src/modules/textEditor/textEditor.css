@@ -97,7 +97,7 @@
     scale: 2;
  
 }
-/*.ant-collapse-content*/
+
 #uploadingImagesSpinner {
     position: fixed;
     width: 100%;
@@ -205,10 +205,7 @@
     font-size: 16px !important;
 }
 
-/* .ant-collapse-content-box .quill-editor-container { */
-/*     max-height: 500px !important; */
-/*     overflow-y: auto !important; */
-/* } */
+
 
 .ql-container:focus,
 .ql-toolbar:focus {
@@ -219,7 +216,7 @@
 /*video and image toolbar*/
 .toolbar {
     pointer-events: all !important;
-    z-index: 10000000001;
+    z-index: 99999 !important;
     background-color: var(--pageBarColor) !important;
     color: white !important;
 }
@@ -263,6 +260,10 @@
     background-color: var(--selectedFileColor);
     color: black !important;
 }
+.ql-background,
+.ql-picker-options {
+    z-index: 9999999 !important;
+}
 
 /* invertir menus*/
 .ql-snow .ql-picker-options {
@@ -270,7 +271,7 @@
     /* bottom: auto !important; */
     /* transform: translateY(0) !important; */
     @apply bg-gray-100 !text-black; 
-    z-index: 1001 !important;
+    /*z-index: 1001 !important;*/
 }
 
 .ql-picker-item {
@@ -466,11 +467,6 @@
     z-index: 10000 !important;
 }
 
-/*.ant-collapse-content #editor-resizer {
-    width: 0px !important;
-    height: 0px !important;
-    left: 50% !important;
-  }*/
 
 .ql-guided-checklist {
     @apply text-black;
@@ -607,3 +603,11 @@ a {
     outline: none !important;
 }
 
+.ql-list {
+    width: 50px !important;
+}
+.ql-align > span,
+.ql-background > span,
+.ql-color > span {
+    width: 30px !important;
+}

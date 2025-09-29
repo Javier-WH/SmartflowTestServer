@@ -11,7 +11,9 @@ import {
     IconFile,
     IconFilePlus,
     IconFolderPlus,
-    IconFolderCode
+    IconFolderCode,
+    IconSortAscendingLetters,
+    IconSortDescendingLetters,
 } from '@tabler/icons-react';
 import { cn } from '@heroui/react';
 import { ReactNode, useContext, useState } from 'react';
@@ -26,7 +28,7 @@ import { useTranslation } from 'react-i18next';
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, /*parentFolders*/ } = useContext(
+    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, setSortOrder, selectedFolderId/*parentFolders*/ } = useContext(
         MainContext,
     ) as MainContextValues;
     const { createFile } = useFilesManager();
@@ -70,15 +72,17 @@ export default function Home() {
         }
     }
 
+   
 
-
-
+    
     const handleCreateFolder = () => {
         if (!memberRoll?.write) {
             message.error(t('can_not_create_folder_message'));
             return;
         }
+        
         const newFolder: Folder = {
+            id: selectedFolderId ?? null,
             name: '',
             container: '7a89a4e6-b484-4a5b-bf94-5277cb45ae9x',
         };
@@ -94,21 +98,34 @@ export default function Home() {
             message.error(t('can_not_find_organization_message'));
             return;
         }
-        createFile('untitled', null, slug).then(res => {
+        createFile('untitled', selectedFolderId ?? null, slug).then(res => {
             if (res.error) {
                 message.error(t('error_creating_file_message'));
                 return;
             }
 
-            getRootContent(slug).then(res => {
-                if (res.error) {
-                    message.error(t('error_creating_file_message'));
-                    return;
+            const currentFolder = document.getElementById(selectedFolderId);
+            if (currentFolder) {
+                if (currentFolder.classList.contains('opened')) {
+                    currentFolder.click();
+                    setTimeout(() => {
+                        currentFolder.click();
+                    }, 10);
+                } else {
+                    currentFolder.click();
                 }
+            }else{
+                getRootContent(slug).then(res => {
+                    if (res.error) {
+                        message.error(t('error_creating_file_message'));
+                        return;
+                    }
+    
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    setUpdateFolderRequestFromMain(res.data as any);
+                });
+            }
 
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                setUpdateFolderRequestFromMain(res.data as any);
-            });
             const id = res.data;
             if (id) {
                 navigate(`/${slug}/edit/${id}`);
@@ -168,10 +185,18 @@ export default function Home() {
                                     getLevelTitle(memberRoll?.level || "")
                                 }
                             </div>
-                            <div className="flex justify-between gap-1 px-1 mt-5">
+                            <div className="flex justify-between gap-1 px-1 mt-5 ml-2">
                                <div>
-                                    {/*<Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
+                                   {/* <Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
                                         <IconFolderCode className='folder-nav-icon' />
+                                    </Button>
+
+                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('asc')}>
+                                        <IconSortAscendingLetters className='folder-nav-icon' />
+                                    </Button>
+
+                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('desc')}>
+                                        <IconSortDescendingLetters className='folder-nav-icon' />
                                     </Button>*/}
                                 </div>
 

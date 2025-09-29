@@ -56,7 +56,7 @@ export default function TextEditor() {
     const { id, organization_id } = useParams();
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { setSelectedFileId, setChangleFileNameRequest, memberRoll, setParentFolders } = useContext(MainContext) as MainContextValues;
+    const { setSelectedFileId, setChangleFileNameRequest, memberRoll, setParentFolders, setIsSaving } = useContext(MainContext) as MainContextValues;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isSavingVersion, setIsSavingVersion] = useState(false);
     const [title, setTitle] = useState('');
@@ -75,7 +75,8 @@ export default function TextEditor() {
     const { user } = useAuth();
     const { addVersion } = useDocumentControlVersion({ documentId: id, userName: `${user?.user_metadata?.name} ${user?.user_metadata?.lastname}` });
 
-
+   
+ 
 
     const modules = {
         toolbar: {
@@ -109,12 +110,13 @@ export default function TextEditor() {
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
             if (!id) return;
-
+            setIsSaving(true);
             await mutate({
                 id,
                 ...(htmlContent ? { content: htmlContent } : {}),
                 ...(title ? { name: title } : {}),
             });
+            setIsSaving(false);
         },
         400,
         { leading: false, trailing: true },
@@ -168,8 +170,6 @@ export default function TextEditor() {
         // Only schedule update if not read-only, content is loaded, and not currently saving
         // Crucially, also check if the initial content for the *current* ID has been loaded
         if (!readOnly && isInitialContentLoaded && !isMutating && needsDebounce) {
-
-
             // Schedule the update with the ID relevant *at this moment*
             console.log(`Scheduling update for ID: ${currentFileId.current}`);
             debouncedUpdate({
@@ -188,11 +188,12 @@ export default function TextEditor() {
         const toolbarContainer = document.getElementById('toolbar-guided-checklist');
 
         const isToolbarElement = toolbarContainer?.contains(activeElement);
-
+  
+        //ant-collapse-content-box
         if (editorRoot && activeElement && !isToolbarElement) {
             const isCollapseEditorFocused =
                 editorRoot.contains(activeElement) &&
-                (activeElement.classList.contains('collapse-editor') || activeElement.closest('.collapse-editor'));
+                (activeElement.classList.contains('collapse-editor') || activeElement.closest('.collapse-editor') || activeElement.classList.contains('ant-collapse-content-box') || activeElement.closest('.ant-collapse-content-box'));
 
             if (isCollapseEditorFocused) {
                 setShowToolbar(false);
@@ -320,6 +321,7 @@ export default function TextEditor() {
             currentFileId.current = id;
             setIsInitialContentLoaded(false);
             setReadOnly(true);
+
         };
     }, [id, debouncedUpdate]);
 
@@ -640,7 +642,7 @@ export default function TextEditor() {
 
 
     return (
-        <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
+        <div className="relative flex flex-col h-full overflow-y-hidden overflow-x-auto o px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
                 <div className="grow ">
                     <Textarea
@@ -682,13 +684,13 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 150px", marginTop: "1px", marginRight: "20px", alignItems: "center" }}>
+            <div style={{ zIndex: showToolbar ? 200 : 1, display: "grid", gridTemplateColumns: "minmax(720px, 1fr) minmax(50px, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
                 <div className='w-full flex justify-center items-center h-[20px]'>
 
                     <header
                         className={cn({
                             hidden: readOnly,
-                            'w-[1000px] p-2 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2  min-h-15 ':
+                            'w-full max-w-[1000px] py-2 px-0 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2  min-h-15 ':
                                 !readOnly,
                         })}
                     >
