@@ -691,23 +691,16 @@ export default function TextEditor() {
             </div>
 
             <div style={{ zIndex: showToolbar ? 200 : 1, display: "grid", gridTemplateColumns: "minmax(720px, 1fr) minmax(50px, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
-                {
-                    <div className='w-full flex justify-center items-center h-[20px]'>
 
-                        <header
-                            className={cn({
-                                hidden: readOnly,
-                                'w-full max-w-[1000px] py-2 px-0 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2  min-h-15 ':
-                                !readOnly,
-                            })}
-                        >
+                <div className='w-full flex justify-center items-center h-[20px]'>
+                    <header style={{ visibility: readOnly ? "hidden" : "visible"}}>
                         {/* this prevent quill native toolbar from rendering */}
                         <div id='toolbar'></div>
-                            <Toolbar />
-                            
-                        </header>
-                    </div>
-                }
+                        <Toolbar />
+
+                    </header>
+                </div>
+
                 <div className=" flex justify-end gap-2 items-center  ">
                     {memberRoll?.write && (
                         <Dropdown.Button style={{ direction: "ltr" }} menu={{ items, onClick: onMenuClick }} onClick={() => {
