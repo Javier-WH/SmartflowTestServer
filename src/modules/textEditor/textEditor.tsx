@@ -5,7 +5,7 @@ import { useEffect, useState, useRef, useContext, useCallback } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import { useParams } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
-import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
+//import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
 import options from './components/utils/options.ts';
 import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.ts';
 import CustomImage from './components/utils/CustonImage.ts';
@@ -13,7 +13,7 @@ import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import { getParentFoldersForFile } from '../../utils/pageUtils.ts';
 import { useDebouncedCallback } from 'use-debounce';
-import { Textarea, cn, Spinner } from '@heroui/react';
+import { Textarea, /*cn,*/ Spinner } from '@heroui/react';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
@@ -690,7 +690,7 @@ export default function TextEditor() {
                 </div>
             </div>
 
-            <div style={{ zIndex: showToolbar ? 200 : 1, display: "grid", gridTemplateColumns: "minmax(720px, 1fr) minmax(50px, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
+            <div style={{ zIndex: showToolbar ? 200 : 1, display: "grid", gridTemplateColumns: "1fr minmax(50px, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
 
                 <div className='w-full flex justify-center items-center h-[20px]'>
                     <header style={{ visibility: readOnly ? "hidden" : "visible"}}>

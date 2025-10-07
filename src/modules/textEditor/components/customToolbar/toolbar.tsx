@@ -37,6 +37,25 @@ export default function Toolbar() {
     }
   };
 
+  const handleQuillToolbarAction = (actionValue: string, key: string) => {
+    const editor = getActiveEditor();
+    if (!editor) return;
+
+    // Ejecuta el handler de la barra de herramientas de Quill
+    // Esto es lo que hacía tu botón original <button class="ql-list" value="check">
+    const toolbarHandlers = editor?.options?.modules?.toolbar?.handlers;
+    const handler = toolbarHandlers?.[key];
+
+    // Si hay un handler definido para 'list' o la acción específica
+    if (typeof handler === 'function') {
+      // En Quill, el handler de 'list' espera el valor ('ordered', 'bullet', 'check')
+      handler.call({ quill: editor }, actionValue);
+    } else {
+      // Si no hay handler, volvemos al formato directo (funciona para ordered/bullet)
+      editor.format(key, actionValue);
+    }
+  }
+
   const toggleFormat = (format: string) => {
     const editor = getActiveEditor();
     if (!editor) return;
@@ -178,7 +197,8 @@ export default function Toolbar() {
         <button onClick={() => applyFormat('list', 'alpha')}>
           <img src={AlphaListIcon} width={20} alt="Alpha" />
         </button>
-        <button onClick={() => applyFormat('list', 'check')}>☑</button>
+        
+        <button onClick={() => handleQuillToolbarAction('check', 'list')}>☑</button>
 
         {/* Alignment */}
         <select onChange={(e) => applyFormat('align', e.target.value)}>
