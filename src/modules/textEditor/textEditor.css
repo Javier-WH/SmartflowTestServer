@@ -215,6 +215,7 @@
 
 /*video and image toolbar*/
 .toolbar {
+    display: none !important;
     pointer-events: all !important;
     z-index: 99999 !important;
     background-color: var(--pageBarColor) !important;

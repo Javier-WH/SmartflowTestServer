@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { t } from 'i18next';
 import GuidedCheckListIcon from '../../assets/svg/addGuidedCheckList';
 import AlphaListIcon from '../../assets/svg/alpha.svg';
+import { getActiveEditor } from './editorStore';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function Toolbar({ editor }: { editor: any }) {
+export default function Toolbar() {
   const [isImageModalOpen, setImageModalOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [localFile, setLocalFile] = useState<File | null>(null);
@@ -15,6 +16,7 @@ export default function Toolbar({ editor }: { editor: any }) {
   const [videoUrl, setVideoUrl] = useState('');
   const [isLinkModalOpen, setLinkModalOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [savedRange, setSavedRange] = useState<any>(null);
 
 
@@ -27,6 +29,7 @@ export default function Toolbar({ editor }: { editor: any }) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const applyFormat = (format: string, value?: any) => {
+    const editor = getActiveEditor();
     if (!editor) return;
     const range = editor.getSelection();
     if (range) {
@@ -35,6 +38,7 @@ export default function Toolbar({ editor }: { editor: any }) {
   };
 
   const toggleFormat = (format: string) => {
+    const editor = getActiveEditor();
     if (!editor) return;
     const range = editor.getSelection();
     if (range) {
@@ -44,6 +48,7 @@ export default function Toolbar({ editor }: { editor: any }) {
   };
 
   const handleInsertLink = () => {
+    const editor = getActiveEditor();
     if (!editor || !linkUrl.trim() || !savedRange) return;
 
     editor.setSelection(savedRange); // restaurar selección
@@ -54,12 +59,14 @@ export default function Toolbar({ editor }: { editor: any }) {
   };
 
   const insertImage = (src: string) => {
+    const editor = getActiveEditor();
     const index = editor.getSelection()?.index ?? 0;
     editor.insertEmbed(index, 'image', src);
     editor.setSelection(index + 1);
   };
 
   const handleInsertImage = () => {
+    const editor = getActiveEditor();
     if (!editor) return;
 
     if (localFile) {
@@ -95,6 +102,7 @@ export default function Toolbar({ editor }: { editor: any }) {
   };
 
   const handleInsertVideo = () => {
+    const editor = getActiveEditor();
     if (!editor || !videoUrl.trim()) {
       message.warning('Por favor ingresa una URL válida.');
       return;
@@ -107,7 +115,7 @@ export default function Toolbar({ editor }: { editor: any }) {
     setVideoUrl('');
     setVideoModalOpen(false);
   };
-  
+
 
   const resetImageModal = () => {
     setImageModalOpen(false);
@@ -187,6 +195,7 @@ export default function Toolbar({ editor }: { editor: any }) {
         {/* Link */}
         <Button
           onClick={() => {
+            const editor = getActiveEditor();
             const range = editor?.getSelection();
             if (range && range.length > 0) {
               setSavedRange(range);
@@ -208,11 +217,15 @@ export default function Toolbar({ editor }: { editor: any }) {
         <Button onClick={() => setVideoModalOpen(true)}>🎥 Insertar video</Button>
 
         {/* Clean */}
-        <button onClick={() => editor.removeFormat(editor.getSelection()?.index ?? 0, editor.getSelection()?.length ?? 0)}>🧹</button>
+        <button onClick={() => {
+          const editor = getActiveEditor();
+          editor.removeFormat(editor.getSelection()?.index ?? 0, editor.getSelection()?.length ?? 0)
+        }}>🧹</button>
 
         {/* Guided checklist */}
         <button
           onClick={() => {
+            const editor = getActiveEditor();
             if (!editor) return;
             const toolbarHandlers = editor?.options?.modules?.toolbar?.handlers;
             const handler = toolbarHandlers?.['guided-checklist'];
@@ -278,7 +291,7 @@ export default function Toolbar({ editor }: { editor: any }) {
         />
       </Modal>
 
-{/* Modal para insertar enlace */}
+      {/* Modal para insertar enlace */}
       <Modal
         title="Insertar enlace"
         open={isLinkModalOpen}
