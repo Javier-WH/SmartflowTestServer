@@ -27,6 +27,7 @@ import './textEditor.css';
 import useAuth from '../auth/hooks/useAuth.ts';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
+import Toolbar from './components/customToolbar/toolbar.tsx';
 
 
 
@@ -641,6 +642,7 @@ export default function TextEditor() {
     ];
 
 
+
     return (
         <div className="relative flex flex-col h-full overflow-y-hidden overflow-x-auto o px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
@@ -685,6 +687,7 @@ export default function TextEditor() {
             </div>
 
             <div style={{ zIndex: showToolbar ? 200 : 1, display: "grid", gridTemplateColumns: "minmax(720px, 1fr) minmax(50px, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
+                    <Toolbar editor={quillRef.current?.getEditor()} />
                 <div className='w-full flex justify-center items-center h-[20px]'>
 
                     <header
@@ -697,7 +700,6 @@ export default function TextEditor() {
                         <CustomToolbar show={!readOnly} name="toolbar" />
                     </header>
                 </div>
-
                 <div className=" flex justify-end gap-2 items-center  ">
                     {memberRoll?.write && (
                         <Dropdown.Button style={{ direction: "ltr" }} menu={{ items, onClick: onMenuClick }} onClick={() => {
