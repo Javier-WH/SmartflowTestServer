@@ -205,5 +205,7 @@
   "text_color": "Color del Texto",
   "background_color": "Color de Fondo",
   "clean_format": "Limpiar Formato",
-  "guided_check_list": "Lista de Verificación Guiada"
+  "guided_check_list": "Lista de Verificación Guiada",
+  "more": "Más",
+  "less": "Menos"
 }

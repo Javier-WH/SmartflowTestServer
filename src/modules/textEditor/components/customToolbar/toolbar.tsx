@@ -563,7 +563,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             <button
               className={styles.dropdownToggle}
               onClick={() => setShowDropdown(!showDropdown)}
-              title="Más opciones"
+              title={t("more")}
             >
               <FaEllipsisH />
             </button>

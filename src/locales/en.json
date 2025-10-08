@@ -205,5 +205,7 @@
   "text_color": "Text Color",
   "background_color": "Background Color",
   "clean_format": "Clean Format",
-  "guided_check_list": "Guided Check List"
+  "guided_check_list": "Guided Check List",
+  "more": "More",
+  "less": "Less"
 }
