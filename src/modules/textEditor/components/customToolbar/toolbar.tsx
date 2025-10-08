@@ -9,6 +9,7 @@ import { TbListLetters } from "react-icons/tb";
 import { MdFormatColorText, MdFontDownload } from "react-icons/md";
 import { FontSelector, SizeSelector, HeaderSelector } from './Selectors';
 import styles from './Toolbar.module.css';
+import { t } from 'i18next';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
@@ -202,7 +203,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
 
   const handleInsertImage = () => {
     if (!savedEditor) {
-      message.warning('No hay editor activo.');
+      message.error(t("no_active_editor"));
       return;
     }
 
@@ -222,7 +223,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       return;
     }
 
-    message.warning('Por favor ingresa una URL o selecciona una imagen local.');
+    message.warning(t("please_select_an_image"));
   };
 
   const normalizeVideoUrl = (url: string): string => {
@@ -235,7 +236,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
 
   const handleInsertVideo = () => {
     if (!savedEditor || !videoUrl.trim()) {
-      message.warning('Por favor ingresa una URL válida.');
+      message.warning(t("invalid_image_url"));
       return;
     }
 
@@ -272,7 +273,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   const openLinkModal = () => {
     const editor = getActiveEditor();
     if (!editor) {
-      message.warning('No hay editor activo.');
+      message.warning(t("no_active_editor"));
       return;
     }
 
@@ -351,7 +352,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('bold', el)}
             onClick={() => handleToolbarAction(() => toggleFormat('bold'))}
             className={buttonClass}
-            title="Negrita"
+            title={t("bold")}
             style={{ marginLeft: '15px' }}
           >
             <FaBold />
@@ -361,7 +362,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('italic', el)}
             onClick={() => handleToolbarAction(() => toggleFormat('italic'))}
             className={buttonClass}
-            title="Itálica"
+            title={t("italic")}
           >
             <FaItalic />
           </button>
@@ -370,7 +371,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('underline', el)}
             onClick={() => handleToolbarAction(() => toggleFormat('underline'))}
             className={buttonClass}
-            title="Subrayado"
+            title={t("underline")}
           >
             <FaUnderline />
           </button>
@@ -379,7 +380,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('strike', el)}
             onClick={() => handleToolbarAction(() => toggleFormat('strike'))}
             className={buttonClass}
-            title="Tachado"
+            title={t("strikethrough")}
           >
             <FaStrikethrough />
           </button>
@@ -389,7 +390,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('list-ordered', el)}
             onClick={() => handleToolbarAction(() => applyFormat('list', 'ordered'))}
             className={buttonClass}
-            title="Lista ordenada"
+            title={t("ordered_list")}
             style={{ marginLeft: '15px' }}
           >
             <FaListOl />
@@ -399,7 +400,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('list-bullet', el)}
             onClick={() => handleToolbarAction(() => applyFormat('list', 'bullet'))}
             className={buttonClass}
-            title="Lista con viñetas"
+            title={t("bullet_list")}
           >
             <FaListUl />
           </button>
@@ -408,7 +409,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('list-alpha', el)}
             onClick={() => handleToolbarAction(() => applyFormat('list', 'alpha'))}
             className={buttonClass}
-            title="Lista alfabética"
+            title={t("alpha_list")}
           >
             <TbListLetters />
           </button>
@@ -417,7 +418,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('list-check', el)}
             onClick={() => handleToolbarAction(() => handleQuillToolbarAction('check', 'list'))}
             className={buttonClass}
-            title="Lista de verificación"
+            title={t("check_list")}
           >
             <FaListCheck />
           </button>
@@ -427,7 +428,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('align-left', el)}
             onClick={() => handleToolbarAction(() => applyFormat('align', ''))}
             className={buttonClass}
-            title="Alinear izquierda"
+            title={t("align_left")}
             style={{ marginLeft: '15px' }}
           >
             <FaAlignLeft />
@@ -437,7 +438,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('align-center', el)}
             onClick={() => handleToolbarAction(() => applyFormat('align', 'center'))}
             className={buttonClass}
-            title="Centrar"
+            title={t("align_center")}
           >
             <FaAlignCenter />
           </button>
@@ -446,7 +447,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('align-right', el)}
             onClick={() => handleToolbarAction(() => applyFormat('align', 'right'))}
             className={buttonClass}
-            title="Alinear derecha"
+            title={t("align_right")}
           >
             <FaAlignRight />
           </button>
@@ -455,7 +456,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('align-justify', el)}
             onClick={() => handleToolbarAction(() => applyFormat('align', 'justify'))}
             className={buttonClass}
-            title="Justificar"
+            title={t("align_justify")}
           >
             <FaAlignJustify />
           </button>
@@ -464,7 +465,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           <button
             ref={(el) => registerButtonRef('color-text', el)}
             className={`${buttonClass} ${styles.colorButton}`}
-            title="Color de texto"
+            title={t("text_color")}
             style={{ marginLeft: '15px' }}
           >
             <MdFormatColorText />
@@ -479,7 +480,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           <button
             ref={(el) => registerButtonRef('color-background', el)}
             className={`${buttonClass} ${styles.colorButton}`}
-            title="Color de fondo"
+            title={t("background_color")}
           >
             <MdFontDownload />
             <input
@@ -495,7 +496,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('link', el)}
             onClick={() => handleToolbarAction(openLinkModal)}
             className={buttonClass}
-            title="Insertar enlace"
+            title={t("insert_link")}
             style={{ marginLeft: '15px' }}
           >
             <FaLink />
@@ -506,7 +507,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('image', el)}
             onClick={() => handleToolbarAction(openImageModal)}
             className={buttonClass}
-            title="Insertar imagen"
+            title={t("insert_image")}
           >
             <FaImage />
           </button>
@@ -516,7 +517,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             ref={(el) => registerButtonRef('video', el)}
             onClick={() => handleToolbarAction(openVideoModal)}
             className={buttonClass}
-            title="Insertar video"
+            title={t("insert_video")}
           >
             <FaVideo />
           </button>
@@ -532,7 +533,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
               }
             })}
             className={buttonClass}
-            title="Quitar formato"
+            title={t("clean_format")}
           >
             <FaRemoveFormat />
           </button>
@@ -550,7 +551,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
               }
             })}
             className={buttonClass}
-            title="Lista guiada"
+            title={t("guided_check_list")}
           >
             <GuidedCheckListIcon />
           </button>
@@ -569,28 +570,28 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
 
             {showDropdown && (
               <div className={styles.dropdownMenu}>
-                {hiddenButtons.includes('bold') && renderDropdownButton('bold-dropdown', <FaBold />, () => toggleFormat('bold'), 'Negrita')}
-                {hiddenButtons.includes('italic') && renderDropdownButton('italic-dropdown', <FaItalic />, () => toggleFormat('italic'), 'Itálica')}
-                {hiddenButtons.includes('underline') && renderDropdownButton('underline-dropdown', <FaUnderline />, () => toggleFormat('underline'), 'Subrayado')}
-                {hiddenButtons.includes('strike') && renderDropdownButton('strike-dropdown', <FaStrikethrough />, () => toggleFormat('strike'), 'Tachado')}
-                {hiddenButtons.includes('list-ordered') && renderDropdownButton('list-ordered-dropdown', <FaListOl />, () => applyFormat('list', 'ordered'), 'Lista ordenada')}
-                {hiddenButtons.includes('list-bullet') && renderDropdownButton('list-bullet-dropdown', <FaListUl />, () => applyFormat('list', 'bullet'), 'Lista con viñetas')}
-                {hiddenButtons.includes('list-alpha') && renderDropdownButton('list-alpha-dropdown', <TbListLetters />, () => applyFormat('list', 'alpha'), 'Lista alfabética')}
-                {hiddenButtons.includes('list-check') && renderDropdownButton('list-check-dropdown', <FaListCheck />, () => handleQuillToolbarAction('check', 'list'), 'Lista de verificación')}
-                {hiddenButtons.includes('align-left') && renderDropdownButton('align-left-dropdown', <FaAlignLeft />, () => applyFormat('align', ''), 'Alinear izquierda')}
-                {hiddenButtons.includes('align-center') && renderDropdownButton('align-center-dropdown', <FaAlignCenter />, () => applyFormat('align', 'center'), 'Centrar')}
-                {hiddenButtons.includes('align-right') && renderDropdownButton('align-right-dropdown', <FaAlignRight />, () => applyFormat('align', 'right'), 'Alinear derecha')}
-                {hiddenButtons.includes('align-justify') && renderDropdownButton('align-justify-dropdown', <FaAlignJustify />, () => applyFormat('align', 'justify'), 'Justificar')}
-                {hiddenButtons.includes('link') && renderDropdownButton('link-dropdown', <FaLink />, openLinkModal, 'Insertar enlace')}
-                {hiddenButtons.includes('image') && renderDropdownButton('image-dropdown', <FaImage />, openImageModal, 'Insertar imagen')}
-                {hiddenButtons.includes('video') && renderDropdownButton('video-dropdown', <FaVideo />, openVideoModal, 'Insertar video')}
+                {hiddenButtons.includes('bold') && renderDropdownButton('bold-dropdown', <FaBold />, () => toggleFormat('bold'), t("bold") )}
+                {hiddenButtons.includes('italic') && renderDropdownButton('italic-dropdown', <FaItalic />, () => toggleFormat('italic'), t("italic"))}
+                {hiddenButtons.includes('underline') && renderDropdownButton('underline-dropdown', <FaUnderline />, () => toggleFormat('underline'), t("underline"))}
+                {hiddenButtons.includes('strike') && renderDropdownButton('strike-dropdown', <FaStrikethrough />, () => toggleFormat('strike'), t("strikethrough"))}
+                {hiddenButtons.includes('list-ordered') && renderDropdownButton('list-ordered-dropdown', <FaListOl />, () => applyFormat('list', 'ordered'), t("ordered_list"))}
+                {hiddenButtons.includes('list-bullet') && renderDropdownButton('list-bullet-dropdown', <FaListUl />, () => applyFormat('list', 'bullet'), t("bullet_list"))}
+                {hiddenButtons.includes('list-alpha') && renderDropdownButton('list-alpha-dropdown', <TbListLetters />, () => applyFormat('list', 'alpha'), t("alpha_list"))}
+                {hiddenButtons.includes('list-check') && renderDropdownButton('list-check-dropdown', <FaListCheck />, () => handleQuillToolbarAction('check', 'list'), t("check_list"))}
+                {hiddenButtons.includes('align-left') && renderDropdownButton('align-left-dropdown', <FaAlignLeft />, () => applyFormat('align', ''), t("align_left"))}
+                {hiddenButtons.includes('align-center') && renderDropdownButton('align-center-dropdown', <FaAlignCenter />, () => applyFormat('align', 'center'), t("align_center"))}
+                {hiddenButtons.includes('align-right') && renderDropdownButton('align-right-dropdown', <FaAlignRight />, () => applyFormat('align', 'right'), t("align_right"))}
+                {hiddenButtons.includes('align-justify') && renderDropdownButton('align-justify-dropdown', <FaAlignJustify />, () => applyFormat('align', 'justify'), t("align_justify"))}
+                {hiddenButtons.includes('link') && renderDropdownButton('link-dropdown', <FaLink />, openLinkModal, t("insert_link"))}
+                {hiddenButtons.includes('image') && renderDropdownButton('image-dropdown', <FaImage />, openImageModal, t("insert_image"))}
+                {hiddenButtons.includes('video') && renderDropdownButton('video-dropdown', <FaVideo />, openVideoModal, t("insert_video"))}
                 {hiddenButtons.includes('remove-format') && renderDropdownButton('remove-format-dropdown', <FaRemoveFormat />, () => {
                   const editor = getActiveEditor();
                   if (editor) {
                     const range = editor.getSelection();
                     editor.removeFormat(range?.index ?? 0, range?.length ?? 0);
                   }
-                }, 'Quitar formato')}
+                }, t("clean_format"))}
                 {hiddenButtons.includes('guided-checklist') && renderDropdownButton('guided-checklist-dropdown', <GuidedCheckListIcon />, () => {
                   const editor = getActiveEditor();
                   if (!editor) return;
@@ -599,29 +600,29 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
                   if (typeof handler === 'function') {
                     handler.call({ quill: editor });
                   }
-                }, 'Lista guiada')}
+                }, t("guided_check_list"))}
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Modales (se mantienen igual) */}
+    
       <Modal
         key={modalKey}
-        title="Insertar imagen"
+        title={t("insert_image")}
         open={isImageModalOpen}
         onCancel={() => {
           resetImageModal();
           handleModalCancel();
         }}
         onOk={handleInsertImage}
-        okText="Insertar"
-        cancelText="Cancelar"
+        okText={t("insert_label")}
+        cancelText={t("cancel_label")}
       >
         <div className="flex flex-col gap-4">
           <Input
-            placeholder="URL de la imagen"
+            placeholder={t("image_placeholder")}
             value={imageUrl}
             disabled={!!localFile}
             onChange={(e) => {
@@ -644,7 +645,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       </Modal>
 
       <Modal
-        title="Insertar video"
+        title={t("insert_video")}
         open={isVideoModalOpen}
         onCancel={() => {
           setVideoModalOpen(false);
@@ -652,18 +653,18 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           handleModalCancel();
         }}
         onOk={handleInsertVideo}
-        okText="Insertar"
-        cancelText="Cancelar"
+        okText={t("insert_label")}
+        cancelText={t("cancel_label")}
       >
         <Input
-          placeholder="URL del video (YouTube, Vimeo...)"
+          placeholder={t("video_placeholder")}
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
         />
       </Modal>
 
       <Modal
-        title="Insertar enlace"
+        title={t("insert_link")}
         open={isLinkModalOpen}
         onCancel={() => {
           setLinkModalOpen(false);
@@ -671,11 +672,11 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           handleModalCancel();
         }}
         onOk={handleInsertLink}
-        okText="Insertar"
-        cancelText="Cancelar"
+        okText={t("insert_label")}
+        cancelText={t("cancel_label")}
       >
         <Input
-          placeholder="https://ejemplo.com"
+          placeholder={t("link_placeholder")}
           value={linkUrl}
           onChange={(e) => setLinkUrl(e.target.value)}
         />

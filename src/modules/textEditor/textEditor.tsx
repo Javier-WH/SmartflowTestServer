@@ -406,6 +406,12 @@ export default function TextEditor() {
         }
     }, []);
 
+    // set default active editor at startup
+    useEffect(() => {
+        if (!quillRef?.current) return;
+        setActiveEditor(quillRef?.current?.getEditor());
+    }, [quillRef.current]);
+
     // add drag image logic
     const handleDrop = useCallback((event) => {
         event.preventDefault();
