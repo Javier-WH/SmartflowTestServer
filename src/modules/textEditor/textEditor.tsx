@@ -5,7 +5,7 @@ import { useEffect, useState, useRef, useContext, useCallback } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import { useParams } from 'react-router-dom';
 import ResizeModule from '@botom/quill-resize-module';
-import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
+//import CustomToolbar from './components/toolbar/CustonToolbar.tsx';
 import options from './components/utils/options.ts';
 import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.ts';
 import CustomImage from './components/utils/CustonImage.ts';
@@ -13,7 +13,7 @@ import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import { getParentFoldersForFile } from '../../utils/pageUtils.ts';
 import { useDebouncedCallback } from 'use-debounce';
-import {Textarea, cn, Spinner } from '@heroui/react';
+import { Textarea, /*cn,*/ Spinner } from '@heroui/react';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
@@ -27,6 +27,8 @@ import './textEditor.css';
 import useAuth from '../auth/hooks/useAuth.ts';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
+import Toolbar from './components/customToolbar/toolbar.tsx';
+import { setActiveEditor } from './components/customToolbar/editorStore.ts';
 
 
 
@@ -75,8 +77,8 @@ export default function TextEditor() {
     const { user } = useAuth();
     const { addVersion } = useDocumentControlVersion({ documentId: id, userName: `${user?.user_metadata?.name} ${user?.user_metadata?.lastname}` });
 
-   
- 
+
+
 
     const modules = {
         toolbar: {
@@ -188,17 +190,20 @@ export default function TextEditor() {
         const toolbarContainer = document.getElementById('toolbar-guided-checklist');
 
         const isToolbarElement = toolbarContainer?.contains(activeElement);
-  
+
         //ant-collapse-content-box
         if (editorRoot && activeElement && !isToolbarElement) {
             const isCollapseEditorFocused =
                 editorRoot.contains(activeElement) &&
-                (activeElement.classList.contains('collapse-editor') || activeElement.closest('.collapse-editor') || activeElement.classList.contains('ant-collapse-content-box') || activeElement.closest('.ant-collapse-content-box'));
+                (activeElement?.classList.contains('collapse-editor') || activeElement?.closest('.collapse-editor') || activeElement?.classList.contains('ant-collapse-content-box') || activeElement?.closest('.ant-collapse-content-box'));
 
             if (isCollapseEditorFocused) {
-                setShowToolbar(false);
+
+                //setShowToolbar(false);
             } else {
-                setShowToolbar(true);
+                console.log("main editor active")
+                setActiveEditor(quillRef.current?.getEditor());
+                //setShowToolbar(true);
             }
         }
     };
@@ -331,16 +336,16 @@ export default function TextEditor() {
             const target = e.target as HTMLElement;
             if (
                 target.id === 'editor-resizer' ||
-                target.classList.contains('ant-image-preview-wrap') ||
-                target.classList.contains('ant-image-preview-operations-operation') ||
-                target.classList.contains('ant-image-preview-operations') ||
-                target.classList.contains('ant-image-preview-img') ||
-                target.tagName === 'svg' ||
-                target.tagName === 'path'
+                target?.classList.contains('ant-image-preview-wrap') ||
+                target?.classList.contains('ant-image-preview-operations-operation') ||
+                target?.classList.contains('ant-image-preview-operations') ||
+                target?.classList.contains('ant-image-preview-img') ||
+                target?.tagName === 'svg' ||
+                target?.tagName === 'path'
             )
                 return;
             const element = target.closest('img');
-            if (element && !element.classList.contains('ant-image-preview-img')) {
+            if (element && !element?.classList.contains('ant-image-preview-img')) {
                 setSelectedImage(element as HTMLElement);
 
                 return;
@@ -381,10 +386,10 @@ export default function TextEditor() {
         // if readOnly cant change image size, so we have to hide the toolbar
         if (readOnly) {
             if (imageToolbar) {
-                imageToolbar.classList.add('hidden');
+                imageToolbar?.classList?.add('hidden');
             }
             if (imagehandler) {
-                imagehandler.classList.add('hidden');
+                imagehandler?.classList?.add('hidden');
             }
         }
     }, [selectedImage]);
@@ -400,6 +405,12 @@ export default function TextEditor() {
             };
         }
     }, []);
+
+    // set default active editor at startup
+    useEffect(() => {
+        if (!quillRef?.current) return;
+        setActiveEditor(quillRef?.current?.getEditor());
+    }, [quillRef.current]);
 
     // add drag image logic
     const handleDrop = useCallback((event) => {
@@ -555,7 +566,7 @@ export default function TextEditor() {
     };
 
 
-    
+
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
 
@@ -641,6 +652,7 @@ export default function TextEditor() {
     ];
 
 
+
     return (
         <div className="relative flex flex-col h-full overflow-y-hidden overflow-x-auto o px-[1px]">
             <div className="flex justify-between items-center flex-wrap gap-4">
@@ -683,22 +695,31 @@ export default function TextEditor() {
                     ) : null}
                 </div>
             </div>
+            
+            <div style={{
+                display: "grid",
+                gridTemplateColumns: "minmax(0px, 1fr) minmax(50px, 150px)",
+                marginTop: "1px",
+                marginRight: "20px",
+                alignItems: "baseline",
+                minWidth: "520px"
+            }}>
+                <div className='w-full flex justify-center items-center' >
+                    <header style={{
+                        visibility: readOnly ? "hidden" : "visible",
+                        width: '100%',
 
-            <div style={{ zIndex: showToolbar ? 200 : 1, display: "grid", gridTemplateColumns: "minmax(720px, 1fr) minmax(50px, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
-                <div className='w-full flex justify-center items-center h-[20px]'>
-
-                    <header
-                        className={cn({
-                            hidden: readOnly,
-                            'w-full max-w-[1000px] py-2 px-0 rounded-2xl shadow-gray-200 shadow-md ring-gray-200 ring-1 mt-2 px-2  min-h-15 ':
-                                !readOnly,
-                        })}
-                    >
-                        <CustomToolbar show={!readOnly} name="toolbar" />
+                        minWidth: 0,
+                        textAlign: 'center',
+                     
+                    }}>
+                        {/* this prevent quill native toolbar from rendering */}
+                        <div id='toolbar' style={{ display: 'none' }}></div>
+                        <Toolbar /> {/* este es el elemento */}
                     </header>
                 </div>
 
-                <div className=" flex justify-end gap-2 items-center  ">
+                <div className="flex justify-end gap-2 items-center">
                     {memberRoll?.write && (
                         <Dropdown.Button style={{ direction: "ltr" }} menu={{ items, onClick: onMenuClick }} onClick={() => {
                             if (memberRoll?.write && readOnly) {
@@ -708,7 +729,6 @@ export default function TextEditor() {
                                 handleOnPressSaveButton();
                             }
                         }} >{readOnly ? t('edit_label') : "Publish"}</Dropdown.Button >
-
                     )}
                 </div>
             </div>

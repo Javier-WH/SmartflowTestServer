@@ -4,12 +4,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import ResizeModule from '@botom/quill-resize-module';
-import CustomToolbar from '../toolbar/CustonToolbar';
+//import CustomToolbar from '../toolbar/CustonToolbar';
 import CustomImage from '../utils/CustonImageGuidance';
 import CustomVideo from '../utils/CustonVideoGuidance';
 import { useDebouncedCallback } from 'use-debounce';
 import CustomOrderedListContainerGuidance from '../blots/custonOrderedListGuidance';
 import { t } from 'i18next';
+import { setActiveEditor } from '../customToolbar/editorStore';
 //import { t } from 'i18next';
 
 const fontSizeList = [
@@ -81,18 +82,18 @@ export default function Guidance({
     const resizing = useRef(false); //awful solution for unknown image resize bug
     const [currentContent, setCurrentContent] = useState(value);
     const toolbarId = `toolbar-guided-checklist-${id}-${crypto.randomUUID().toString()}`;
-    const [mainToolbarElement, setMainToolbarElement] = useState<HTMLElement | null>(null);
-    const [mainToolbarRect, setMainToolbarRect] = useState({
+    //const [mainToolbarElement, setMainToolbarElement] = useState<HTMLElement | null>(null);
+    /*const [mainToolbarRect, setMainToolbarRect] = useState({
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
         height: 0,
         width: 0,
-    });
-    const [showToolbar, setShowToolbar] = useState(false);
+    });*/
+    //const [showToolbar, setShowToolbar] = useState(false);
 
-    const updateToolbarPosition = useCallback(() => {
+    /*const updateToolbarPosition = useCallback(() => {
         if (!mainToolbarElement) return;
 
         const rect = mainToolbarElement.getBoundingClientRect();
@@ -104,7 +105,7 @@ export default function Guidance({
             height: rect.height,
             width: rect.width,
         });
-    }, [mainToolbarElement]);
+    }, [mainToolbarElement]);*/
 
 
     const debouncedSave = useDebouncedCallback(async (content: string) => {
@@ -189,8 +190,8 @@ export default function Guidance({
 
 
     useEffect(() => {
-        const maintolbar = document.getElementById("toolbar")
-        setMainToolbarElement(maintolbar as HTMLElement);
+        //const maintolbar = document.getElementById("toolbar")
+        //setMainToolbarElement(maintolbar as HTMLElement);
 
         if (quillRef.current && !editorRef.current) {
             const options = {
@@ -395,9 +396,11 @@ export default function Guidance({
                 quillRef.current && quillRef.current.contains(event.target as Node) ||
                 toolbarRef.current && toolbarRef.current.contains(event.target as Node)
             ) {
-                setShowToolbar(true);
+                console.log("guidance editor active")
+                setActiveEditor(editorRef.current);
+                //setShowToolbar(true);
             } else {
-                setShowToolbar(false);
+                //setShowToolbar(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -409,7 +412,7 @@ export default function Guidance({
         };
     }, []);
 
-    useEffect(() => {
+    /*useEffect(() => {
         if (!mainToolbarElement) return;
 
         // **Observer para cambios de tamaño del contenedor del editor**
@@ -450,14 +453,14 @@ export default function Guidance({
             containerObserver.disconnect();
             toolbarObserver.disconnect();
         };
-    }, [mainToolbarElement, updateToolbarPosition]);
+    }, [mainToolbarElement, updateToolbarPosition]);*/
 
 
 
 
     return (
         <>
-            {
+            {/*
 
                 !readonly && (
                     <div
@@ -481,7 +484,7 @@ export default function Guidance({
                     </div>
                 )
 
-
+*/
             }
          
             <div className="quill-editor-container" ref={containerRef} onPaste={e => e.stopPropagation()}>
