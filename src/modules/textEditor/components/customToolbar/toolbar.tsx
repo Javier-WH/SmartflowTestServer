@@ -661,7 +661,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         </div>
       </Modal>
 
-      ---
+  
 
       {/* Modal de Insertar Video */}
       <Modal
@@ -687,7 +687,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         />
       </Modal>
 
-      ---
+
 
       {/* Modal de Insertar Enlace */}
       <Modal

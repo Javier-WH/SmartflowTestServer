@@ -270,42 +270,44 @@
 }
 
 /* Estilos para los botones de Ant Design */
+/* Botón Primario (Aceptar/Insertar) */
 .minimalistModalWrap :global(.ant-btn-primary) {
   /* Gris oscuro para Aceptar */
-  background-color: #5d5d5d;
-  border-color: #5d5d5d;
-  color: white;
+  background-color: #5d5d5d !important;
+  /* ¡Aumentamos especificidad con !important! */
+  border-color: #5d5d5d !important;
+  color: white !important;
 }
 
+/* **CORRECCIÓN CLAVE:** Asegurar que el hover y focus sigan siendo grises */
+.minimalistModalWrap :global(.ant-btn-primary:not([disabled]):hover),
+.minimalistModalWrap :global(.ant-btn-primary:not([disabled]):focus),
 .minimalistModalWrap :global(.ant-btn-primary:hover),
 .minimalistModalWrap :global(.ant-btn-primary:focus) {
-  background-color: #444;
-  border-color: #444;
-  color: white;
-  opacity: 0.9;
+  background-color: #444 !important;
+  border-color: #444 !important;
+  color: white !important;
+  opacity: 1 !important;
+  /* Aseguramos que la opacidad sea total */
 }
 
+/* Botón Por Defecto (Cancelar) */
 .minimalistModalWrap :global(.ant-btn-default) {
   /* Gris medio para Cancelar */
-  color: #777;
-  border-color: #ccc;
+  color: #777 !important;
+  border-color: #ccc !important;
+  background-color: white !important;
+  /* Aseguramos que no haya color de fondo azul por defecto */
 }
 
+/* **CORRECCIÓN CLAVE:** Hover y Focus para Cancelar */
+.minimalistModalWrap :global(.ant-btn-default:not([disabled]):hover),
+.minimalistModalWrap :global(.ant-btn-default:not([disabled]):focus),
 .minimalistModalWrap :global(.ant-btn-default:hover),
 .minimalistModalWrap :global(.ant-btn-default:focus) {
-  /* **CORRECCIÓN:** Hover y Focus para Cancelar */
-  color: #555;
-  border-color: #aaa;
-  background-color: #eee;
-  /* Levemente más oscuro al hacer hover */
-}
-
-/* Estilos para el Input de Ant Design */
-.minimalistModalWrap :global(.ant-input) {
-  border: 1px solid #ccc;
-  /* Borde gris sutil */
-  border-radius: 4px;
-  padding: 8px 12px;
+  color: #555 !important;
+  border-color: #aaa !important;
+  background-color: #eee !important;
 }
 
 .fileInputButton {
