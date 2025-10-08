@@ -1,13 +1,17 @@
-import { Modal, Input, Button, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
-import { t } from 'i18next';
+// este es el toolbar con los modales
+import { Modal, Input, message } from 'antd';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import GuidedCheckListIcon from '../../assets/svg/addGuidedCheckList';
-import AlphaListIcon from '../../assets/svg/alpha.svg';
 import { getActiveEditor } from './editorStore';
+import { FaBold, FaItalic, FaUnderline, FaStrikethrough, FaListOl, FaListUl, FaAlignLeft, FaAlignCenter, FaAlignRight, FaAlignJustify, FaLink, FaImage, FaVideo, FaRemoveFormat, FaEllipsisH } from "react-icons/fa";
+import { FaListCheck } from "react-icons/fa6";
+import { TbListLetters } from "react-icons/tb";
+import { MdFormatColorText, MdFontDownload } from "react-icons/md";
+import { FontSelector, SizeSelector, HeaderSelector } from './Selectors';
+import styles from './Toolbar.module.css';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function Toolbar() {
+export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   const [isImageModalOpen, setImageModalOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [localFile, setLocalFile] = useState<File | null>(null);
@@ -18,7 +22,13 @@ export default function Toolbar() {
   const [linkUrl, setLinkUrl] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [savedRange, setSavedRange] = useState<any>(null);
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [savedEditor, setSavedEditor] = useState<any>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [hiddenButtons, setHiddenButtons] = useState<string[]>([]);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<{ [key: string]: HTMLButtonElement }>({});
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isImageModalOpen) {
@@ -26,6 +36,114 @@ export default function Toolbar() {
       setLocalFile(null);
     }
   }, [isImageModalOpen]);
+
+  // Función para calcular botones visibles
+  const calculateVisibleButtons = useCallback(() => {
+    if (!toolbarRef.current) return;
+
+    const toolbar = toolbarRef.current;
+    const toolbarWidth = toolbar.offsetWidth;
+
+    // Espacio disponible (dejamos 60px para el botón dropdown)
+    const availableWidth = toolbarWidth - 340;
+    let currentWidth = 0;
+    const hidden: string[] = [];
+
+    // Orden de los botones (deben coincidir con el orden en el DOM)
+    const buttonOrder = [
+      'font-selector', 'size-selector', 'header-selector',
+      'bold', 'italic', 'underline', 'strike',
+      'list-ordered', 'list-bullet', 'list-alpha', 'list-check',
+      'align-left', 'align-center', 'align-right', 'align-justify',
+      'color-text', 'color-background', 'link', 'image', 'video',
+      'remove-format', 'guided-checklist'
+    ];
+
+    // Resetear todos los botones primero
+    Object.keys(buttonsRef.current).forEach(key => {
+      const button = buttonsRef.current[key];
+      if (button) {
+        button.style.display = 'flex';
+      }
+    });
+
+    // Calcular qué botones caben
+    buttonOrder.forEach(key => {
+      const button = buttonsRef.current[key];
+      if (button && button.offsetWidth > 0) {
+        const buttonWidth = button.offsetWidth + 8; // +8 por el gap
+
+        if (currentWidth + buttonWidth <= availableWidth) {
+          currentWidth += buttonWidth;
+        } else {
+          button.style.display = 'none';
+          hidden.push(key);
+        }
+      }
+    });
+
+    setHiddenButtons(hidden);
+  }, []);
+
+  // Efecto para calcular visibilidad
+  useEffect(() => {
+    const handleResize = () => {
+      calculateVisibleButtons();
+    };
+
+    // Calcular después de un breve delay para asegurar que los elementos están renderizados
+    const timeoutId = setTimeout(() => {
+      calculateVisibleButtons();
+    }, 100);
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+    };
+  }, [calculateVisibleButtons]);
+
+  // Cerrar dropdown al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
+
+  // Recalcular cuando cambia el modo oscuro
+  useEffect(() => {
+    setTimeout(calculateVisibleButtons, 100);
+  }, [darkMode, calculateVisibleButtons]);
+
+  // Función para guardar el estado actual del editor
+  const saveEditorState = () => {
+    const editor = getActiveEditor();
+    if (!editor) return null;
+
+    const range = editor.getSelection();
+    setSavedRange(range);
+    setSavedEditor(editor);
+    return { editor, range };
+  };
+
+  // Función para restaurar el estado del editor y enfocarlo
+  const restoreAndFocusEditor = () => {
+    if (savedEditor && savedRange) {
+      savedEditor.focus();
+      savedEditor.setSelection(savedRange);
+    }
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const applyFormat = (format: string, value?: any) => {
@@ -35,25 +153,20 @@ export default function Toolbar() {
     if (range) {
       editor.format(format, value ?? true);
     }
+    setShowDropdown(false);
   };
 
   const handleQuillToolbarAction = (actionValue: string, key: string) => {
     const editor = getActiveEditor();
     if (!editor) return;
-
-    // Ejecuta el handler de la barra de herramientas de Quill
-    // Esto es lo que hacía tu botón original <button class="ql-list" value="check">
     const toolbarHandlers = editor?.options?.modules?.toolbar?.handlers;
     const handler = toolbarHandlers?.[key];
-
-    // Si hay un handler definido para 'list' o la acción específica
     if (typeof handler === 'function') {
-      // En Quill, el handler de 'list' espera el valor ('ordered', 'bullet', 'check')
       handler.call({ quill: editor }, actionValue);
     } else {
-      // Si no hay handler, volvemos al formato directo (funciona para ordered/bullet)
       editor.format(key, actionValue);
     }
+    setShowDropdown(false);
   }
 
   const toggleFormat = (format: string) => {
@@ -64,29 +177,34 @@ export default function Toolbar() {
       const current = editor.getFormat(range)[format];
       editor.format(format, !current);
     }
+    setShowDropdown(false);
   };
 
   const handleInsertLink = () => {
-    const editor = getActiveEditor();
-    if (!editor || !linkUrl.trim() || !savedRange) return;
+    if (!savedEditor || !linkUrl.trim() || !savedRange) return;
 
-    editor.setSelection(savedRange); // restaurar selección
-    editor.formatText(savedRange.index, savedRange.length, 'link', linkUrl.trim());
+    restoreAndFocusEditor();
+    savedEditor.formatText(savedRange.index, savedRange.length, 'link', linkUrl.trim());
     setLinkUrl('');
     setSavedRange(null);
+    setSavedEditor(null);
     setLinkModalOpen(false);
   };
 
   const insertImage = (src: string) => {
-    const editor = getActiveEditor();
-    const index = editor.getSelection()?.index ?? 0;
-    editor.insertEmbed(index, 'image', src);
-    editor.setSelection(index + 1);
+    if (!savedEditor) return;
+
+    restoreAndFocusEditor();
+    const index = savedRange?.index ?? savedEditor.getSelection()?.index ?? 0;
+    savedEditor.insertEmbed(index, 'image', src);
+    savedEditor.setSelection(index + 1, 0);
   };
 
   const handleInsertImage = () => {
-    const editor = getActiveEditor();
-    if (!editor) return;
+    if (!savedEditor) {
+      message.warning('No hay editor activo.');
+      return;
+    }
 
     if (localFile) {
       const reader = new FileReader();
@@ -108,33 +226,29 @@ export default function Toolbar() {
   };
 
   const normalizeVideoUrl = (url: string): string => {
-    // YouTube
     const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
     if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
-
-    // Vimeo
     const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
     if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-
-    // Default: return as-is
     return url;
   };
 
   const handleInsertVideo = () => {
-    const editor = getActiveEditor();
-    if (!editor || !videoUrl.trim()) {
+    if (!savedEditor || !videoUrl.trim()) {
       message.warning('Por favor ingresa una URL válida.');
       return;
     }
 
+    restoreAndFocusEditor();
     const embedUrl = normalizeVideoUrl(videoUrl.trim());
-    const index = editor.getSelection()?.index ?? 0;
-    editor.insertEmbed(index, 'video', embedUrl);
-    editor.setSelection(index + 1);
+    const index = savedRange?.index ?? savedEditor.getSelection()?.index ?? 0;
+    savedEditor.insertEmbed(index, 'video', embedUrl);
+    savedEditor.setSelection(index + 1, 0);
     setVideoUrl('');
+    setSavedRange(null);
+    setSavedEditor(null);
     setVideoModalOpen(false);
   };
-
 
   const resetImageModal = () => {
     setImageModalOpen(false);
@@ -143,127 +257,364 @@ export default function Toolbar() {
   };
 
   const openImageModal = () => {
-    resetImageModal(); // limpia antes de abrir
+    saveEditorState();
     setModalKey(prev => prev + 1);
     setImageModalOpen(true);
+    setShowDropdown(false);
   };
 
+  const openVideoModal = () => {
+    saveEditorState();
+    setVideoModalOpen(true);
+    setShowDropdown(false);
+  };
+
+  const openLinkModal = () => {
+    const editor = getActiveEditor();
+    if (!editor) {
+      message.warning('No hay editor activo.');
+      return;
+    }
+
+    const range = editor.getSelection();
+    if (range && range.length > 0) {
+      saveEditorState();
+      setLinkModalOpen(true);
+      setShowDropdown(false);
+    } else {
+      message.warning('Selecciona el texto que deseas enlazar.');
+    }
+  };
+
+  const handleModalCancel = () => {
+    setSavedRange(null);
+    setSavedEditor(null);
+  };
+
+  // Handler para acciones del toolbar con manejo de estado
+  const handleToolbarAction = (action: () => void) => {
+    const editor = getActiveEditor();
+    if (editor) {
+      const range = editor.getSelection();
+      setSavedRange(range);
+      setSavedEditor(editor);
+    }
+    action();
+  };
+
+  // Función para registrar referencia de botón
+  const registerButtonRef = (key: string, element: HTMLButtonElement | null) => {
+    if (element) {
+      buttonsRef.current[key] = element;
+    }
+  };
+
+  // Renderizar botón del dropdown
+  const renderDropdownButton = (key: string, icon: React.ReactNode, onClick: () => void, label: string) => (
+    <button
+      key={key}
+      onClick={() => handleToolbarAction(onClick)}
+      className={darkMode ? styles.darkDropdownButtonItem : styles.dropdownButtonItem}
+      title={label}
+      type="button"
+    >
+      <span className={styles.dropdownIcon}>{icon}</span>
+      <span className={styles.dropdownLabel}>{label}</span>
+    </button>
+  );
+
+ 
+  const buttonClass = styles.toolbarButton;
+
+ 
   return (
     <>
-      <div className="flex gap-2 p-2 bg-white dark:bg-[#1E1E2F] rounded flex-wrap">
-        {/* Font */}
-        <select onChange={(e) => applyFormat('font', e.target.value)} defaultValue="arial">
-          <option value="arial">Arial</option>
-          <option value="times-new-roman">Times New Roman</option>
-          <option value="courier-new">Courier New</option>
-          <option value="comic-sans-ms">Comic Sans MS</option>
-          <option value="roboto">Roboto</option>
-          <option value="georgia">Georgia</option>
-          <option value="verdana">Verdana</option>
-          <option value="open-sans">Open Sans</option>
-          <option value="lato">Lato</option>
-          <option value="montserrat">Montserrat</option>
-          <option value="impact">Impact</option>
-          <option value="fantasy">Fantasy</option>
-          <option value="cursive">Cursive</option>
-          <option value="monospace">Monospace</option>
-          <option value="serif">Serif</option>
-        </select>
+      <div ref={toolbarRef} className={styles.toolbarContainer}>
+        <div className={styles.toolbarButtons}>
+          {/* Font */}
+          <div ref={(el) => el && registerButtonRef('font-selector', el?.querySelector('button') || null)}>
+            <FontSelector applyFormat={applyFormat} />
+          </div>
 
-        {/* Size */}
-        <select onChange={(e) => applyFormat('size', e.target.value)} defaultValue="16px">
-          {Array.from({ length: 20 }, (_, i) => 10 + i * 2).map((size) => (
-            <option key={size} value={`${size}px`}>{size}</option>
-          ))}
-        </select>
+          {/* Size */}
+          <div ref={(el) => el && registerButtonRef('size-selector', el?.querySelector('button') || null)}>
+            <SizeSelector applyFormat={applyFormat} />
+          </div>
 
-        {/* Header */}
-        <select onChange={(e) => applyFormat('header', e.target.value === 'normal' ? false : parseInt(e.target.value))} defaultValue="normal">
-          {[1, 2, 3, 4, 5, 6].map((h) => (
-            <option key={h} value={h}>{`${t('quill_header')} ${h}`}</option>
-          ))}
-          <option value="normal">{t('quill_paragraph')}</option>
-        </select>
+          {/* Header */}
+          <div ref={(el) => el && registerButtonRef('header-selector', el?.querySelector('button') || null)}>
+            <HeaderSelector applyFormat={applyFormat} />
+          </div>
 
-        {/* Text styles */}
-        <button onClick={() => toggleFormat('bold')}>B</button>
-        <button onClick={() => toggleFormat('italic')}>I</button>
-        <button onClick={() => toggleFormat('underline')}>U</button>
-        <button onClick={() => toggleFormat('strike')}>S</button>
+          {/* Text styles */}
+          <button
+            ref={(el) => registerButtonRef('bold', el)}
+            onClick={() => handleToolbarAction(() => toggleFormat('bold'))}
+            className={buttonClass}
+            title="Negrita"
+            style={{ marginLeft: '15px' }}
+          >
+            <FaBold />
+          </button>
 
-        {/* Lists */}
-        <button onClick={() => applyFormat('list', 'ordered')}>1.</button>
-        <button onClick={() => applyFormat('list', 'bullet')}>•</button>
-        <button onClick={() => applyFormat('list', 'alpha')}>
-          <img src={AlphaListIcon} width={20} alt="Alpha" />
-        </button>
-        
-        <button onClick={() => handleQuillToolbarAction('check', 'list')}>☑</button>
+          <button
+            ref={(el) => registerButtonRef('italic', el)}
+            onClick={() => handleToolbarAction(() => toggleFormat('italic'))}
+            className={buttonClass}
+            title="Itálica"
+          >
+            <FaItalic />
+          </button>
 
-        {/* Alignment */}
-        <select onChange={(e) => applyFormat('align', e.target.value)}>
-          <option value="">Izquierda</option>
-          <option value="center">Centro</option>
-          <option value="right">Derecha</option>
-          <option value="justify">Justificado</option>
-        </select>
+          <button
+            ref={(el) => registerButtonRef('underline', el)}
+            onClick={() => handleToolbarAction(() => toggleFormat('underline'))}
+            className={buttonClass}
+            title="Subrayado"
+          >
+            <FaUnderline />
+          </button>
 
-        {/* Colors */}
-        <input type="color" onChange={(e) => applyFormat('color', e.target.value)} />
-        <input type="color" onChange={(e) => applyFormat('background', e.target.value)} />
+          <button
+            ref={(el) => registerButtonRef('strike', el)}
+            onClick={() => handleToolbarAction(() => toggleFormat('strike'))}
+            className={buttonClass}
+            title="Tachado"
+          >
+            <FaStrikethrough />
+          </button>
 
-        {/* Link */}
-        <Button
-          onClick={() => {
-            const editor = getActiveEditor();
-            const range = editor?.getSelection();
-            if (range && range.length > 0) {
-              setSavedRange(range);
-              setLinkModalOpen(true);
-            } else {
-              message.warning('Selecciona el texto que deseas enlazar.');
-            }
-          }}
-        >
-          🔗 Insertar enlace
-        </Button>
+          {/* Lists */}
+          <button
+            ref={(el) => registerButtonRef('list-ordered', el)}
+            onClick={() => handleToolbarAction(() => applyFormat('list', 'ordered'))}
+            className={buttonClass}
+            title="Lista ordenada"
+            style={{ marginLeft: '15px' }}
+          >
+            <FaListOl />
+          </button>
 
-        {/* Imagen (modal dual) */}
-        <Button icon={<UploadOutlined />} onClick={openImageModal}>
-          Insertar imagen
-        </Button>
+          <button
+            ref={(el) => registerButtonRef('list-bullet', el)}
+            onClick={() => handleToolbarAction(() => applyFormat('list', 'bullet'))}
+            className={buttonClass}
+            title="Lista con viñetas"
+          >
+            <FaListUl />
+          </button>
 
-        {/* Video */}
-        <Button onClick={() => setVideoModalOpen(true)}>🎥 Insertar video</Button>
+          <button
+            ref={(el) => registerButtonRef('list-alpha', el)}
+            onClick={() => handleToolbarAction(() => applyFormat('list', 'alpha'))}
+            className={buttonClass}
+            title="Lista alfabética"
+          >
+            <TbListLetters />
+          </button>
 
-        {/* Clean */}
-        <button onClick={() => {
-          const editor = getActiveEditor();
-          editor.removeFormat(editor.getSelection()?.index ?? 0, editor.getSelection()?.length ?? 0)
-        }}>🧹</button>
+          <button
+            ref={(el) => registerButtonRef('list-check', el)}
+            onClick={() => handleToolbarAction(() => handleQuillToolbarAction('check', 'list'))}
+            className={buttonClass}
+            title="Lista de verificación"
+          >
+            <FaListCheck />
+          </button>
 
-        {/* Guided checklist */}
-        <button
-          onClick={() => {
-            const editor = getActiveEditor();
-            if (!editor) return;
-            const toolbarHandlers = editor?.options?.modules?.toolbar?.handlers;
-            const handler = toolbarHandlers?.['guided-checklist'];
-            if (typeof handler === 'function') {
-              handler.call({ quill: editor });
-            }
-          }}
-        >
-          <GuidedCheckListIcon />
-        </button>
+          {/* Alignment */}
+          <button
+            ref={(el) => registerButtonRef('align-left', el)}
+            onClick={() => handleToolbarAction(() => applyFormat('align', ''))}
+            className={buttonClass}
+            title="Alinear izquierda"
+            style={{ marginLeft: '15px' }}
+          >
+            <FaAlignLeft />
+          </button>
+
+          <button
+            ref={(el) => registerButtonRef('align-center', el)}
+            onClick={() => handleToolbarAction(() => applyFormat('align', 'center'))}
+            className={buttonClass}
+            title="Centrar"
+          >
+            <FaAlignCenter />
+          </button>
+
+          <button
+            ref={(el) => registerButtonRef('align-right', el)}
+            onClick={() => handleToolbarAction(() => applyFormat('align', 'right'))}
+            className={buttonClass}
+            title="Alinear derecha"
+          >
+            <FaAlignRight />
+          </button>
+
+          <button
+            ref={(el) => registerButtonRef('align-justify', el)}
+            onClick={() => handleToolbarAction(() => applyFormat('align', 'justify'))}
+            className={buttonClass}
+            title="Justificar"
+          >
+            <FaAlignJustify />
+          </button>
+
+          {/* Colors */}
+          <button
+            ref={(el) => registerButtonRef('color-text', el)}
+            className={`${buttonClass} ${styles.colorButton}`}
+            title="Color de texto"
+            style={{ marginLeft: '15px' }}
+          >
+            <MdFormatColorText />
+            <input
+              type="color"
+              onChange={(e) => {
+                handleToolbarAction(() => applyFormat('color', e.target.value));
+              }}
+            />
+          </button>
+
+          <button
+            ref={(el) => registerButtonRef('color-background', el)}
+            className={`${buttonClass} ${styles.colorButton}`}
+            title="Color de fondo"
+          >
+            <MdFontDownload />
+            <input
+              type="color"
+              onChange={(e) => {
+                handleToolbarAction(() => applyFormat('background', e.target.value));
+              }}
+            />
+          </button>
+
+          {/* Link */}
+          <button
+            ref={(el) => registerButtonRef('link', el)}
+            onClick={() => handleToolbarAction(openLinkModal)}
+            className={buttonClass}
+            title="Insertar enlace"
+            style={{ marginLeft: '15px' }}
+          >
+            <FaLink />
+          </button>
+
+          {/* Image */}
+          <button
+            ref={(el) => registerButtonRef('image', el)}
+            onClick={() => handleToolbarAction(openImageModal)}
+            className={buttonClass}
+            title="Insertar imagen"
+          >
+            <FaImage />
+          </button>
+
+          {/* Video */}
+          <button
+            ref={(el) => registerButtonRef('video', el)}
+            onClick={() => handleToolbarAction(openVideoModal)}
+            className={buttonClass}
+            title="Insertar video"
+          >
+            <FaVideo />
+          </button>
+
+          {/* Clean */}
+          <button
+            ref={(el) => registerButtonRef('remove-format', el)}
+            onClick={() => handleToolbarAction(() => {
+              const editor = getActiveEditor();
+              if (editor) {
+                const range = editor.getSelection();
+                editor.removeFormat(range?.index ?? 0, range?.length ?? 0);
+              }
+            })}
+            className={buttonClass}
+            title="Quitar formato"
+          >
+            <FaRemoveFormat />
+          </button>
+
+          {/* Guided checklist */}
+          <button
+            ref={(el) => registerButtonRef('guided-checklist', el)}
+            onClick={() => handleToolbarAction(() => {
+              const editor = getActiveEditor();
+              if (!editor) return;
+              const toolbarHandlers = editor?.options?.modules?.toolbar?.handlers;
+              const handler = toolbarHandlers?.['guided-checklist'];
+              if (typeof handler === 'function') {
+                handler.call({ quill: editor });
+              }
+            })}
+            className={buttonClass}
+            title="Lista guiada"
+          >
+            <GuidedCheckListIcon />
+          </button>
+        </div>
+
+        {/* Dropdown para botones que no caben */}
+        {hiddenButtons.length > 0 && (
+          <div ref={dropdownRef} className={styles.dropdownContainer}>
+            <button
+              className={styles.dropdownToggle}
+              onClick={() => setShowDropdown(!showDropdown)}
+              title="Más opciones"
+            >
+              <FaEllipsisH />
+            </button>
+
+            {showDropdown && (
+              <div className={styles.dropdownMenu}>
+                {hiddenButtons.includes('bold') && renderDropdownButton('bold-dropdown', <FaBold />, () => toggleFormat('bold'), 'Negrita')}
+                {hiddenButtons.includes('italic') && renderDropdownButton('italic-dropdown', <FaItalic />, () => toggleFormat('italic'), 'Itálica')}
+                {hiddenButtons.includes('underline') && renderDropdownButton('underline-dropdown', <FaUnderline />, () => toggleFormat('underline'), 'Subrayado')}
+                {hiddenButtons.includes('strike') && renderDropdownButton('strike-dropdown', <FaStrikethrough />, () => toggleFormat('strike'), 'Tachado')}
+                {hiddenButtons.includes('list-ordered') && renderDropdownButton('list-ordered-dropdown', <FaListOl />, () => applyFormat('list', 'ordered'), 'Lista ordenada')}
+                {hiddenButtons.includes('list-bullet') && renderDropdownButton('list-bullet-dropdown', <FaListUl />, () => applyFormat('list', 'bullet'), 'Lista con viñetas')}
+                {hiddenButtons.includes('list-alpha') && renderDropdownButton('list-alpha-dropdown', <TbListLetters />, () => applyFormat('list', 'alpha'), 'Lista alfabética')}
+                {hiddenButtons.includes('list-check') && renderDropdownButton('list-check-dropdown', <FaListCheck />, () => handleQuillToolbarAction('check', 'list'), 'Lista de verificación')}
+                {hiddenButtons.includes('align-left') && renderDropdownButton('align-left-dropdown', <FaAlignLeft />, () => applyFormat('align', ''), 'Alinear izquierda')}
+                {hiddenButtons.includes('align-center') && renderDropdownButton('align-center-dropdown', <FaAlignCenter />, () => applyFormat('align', 'center'), 'Centrar')}
+                {hiddenButtons.includes('align-right') && renderDropdownButton('align-right-dropdown', <FaAlignRight />, () => applyFormat('align', 'right'), 'Alinear derecha')}
+                {hiddenButtons.includes('align-justify') && renderDropdownButton('align-justify-dropdown', <FaAlignJustify />, () => applyFormat('align', 'justify'), 'Justificar')}
+                {hiddenButtons.includes('link') && renderDropdownButton('link-dropdown', <FaLink />, openLinkModal, 'Insertar enlace')}
+                {hiddenButtons.includes('image') && renderDropdownButton('image-dropdown', <FaImage />, openImageModal, 'Insertar imagen')}
+                {hiddenButtons.includes('video') && renderDropdownButton('video-dropdown', <FaVideo />, openVideoModal, 'Insertar video')}
+                {hiddenButtons.includes('remove-format') && renderDropdownButton('remove-format-dropdown', <FaRemoveFormat />, () => {
+                  const editor = getActiveEditor();
+                  if (editor) {
+                    const range = editor.getSelection();
+                    editor.removeFormat(range?.index ?? 0, range?.length ?? 0);
+                  }
+                }, 'Quitar formato')}
+                {hiddenButtons.includes('guided-checklist') && renderDropdownButton('guided-checklist-dropdown', <GuidedCheckListIcon />, () => {
+                  const editor = getActiveEditor();
+                  if (!editor) return;
+                  const toolbarHandlers = editor?.options?.modules?.toolbar?.handlers;
+                  const handler = toolbarHandlers?.['guided-checklist'];
+                  if (typeof handler === 'function') {
+                    handler.call({ quill: editor });
+                  }
+                }, 'Lista guiada')}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Modal para insertar imagen */}
+      {/* Modales (se mantienen igual) */}
       <Modal
         key={modalKey}
         title="Insertar imagen"
         open={isImageModalOpen}
-        onCancel={resetImageModal}
+        onCancel={() => {
+          resetImageModal();
+          handleModalCancel();
+        }}
         onOk={handleInsertImage}
         okText="Insertar"
         cancelText="Cancelar"
@@ -292,13 +643,13 @@ export default function Toolbar() {
         </div>
       </Modal>
 
-      {/* Modal para insertar video */}
       <Modal
         title="Insertar video"
         open={isVideoModalOpen}
         onCancel={() => {
           setVideoModalOpen(false);
           setVideoUrl('');
+          handleModalCancel();
         }}
         onOk={handleInsertVideo}
         okText="Insertar"
@@ -311,13 +662,13 @@ export default function Toolbar() {
         />
       </Modal>
 
-      {/* Modal para insertar enlace */}
       <Modal
         title="Insertar enlace"
         open={isLinkModalOpen}
         onCancel={() => {
           setLinkModalOpen(false);
           setLinkUrl('');
+          handleModalCancel();
         }}
         onOk={handleInsertLink}
         okText="Insertar"

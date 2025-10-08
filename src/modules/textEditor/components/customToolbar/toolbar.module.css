@@ -1,0 +1,235 @@
+/* Variables para mantener la consistencia */
+:root {
+  --gris-claro: #dcdcdc;
+  /* Línea gris minimalista y sutil */
+  --gris-medio: #b0b0b0;
+  /* Para el hover */
+  --gris-oscuro-suave: #888;
+  /* Para el enfoque (focus) */
+  --radio-esquina: 15px;
+  /* Hacemos las esquinas un poco más redondeadas */
+  --espaciado-minimal: 0.4em 1em;
+}
+
+/* Estilos comunes para todos los selectores */
+.toolbarSelect {
+  text-align: center;
+  /* Apariencia */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: 1px solid var(--gris-claro);
+  border-radius: var(--radio-esquina);
+  background-color: white;
+  color: #333;
+  font-size: 14px;
+  padding: var(--espaciado-minimal);
+
+  cursor: pointer;
+  outline: none;
+
+  /* Transición para efectos suaves */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.toolbarSelect:hover {
+  border-color: var(--gris-medio);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+
+.toolbarSelect:focus {
+  border-color: var(--gris-oscuro-suave);
+  box-shadow: 0 0 0 2px rgba(136, 136, 136, 0.3);
+}
+
+
+.selectWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.fontSelector {
+  padding-right: 25px;
+  min-width: 130px;
+}
+
+/****/
+
+.toolbarContainer {
+  display: flex;
+  width: 100%;
+  min-width: 375px;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  position: relative;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  min-height: 48px;
+ 
+  justify-content: center;
+}
+
+.toolbarButtons {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+  justify-content: center;
+}
+
+.toolbarButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  min-width: 32px;
+  height: 32px;
+  transition: all 0.2s;
+  position: relative;
+  flex-shrink: 1;
+  font-size: 14px;
+}
+
+.toolbarButton :global(.ant-select) {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.toolbarButton :global(.ant-select-selector) {
+  min-width: 0;
+}
+
+.toolbarButton:hover {
+  background: #f5f5f5;
+  border-color: var(--gris-medio);
+}
+
+.colorButton {
+  position: relative;
+  overflow: hidden;
+}
+
+.colorButton input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.dropdownContainer {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.dropdownToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  min-width: 32px;
+  height: 32px;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.dropdownToggle:hover {
+  background: #f5f5f5;
+  border-color: #4096ff;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+  margin-top: 4px;
+}
+
+.dropdownButtonItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  font-size: 14px;
+  width: 100%;
+  text-align: left;
+}
+
+.dropdownButtonItem:hover {
+  background: #f5f5f5;
+}
+
+.dropdownIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.dropdownLabel {
+  flex: 1;
+}
+
+/* Modo oscuro */
+.darkToolbarContainer {
+  background: #1E1E2F;
+}
+
+.darkToolbarButton,
+.darkDropdownToggle {
+  background: #2D2D44;
+  border-color: #434356;
+  color: #E2E8F0;
+}
+
+.darkToolbarButton:hover,
+.darkDropdownToggle:hover {
+  background: #383852;
+  border-color: #4096ff;
+}
+
+.darkDropdownMenu {
+  background: #2D2D44;
+  border-color: #434356;
+}
+
+.darkDropdownButtonItem {
+  color: #E2E8F0;
+}
+
+.darkDropdownButtonItem:hover {
+  background: #383852;
+}

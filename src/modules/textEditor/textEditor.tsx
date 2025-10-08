@@ -689,19 +689,31 @@ export default function TextEditor() {
                     ) : null}
                 </div>
             </div>
+            
+            <div style={{
+                display: "grid",
+                gridTemplateColumns: "minmax(0px, 1fr) minmax(50px, 150px)",
+                marginTop: "1px",
+                marginRight: "20px",
+                alignItems: "baseline",
+                minWidth: "520px"
+            }}>
+                <div className='w-full flex justify-center items-center' >
+                    <header style={{
+                        visibility: readOnly ? "hidden" : "visible",
+                        width: '100%',
 
-            <div style={{ zIndex: showToolbar ? 200 : 1, display: "grid", gridTemplateColumns: "1fr minmax(50px, 150px)", marginTop: "1px", marginRight: "20px", alignItems: "center", wordWrap: "break-word" }}>
-
-                <div className='w-full flex justify-center items-center h-[20px]'>
-                    <header style={{ visibility: readOnly ? "hidden" : "visible"}}>
+                        minWidth: 0,
+                        textAlign: 'center',
+                     
+                    }}>
                         {/* this prevent quill native toolbar from rendering */}
-                        <div id='toolbar'></div>
-                        <Toolbar />
-
+                        <div id='toolbar' style={{ display: 'none' }}></div>
+                        <Toolbar /> {/* este es el elemento */}
                     </header>
                 </div>
 
-                <div className=" flex justify-end gap-2 items-center  ">
+                <div className="flex justify-end gap-2 items-center">
                     {memberRoll?.write && (
                         <Dropdown.Button style={{ direction: "ltr" }} menu={{ items, onClick: onMenuClick }} onClick={() => {
                             if (memberRoll?.write && readOnly) {
@@ -711,7 +723,6 @@ export default function TextEditor() {
                                 handleOnPressSaveButton();
                             }
                         }} >{readOnly ? t('edit_label') : "Publish"}</Dropdown.Button >
-
                     )}
                 </div>
             </div>
