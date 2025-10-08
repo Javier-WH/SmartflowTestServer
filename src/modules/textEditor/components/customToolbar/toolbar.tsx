@@ -608,6 +608,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       </div>
 
     
+      {/* Modal de Insertar Imagen */}
       <Modal
         key={modalKey}
         title={t("insert_image")}
@@ -619,31 +620,50 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         onOk={handleInsertImage}
         okText={t("insert_label")}
         cancelText={t("cancel_label")}
+        wrapClassName={styles.minimalistModalWrap}
+        centered
       >
         <div className="flex flex-col gap-4">
-          <Input
+          {!localFile && <Input
+            style={{ direction: 'ltr' }}
             placeholder={t("image_placeholder")}
             value={imageUrl}
             disabled={!!localFile}
             onChange={(e) => {
               setImageUrl(e.target.value);
             }}
-          />
+          />}
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                setLocalFile(file);
-                setImageUrl('');
-              }
-            }}
-          />
+        
+          <div className={styles.customFileInput}>
+            {/* Texto que se muestra como un botón */}
+            {localFile
+              ? localFile.name 
+              : t("select_file_label") 
+            }
+
+            <input
+              type="file"
+              accept="image/*"
+    
+              className={styles.fileInputButton}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setLocalFile(file);
+                  setImageUrl('');
+                }
+              }}
+            />
+          </div>
+       
+
         </div>
       </Modal>
 
+      ---
+
+      {/* Modal de Insertar Video */}
       <Modal
         title={t("insert_video")}
         open={isVideoModalOpen}
@@ -655,14 +675,21 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         onOk={handleInsertVideo}
         okText={t("insert_label")}
         cancelText={t("cancel_label")}
+   
+        wrapClassName={styles.minimalistModalWrap}
+        centered 
       >
         <Input
+          style={{ direction: 'ltr' }}
           placeholder={t("video_placeholder")}
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
         />
       </Modal>
 
+      ---
+
+      {/* Modal de Insertar Enlace */}
       <Modal
         title={t("insert_link")}
         open={isLinkModalOpen}
@@ -674,8 +701,12 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         onOk={handleInsertLink}
         okText={t("insert_label")}
         cancelText={t("cancel_label")}
+   
+        wrapClassName={styles.minimalistModalWrap}
+        centered 
       >
         <Input
+          style={{ direction: 'ltr' }}
           placeholder={t("link_placeholder")}
           value={linkUrl}
           onChange={(e) => setLinkUrl(e.target.value)}

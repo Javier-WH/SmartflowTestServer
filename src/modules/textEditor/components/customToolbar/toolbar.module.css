@@ -233,3 +233,113 @@
 .darkDropdownButtonItem:hover {
   background: #383852;
 }
+
+/**/
+
+/* toolbar.module.css */
+
+.minimalistModalWrap :global(.ant-modal-content) {
+  /* Fondo del Modal */
+  background-color: #f7f7f7;
+  /* Gris muy claro */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  
+}
+
+.minimalistModalWrap :global(.ant-modal-header) {
+  /* Cabecera */
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #e0e0e0;
+  /* Divisor sutil */
+  padding: 16px 24px;
+}
+
+.minimalistModalWrap :global(.ant-modal-title) {
+  /* Título */
+  color: #333;
+  /* Texto oscuro */
+  font-weight: 600;
+}
+
+.minimalistModalWrap :global(.ant-modal-footer) {
+  /* Pie del Modal */
+  background-color: #f7f7f7;
+  border-top: 1px solid #e0e0e0;
+  padding: 10px 24px;
+}
+
+/* Estilos para los botones de Ant Design */
+.minimalistModalWrap :global(.ant-btn-primary) {
+  /* Gris oscuro para Aceptar */
+  background-color: #5d5d5d;
+  border-color: #5d5d5d;
+  color: white;
+}
+
+.minimalistModalWrap :global(.ant-btn-primary:hover),
+.minimalistModalWrap :global(.ant-btn-primary:focus) {
+  background-color: #444;
+  border-color: #444;
+  color: white;
+  opacity: 0.9;
+}
+
+.minimalistModalWrap :global(.ant-btn-default) {
+  /* Gris medio para Cancelar */
+  color: #777;
+  border-color: #ccc;
+}
+
+.minimalistModalWrap :global(.ant-btn-default:hover),
+.minimalistModalWrap :global(.ant-btn-default:focus) {
+  /* **CORRECCIÓN:** Hover y Focus para Cancelar */
+  color: #555;
+  border-color: #aaa;
+  background-color: #eee;
+  /* Levemente más oscuro al hacer hover */
+}
+
+/* Estilos para el Input de Ant Design */
+.minimalistModalWrap :global(.ant-input) {
+  border: 1px solid #ccc;
+  /* Borde gris sutil */
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.fileInputButton {
+  /* Oculta la apariencia genérica del input */
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* Estilo visual que simula el botón "Subir imagen" */
+.customFileInput {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #555;
+  /* Texto gris */
+  background-color: #eee;
+  /* Fondo gris claro */
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  /* Necesario para posicionar el input real */
+  overflow: hidden;
+  /* Oculta el texto genérico del input file */
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.customFileInput:hover {
+  background-color: #e0e0e0;
+  /* Gris ligeramente más oscuro al hacer hover */
+  border-color: #bbb;
+}

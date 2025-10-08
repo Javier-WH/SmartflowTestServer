@@ -207,5 +207,6 @@
   "clean_format": "Clean Format",
   "guided_check_list": "Guided Check List",
   "more": "More",
-  "less": "Less"
+  "less": "Less",
+  "select_file_label": "Select a file image"
 }
