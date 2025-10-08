@@ -8,7 +8,7 @@ import { FaListCheck } from "react-icons/fa6";
 import { TbListLetters } from "react-icons/tb";
 import { MdFormatColorText, MdFontDownload } from "react-icons/md";
 import { FontSelector, SizeSelector, HeaderSelector } from './Selectors';
-import styles from './Toolbar.module.css';
+import styles from './toolbar.module.css';
 import { t } from 'i18next';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
