@@ -43,14 +43,45 @@ export function SizeSelector({ applyFormat }) {
   )
 }
 
+
+
 export function HeaderSelector({ applyFormat }) {
 
+
+  const headerStyles = {
+  
+    1: { fontSize: '2em', fontWeight: 'bold' },    
+    2: { fontSize: '1.5em', fontWeight: 'bold' },  
+    3: { fontSize: '1.17em', fontWeight: 'bold' }, 
+    4: { fontSize: '1em', fontWeight: 'bold' },   
+    5: { fontSize: '0.83em', fontWeight: 'bold' },
+    6: { fontSize: '0.67em', fontWeight: 'bold' }, 
+    normal: { fontSize: '1em', fontWeight: 'normal' } 
+  };
+
   return (
-    <select className={`${styles.toolbarSelect} ${styles.headerSelector}`} onChange={(e) => applyFormat('header', e.target.value === 'normal' ? false : parseInt(e.target.value))} defaultValue="normal">
+    <select
+      className={`${styles.toolbarSelect} ${styles.headerSelector}`}
+      onChange={(e) => applyFormat('header', e.target.value === 'normal' ? false : parseInt(e.target.value))}
+      defaultValue="normal"
+    >
       {[1, 2, 3, 4, 5, 6].map((h) => (
-        <option key={h} value={h}>{`${t('quill_header')} ${h}`}</option>
+        <option
+          key={h}
+          value={h}
+     
+          style={headerStyles[h]}
+        >
+          {`${t('quill_header')} ${h}`}
+        </option>
       ))}
-      <option value="normal">{t('quill_paragraph')}</option>
+      <option
+        value="normal"
+  
+        style={headerStyles.normal}
+      >
+        {t('quill_paragraph')}
+      </option>
     </select>
   )
 }

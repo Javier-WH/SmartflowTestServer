@@ -233,3 +233,115 @@
 .darkDropdownButtonItem:hover {
   background: #383852;
 }
+
+/**/
+
+/* toolbar.module.css */
+
+.minimalistModalWrap :global(.ant-modal-content) {
+  /* Fondo del Modal */
+  background-color: #f7f7f7;
+  /* Gris muy claro */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  
+}
+
+.minimalistModalWrap :global(.ant-modal-header) {
+  /* Cabecera */
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #e0e0e0;
+  /* Divisor sutil */
+  padding: 16px 24px;
+}
+
+.minimalistModalWrap :global(.ant-modal-title) {
+  /* Título */
+  color: #333;
+  /* Texto oscuro */
+  font-weight: 600;
+}
+
+.minimalistModalWrap :global(.ant-modal-footer) {
+  /* Pie del Modal */
+  background-color: #f7f7f7;
+  border-top: 1px solid #e0e0e0;
+  padding: 10px 24px;
+}
+
+/* Estilos para los botones de Ant Design */
+/* Botón Primario (Aceptar/Insertar) */
+.minimalistModalWrap :global(.ant-btn-primary) {
+  /* Gris oscuro para Aceptar */
+  background-color: #5d5d5d !important;
+  /* ¡Aumentamos especificidad con !important! */
+  border-color: #5d5d5d !important;
+  color: white !important;
+}
+
+/* **CORRECCIÓN CLAVE:** Asegurar que el hover y focus sigan siendo grises */
+.minimalistModalWrap :global(.ant-btn-primary:not([disabled]):hover),
+.minimalistModalWrap :global(.ant-btn-primary:not([disabled]):focus),
+.minimalistModalWrap :global(.ant-btn-primary:hover),
+.minimalistModalWrap :global(.ant-btn-primary:focus) {
+  background-color: #444 !important;
+  border-color: #444 !important;
+  color: white !important;
+  opacity: 1 !important;
+  /* Aseguramos que la opacidad sea total */
+}
+
+/* Botón Por Defecto (Cancelar) */
+.minimalistModalWrap :global(.ant-btn-default) {
+  /* Gris medio para Cancelar */
+  color: #777 !important;
+  border-color: #ccc !important;
+  background-color: white !important;
+  /* Aseguramos que no haya color de fondo azul por defecto */
+}
+
+/* **CORRECCIÓN CLAVE:** Hover y Focus para Cancelar */
+.minimalistModalWrap :global(.ant-btn-default:not([disabled]):hover),
+.minimalistModalWrap :global(.ant-btn-default:not([disabled]):focus),
+.minimalistModalWrap :global(.ant-btn-default:hover),
+.minimalistModalWrap :global(.ant-btn-default:focus) {
+  color: #555 !important;
+  border-color: #aaa !important;
+  background-color: #eee !important;
+}
+
+.fileInputButton {
+  /* Oculta la apariencia genérica del input */
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* Estilo visual que simula el botón "Subir imagen" */
+.customFileInput {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #555;
+  /* Texto gris */
+  background-color: #eee;
+  /* Fondo gris claro */
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  /* Necesario para posicionar el input real */
+  overflow: hidden;
+  /* Oculta el texto genérico del input file */
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.customFileInput:hover {
+  background-color: #e0e0e0;
+  /* Gris ligeramente más oscuro al hacer hover */
+  border-color: #bbb;
+}
