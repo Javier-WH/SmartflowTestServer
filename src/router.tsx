@@ -1,20 +1,20 @@
-import { createBrowserRouter } from 'react-router-dom';
-import SignIn from './modules/auth/pages/SignIn';
-import SignUp from './modules/auth/pages/SignUp';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import ErrorPage from './errorsHandler/errorPage';
 import ForgotPassword from './modules/auth/pages/ForgotPassword';
 import ResetPassword from './modules/auth/pages/ResetPassword';
+import SignIn from './modules/auth/pages/SignIn';
+import SignUp from './modules/auth/pages/SignUp';
 import Home from './modules/home/pages/Home';
-import Page from './modules/page/page';
-import { Navigate } from 'react-router-dom';
-import MainLayout from './modules/MainLayout';
-import PrivateRoute from './PrivateRoute';
-import TextEditor from './modules/textEditor/textEditor';
-import Organizations from './modules/organizations/organizations';
-import JoinOrganization from './modules/onboarding/join-org';
-import Members from './modules/joinOrganization/menbers';
 import UserJoinOrganization from './modules/joinOrganization/joinOrganization';
+import Members from './modules/joinOrganization/menbers';
+import MainLayout from './modules/MainLayout';
+import JoinOrganization from './modules/onboarding/join-org';
+import Organizations from './modules/organizations/organizations';
+import Page from './modules/page/page';
+import TaskManager from './modules/task_manager/pages/TaskManager';
+import TextEditor from './modules/textEditor/textEditor';
 import VersionViewer from './modules/textEditor/versionViewer';
-import ErrorPage from './errorsHandler/errorPage';
+import PrivateRoute from './PrivateRoute';
 
 const router = createBrowserRouter([
     {
@@ -55,6 +55,10 @@ const router = createBrowserRouter([
             {
                 path: 'join/:id',
                 element: <UserJoinOrganization />,
+            },
+            {
+                path: 'task_manager',
+                element: <TaskManager />,
             },
         ],
     },

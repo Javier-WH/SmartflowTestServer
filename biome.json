@@ -13,7 +13,6 @@
     "javascript": {
         "formatter": {
             "quoteStyle": "single",
-            "trailingComma": "all",
             "arrowParentheses": "asNeeded"
         }
     },
