@@ -201,7 +201,6 @@ export default function TextEditor() {
 
                 //setShowToolbar(false);
             } else {
-                console.log("main editor active")
                 setActiveEditor(quillRef.current?.getEditor());
                 //setShowToolbar(true);
             }

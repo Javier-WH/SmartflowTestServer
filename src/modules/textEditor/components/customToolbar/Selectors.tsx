@@ -1,7 +1,18 @@
 import { t } from 'i18next';
 import styles from './toolbar.module.css'
 
-export function FontSelector({ applyFormat }) {
+interface FontSelectorProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  applyFormat: (format: string, value: any) => void;
+  currentFont?: string;
+}
+
+interface SizeSelectorProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  applyFormat: (format: string, value: any) => void;
+  currentSize?: string;
+}
+export function FontSelector({ applyFormat, currentFont }: FontSelectorProps) {
 
   return (
     <div className={styles.selectWrapper}>
@@ -9,6 +20,7 @@ export function FontSelector({ applyFormat }) {
       onChange={(e) => applyFormat('font', e.target.value)}
       defaultValue="arial"
       className={`${styles.toolbarSelect} ${styles.fontSelector}`}
+      value={currentFont}
     >
 
       <option value="arial" style={{ fontFamily: 'Arial, sans-serif' }}>Arial</option>
@@ -32,10 +44,10 @@ export function FontSelector({ applyFormat }) {
 }
 
 
-export function SizeSelector({ applyFormat }) {
+export function SizeSelector({ applyFormat, currentSize }: SizeSelectorProps) {
 
   return (
-    <select className={`${styles.toolbarSelect} ${styles.sizeSelector}`} onChange={(e) => applyFormat('size', e.target.value)} defaultValue="16px">
+    <select value={currentSize} className={`${styles.toolbarSelect} ${styles.sizeSelector}`} onChange={(e) => applyFormat('size', e.target.value)} defaultValue="16px">
       {Array.from({ length: 20 }, (_, i) => 10 + i * 2).map((size) => (
         <option key={size} value={`${size}px`}>{size}</option>
       ))}

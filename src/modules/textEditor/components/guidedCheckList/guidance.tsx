@@ -396,7 +396,7 @@ export default function Guidance({
                 quillRef.current && quillRef.current.contains(event.target as Node) ||
                 toolbarRef.current && toolbarRef.current.contains(event.target as Node)
             ) {
-                console.log("guidance editor active")
+                
                 setActiveEditor(editorRef.current);
                 //setShowToolbar(true);
             } else {
