@@ -27,6 +27,8 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   const [savedEditor, setSavedEditor] = useState<any>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [hiddenButtons, setHiddenButtons] = useState<string[]>([]);
+  const [currentFont, setCurrentFont] = useState<string>(''); // Estado para la fuente actual
+  const [currentFontSize, setCurrentFontSize] = useState<string>('');// Estado para el tamaño de fuente actual
   const toolbarRef = useRef<HTMLDivElement>(null);
   const toolbarButtonsRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<{ [key: string]: HTMLButtonElement }>({});
@@ -38,9 +40,77 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       setLocalFile(null);
     }
   }, [isImageModalOpen]);
-  
 
+  // Efecto para escuchar cambios en la selección y actualizar la fuente actual
+  useEffect(() => {
+    let lastFont = '';
+    let lastFontSize = '';
+    let intervalId = null;
 
+    const checkFontAndSize = () => {
+      const editor = getActiveEditor();
+
+      if (editor) {
+        const range = editor.getSelection();
+        if (range) {
+          const formats = editor.getFormat(range);
+          const currentFont = formats.font || '';
+          const currentFontSize = formats.size || '';
+
+          // Actualizar fuente si cambió
+          if (currentFont !== lastFont) {
+            lastFont = currentFont;
+            setCurrentFont(currentFont);
+          }
+
+          // Actualizar tamaño de fuente si cambió
+          if (currentFontSize !== lastFontSize) {
+            lastFontSize = currentFontSize;
+            setCurrentFontSize(currentFontSize);
+          }
+        } else {
+          // No hay selección - resetear ambos valores
+          if (lastFont !== '') {
+            lastFont = '';
+            setCurrentFont('');
+          }
+          if (lastFontSize !== '') {
+            lastFontSize = '';
+            setCurrentFontSize('');
+          }
+        }
+      } else {
+        // No hay editor activo - resetear ambos valores
+        if (lastFont !== '') {
+          lastFont = '';
+          setCurrentFont('');
+        }
+        if (lastFontSize !== '') {
+          lastFontSize = '';
+          setCurrentFontSize('');
+        }
+      }
+    };
+
+    // Verificar cada 100ms
+    intervalId = setInterval(checkFontAndSize, 100);
+
+    // Eventos para respuesta inmediata
+    const quickCheck = () => {
+      requestAnimationFrame(checkFontAndSize);
+    };
+
+    document.addEventListener('click', quickCheck);
+    document.addEventListener('keyup', quickCheck);
+    document.addEventListener('mouseup', quickCheck);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('click', quickCheck);
+      document.removeEventListener('keyup', quickCheck);
+      document.removeEventListener('mouseup', quickCheck);
+    };
+  }, []);
 
   // Función para calcular botones visibles 
   const calculateVisibleButtons = useCallback(() => {
@@ -98,7 +168,6 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
 
     setHiddenButtons(hidden);
   }, []);
-
 
   useEffect(() => {
     let resizeTimeout: NodeJS.Timeout;
@@ -196,6 +265,11 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     const range = editor.getSelection();
     if (range) {
       editor.format(format, value ?? true);
+
+      // Actualizar la fuente actual si se cambió la fuente
+      if (format === 'font') {
+        setCurrentFont(value || '');
+      }
     }
     setShowDropdown(false);
   };
@@ -373,14 +447,14 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     <>
       <div ref={toolbarRef} className={styles.toolbarContainer}>
         <div ref={toolbarButtonsRef} className={styles.toolbarButtons}>
-          {/* Font */}
+          {/* Font - Pasamos la fuente actual como prop */}
           <div ref={(el) => el && registerButtonRef('font-selector', el?.querySelector('button') || null)}>
-            <FontSelector applyFormat={applyFormat} />
+            <FontSelector applyFormat={applyFormat} currentFont={currentFont} />
           </div>
 
           {/* Size */}
           <div ref={(el) => el && registerButtonRef('size-selector', el?.querySelector('button') || null)}>
-            <SizeSelector applyFormat={applyFormat} />
+            <SizeSelector applyFormat={applyFormat} currentSize={currentFontSize} />
           </div>
 
           {/* Header */}
@@ -571,6 +645,8 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
               if (editor) {
                 const range = editor.getSelection();
                 editor.removeFormat(range?.index ?? 0, range?.length ?? 0);
+                // También resetear la fuente actual
+                setCurrentFont('');
               }
             })}
             className={buttonClass}
@@ -631,6 +707,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
                   if (editor) {
                     const range = editor.getSelection();
                     editor.removeFormat(range?.index ?? 0, range?.length ?? 0);
+                    setCurrentFont('');
                   }
                 }, t("clean_format"))}
                 {hiddenButtons.includes('guided-checklist') && renderDropdownButton('guided-checklist-dropdown', <GuidedCheckListIcon />, () => {
