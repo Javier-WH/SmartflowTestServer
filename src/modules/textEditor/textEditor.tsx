@@ -719,7 +719,7 @@ export default function TextEditor() {
                     </header>
                 </div>
 
-                <div className="flex justify-end gap-2 items-center">
+                <div className="flex justify-end gap-2 items-center custom-dropdown">
                     {memberRoll?.write && (
                         <Dropdown.Button style={{ direction: "ltr" }} menu={{ items, onClick: onMenuClick }} onClick={() => {
                             if (memberRoll?.write && readOnly) {

@@ -8,20 +8,28 @@
     color: black !important;
 }
 
+/*boton editar publicar*/
+/*.custom-dropdown button {
+    height: 32px !important;
+
+}*/
+
 .ant-space-compact .ant-btn {
-    height: 37px;
+    height: 32px;
     margin-top: 10px;
 }
 .ant-space-compact .ant-btn:first-child {
     width: 100%;
-    border-bottom-left-radius: 15px !important;
-    border-top-left-radius: 15px !important;
+    border-bottom-left-radius: 12px !important;
+    border-top-left-radius: 12px !important;
 }
 
 .ant-space-compact .ant-btn:last-child {
-    border-bottom-right-radius: 15px !important;
-    border-top-right-radius: 15px !important;
+    border-bottom-right-radius: 12px !important;
+    border-top-right-radius: 12px !important;
 }
+
+/**/
 
 .ant-dropdown-menu {
     /* Ajusta estos valores según tus necesidades */
@@ -509,29 +517,6 @@ a {
 
 
 
-/*.action-button {
-    @apply rounded-md hover:!bg-primary hover:!text-white
-}
-
-.action-button:hover > svg > .ql-stroke {
-    @apply !stroke-white
-}
-
-.action-button:hover img {
-    filter: invert(1);
-}
-
-.action-button:hover > .ql-picker-label > svg > .ql-stroke {
-    @apply !stroke-white
-}
-
-.action-button:hover .ql-fill {
-    @apply !fill-white
-}
-.ql-picker-item:hover .ql-stroke {
-    @apply !stroke-white
-}*/
-
 .guidend-checklist-toolbar-button:hover svg {
     fill: black !important;
   
@@ -611,3 +596,4 @@ a {
 .ql-color > span {
     width: 30px !important;
 }
+

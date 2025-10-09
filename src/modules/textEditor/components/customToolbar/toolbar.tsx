@@ -28,6 +28,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [hiddenButtons, setHiddenButtons] = useState<string[]>([]);
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const toolbarButtonsRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<{ [key: string]: HTMLButtonElement }>({});
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -37,20 +38,17 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       setLocalFile(null);
     }
   }, [isImageModalOpen]);
+  
 
-  // Función para calcular botones visibles
+
+
+  // Función para calcular botones visibles 
   const calculateVisibleButtons = useCallback(() => {
-    if (!toolbarRef.current) return;
+    if (!toolbarButtonsRef.current) return;
 
-    const toolbar = toolbarRef.current;
-    const toolbarWidth = toolbar.offsetWidth;
+    const toolbarButtons = toolbarButtonsRef.current;
+    const availableWidth = toolbarButtons.offsetWidth;
 
-    // Espacio disponible (dejamos 60px para el botón dropdown)
-    const availableWidth = toolbarWidth - 340;
-    let currentWidth = 0;
-    const hidden: string[] = [];
-
-    // Orden de los botones (deben coincidir con el orden en el DOM)
     const buttonOrder = [
       'font-selector', 'size-selector', 'header-selector',
       'bold', 'italic', 'underline', 'strike',
@@ -60,48 +58,86 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       'remove-format', 'guided-checklist'
     ];
 
-    // Resetear todos los botones primero
-    Object.keys(buttonsRef.current).forEach(key => {
+    // Mostrar todos los botones primero
+    buttonOrder.forEach(key => {
       const button = buttonsRef.current[key];
       if (button) {
         button.style.display = 'flex';
       }
     });
 
-    // Calcular qué botones caben
-    buttonOrder.forEach(key => {
-      const button = buttonsRef.current[key];
-      if (button && button.offsetWidth > 0) {
-        const buttonWidth = button.offsetWidth + 8; // +8 por el gap
+    // Forzar reflow
+    toolbarButtons.getBoundingClientRect();
 
-        if (currentWidth + buttonWidth <= availableWidth) {
-          currentWidth += buttonWidth;
-        } else {
-          button.style.display = 'none';
-          hidden.push(key);
+    // Verificar si todos caben
+    const containerWidth = toolbarButtons.scrollWidth;
+    if (containerWidth <= availableWidth) {
+      setHiddenButtons([]);
+      return;
+    }
+
+    // Si no caben, empezar a ocultar desde el final
+    const hidden = [];
+    for (let i = buttonOrder.length - 1; i >= 0; i--) {
+      const key = buttonOrder[i];
+      const button = buttonsRef.current[key];
+
+      if (button) {
+        button.style.display = 'none';
+        hidden.push(key);
+
+        // Forzar reflow después de ocultar
+        toolbarButtons.getBoundingClientRect();
+
+        // Verificar si ahora caben
+        if (toolbarButtons.scrollWidth <= availableWidth) {
+          break;
         }
       }
-    });
+    }
 
     setHiddenButtons(hidden);
   }, []);
 
-  // Efecto para calcular visibilidad
+
   useEffect(() => {
+    let resizeTimeout: NodeJS.Timeout;
+
     const handleResize = () => {
-      calculateVisibleButtons();
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        calculateVisibleButtons();
+      }, 150);
     };
 
-    // Calcular después de un breve delay para asegurar que los elementos están renderizados
-    const timeoutId = setTimeout(() => {
-      calculateVisibleButtons();
-    }, 100);
+    // Múltiples recálculos para asegurar que todo esté renderizado
+    const timeouts = [
+      setTimeout(calculateVisibleButtons, 100),
+      setTimeout(calculateVisibleButtons, 300),
+      setTimeout(calculateVisibleButtons, 500)
+    ];
 
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      clearTimeout(timeoutId);
+      clearTimeout(resizeTimeout);
+      timeouts.forEach(timeout => clearTimeout(timeout));
+    };
+  }, [calculateVisibleButtons]);
+
+  // Efecto para observar cambios en el contenedor de botones
+  useEffect(() => {
+    if (!toolbarButtonsRef.current) return;
+
+    const observer = new ResizeObserver(() => {
+      calculateVisibleButtons();
+    });
+
+    observer.observe(toolbarButtonsRef.current);
+
+    return () => {
+      observer.disconnect();
     };
   }, [calculateVisibleButtons]);
 
@@ -122,10 +158,17 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     };
   }, [showDropdown]);
 
-  // Recalcular cuando cambia el modo oscuro
+  // Recalcular cuando cambia el modo oscuro - MEJORADO
   useEffect(() => {
-    setTimeout(calculateVisibleButtons, 100);
+    const timeoutId = setTimeout(calculateVisibleButtons, 200);
+    return () => clearTimeout(timeoutId);
   }, [darkMode, calculateVisibleButtons]);
+
+  // Recalcular cuando se monta el componente
+  useEffect(() => {
+    const timeoutId = setTimeout(calculateVisibleButtons, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [calculateVisibleButtons]);
 
   // Función para guardar el estado actual del editor
   const saveEditorState = () => {
@@ -324,14 +367,12 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     </button>
   );
 
- 
   const buttonClass = styles.toolbarButton;
 
- 
   return (
     <>
       <div ref={toolbarRef} className={styles.toolbarContainer}>
-        <div className={styles.toolbarButtons}>
+        <div ref={toolbarButtonsRef} className={styles.toolbarButtons}>
           {/* Font */}
           <div ref={(el) => el && registerButtonRef('font-selector', el?.querySelector('button') || null)}>
             <FontSelector applyFormat={applyFormat} />
@@ -570,7 +611,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
 
             {showDropdown && (
               <div className={styles.dropdownMenu}>
-                {hiddenButtons.includes('bold') && renderDropdownButton('bold-dropdown', <FaBold />, () => toggleFormat('bold'), t("bold") )}
+                {hiddenButtons.includes('bold') && renderDropdownButton('bold-dropdown', <FaBold />, () => toggleFormat('bold'), t("bold"))}
                 {hiddenButtons.includes('italic') && renderDropdownButton('italic-dropdown', <FaItalic />, () => toggleFormat('italic'), t("italic"))}
                 {hiddenButtons.includes('underline') && renderDropdownButton('underline-dropdown', <FaUnderline />, () => toggleFormat('underline'), t("underline"))}
                 {hiddenButtons.includes('strike') && renderDropdownButton('strike-dropdown', <FaStrikethrough />, () => toggleFormat('strike'), t("strikethrough"))}
@@ -607,7 +648,6 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         )}
       </div>
 
-    
       {/* Modal de Insertar Imagen */}
       <Modal
         key={modalKey}
@@ -634,18 +674,16 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             }}
           />}
 
-        
           <div className={styles.customFileInput}>
             {/* Texto que se muestra como un botón */}
             {localFile
-              ? localFile.name 
-              : t("select_file_label") 
+              ? localFile.name
+              : t("select_file_label")
             }
 
             <input
               type="file"
               accept="image/*"
-    
               className={styles.fileInputButton}
               onChange={(e) => {
                 const file = e.target.files?.[0];
@@ -656,12 +694,8 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
               }}
             />
           </div>
-       
-
         </div>
       </Modal>
-
-  
 
       {/* Modal de Insertar Video */}
       <Modal
@@ -675,9 +709,8 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         onOk={handleInsertVideo}
         okText={t("insert_label")}
         cancelText={t("cancel_label")}
-   
         wrapClassName={styles.minimalistModalWrap}
-        centered 
+        centered
       >
         <Input
           style={{ direction: 'ltr' }}
@@ -686,8 +719,6 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           onChange={(e) => setVideoUrl(e.target.value)}
         />
       </Modal>
-
-
 
       {/* Modal de Insertar Enlace */}
       <Modal
@@ -701,9 +732,8 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         onOk={handleInsertLink}
         okText={t("insert_label")}
         cancelText={t("cancel_label")}
-   
         wrapClassName={styles.minimalistModalWrap}
-        centered 
+        centered
       >
         <Input
           style={{ direction: 'ltr' }}
