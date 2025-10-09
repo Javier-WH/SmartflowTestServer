@@ -1,20 +1,16 @@
 /* Variables para mantener la consistencia */
 :root {
   --gris-claro: #dcdcdc;
-  /* Línea gris minimalista y sutil */
   --gris-medio: #b0b0b0;
-  /* Para el hover */
   --gris-oscuro-suave: #888;
-  /* Para el enfoque (focus) */
   --radio-esquina: 15px;
-  /* Hacemos las esquinas un poco más redondeadas */
   --espaciado-minimal: 0.4em 1em;
+  --button-height: 31px;
 }
 
 /* Estilos comunes para todos los selectores */
 .toolbarSelect {
   text-align: center;
-  /* Apariencia */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -24,11 +20,10 @@
   color: #333;
   font-size: 14px;
   padding: var(--espaciado-minimal);
-
   cursor: pointer;
   outline: none;
-
-  /* Transición para efectos suaves */
+  height: var(--button-height);
+  line-height: calc(var(--button-height) / 2);
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
@@ -93,8 +88,8 @@
   border-radius: 12px;
   background: white;
   cursor: pointer;
-  min-width: 32px;
-  height: 32px;
+  min-width: var(--button-height);
+  height: var(--button-height);
   transition: all 0.2s;
   position: relative;
   flex-shrink: 1;
@@ -141,7 +136,7 @@
   justify-content: center;
   padding: 6px;
   border: 1px solid #d9d9d9;
-  border-radius: 4px;
+  border-radius: 12px;
   background: white;
   cursor: pointer;
   min-width: 32px;
@@ -152,7 +147,7 @@
 
 .dropdownToggle:hover {
   background: #f5f5f5;
-  border-color: #4096ff;
+  border-color: var(--gris-medio);
 }
 
 .dropdownMenu {
@@ -239,9 +234,9 @@
 /* toolbar.module.css */
 
 .minimalistModalWrap :global(.ant-modal-content) {
-  /* Fondo del Modal */
+
   background-color: #f7f7f7;
-  /* Gris muy claro */
+  
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   
@@ -251,14 +246,13 @@
   /* Cabecera */
   background-color: #f7f7f7;
   border-bottom: 1px solid #e0e0e0;
-  /* Divisor sutil */
   padding: 16px 24px;
 }
 
 .minimalistModalWrap :global(.ant-modal-title) {
-  /* Título */
+
   color: #333;
-  /* Texto oscuro */
+
   font-weight: 600;
 }
 
@@ -272,14 +266,12 @@
 /* Estilos para los botones de Ant Design */
 /* Botón Primario (Aceptar/Insertar) */
 .minimalistModalWrap :global(.ant-btn-primary) {
-  /* Gris oscuro para Aceptar */
   background-color: #5d5d5d !important;
-  /* ¡Aumentamos especificidad con !important! */
   border-color: #5d5d5d !important;
   color: white !important;
 }
 
-/* **CORRECCIÓN CLAVE:** Asegurar que el hover y focus sigan siendo grises */
+/* Asegurar que el hover y focus sigan siendo grises */
 .minimalistModalWrap :global(.ant-btn-primary:not([disabled]):hover),
 .minimalistModalWrap :global(.ant-btn-primary:not([disabled]):focus),
 .minimalistModalWrap :global(.ant-btn-primary:hover),
@@ -293,14 +285,13 @@
 
 /* Botón Por Defecto (Cancelar) */
 .minimalistModalWrap :global(.ant-btn-default) {
-  /* Gris medio para Cancelar */
   color: #777 !important;
   border-color: #ccc !important;
   background-color: white !important;
-  /* Aseguramos que no haya color de fondo azul por defecto */
+
 }
 
-/* **CORRECCIÓN CLAVE:** Hover y Focus para Cancelar */
+/* Hover y Focus para Cancelar */
 .minimalistModalWrap :global(.ant-btn-default:not([disabled]):hover),
 .minimalistModalWrap :global(.ant-btn-default:not([disabled]):focus),
 .minimalistModalWrap :global(.ant-btn-default:hover),
@@ -311,7 +302,6 @@
 }
 
 .fileInputButton {
-  /* Oculta la apariencia genérica del input */
   opacity: 0;
   position: absolute;
   top: 0;
@@ -342,6 +332,5 @@
 
 .customFileInput:hover {
   background-color: #e0e0e0;
-  /* Gris ligeramente más oscuro al hacer hover */
   border-color: #bbb;
 }
