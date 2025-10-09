@@ -446,6 +446,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   return (
     <>
       <div ref={toolbarRef} className={styles.toolbarContainer}>
+        
         <div ref={toolbarButtonsRef} className={styles.toolbarButtons}>
           {/* Font - Pasamos la fuente actual como prop */}
           <div ref={(el) => el && registerButtonRef('font-selector', el?.querySelector('button') || null)}>
@@ -723,6 +724,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             )}
           </div>
         )}
+
       </div>
 
       {/* Modal de Insertar Imagen */}
