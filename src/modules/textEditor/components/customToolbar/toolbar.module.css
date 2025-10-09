@@ -165,6 +165,10 @@
   gap: 4px;
   min-width: 160px;
   margin-top: 4px;
+  max-height: 500px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-track-color: transparent;
 }
 
 .dropdownButtonItem {
