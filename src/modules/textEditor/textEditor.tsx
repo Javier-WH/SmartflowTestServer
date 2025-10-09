@@ -701,7 +701,7 @@ export default function TextEditor() {
                 marginTop: "1px",
                 marginRight: "20px",
                 alignItems: "baseline",
-                minWidth: "520px"
+                minWidth: "520px",
             }}>
                 <div className='w-full flex justify-center items-center' >
                     <header style={{
@@ -714,7 +714,7 @@ export default function TextEditor() {
                     }}>
                         {/* this prevent quill native toolbar from rendering */}
                         <div id='toolbar' style={{ display: 'none' }}></div>
-                        <Toolbar /> {/* este es el elemento */}
+                        <Toolbar /> 
                     </header>
                 </div>
 

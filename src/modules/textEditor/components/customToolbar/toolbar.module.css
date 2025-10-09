@@ -10,32 +10,20 @@
 
 /* Estilos comunes para todos los selectores */
 .toolbarSelect {
+  position: relative;
   text-align: center;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  border: 1px solid var(--gris-claro);
-  border-radius: var(--radio-esquina);
-  background-color: white;
+  /*border: 1px solid var(--gris-claro);*/
+  background-color: transparent;
   color: #333;
   font-size: 14px;
   padding: var(--espaciado-minimal);
-  cursor: pointer;
   outline: none;
   height: var(--button-height);
   line-height: calc(var(--button-height) / 2);
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.toolbarSelect:hover {
-  border-color: var(--gris-medio);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-
-.toolbarSelect:focus {
-  border-color: var(--gris-oscuro-suave);
-  box-shadow: 0 0 0 2px rgba(136, 136, 136, 0.3);
 }
 
 
@@ -44,11 +32,22 @@
   display: inline-block;
 }
 
-.fontSelector {
-  padding-right: 25px;
-  min-width: 130px;
+.selectWrapper:hover {
+  background-color: var(--gris-medio);
 }
 
+
+.fontSelector{
+  position: relative;
+  flex-shrink: 0;
+}
+.fontMenu{
+  background-color: white;
+ overflow-y: auto;
+  width: 100%;
+  height: 400px;
+  border: 1px solid var(--gris-medio);
+}
 /****/
 
 .toolbarContainer {
@@ -57,14 +56,19 @@
   min-width: 375px;
   background: white;
   padding: 8px;
-  border-radius: 4px;
+  border-radius: 15px;
   position: relative;
   align-items: center;
   gap: 8px;
   box-sizing: border-box;
-  min-height: 48px;
- 
+  height: 33px;
+  border: 1px solid var(--gris-claro);
   justify-content: center;
+  max-width: 1050px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+
 }
 
 .toolbarButtons {
@@ -77,6 +81,7 @@
   overflow: hidden;
   width: 100%;
   justify-content: center;
+
 }
 
 .toolbarButton {
@@ -84,16 +89,18 @@
   align-items: center;
   justify-content: center;
   padding: 6px;
-  border: 1px solid #d9d9d9;
-  border-radius: 12px;
-  background: white;
-  cursor: pointer;
+  cursor: default;
   min-width: var(--button-height);
   height: var(--button-height);
   transition: all 0.2s;
   position: relative;
   flex-shrink: 1;
   font-size: 14px;
+  background-color: transparent;
+}
+
+.toolbarButton:hover {
+ background-color: var(--gris-medio) !important;
 }
 
 .toolbarButton :global(.ant-select) {
@@ -105,10 +112,7 @@
   min-width: 0;
 }
 
-.toolbarButton:hover {
-  background: #f5f5f5;
-  border-color: var(--gris-medio);
-}
+
 
 .colorButton {
   position: relative;
@@ -135,19 +139,15 @@
   align-items: center;
   justify-content: center;
   padding: 6px;
-  border: 1px solid #d9d9d9;
-  border-radius: 12px;
-  background: white;
-  cursor: pointer;
-  min-width: 32px;
-  height: 32px;
+  cursor: default;
+  min-width: 31px;
+  height: 31px;
   transition: all 0.2s;
   font-size: 14px;
 }
 
 .dropdownToggle:hover {
-  background: #f5f5f5;
-  border-color: var(--gris-medio);
+  background: var(--gris-medio);
 }
 
 .dropdownMenu {
@@ -187,7 +187,8 @@
 }
 
 .dropdownButtonItem:hover {
-  background: #f5f5f5;
+  background: var(--gris-medio);
+  
 }
 
 .dropdownIcon {
