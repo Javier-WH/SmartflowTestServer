@@ -10,6 +10,7 @@ import { MdFormatColorText, MdFontDownload } from "react-icons/md";
 import { FontSelector, SizeSelector, HeaderSelector } from './Selectors';
 import styles from './toolbar.module.css';
 import { t } from 'i18next';
+import { BackgroundColorPicker, TextColorPicker } from './colorPickers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
@@ -26,6 +27,8 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [savedEditor, setSavedEditor] = useState<any>(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showListDropdown, setShowListDropdown] = useState(false);
+  const [showAlignDropdown, setShowAlignDropdown] = useState(false);
   const [hiddenButtons, setHiddenButtons] = useState<string[]>([]);
   const [currentFont, setCurrentFont] = useState<string>(''); // Estado para la fuente actual
   const [currentFontSize, setCurrentFontSize] = useState<string>('');// Estado para el tamaño de fuente actual
@@ -33,6 +36,11 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   const toolbarButtonsRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<{ [key: string]: HTMLButtonElement }>({});
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const listDropdownRef = useRef<HTMLDivElement>(null);
+  const alignDropdownRef = useRef<HTMLDivElement>(null);
+  const [currentHeader, setCurrentHeader] = useState<string | number | boolean>('');
+  const [currentColor, setCurrentColor] = useState('');
+  const [currentBackground, setCurrentBackground] = useState('');
 
   useEffect(() => {
     if (isImageModalOpen) {
@@ -45,9 +53,12 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   useEffect(() => {
     let lastFont = '';
     let lastFontSize = '';
-    let intervalId = null;
+    let lastHeader: string | number | boolean = '';
+    let lastColor = '';
+    let lastBackground = '';
+    let intervalId: NodeJS.Timeout | null = null;
 
-    const checkFontAndSize = () => {
+    const checkFormats = () => {
       const editor = getActiveEditor();
 
       if (editor) {
@@ -56,6 +67,9 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           const formats = editor.getFormat(range);
           const currentFont = formats.font || '';
           const currentFontSize = formats.size || '';
+          const currentHeader = formats.header || '';
+          const currentColor = formats.color || '';
+          const currentBackground = formats.background || '';
 
           // Actualizar fuente si cambió
           if (currentFont !== lastFont) {
@@ -68,8 +82,27 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             lastFontSize = currentFontSize;
             setCurrentFontSize(currentFontSize);
           }
+
+          // Actualizar header si cambió
+          if (currentHeader !== lastHeader) {
+            lastHeader = currentHeader;
+            setCurrentHeader(currentHeader);
+          }
+
+          // Actualizar color si cambió
+          if (currentColor !== lastColor) {
+            lastColor = currentColor;
+            setCurrentColor(currentColor);
+          }
+
+          // Actualizar fondo si cambió
+          if (currentBackground !== lastBackground) {
+            lastBackground = currentBackground;
+            setCurrentBackground(currentBackground);
+          }
+
         } else {
-          // No hay selección - resetear ambos valores
+          // No hay selección - resetear todos los valores
           if (lastFont !== '') {
             lastFont = '';
             setCurrentFont('');
@@ -78,9 +111,21 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             lastFontSize = '';
             setCurrentFontSize('');
           }
+          if (lastHeader !== '') {
+            lastHeader = '';
+            setCurrentHeader('');
+          }
+          if (lastColor !== '') {
+            lastColor = '';
+            setCurrentColor('');
+          }
+          if (lastBackground !== '') {
+            lastBackground = '';
+            setCurrentBackground('');
+          }
         }
       } else {
-        // No hay editor activo - resetear ambos valores
+        // No hay editor activo - resetear todos los valores
         if (lastFont !== '') {
           lastFont = '';
           setCurrentFont('');
@@ -89,15 +134,27 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           lastFontSize = '';
           setCurrentFontSize('');
         }
+        if (lastHeader !== '') {
+          lastHeader = '';
+          setCurrentHeader('');
+        }
+        if (lastColor !== '') {
+          lastColor = '';
+          setCurrentColor('');
+        }
+        if (lastBackground !== '') {
+          lastBackground = '';
+          setCurrentBackground('');
+        }
       }
     };
 
     // Verificar cada 100ms
-    intervalId = setInterval(checkFontAndSize, 100);
+    intervalId = setInterval(checkFormats, 100);
 
     // Eventos para respuesta inmediata
     const quickCheck = () => {
-      requestAnimationFrame(checkFontAndSize);
+      requestAnimationFrame(checkFormats);
     };
 
     document.addEventListener('click', quickCheck);
@@ -105,13 +162,13 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     document.addEventListener('mouseup', quickCheck);
 
     return () => {
-      clearInterval(intervalId);
+      if (intervalId) clearInterval(intervalId);
       document.removeEventListener('click', quickCheck);
       document.removeEventListener('keyup', quickCheck);
       document.removeEventListener('mouseup', quickCheck);
     };
   }, []);
-
+  
   // Función para calcular botones visibles 
   const calculateVisibleButtons = useCallback(() => {
     if (!toolbarButtonsRef.current) return;
@@ -122,8 +179,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     const buttonOrder = [
       'font-selector', 'size-selector', 'header-selector',
       'bold', 'italic', 'underline', 'strike',
-      'list-ordered', 'list-bullet', 'list-alpha', 'list-check',
-      'align-left', 'align-center', 'align-right', 'align-justify',
+      'list-dropdown', 'align-dropdown', // Separados en dos menús diferentes
       'color-text', 'color-background', 'link', 'image', 'video',
       'remove-format', 'guided-checklist'
     ];
@@ -210,22 +266,28 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     };
   }, [calculateVisibleButtons]);
 
-  // Cerrar dropdown al hacer clic fuera
+  // Cerrar dropdowns al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
       }
+      if (listDropdownRef.current && !listDropdownRef.current.contains(event.target as Node)) {
+        setShowListDropdown(false);
+      }
+      if (alignDropdownRef.current && !alignDropdownRef.current.contains(event.target as Node)) {
+        setShowAlignDropdown(false);
+      }
     };
 
-    if (showDropdown) {
+    if (showDropdown || showListDropdown || showAlignDropdown) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showDropdown]);
+  }, [showDropdown, showListDropdown, showAlignDropdown]);
 
   // Recalcular cuando cambia el modo oscuro - MEJORADO
   useEffect(() => {
@@ -272,6 +334,8 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       }
     }
     setShowDropdown(false);
+    setShowListDropdown(false);
+    setShowAlignDropdown(false);
   };
 
   const handleQuillToolbarAction = (actionValue: string, key: string) => {
@@ -285,6 +349,8 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       editor.format(key, actionValue);
     }
     setShowDropdown(false);
+    setShowListDropdown(false);
+    setShowAlignDropdown(false);
   }
 
   const toggleFormat = (format: string) => {
@@ -296,6 +362,8 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       editor.format(format, !current);
     }
     setShowDropdown(false);
+    setShowListDropdown(false);
+    setShowAlignDropdown(false);
   };
 
   const handleInsertLink = () => {
@@ -379,12 +447,16 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     setModalKey(prev => prev + 1);
     setImageModalOpen(true);
     setShowDropdown(false);
+    setShowListDropdown(false);
+    setShowAlignDropdown(false);
   };
 
   const openVideoModal = () => {
     saveEditorState();
     setVideoModalOpen(true);
     setShowDropdown(false);
+    setShowListDropdown(false);
+    setShowAlignDropdown(false);
   };
 
   const openLinkModal = () => {
@@ -399,6 +471,8 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       saveEditorState();
       setLinkModalOpen(true);
       setShowDropdown(false);
+      setShowListDropdown(false);
+      setShowAlignDropdown(false);
     } else {
       message.warning('Selecciona el texto que deseas enlazar.');
     }
@@ -446,7 +520,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   return (
     <>
       <div ref={toolbarRef} className={styles.toolbarContainer}>
-        
+
         <div ref={toolbarButtonsRef} className={styles.toolbarButtons}>
           {/* Font - Pasamos la fuente actual como prop */}
           <div ref={(el) => el && registerButtonRef('font-selector', el?.querySelector('button') || null)}>
@@ -460,7 +534,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
 
           {/* Header */}
           <div ref={(el) => el && registerButtonRef('header-selector', el?.querySelector('button') || null)}>
-            <HeaderSelector applyFormat={applyFormat} />
+            <HeaderSelector applyFormat={applyFormat} currentHeader={currentHeader} />
           </div>
 
           {/* Text styles */}
@@ -501,111 +575,65 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             <FaStrikethrough />
           </button>
 
-          {/* Lists */}
-          <button
-            ref={(el) => registerButtonRef('list-ordered', el)}
-            onClick={() => handleToolbarAction(() => applyFormat('list', 'ordered'))}
-            className={buttonClass}
-            title={t("ordered_list")}
-            style={{ marginLeft: '15px' }}
-          >
-            <FaListOl />
-          </button>
+          {/* Dropdown para Listas */}
+          <div ref={listDropdownRef} className={styles.dropdownContainer}>
+            <button
+              ref={(el) => registerButtonRef('list-dropdown', el)}
+              className={styles.dropdownToggle}
+              onClick={() => setShowListDropdown(!showListDropdown)}
+              title={t("lists")}
+              style={{ marginLeft: '15px' }}
+            >
+              <FaListUl />
+            </button>
 
-          <button
-            ref={(el) => registerButtonRef('list-bullet', el)}
-            onClick={() => handleToolbarAction(() => applyFormat('list', 'bullet'))}
-            className={buttonClass}
-            title={t("bullet_list")}
-          >
-            <FaListUl />
-          </button>
+            {showListDropdown && (
+              <div className={`${styles.dropdownMenu} ${styles.listDropdownMenu}`}>
+                {renderDropdownButton('list-ordered-dropdown', <FaListOl />, () => applyFormat('list', 'ordered'), t("ordered_list"))}
+                {renderDropdownButton('list-bullet-dropdown', <FaListUl />, () => applyFormat('list', 'bullet'), t("bullet_list"))}
+                {renderDropdownButton('list-alpha-dropdown', <TbListLetters />, () => applyFormat('list', 'alpha'), t("alpha_list"))}
+                {renderDropdownButton('list-check-dropdown', <FaListCheck />, () => handleQuillToolbarAction('check', 'list'), t("check_list"))}
+              </div>
+            )}
+          </div>
 
-          <button
-            ref={(el) => registerButtonRef('list-alpha', el)}
-            onClick={() => handleToolbarAction(() => applyFormat('list', 'alpha'))}
-            className={buttonClass}
-            title={t("alpha_list")}
-          >
-            <TbListLetters />
-          </button>
+          {/* Dropdown para Alineación */}
+          <div ref={alignDropdownRef} className={styles.dropdownContainer}>
+            <button
+              ref={(el) => registerButtonRef('align-dropdown', el)}
+              className={styles.dropdownToggle}
+              onClick={() => setShowAlignDropdown(!showAlignDropdown)}
+              title={t("alignment")}
+            >
+              <FaAlignLeft />
+            </button>
 
-          <button
-            ref={(el) => registerButtonRef('list-check', el)}
-            onClick={() => handleToolbarAction(() => handleQuillToolbarAction('check', 'list'))}
-            className={buttonClass}
-            title={t("check_list")}
-          >
-            <FaListCheck />
-          </button>
-
-          {/* Alignment */}
-          <button
-            ref={(el) => registerButtonRef('align-left', el)}
-            onClick={() => handleToolbarAction(() => applyFormat('align', ''))}
-            className={buttonClass}
-            title={t("align_left")}
-            style={{ marginLeft: '15px' }}
-          >
-            <FaAlignLeft />
-          </button>
-
-          <button
-            ref={(el) => registerButtonRef('align-center', el)}
-            onClick={() => handleToolbarAction(() => applyFormat('align', 'center'))}
-            className={buttonClass}
-            title={t("align_center")}
-          >
-            <FaAlignCenter />
-          </button>
-
-          <button
-            ref={(el) => registerButtonRef('align-right', el)}
-            onClick={() => handleToolbarAction(() => applyFormat('align', 'right'))}
-            className={buttonClass}
-            title={t("align_right")}
-          >
-            <FaAlignRight />
-          </button>
-
-          <button
-            ref={(el) => registerButtonRef('align-justify', el)}
-            onClick={() => handleToolbarAction(() => applyFormat('align', 'justify'))}
-            className={buttonClass}
-            title={t("align_justify")}
-          >
-            <FaAlignJustify />
-          </button>
+            {showAlignDropdown && (
+              <div className={`${styles.dropdownMenu} ${styles.alignDropdownMenu}`}>
+                {renderDropdownButton('align-left-dropdown', <FaAlignLeft />, () => applyFormat('align', ''), t("align_left"))}
+                {renderDropdownButton('align-center-dropdown', <FaAlignCenter />, () => applyFormat('align', 'center'), t("align_center"))}
+                {renderDropdownButton('align-right-dropdown', <FaAlignRight />, () => applyFormat('align', 'right'), t("align_right"))}
+                {renderDropdownButton('align-justify-dropdown', <FaAlignJustify />, () => applyFormat('align', 'justify'), t("align_justify"))}
+              </div>
+            )}
+          </div>
 
           {/* Colors */}
-          <button
-            ref={(el) => registerButtonRef('color-text', el)}
-            className={`${buttonClass} ${styles.colorButton}`}
-            title={t("text_color")}
-            style={{ marginLeft: '15px' }}
-          >
-            <MdFormatColorText />
-            <input
-              type="color"
-              onChange={(e) => {
-                handleToolbarAction(() => applyFormat('color', e.target.value));
-              }}
-            />
-          </button>
 
-          <button
-            ref={(el) => registerButtonRef('color-background', el)}
-            className={`${buttonClass} ${styles.colorButton}`}
-            title={t("background_color")}
-          >
-            <MdFontDownload />
-            <input
-              type="color"
-              onChange={(e) => {
-                handleToolbarAction(() => applyFormat('background', e.target.value));
-              }}
-            />
-          </button>
+          <TextColorPicker
+            applyFormat={applyFormat}
+            currentColor={currentColor}
+            buttonRef={(el) => registerButtonRef('color-text', el)}
+          />
+
+          <BackgroundColorPicker
+            applyFormat={applyFormat}
+            currentBackground={currentBackground}
+            buttonRef={(el) => registerButtonRef('color-background', el)}
+          />
+       
+
+    
 
           {/* Link */}
           <button
@@ -676,54 +704,113 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         </div>
 
         {/* Dropdown para botones que no caben */}
-        {hiddenButtons.length > 0 && (
-          <div ref={dropdownRef} className={styles.dropdownContainer}>
-            <button
-              className={styles.dropdownToggle}
-              onClick={() => setShowDropdown(!showDropdown)}
-              title={t("more")}
-            >
-              <FaEllipsisH />
-            </button>
+        {
+          hiddenButtons.length > 0 && (
+            <div ref={dropdownRef} className={styles.dropdownContainer}>
+              <button
+                className={styles.dropdownToggle}
+                onClick={() => setShowDropdown(!showDropdown)}
+                title={t("more")}
+              >
+                <FaEllipsisH />
+              </button>
 
-            {showDropdown && (
-              <div className={styles.dropdownMenu}>
-                {hiddenButtons.includes('bold') && renderDropdownButton('bold-dropdown', <FaBold />, () => toggleFormat('bold'), t("bold"))}
-                {hiddenButtons.includes('italic') && renderDropdownButton('italic-dropdown', <FaItalic />, () => toggleFormat('italic'), t("italic"))}
-                {hiddenButtons.includes('underline') && renderDropdownButton('underline-dropdown', <FaUnderline />, () => toggleFormat('underline'), t("underline"))}
-                {hiddenButtons.includes('strike') && renderDropdownButton('strike-dropdown', <FaStrikethrough />, () => toggleFormat('strike'), t("strikethrough"))}
-                {hiddenButtons.includes('list-ordered') && renderDropdownButton('list-ordered-dropdown', <FaListOl />, () => applyFormat('list', 'ordered'), t("ordered_list"))}
-                {hiddenButtons.includes('list-bullet') && renderDropdownButton('list-bullet-dropdown', <FaListUl />, () => applyFormat('list', 'bullet'), t("bullet_list"))}
-                {hiddenButtons.includes('list-alpha') && renderDropdownButton('list-alpha-dropdown', <TbListLetters />, () => applyFormat('list', 'alpha'), t("alpha_list"))}
-                {hiddenButtons.includes('list-check') && renderDropdownButton('list-check-dropdown', <FaListCheck />, () => handleQuillToolbarAction('check', 'list'), t("check_list"))}
-                {hiddenButtons.includes('align-left') && renderDropdownButton('align-left-dropdown', <FaAlignLeft />, () => applyFormat('align', ''), t("align_left"))}
-                {hiddenButtons.includes('align-center') && renderDropdownButton('align-center-dropdown', <FaAlignCenter />, () => applyFormat('align', 'center'), t("align_center"))}
-                {hiddenButtons.includes('align-right') && renderDropdownButton('align-right-dropdown', <FaAlignRight />, () => applyFormat('align', 'right'), t("align_right"))}
-                {hiddenButtons.includes('align-justify') && renderDropdownButton('align-justify-dropdown', <FaAlignJustify />, () => applyFormat('align', 'justify'), t("align_justify"))}
-                {hiddenButtons.includes('link') && renderDropdownButton('link-dropdown', <FaLink />, openLinkModal, t("insert_link"))}
-                {hiddenButtons.includes('image') && renderDropdownButton('image-dropdown', <FaImage />, openImageModal, t("insert_image"))}
-                {hiddenButtons.includes('video') && renderDropdownButton('video-dropdown', <FaVideo />, openVideoModal, t("insert_video"))}
-                {hiddenButtons.includes('remove-format') && renderDropdownButton('remove-format-dropdown', <FaRemoveFormat />, () => {
-                  const editor = getActiveEditor();
-                  if (editor) {
-                    const range = editor.getSelection();
-                    editor.removeFormat(range?.index ?? 0, range?.length ?? 0);
-                    setCurrentFont('');
-                  }
-                }, t("clean_format"))}
-                {hiddenButtons.includes('guided-checklist') && renderDropdownButton('guided-checklist-dropdown', <GuidedCheckListIcon />, () => {
-                  const editor = getActiveEditor();
-                  if (!editor) return;
-                  const toolbarHandlers = editor?.options?.modules?.toolbar?.handlers;
-                  const handler = toolbarHandlers?.['guided-checklist'];
-                  if (typeof handler === 'function') {
-                    handler.call({ quill: editor });
-                  }
-                }, t("guided_check_list"))}
-              </div>
-            )}
-          </div>
-        )}
+              {showDropdown && (
+                <div className={styles.dropdownMenu}>
+                  {hiddenButtons.includes('bold') && renderDropdownButton('bold-dropdown', <FaBold />, () => toggleFormat('bold'), t("bold"))}
+                  {hiddenButtons.includes('italic') && renderDropdownButton('italic-dropdown', <FaItalic />, () => toggleFormat('italic'), t("italic"))}
+                  {hiddenButtons.includes('underline') && renderDropdownButton('underline-dropdown', <FaUnderline />, () => toggleFormat('underline'), t("underline"))}
+                  {hiddenButtons.includes('strike') && renderDropdownButton('strike-dropdown', <FaStrikethrough />, () => toggleFormat('strike'), t("strikethrough"))}
+
+                  {/* Listas en dropdown secundario */}
+                  {hiddenButtons.includes('list-dropdown') && (
+                    <>
+                      {renderDropdownButton('list-ordered-dropdown', <FaListOl />, () => applyFormat('list', 'ordered'), t("ordered_list"))}
+                      {renderDropdownButton('list-bullet-dropdown', <FaListUl />, () => applyFormat('list', 'bullet'), t("bullet_list"))}
+                      {renderDropdownButton('list-alpha-dropdown', <TbListLetters />, () => applyFormat('list', 'alpha'), t("alpha_list"))}
+                      {renderDropdownButton('list-check-dropdown', <FaListCheck />, () => handleQuillToolbarAction('check', 'list'), t("check_list"))}
+                    </>
+                  )}
+
+                  {/* Alineación en dropdown secundario */}
+                  {hiddenButtons.includes('align-dropdown') && (
+                    <>
+                      {renderDropdownButton('align-left-dropdown', <FaAlignLeft />, () => applyFormat('align', ''), t("align_left"))}
+                      {renderDropdownButton('align-center-dropdown', <FaAlignCenter />, () => applyFormat('align', 'center'), t("align_center"))}
+                      {renderDropdownButton('align-right-dropdown', <FaAlignRight />, () => applyFormat('align', 'right'), t("align_right"))}
+                      {renderDropdownButton('align-justify-dropdown', <FaAlignJustify />, () => applyFormat('align', 'justify'), t("align_justify"))}
+                    </>
+                  )}
+
+                  {/* Botones de color en dropdown secundario */}
+                  {hiddenButtons.includes('color-text') && (
+                    <div className={styles.dropdownColorSection}>
+                      <div className={styles.dropdownColorHeader}>
+                        <MdFormatColorText />
+                        <span>{t("text_color")}</span>
+                      </div>
+                      <div className={styles.dropdownColorGrid}>
+                        {['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFFFFF'].map((color) => (
+                          <button
+                            key={color}
+                            className={styles.dropdownColorOption}
+                            style={{ backgroundColor: color }}
+                            onClick={() => handleToolbarAction(() => applyFormat('color', color))}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {hiddenButtons.includes('color-background') && (
+                    <div className={styles.dropdownColorSection}>
+                      <div className={styles.dropdownColorHeader}>
+                        <MdFontDownload />
+                        <span>{t("background_color")}</span>
+                      </div>
+                      <div className={styles.dropdownColorGrid}>
+                        {['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFFFFF'].map((color) => (
+                          <button
+                            key={color}
+                            className={styles.dropdownColorOption}
+                            style={{ backgroundColor: color }}
+                            onClick={() => handleToolbarAction(() => applyFormat('background', color))}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+
+                  {/* otros*/}
+
+                  {hiddenButtons.includes('link') && renderDropdownButton('link-dropdown', <FaLink />, openLinkModal, t("insert_link"))}
+                  {hiddenButtons.includes('image') && renderDropdownButton('image-dropdown', <FaImage />, openImageModal, t("insert_image"))}
+                  {hiddenButtons.includes('video') && renderDropdownButton('video-dropdown', <FaVideo />, openVideoModal, t("insert_video"))}
+                  {hiddenButtons.includes('remove-format') && renderDropdownButton('remove-format-dropdown', <FaRemoveFormat />, () => {
+                    const editor = getActiveEditor();
+                    if (editor) {
+                      const range = editor.getSelection();
+                      editor.removeFormat(range?.index ?? 0, range?.length ?? 0);
+                      setCurrentFont('');
+                    }
+                  }, t("clean_format"))}
+                  {hiddenButtons.includes('guided-checklist') && renderDropdownButton('guided-checklist-dropdown', <GuidedCheckListIcon />, () => {
+                    const editor = getActiveEditor();
+                    if (!editor) return;
+                    const toolbarHandlers = editor?.options?.modules?.toolbar?.handlers;
+                    const handler = toolbarHandlers?.['guided-checklist'];
+                    if (typeof handler === 'function') {
+                      handler.call({ quill: editor });
+                    }
+                  }, t("guided_check_list"))}
+                </div>
+              )}
+            </div>
+          )
+        }
 
       </div>
 

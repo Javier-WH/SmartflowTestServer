@@ -701,7 +701,7 @@ export default function TextEditor() {
                 marginTop: "1px",
                 marginRight: "20px",
                 alignItems: "baseline",
-                minWidth: "520px",
+                minWidth: "520px"
             }}>
                 <div className='w-full flex justify-center items-center' >
                     <header style={{
