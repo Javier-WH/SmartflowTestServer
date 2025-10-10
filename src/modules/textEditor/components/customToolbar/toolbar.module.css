@@ -197,7 +197,7 @@
 .toolbarContainer {
   display: flex;
   width: 100%;
-  min-width: 375px;
+  min-width: 200px;
   background: white;
   padding: 8px;
   border-radius: 15px;
@@ -364,3 +364,45 @@
   padding: 6px 10px;
 }
 
+
+
+/**/
+
+.dropdownColorSection {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdownColorSection:last-child {
+  border-bottom: none;
+}
+
+.dropdownColorHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px 8px 12px;
+  font-size: 14px;
+  color: #333;
+}
+
+.dropdownColorGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 0 12px;
+}
+
+.dropdownColorOption {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.dropdownColorOption:hover {
+  transform: scale(1.1);
+  border-color: #999;
+}

@@ -17,6 +17,7 @@ interface SizeSelectorProps {
 interface HeaderSelectorProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   applyFormat: (format: string, value: any) => void;
+  currentHeader?: string | number | boolean;
 }
 
 export function FontSelector({ applyFormat, currentFont }: FontSelectorProps) {
@@ -71,7 +72,7 @@ export function FontSelector({ applyFormat, currentFont }: FontSelectorProps) {
         className={styles.dropdownToggle}
         onClick={() => setShowFontMenu(!showFontMenu)}
         title={t("font_family")}
-        style={{ minWidth: '100px', fontFamily: fonts.find(font => font.value === currentFont)?.style.fontFamily }}
+        style={{ width: '150px' }}
       >
         {currentFontLabel}
       </button>
@@ -153,8 +154,7 @@ export function SizeSelector({ applyFormat, currentSize }: SizeSelectorProps) {
     </div>
   );
 }
-
-export function HeaderSelector({ applyFormat }: HeaderSelectorProps) {
+export function HeaderSelector({ applyFormat, currentHeader }: HeaderSelectorProps) {
   const [showHeaderMenu, setShowHeaderMenu] = useState(false);
   const headerDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -177,6 +177,19 @@ export function HeaderSelector({ applyFormat }: HeaderSelectorProps) {
     { value: 6, label: `${t('quill_header')} 6`, style: headerStyles[6] },
     { value: 'normal', label: t('quill_paragraph'), style: headerStyles.normal },
   ];
+
+  // Función para obtener la etiqueta del header actual
+  const getCurrentHeaderLabel = () => {
+    if (!currentHeader  || currentHeader === 'normal') {
+      return t('quill_paragraph');
+    }
+
+    const headerNumber = typeof currentHeader === 'string' ? parseInt(currentHeader) : currentHeader;
+    const header = headers.find(h => h.value === headerNumber);
+    return header ? header.label : t('quill_paragraph');
+  };
+
+  const currentHeaderLabel = getCurrentHeaderLabel();
 
   // Cerrar menú al hacer clic fuera
   useEffect(() => {
@@ -208,7 +221,7 @@ export function HeaderSelector({ applyFormat }: HeaderSelectorProps) {
         title={t("headers")}
         style={{ minWidth: '90px' }}
       >
-        {t('quill_paragraph')}
+        {currentHeaderLabel}
       </button>
 
       {showHeaderMenu && (

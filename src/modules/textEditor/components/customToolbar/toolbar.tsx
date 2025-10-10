@@ -10,6 +10,7 @@ import { MdFormatColorText, MdFontDownload } from "react-icons/md";
 import { FontSelector, SizeSelector, HeaderSelector } from './Selectors';
 import styles from './toolbar.module.css';
 import { t } from 'i18next';
+import { BackgroundColorPicker, TextColorPicker } from './colorPickers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
@@ -37,6 +38,9 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const listDropdownRef = useRef<HTMLDivElement>(null);
   const alignDropdownRef = useRef<HTMLDivElement>(null);
+  const [currentHeader, setCurrentHeader] = useState<string | number | boolean>('');
+  const [currentColor, setCurrentColor] = useState('');
+  const [currentBackground, setCurrentBackground] = useState('');
 
   useEffect(() => {
     if (isImageModalOpen) {
@@ -49,9 +53,12 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
   useEffect(() => {
     let lastFont = '';
     let lastFontSize = '';
-    let intervalId = null;
+    let lastHeader: string | number | boolean = '';
+    let lastColor = '';
+    let lastBackground = '';
+    let intervalId: NodeJS.Timeout | null = null;
 
-    const checkFontAndSize = () => {
+    const checkFormats = () => {
       const editor = getActiveEditor();
 
       if (editor) {
@@ -60,6 +67,9 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           const formats = editor.getFormat(range);
           const currentFont = formats.font || '';
           const currentFontSize = formats.size || '';
+          const currentHeader = formats.header || '';
+          const currentColor = formats.color || '';
+          const currentBackground = formats.background || '';
 
           // Actualizar fuente si cambió
           if (currentFont !== lastFont) {
@@ -72,8 +82,27 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             lastFontSize = currentFontSize;
             setCurrentFontSize(currentFontSize);
           }
+
+          // Actualizar header si cambió
+          if (currentHeader !== lastHeader) {
+            lastHeader = currentHeader;
+            setCurrentHeader(currentHeader);
+          }
+
+          // Actualizar color si cambió
+          if (currentColor !== lastColor) {
+            lastColor = currentColor;
+            setCurrentColor(currentColor);
+          }
+
+          // Actualizar fondo si cambió
+          if (currentBackground !== lastBackground) {
+            lastBackground = currentBackground;
+            setCurrentBackground(currentBackground);
+          }
+
         } else {
-          // No hay selección - resetear ambos valores
+          // No hay selección - resetear todos los valores
           if (lastFont !== '') {
             lastFont = '';
             setCurrentFont('');
@@ -82,9 +111,21 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             lastFontSize = '';
             setCurrentFontSize('');
           }
+          if (lastHeader !== '') {
+            lastHeader = '';
+            setCurrentHeader('');
+          }
+          if (lastColor !== '') {
+            lastColor = '';
+            setCurrentColor('');
+          }
+          if (lastBackground !== '') {
+            lastBackground = '';
+            setCurrentBackground('');
+          }
         }
       } else {
-        // No hay editor activo - resetear ambos valores
+        // No hay editor activo - resetear todos los valores
         if (lastFont !== '') {
           lastFont = '';
           setCurrentFont('');
@@ -93,15 +134,27 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           lastFontSize = '';
           setCurrentFontSize('');
         }
+        if (lastHeader !== '') {
+          lastHeader = '';
+          setCurrentHeader('');
+        }
+        if (lastColor !== '') {
+          lastColor = '';
+          setCurrentColor('');
+        }
+        if (lastBackground !== '') {
+          lastBackground = '';
+          setCurrentBackground('');
+        }
       }
     };
 
     // Verificar cada 100ms
-    intervalId = setInterval(checkFontAndSize, 100);
+    intervalId = setInterval(checkFormats, 100);
 
     // Eventos para respuesta inmediata
     const quickCheck = () => {
-      requestAnimationFrame(checkFontAndSize);
+      requestAnimationFrame(checkFormats);
     };
 
     document.addEventListener('click', quickCheck);
@@ -109,13 +162,13 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     document.addEventListener('mouseup', quickCheck);
 
     return () => {
-      clearInterval(intervalId);
+      if (intervalId) clearInterval(intervalId);
       document.removeEventListener('click', quickCheck);
       document.removeEventListener('keyup', quickCheck);
       document.removeEventListener('mouseup', quickCheck);
     };
   }, []);
-
+  
   // Función para calcular botones visibles 
   const calculateVisibleButtons = useCallback(() => {
     if (!toolbarButtonsRef.current) return;
@@ -481,7 +534,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
 
           {/* Header */}
           <div ref={(el) => el && registerButtonRef('header-selector', el?.querySelector('button') || null)}>
-            <HeaderSelector applyFormat={applyFormat} />
+            <HeaderSelector applyFormat={applyFormat} currentHeader={currentHeader} />
           </div>
 
           {/* Text styles */}
@@ -566,34 +619,21 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           </div>
 
           {/* Colors */}
-          <button
-            ref={(el) => registerButtonRef('color-text', el)}
-            className={`${buttonClass} ${styles.colorButton}`}
-            title={t("text_color")}
-            style={{ marginLeft: '15px' }}
-          >
-            <MdFormatColorText />
-            <input
-              type="color"
-              onChange={(e) => {
-                handleToolbarAction(() => applyFormat('color', e.target.value));
-              }}
-            />
-          </button>
 
-          <button
-            ref={(el) => registerButtonRef('color-background', el)}
-            className={`${buttonClass} ${styles.colorButton}`}
-            title={t("background_color")}
-          >
-            <MdFontDownload />
-            <input
-              type="color"
-              onChange={(e) => {
-                handleToolbarAction(() => applyFormat('background', e.target.value));
-              }}
-            />
-          </button>
+          <TextColorPicker
+            applyFormat={applyFormat}
+            currentColor={currentColor}
+            buttonRef={(el) => registerButtonRef('color-text', el)}
+          />
+
+          <BackgroundColorPicker
+            applyFormat={applyFormat}
+            currentBackground={currentBackground}
+            buttonRef={(el) => registerButtonRef('color-background', el)}
+          />
+       
+
+    
 
           {/* Link */}
           <button
@@ -704,44 +744,47 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
 
                   {/* Botones de color en dropdown secundario */}
                   {hiddenButtons.includes('color-text') && (
-                    <button
-                      className={darkMode ? styles.darkDropdownButtonItem : styles.dropdownButtonItem}
-                      title={t("text_color")}
-                      type="button"
-                      onClick={() => {
-                        // Crear un input de color programáticamente
-                        const colorInput = document.createElement('input');
-                        colorInput.type = 'color';
-                        colorInput.addEventListener('change', (e) => {
-                          handleToolbarAction(() => applyFormat('color', (e.target as HTMLInputElement).value));
-                        });
-                        colorInput.click();
-                      }}
-                    >
-                      <span className={styles.dropdownIcon}><MdFormatColorText /></span>
-                      <span className={styles.dropdownLabel}>{t("text_color")}</span>
-                    </button>
+                    <div className={styles.dropdownColorSection}>
+                      <div className={styles.dropdownColorHeader}>
+                        <MdFormatColorText />
+                        <span>{t("text_color")}</span>
+                      </div>
+                      <div className={styles.dropdownColorGrid}>
+                        {['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFFFFF'].map((color) => (
+                          <button
+                            key={color}
+                            className={styles.dropdownColorOption}
+                            style={{ backgroundColor: color }}
+                            onClick={() => handleToolbarAction(() => applyFormat('color', color))}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   )}
 
                   {hiddenButtons.includes('color-background') && (
-                    <button
-                      className={darkMode ? styles.darkDropdownButtonItem : styles.dropdownButtonItem}
-                      title={t("background_color")}
-                      type="button"
-                      onClick={() => {
-                        // Crear un input de color programáticamente
-                        const colorInput = document.createElement('input');
-                        colorInput.type = 'color';
-                        colorInput.addEventListener('change', (e) => {
-                          handleToolbarAction(() => applyFormat('background', (e.target as HTMLInputElement).value));
-                        });
-                        colorInput.click();
-                      }}
-                    >
-                      <span className={styles.dropdownIcon}><MdFontDownload /></span>
-                      <span className={styles.dropdownLabel}>{t("background_color")}</span>
-                    </button>
+                    <div className={styles.dropdownColorSection}>
+                      <div className={styles.dropdownColorHeader}>
+                        <MdFontDownload />
+                        <span>{t("background_color")}</span>
+                      </div>
+                      <div className={styles.dropdownColorGrid}>
+                        {['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFFFFF'].map((color) => (
+                          <button
+                            key={color}
+                            className={styles.dropdownColorOption}
+                            style={{ backgroundColor: color }}
+                            onClick={() => handleToolbarAction(() => applyFormat('background', color))}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   )}
+
+
+                  {/* otros*/}
 
                   {hiddenButtons.includes('link') && renderDropdownButton('link-dropdown', <FaLink />, openLinkModal, t("insert_link"))}
                   {hiddenButtons.includes('image') && renderDropdownButton('image-dropdown', <FaImage />, openImageModal, t("insert_image"))}
