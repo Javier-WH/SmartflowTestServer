@@ -64,7 +64,7 @@ const DraggableItem: React.FC<DraggableItemProps> = (props) => {
 
   return (
     <div style={style} ref={setNodeRef}>
-      <Flex justify="space-between" align="center">
+      <Flex justify="space-between" align="center" style={{direction: "ltr"}} >
         <Typography.Text>{item.name} ({item.type === 1 ? 'Carpeta' : 'Archivo'})</Typography.Text>
 
         {/* Ícono de arrastre: se adjuntan los listeners y attributes aquí */}
@@ -150,7 +150,7 @@ export default function SortModal({ containerid, setContainerid, slug }: SortMod
     console.log('Datos a guardar con nuevo orden:', folderData);
 
     // Simulación de cierre
-    setContainerid(null);
+   // setContainerid(null);
   };
 
   const handleCancel = () => {
@@ -167,13 +167,14 @@ export default function SortModal({ containerid, setContainerid, slug }: SortMod
       confirmLoading={loading} // Usamos loading para deshabilitar el botón de OK si está cargando
       okText="Guardar Orden"
       cancelText="Cancelar"
-      width={600}
+      width={800}
+      
     >
-      <Typography.Paragraph>
+      <Typography.Paragraph style={{ direction: 'ltr' }}>
         Arrastra y suelta los elementos para cambiar su orden.
       </Typography.Paragraph>
 
-      <div style={{ maxHeight: 400, overflowY: 'auto', padding: '1px' }}>
+      <div style={{ maxHeight: 600, overflowY: 'auto', overflowX: 'unset', padding: '1px' }}>
         <DndContext
           sensors={sensors}
           onDragEnd={handleDragEnd}
