@@ -1,5 +1,5 @@
 import supabase from '../../../lib/supabase';
-import type { FolderResponse } from '../types/folder';
+import type { FolderResponse, SortableContent } from '../types/folder';
 import errorManager from '../errorManager/folderErrorManager';
 
 const pageType = import.meta.env.VITE_PAGE_TYPE;
@@ -183,7 +183,74 @@ const getFilesCount = async (folderId: string): Promise<FolderResponse> => {
     return { error: false, message: 'Files count in folder retrieved successfully', data };
 };
 
+const sortFolderContent = async (
+    sorteableContent: SortableContent[]
+): Promise<boolean> => {
+    const filesItem = [];
+    const foldersItem = [];
 
+    for (const item of sorteableContent) {
+        const newItem = {
+            id: item.id,
+            order: item.order,
+        };
+        if (item.type === 1) {
+            foldersItem.push(newItem);
+        } else {
+            filesItem.push(newItem);
+        }
+    }
+
+    // Actualizar orden de archivos
+    const fileUpdates = filesItem.map(item =>
+        supabase
+            .from('filesquill')
+            .update({ order: item.order })
+            .eq('id', item.id)
+    );
+
+    // Actualizar orden de carpetas
+    const folderUpdates = foldersItem.map(item =>
+        supabase
+            .from('folders')
+            .update({ order: item.order })
+            .eq('id', item.id)
+    );
+
+    // Ejecutar ambas actualizaciones en paralelo
+    const [fileResults, folderResults] = await Promise.all([
+        Promise.all(fileUpdates),
+        Promise.all(folderUpdates),
+    ]);
+
+    // Verificar errores en archivos
+    const fileHasError = fileResults.some(({ error }) => error);
+    if (fileHasError) {
+        fileResults.forEach(({ error }, i) => {
+            if (error) {
+                console.error(`Error al actualizar archivo ${filesItem[i].id}:`, error.message);
+            }
+        });
+    }
+
+    // Verificar errores en carpetas
+    const folderHasError = folderResults.some(({ error }) => error);
+    if (folderHasError) {
+        folderResults.forEach(({ error }, i) => {
+            if (error) {
+                console.error(`Error al actualizar carpeta ${foldersItem[i].id}:`, error.message);
+            }
+        });
+    }
+
+    if (fileHasError || folderHasError) {
+        return false;
+    }
+
+    console.log('Órdenes de archivos y carpetas actualizadas correctamente');
+    return true;
+};
+  
 
 
 export default function useFolderManager() {
@@ -199,6 +266,7 @@ export default function useFolderManager() {
         moveFolderToRoot,
         getHierarchyFolderContent,
         getAllRootContent,
-        getFilesCount
+        getFilesCount,
+        sortFolderContent
     };
 }

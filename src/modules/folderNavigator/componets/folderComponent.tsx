@@ -270,7 +270,7 @@ export function FolderComponent({
                     </div>
                 )}
             </div>
-            <SortModal containerid={sortFolderId} setContainerid={setSortFolderId} slug = {slug}/>
+            <SortModal containerid={sortFolderId} setContainerid={setSortFolderId} slug = {slug} folderName = {folder.name}/>
         </div>
     );
 }

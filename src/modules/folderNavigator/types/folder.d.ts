@@ -37,6 +37,12 @@ export interface FolderData {
   filesnumber?: string
 }
 
+export interface SortableContent {
+  id: string,
+  type: number,
+  order: number
+}
+
 
 export interface FolderNavigatorContextValues{
   Loading: string | null;

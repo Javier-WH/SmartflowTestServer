@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Modal, Flex, Typography, theme } from 'antd';
-import { MenuOutlined } from '@ant-design/icons';
+import { Modal, Typography } from 'antd';
+import { PiFolderOpenLight } from "react-icons/pi";
 import useFolderManager from '../hooks/useFolderManager';
-import { FolderRequestItem } from '../types/folder';
+import { FolderRequestItem, SortableContent } from '../types/folder';
+import DraggableItem from './Item';
 
 // --- Importaciones de DND-Kit ---
 import {
@@ -15,79 +16,24 @@ import {
 import type { DragEndEvent } from '@dnd-kit/core';
 import {
   arrayMove,
-  verticalListSortingStrategy, // Estrategia para listas verticales
-  SortableContext,
-  useSortable,
+  verticalListSortingStrategy,
+  SortableContext
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+
 // ---------------------------------
 
 export interface SortModalProps {
   containerid: string | null,
   setContainerid: React.Dispatch<React.SetStateAction<string | null>>
   slug: string
+  folderName: string
 }
 
-// ----------------------------------------------------
-// 1. Componente de Elemento Arrastrable (DraggableItem)
-// ----------------------------------------------------
 
-interface DraggableItemProps {
-  item: FolderRequestItem;
-}
-
-const DraggableItem: React.FC<DraggableItemProps> = (props) => {
-  const { item } = props;
-  const { token } = theme.useToken();
-
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id: item.id });
-
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    padding: token.paddingSM,
-    marginBottom: token.marginXS,
-    backgroundColor: isDragging ? token.colorPrimaryBg : token.colorBgContainer,
-    border: `1px solid ${token.colorBorderSecondary}`,
-    borderRadius: token.borderRadius,
-    opacity: isDragging ? 0.8 : 1,
-    cursor: 'default',
-    zIndex: isDragging ? 1000 : 'auto',
-  };
-
-  return (
-    <div style={style} ref={setNodeRef}>
-      <Flex justify="space-between" align="center" style={{direction: "ltr"}} >
-        <Typography.Text>{item.name} ({item.type === 1 ? 'Carpeta' : 'Archivo'})</Typography.Text>
-
-        {/* Ícono de arrastre: se adjuntan los listeners y attributes aquí */}
-        <span
-          style={{ cursor: 'grab', padding: '0 8px' }}
-          {...attributes}
-          {...listeners}
-        >
-          <MenuOutlined />
-        </span>
-      </Flex>
-    </div>
-  );
-};
-
-// ----------------------------------------------------
-// 2. Componente Principal del Modal
-// ----------------------------------------------------
-
-export default function SortModal({ containerid, setContainerid, slug }: SortModalProps) {
+export default function SortModal({ containerid, setContainerid, slug, folderName }: SortModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folderData, setFolderData] = useState<FolderRequestItem[]>([]);
-  const { getFolderContent } = useFolderManager();
+  const { getFolderContent, sortFolderContent } = useFolderManager();
   const [loading, setLoading] = useState(false);
 
   // Los IDs de los elementos son necesarios para SortableContext
@@ -143,14 +89,25 @@ export default function SortModal({ containerid, setContainerid, slug }: SortMod
     });
   };
 
-  const handleOk = () => {
-    // Aquí debes implementar la lógica para:
-    // 1. Enviar 'folderData' (que ya tiene los campos 'order' actualizados) a tu API.
-    // 2. Por ejemplo: updateFolderOrder(folderData);
-    console.log('Datos a guardar con nuevo orden:', folderData);
+  const handleOk = async () => {
+    const data: SortableContent[] = folderData.map(item => ({
+      id: item.id,
+      type: item.type,
+      order: item.order
+    }))
 
-    // Simulación de cierre
-   // setContainerid(null);
+
+    await sortFolderContent(data)
+
+    const container = document.getElementById(containerid);
+    if (!container) return;
+    if (container.classList.contains('opened')) {
+      container.click();
+    }
+    setTimeout(() => {
+      container.click();
+      setContainerid(null);
+    }, 5);
   };
 
   const handleCancel = () => {
@@ -159,22 +116,28 @@ export default function SortModal({ containerid, setContainerid, slug }: SortMod
 
   return (
     <Modal
-      title="Ordenar Contenido de la Carpeta"
+      title={
+        <span style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <PiFolderOpenLight size={40} />
+          {folderName}
+        </span>
+      }
       closable={true}
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}
-      confirmLoading={loading} // Usamos loading para deshabilitar el botón de OK si está cargando
+      confirmLoading={loading}
       okText="Guardar Orden"
       cancelText="Cancelar"
       width={800}
-      
+
+
     >
       <Typography.Paragraph style={{ direction: 'ltr' }}>
-        Arrastra y suelta los elementos para cambiar su orden.
+        Arrastra y suelta los archivos y carpetas para cambiar su orden.
       </Typography.Paragraph>
 
-      <div style={{ maxHeight: 600, overflowY: 'auto', overflowX: 'unset', padding: '1px' }}>
+      <div style={{ maxHeight: 600, overflowY: 'auto', overflowX: 'hidden', padding: '1px' }}>
         <DndContext
           sensors={sensors}
           onDragEnd={handleDragEnd}
@@ -185,7 +148,7 @@ export default function SortModal({ containerid, setContainerid, slug }: SortMod
             strategy={verticalListSortingStrategy} // Vertical
           >
             {folderData.length === 0 && !loading ? (
-              <Typography.Text disabled>No hay elementos para ordenar.</Typography.Text>
+              <Typography.Text disabled>La carpeta esta vacia</Typography.Text>
             ) : (
               folderData.map((item) => (
                 <DraggableItem item={item} key={item.id} />
