@@ -45,6 +45,7 @@ export default function DeleteFolderModal({
             message.error(request.message);
             return;
         }
+        console.log(request);
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
         setFileCountUpdateRequest(true);
