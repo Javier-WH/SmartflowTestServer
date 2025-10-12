@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { Modal, Typography } from 'antd';
 import { PiFolderOpenLight } from "react-icons/pi";
 import useFolderManager from '../hooks/useFolderManager';
-import { FolderRequestItem, SortableContent } from '../types/folder';
+import { FolderData, FolderRequestItem, SortableContent } from '../types/folder';
+import { MainContext } from '@/modules/mainContext';
+import { MainContextValues } from '@/modules/mainContext';
 import DraggableItem from './Item';
 
 // --- Importaciones de DND-Kit ---
@@ -19,6 +21,7 @@ import {
   verticalListSortingStrategy,
   SortableContext
 } from '@dnd-kit/sortable';
+import groupDataByContainer from '../context/utils/groupDataByContainer';
 
 // ---------------------------------
 
@@ -33,8 +36,9 @@ export interface SortModalProps {
 export default function SortModal({ containerid, setContainerid, slug, folderName }: SortModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folderData, setFolderData] = useState<FolderRequestItem[]>([]);
-  const { getFolderContent, sortFolderContent } = useFolderManager();
+  const { getFolderContent, sortFolderContent, getRootContent } = useFolderManager();
   const [loading, setLoading] = useState(false);
+  const { setUpdateFolderRequestFromMain } = useContext(MainContext) as MainContextValues;
 
   // Los IDs de los elementos son necesarios para SortableContext
   const itemsIds = useMemo(() => folderData.map(item => item.id), [folderData]);
@@ -49,8 +53,10 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
       return;
     }
 
+    const container = containerid === "root" ? null : containerid;
+
     setLoading(true);
-    getFolderContent(containerid, slug)
+    getFolderContent(container, slug)
       .then(res => {
         // Ordenar la data inicial por el campo 'order'
         const sortedData = res.data.sort((a: FolderRequestItem, b: FolderRequestItem) => (a.order || 0) - (b.order || 0));
@@ -99,15 +105,26 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
 
     await sortFolderContent(data)
 
-    const container = document.getElementById(containerid);
-    if (!container) return;
-    if (container.classList.contains('opened')) {
-      container.click();
-    }
-    setTimeout(() => {
-      container.click();
+    
+
+    if(containerid === "root") {
+      const rootContent = await getRootContent(slug);
+      const gruppedByContainer = groupDataByContainer(rootContent as { data: FolderData[] });
+      setUpdateFolderRequestFromMain(gruppedByContainer);
       setContainerid(null);
-    }, 5);
+
+    }else{
+
+      const container = document.getElementById(containerid);
+      if (!container) return;
+      if (container.classList.contains('opened')) {
+        container.click();
+      }
+      setTimeout(() => {
+        container.click();
+        setContainerid(null);
+      }, 5);
+    }
   };
 
   const handleCancel = () => {

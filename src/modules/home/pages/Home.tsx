@@ -12,9 +12,10 @@ import {
     IconFilePlus,
     IconFolderPlus,
     IconFolderCode,
-    IconSortAscendingLetters,
-    IconSortDescendingLetters,
+    //IconSortAscendingLetters,
+    //IconSortDescendingLetters,
 } from '@tabler/icons-react';
+import { LuFolderTree } from "react-icons/lu";
 import { cn } from '@heroui/react';
 import { ReactNode, useContext, useState } from 'react';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
@@ -23,12 +24,13 @@ import { message } from 'antd';
 import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
 import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
 import { useTranslation } from 'react-i18next';
+import SortModal from '@/modules/folderNavigator/sortModal/sortModal';
 
 
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-
-    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, setSortOrder, selectedFolderId/*parentFolders*/ } = useContext(
+    const [containerId, setContainerId] = useState<"root" | null>(null);
+    const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, selectedFolderId } = useContext(
         MainContext,
     ) as MainContextValues;
     const { createFile } = useFilesManager();
@@ -143,6 +145,8 @@ export default function Home() {
     }*/
 
     return (
+        <>
+         <SortModal containerid={containerId} setContainerid={setContainerId} slug = {slug} folderName = "Root"/>
         <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
             {/* Mobile Header Container */}
             <Button
@@ -198,6 +202,10 @@ export default function Home() {
                                     <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('desc')}>
                                         <IconSortDescendingLetters className='folder-nav-icon' />
                                     </Button>*/}
+
+                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={()=>setContainerId("root")} title='sort root'>
+                                        <LuFolderTree className='folder-nav-icon' />
+                                    </Button>
                                 </div>
 
                                 <div>
@@ -257,5 +265,6 @@ export default function Home() {
                 <Outlet />
             </section>
         </div>
+        </>
     );
 }

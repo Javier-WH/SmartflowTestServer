@@ -81,14 +81,11 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
                 container: null,
                 published: item.published,
                 filesnumber: item.filesnumber,
+                order: item?.order ?? 0
             };
         });
 
-        //const sortedItemes = sortContainerElements(newItems ?? [], 'asc');
-        //setContent(sortedItemes ?? []);
-    
-        //console.log(newItems)
-        setContent(newItems ?? []);
+        setContent(newItems.sort(sortByOrder) ?? []);
     }
 
 
@@ -105,12 +102,12 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
         if (!updateFolderRequest) return;
 
         const keys = Object.keys(updateFolderRequest);
+      
         if (!keys.includes(folderId ?? '')) {
             return;
         }
 
         const newData = updateFolderRequest[folderId ?? ''];
-
         const newFolders = newData.map((item: FolderRequestItem) => {
             return {
                 id: item.id ?? '',
@@ -121,8 +118,8 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
                 filesnumber: item.filesnumber,
             };
         });
-
-        setContent(newFolders);
+        setContent(newFolders.sort(sortByOrder) ?? []);
+        //setContent(newFolders);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updateFolderRequest, slug]);
 

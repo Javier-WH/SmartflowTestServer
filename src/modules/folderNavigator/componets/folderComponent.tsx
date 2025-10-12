@@ -229,7 +229,7 @@ export function FolderComponent({
             message.error(request.message);
             return;
         }
-
+        console.log(request);
         if (request.data) {
             const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
             setUpdateFolderRequest(gruppedByContainer);
