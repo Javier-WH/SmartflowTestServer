@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { Modal, Typography } from 'antd';
-import { PiFolderOpenLight } from "react-icons/pi";
+import {PiFolderOpenLight } from "react-icons/pi";
+import { RiOrganizationChart } from "react-icons/ri";
 import useFolderManager from '../hooks/useFolderManager';
 import { FolderData, FolderRequestItem, SortableContent } from '../types/folder';
 import { MainContext } from '@/modules/mainContext';
@@ -142,7 +143,7 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
       className={styles['minimal-modal']} // Para el cuerpo del modal
       title={
         <span className={styles['modal-title-content']}>
-          <PiFolderOpenLight size={24} className={styles['modal-title-icon']} />
+          {containerid === "root" ? <RiOrganizationChart size={24} className={styles['modal-title-icon']} /> : <PiFolderOpenLight size={24} className={styles['modal-title-icon']} />}
           <Typography.Text className={styles['modal-title-text']}>{folderName}</Typography.Text>
         </span>
       }

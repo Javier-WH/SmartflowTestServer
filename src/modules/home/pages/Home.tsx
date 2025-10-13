@@ -146,7 +146,7 @@ export default function Home() {
 
     return (
         <>
-            <SortModal containerid={containerId} setContainerid={setContainerId} slug={slug} folderName="Root" />
+            <SortModal containerid={containerId} setContainerid={setContainerId} slug={slug} folderName={`${localStorage.getItem("OrgName") || "Root"}`} />
             <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
                 {/* Mobile Header Container */}
                 <Button
