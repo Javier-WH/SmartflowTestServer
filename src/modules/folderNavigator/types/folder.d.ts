@@ -35,6 +35,7 @@ export interface FolderData {
   published: boolean;
   type: number;
   filesnumber?: string
+  order?: number
 }
 
 export interface SortableContent {

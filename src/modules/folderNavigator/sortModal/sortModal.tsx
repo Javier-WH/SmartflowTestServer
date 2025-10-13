@@ -58,6 +58,7 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
     setLoading(true);
     getFolderContent(container, slug)
       .then(res => {
+       
         // Ordenar la data inicial por el campo 'order'
         const sortedData = res.data.sort((a: FolderRequestItem, b: FolderRequestItem) => (a.order || 0) - (b.order || 0));
         setFolderData(sortedData);
