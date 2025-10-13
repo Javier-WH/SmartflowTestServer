@@ -208,5 +208,10 @@
   "guided_check_list": "Guided Check List",
   "more": "More",
   "less": "Less",
-  "select_file_label": "Select a file image"
+  "select_file_label": "Select a file image",
+  "sort_folder_label": "Sort folder",
+  "sort_root_label": "Sort root",
+  "save_order_label": "Save order",
+  "order_message": "Drag and drop the files and folders to change their order."
+
 }

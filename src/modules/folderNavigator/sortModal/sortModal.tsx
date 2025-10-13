@@ -6,6 +6,8 @@ import { FolderData, FolderRequestItem, SortableContent } from '../types/folder'
 import { MainContext } from '@/modules/mainContext';
 import { MainContextValues } from '@/modules/mainContext';
 import DraggableItem from './Item';
+// --- Importar estilos ---
+import styles from './SortModal.module.css';
 
 // --- Importaciones de DND-Kit ---
 import {
@@ -22,6 +24,7 @@ import {
   SortableContext
 } from '@dnd-kit/sortable';
 import groupDataByContainer from '../context/utils/groupDataByContainer';
+import { t } from 'i18next';
 
 // ---------------------------------
 
@@ -58,6 +61,7 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
     setLoading(true);
     getFolderContent(container, slug)
       .then(res => {
+
         // Ordenar la data inicial por el campo 'order'
         const sortedData = res.data.sort((a: FolderRequestItem, b: FolderRequestItem) => (a.order || 0) - (b.order || 0));
         setFolderData(sortedData);
@@ -105,15 +109,15 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
 
     await sortFolderContent(data)
 
-    
 
-    if(containerid === "root") {
+
+    if (containerid === "root") {
       const rootContent = await getRootContent(slug);
       const gruppedByContainer = groupDataByContainer(rootContent as { data: FolderData[] });
       setUpdateFolderRequestFromMain(gruppedByContainer);
       setContainerid(null);
 
-    }else{
+    } else {
 
       const container = document.getElementById(containerid);
       if (!container) return;
@@ -133,10 +137,13 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
 
   return (
     <Modal
+      // 💡 Aplicamos las clases para el estilo minimalista en grises
+      wrapClassName={styles['minimal-modal-wrap']} // Para el fondo (backdrop)
+      className={styles['minimal-modal']} // Para el cuerpo del modal
       title={
-        <span style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-          <PiFolderOpenLight size={40} />
-          {folderName}
+        <span className={styles['modal-title-content']}>
+          <PiFolderOpenLight size={24} className={styles['modal-title-icon']} />
+          <Typography.Text className={styles['modal-title-text']}>{folderName}</Typography.Text>
         </span>
       }
       closable={true}
@@ -144,17 +151,15 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
       onOk={handleOk}
       onCancel={handleCancel}
       confirmLoading={loading}
-      okText="Guardar Orden"
-      cancelText="Cancelar"
-      width={800}
-
-
+      okText={t("save_order_label")}
+      cancelText={t("cancel_label")}
+      width={600} // Se reduce un poco el ancho
     >
-      <Typography.Paragraph style={{ direction: 'ltr' }}>
-        Arrastra y suelta los archivos y carpetas para cambiar su orden.
+      <Typography.Paragraph className={styles['modal-description']} >
+        {t("order_message")}
       </Typography.Paragraph>
 
-      <div style={{ maxHeight: 600, overflowY: 'auto', overflowX: 'hidden', padding: '1px' }}>
+      <div className={styles['list-container']}>
         <DndContext
           sensors={sensors}
           onDragEnd={handleDragEnd}
@@ -165,7 +170,7 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
             strategy={verticalListSortingStrategy} // Vertical
           >
             {folderData.length === 0 && !loading ? (
-              <Typography.Text disabled>La carpeta esta vacia</Typography.Text>
+              <Typography.Text disabled>La carpeta esta vacía</Typography.Text>
             ) : (
               folderData.map((item) => (
                 <DraggableItem item={item} key={item.id} />

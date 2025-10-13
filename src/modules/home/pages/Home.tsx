@@ -11,7 +11,7 @@ import {
     IconFile,
     IconFilePlus,
     IconFolderPlus,
-    IconFolderCode,
+    //IconFolderCode,
     //IconSortAscendingLetters,
     //IconSortDescendingLetters,
 } from '@tabler/icons-react';
@@ -74,15 +74,15 @@ export default function Home() {
         }
     }
 
-   
 
-    
+
+
     const handleCreateFolder = () => {
         if (!memberRoll?.write) {
             message.error(t('can_not_create_folder_message'));
             return;
         }
-        
+
         const newFolder: Folder = {
             id: selectedFolderId ?? null,
             name: '',
@@ -116,13 +116,13 @@ export default function Home() {
                 } else {
                     currentFolder.click();
                 }
-            }else{
+            } else {
                 getRootContent(slug).then(res => {
                     if (res.error) {
                         message.error(t('error_creating_file_message'));
                         return;
                     }
-    
+
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     setUpdateFolderRequestFromMain(res.data as any);
                 });
@@ -146,52 +146,52 @@ export default function Home() {
 
     return (
         <>
-         <SortModal containerid={containerId} setContainerid={setContainerId} slug = {slug} folderName = "Root"/>
-        <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
-            {/* Mobile Header Container */}
-            <Button
-                isIconOnly
-                className="md:hidden flex items-center justify-between py-6 px-4 bg-gray-100 rounded-lg w-full shadow-md cursor-pointer"
-                onPress={handleToggleSidebar}
-            >
-                <span className="flex gap-2 items-center font-medium text-black">
-                    <IconFile className="text-primary" />
-                    {t('document_explorer_title')}
-                </span>
+            <SortModal containerid={containerId} setContainerid={setContainerId} slug={slug} folderName="Root" />
+            <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
+                {/* Mobile Header Container */}
+                <Button
+                    isIconOnly
+                    className="md:hidden flex items-center justify-between py-6 px-4 bg-gray-100 rounded-lg w-full shadow-md cursor-pointer"
+                    onPress={handleToggleSidebar}
+                >
+                    <span className="flex gap-2 items-center font-medium text-black">
+                        <IconFile className="text-primary" />
+                        {t('document_explorer_title')}
+                    </span>
 
-                {isSidebarCollapsed ? (
-                    <IconChevronDown className="text-primary" />
-                ) : (
-                    <IconChevronUp className="text-primary" />
-                )}
-            </Button>
+                    {isSidebarCollapsed ? (
+                        <IconChevronDown className="text-primary" />
+                    ) : (
+                        <IconChevronUp className="text-primary" />
+                    )}
+                </Button>
 
-            <div
-                className={cn('flex flex-col gap-2 h-full relative', {
-                    'max-h-0 md:max-h-none md:w-16 md:bg-gray-100 md:rounded-xl': isSidebarCollapsed,
-                    'max-h-[calc(100%-180px)] md:max-h-none w-full md:w-1/4 min-w-[350px]': !isSidebarCollapsed,
-                })}
-            >
-                <nav className="w-full h-full overflow-hidden">
-                    {/* Content visible when sidebar is expanded */}
-                    <div
-                        className={`flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'hidden absolute md:opacity-100 md:visible md:relative' : 'relative'}`}
-                    >
-                        {/* <SearchInput /> */}
-                        <div className="border-2 h-full py-1 rounded-lg flex flex-col mt-[0px] relative pt-6 custom-shadow">
+                <div
+                    className={cn('flex flex-col gap-2 h-full relative', {
+                        'max-h-0 md:max-h-none md:w-16 md:bg-gray-100 md:rounded-xl': isSidebarCollapsed,
+                        'max-h-[calc(100%-180px)] md:max-h-none w-full md:w-1/4 min-w-[350px]': !isSidebarCollapsed,
+                    })}
+                >
+                    <nav className="w-full h-full overflow-hidden">
+                        {/* Content visible when sidebar is expanded */}
+                        <div
+                            className={`flex flex-col p-[1px] w-full h-full transition-opacity duration-200 ease-in-out ${isSidebarCollapsed ? 'hidden absolute md:opacity-100 md:visible md:relative' : 'relative'}`}
+                        >
+                            {/* <SearchInput /> */}
+                            <div className="border-2 h-full py-1 rounded-lg flex flex-col mt-[0px] relative pt-6 custom-shadow">
 
-                            <div className="rounded-tl-lg rounded-tr-lg text-center leading-[40px] absolute top-0 left-0 w-full h-[40px] pl-10 pr-10 truncate overflow-hidden whitespace-nowrap text-gray-500 bg-default-50 border-b-1 ">
-                                {`${localStorage.getItem("OrgName") || ""}`}
-                            </div>
+                                <div className="rounded-tl-lg rounded-tr-lg text-center leading-[40px] absolute top-0 left-0 w-full h-[40px] pl-10 pr-10 truncate overflow-hidden whitespace-nowrap text-gray-500 bg-default-50 border-b-1 ">
+                                    {`${localStorage.getItem("OrgName") || ""}`}
+                                </div>
 
-                            <div className='absolute top-[50px] left-[50%] transform -translate-x-1/2'>
-                                {
-                                    getLevelTitle(memberRoll?.level || "")
-                                }
-                            </div>
-                            <div className="flex justify-between gap-1 px-1 mt-5 ml-2">
-                               <div>
-                                   {/* <Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
+                                <div className='absolute top-[50px] left-[50%] transform -translate-x-1/2'>
+                                    {
+                                        getLevelTitle(memberRoll?.level || "")
+                                    }
+                                </div>
+                                <div className="flex justify-between gap-1 px-1 mt-5 ml-2">
+                                    <div>
+                                        {/* <Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
                                         <IconFolderCode className='folder-nav-icon' />
                                     </Button>
 
@@ -203,68 +203,68 @@ export default function Home() {
                                         <IconSortDescendingLetters className='folder-nav-icon' />
                                     </Button>*/}
 
-                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={()=>setContainerId("root")} title='sort root'>
-                                        <LuFolderTree className='folder-nav-icon' />
-                                    </Button>
+                                        <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setContainerId("root")} title={t('sort_root_label')}>
+                                            <LuFolderTree className='folder-nav-icon' />
+                                        </Button>
+                                    </div>
+
+                                    <div>
+
+                                        <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreatePage}>
+                                            <IconFilePlus className='folder-nav-icon' />
+                                        </Button>
+                                        <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreateFolder}>
+                                            <IconFolderPlus className='folder-nav-icon' />
+                                        </Button>
+                                    </div>
                                 </div>
 
-                                <div>
-
-                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreatePage}>
-                                        <IconFilePlus className='folder-nav-icon' />
-                                    </Button>
-                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreateFolder}>
-                                        <IconFolderPlus className='folder-nav-icon' />
-                                    </Button>
+                                <div className=" grow overflow-y-auto overflow-x-auto scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-[var(--strokeColor:)] scrollbar-track-transparent scrollbar-thin">
+                                    <FolderNavigator />
                                 </div>
-                            </div>
-
-                            <div className=" grow overflow-y-auto overflow-x-auto scrollbar-thumb-rounded-full scrollbar scrollbar-thumb-[var(--strokeColor:)] scrollbar-track-transparent scrollbar-thin">
-                                <FolderNavigator />
                             </div>
                         </div>
-                    </div>
 
-                    <div
-                        className={`flex flex-col items-center gap-2 pt-4 mt-6 ${isSidebarCollapsed ? 'opacity-100 visible' : 'opacity-0 invisible absolute'}`}
-                    >
-                        <Button variant="light" isIconOnly onPress={handleCreatePage}>
-                            <IconFilePlus />
-                        </Button>
-                        <Button variant="light" isIconOnly onPress={handleCreateFolder}>
-                            <IconFolderPlus />
-                        </Button>
-                    </div>
+                        <div
+                            className={`flex flex-col items-center gap-2 pt-4 mt-6 ${isSidebarCollapsed ? 'opacity-100 visible' : 'opacity-0 invisible absolute'}`}
+                        >
+                            <Button variant="light" isIconOnly onPress={handleCreatePage}>
+                                <IconFilePlus />
+                            </Button>
+                            <Button variant="light" isIconOnly onPress={handleCreateFolder}>
+                                <IconFolderPlus />
+                            </Button>
+                        </div>
 
-                    {/* Desktop Toggle Button */}
-                    <Button
-                        onPress={handleToggleSidebar}
-                        isIconOnly
-                        color="primary"
-                        className={cn(
-                            'max-sm:hidden md:flex absolute -translate-y-1/2 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out text-primary',
-                            {
-                                'left-1/2 -translate-x-1/2 bottom-4': isSidebarCollapsed,
-                                'left-[95%] top-1/2': !isSidebarCollapsed,
-                            },
-                        )}
-                    >
-                        {isSidebarCollapsed ? (
-                            <IconChevronRight key="sidebar-collapsed" size={16} />
-                        ) : (
-                            <IconChevronLeft key="sidebar-expanded" size={16} />
-                        )}
-                    </Button>
-                </nav>
+                        {/* Desktop Toggle Button */}
+                        <Button
+                            onPress={handleToggleSidebar}
+                            isIconOnly
+                            color="primary"
+                            className={cn(
+                                'max-sm:hidden md:flex absolute -translate-y-1/2 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out text-primary',
+                                {
+                                    'left-1/2 -translate-x-1/2 bottom-4': isSidebarCollapsed,
+                                    'left-[95%] top-1/2': !isSidebarCollapsed,
+                                },
+                            )}
+                        >
+                            {isSidebarCollapsed ? (
+                                <IconChevronRight key="sidebar-collapsed" size={16} />
+                            ) : (
+                                <IconChevronLeft key="sidebar-expanded" size={16} />
+                            )}
+                        </Button>
+                    </nav>
+                </div>
+
+                <section
+                    className={`grow transition-all duration-200 ease-in-out ${isSidebarCollapsed ? 'w-full md:w-[calc(100%-4rem-0.5rem)]' : 'w-full md:w-[calc(75%-0.5rem)]'
+                        } ${isSidebarCollapsed ? 'mt-0' : 'mt-2 md:mt-0'}`}
+                >
+                    <Outlet />
+                </section>
             </div>
-
-            <section
-                className={`grow transition-all duration-200 ease-in-out ${isSidebarCollapsed ? 'w-full md:w-[calc(100%-4rem-0.5rem)]' : 'w-full md:w-[calc(75%-0.5rem)]'
-                    } ${isSidebarCollapsed ? 'mt-0' : 'mt-2 md:mt-0'}`}
-            >
-                <Outlet />
-            </section>
-        </div>
         </>
     );
 }
