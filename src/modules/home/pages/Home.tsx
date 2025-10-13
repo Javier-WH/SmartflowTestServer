@@ -203,9 +203,12 @@ export default function Home() {
                                         <IconSortDescendingLetters className='folder-nav-icon' />
                                     </Button>*/}
 
-                                        <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setContainerId("root")} title={t('sort_root_label')}>
-                                            <LuFolderTree className='folder-nav-icon' />
-                                        </Button>
+                                        {
+                                            memberRoll?.write &&
+                                            <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setContainerId("root")} title={t('sort_root_label')}>
+                                                <LuFolderTree className='folder-nav-icon' />
+                                            </Button>
+                                        }
                                     </div>
 
                                     <div>

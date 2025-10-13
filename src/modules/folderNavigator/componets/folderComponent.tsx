@@ -144,6 +144,14 @@ export function FolderComponent({
         setFileCountUpdateRequest(true);
     };
 
+    const handleSortFolder = () => {
+        if (!memberRoll.write) {
+            message.error(t('can_not_create_file_message'));
+            return;
+        }
+        setSortFolderId(folder.id);
+    };
+
     const menu: MenuProps['items'] = [
         {
             key: '1',
@@ -168,7 +176,7 @@ export function FolderComponent({
         {
             key: '5',
             label: <div style={{ textAlign: 'left' }}>{t('sort_folder_label')}</div>,
-            onClick: () => setSortFolderId(folder.id),
+            onClick: () => handleSortFolder(),
         },
         {
             type: 'divider',
