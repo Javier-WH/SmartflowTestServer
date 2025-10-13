@@ -1,0 +1,126 @@
+/* Variables de color en escala de grises */
+:root {
+  --gray-light: #f5f5f5;
+  /* Fondo claro */
+  --gray-medium: #e0e0e0;
+  /* Bordes y separadores */
+  --gray-dark: #616161;
+  /* Texto y detalles */
+  --gray-darker: #212121;
+  /* Texto principal */
+}
+
+/* 1. Estilos del Contenedor del Modal (minimal-modal-wrap) */
+/* El contenedor envuelve el modal, se usa para el efecto de fondo (backdrop) */
+.minimal-modal-wrap :global(.ant-modal-mask) {
+  /* Fondo más oscuro y menos transparente para un look serio */
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+/* 2. Estilos del cuerpo del Modal (minimal-modal) */
+.minimal-modal :global(.ant-modal-content) {
+  /* Fondo blanco o muy claro, típico de minimalismo */
+  background-color: #ffffff;
+  /* Borde sutil */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  /* Controlamos el padding de las secciones internas */
+}
+
+/* 3. Encabezado del Modal */
+.minimal-modal :global(.ant-modal-header) {
+  /* Se elimina el fondo de color de Antd para un look más limpio */
+  background: transparent;
+  border-bottom: 1px solid var(--gray-medium);
+  /* Separador sutil */
+  padding: 16px 24px;
+}
+
+.modal-title-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-title-icon {
+  color: var(--gray-dark);
+  /* Icono gris */
+}
+
+.modal-title-text {
+  color: var(--gray-darker);
+  /* Texto del título más oscuro */
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* 4. Cuerpo Principal */
+.minimal-modal :global(.ant-modal-body) {
+  padding: 24px;
+}
+
+.modal-description {
+  color: var(--gray-dark);
+  margin-bottom: 16px;
+  font-size: 14px;
+  direction: ltr;
+  margin-top: -20px;
+}
+
+.list-container {
+  max-height: 400px;
+  /* Se reduce un poco la altura para que se vea más compacto */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  /* Estilo de scrollbar minimalista para navegadores basados en Webkit */
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-medium) transparent;
+}
+
+.list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.list-container::-webkit-scrollbar-thumb {
+  background-color: var(--gray-medium);
+  border-radius: 4px;
+}
+
+/* 5. Pie de página del Modal (Botones) */
+.minimal-modal :global(.ant-modal-footer) {
+  border-top: 1px solid var(--gray-medium);
+  /* Separador sutil */
+  padding: 16px 24px;
+}
+
+.minimal-modal :global(.ant-btn-primary) {
+  /* Botón principal (Guardar Orden) en un gris oscuro */
+  background-color: var(--gray-darker);
+  border-color: var(--gray-darker);
+  color: #ffffff;
+}
+
+/* 💡 CORRECCIÓN: Sobrescribir el estado :hover, :focus, y :active del botón primario */
+.minimal-modal :global(.ant-btn-primary:not(:disabled):hover),
+.minimal-modal :global(.ant-btn-primary:not(:disabled):focus),
+.minimal-modal :global(.ant-btn-primary:not(:disabled):active) {
+  /* Efecto hover/focus más sutil en un gris más claro/medio */
+  background-color: var(--gray-dark) !important;
+  /* Usamos !important para asegurar que sobrescriba el tema de Antd */
+  border-color: var(--gray-dark) !important;
+}
+
+.minimal-modal :global(.ant-btn:not(.ant-btn-primary)) {
+  /* Botón secundario (Cancelar) sin color de fondo */
+  color: var(--gray-dark);
+  border-color: var(--gray-dark);
+  background: transparent;
+}
+
+.minimal-modal :global(.ant-btn:not(.ant-btn-primary):hover) {
+  /* Efecto hover en el botón secundario */
+  color: var(--gray-darker) !important;
+  border-color: var(--gray-darker) !important;
+}

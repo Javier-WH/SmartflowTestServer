@@ -1,12 +1,13 @@
-
 import React from 'react';
 import { FolderRequestItem } from '../types/folder';
-import { useSortable} from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import {  Flex, theme } from 'antd';
+import { Flex } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
-import { CiFileOn } from "react-icons/ci"; 
-import { PiFolderLight} from "react-icons/pi";
+import { CiFileOn } from "react-icons/ci";
+import { PiFolderLight } from "react-icons/pi";
+// --- Importar estilos ---
+import styles from './DraggableItem.module.css';
 
 interface DraggableItemProps {
   item: FolderRequestItem;
@@ -14,7 +15,7 @@ interface DraggableItemProps {
 const DraggableItem: React.FC<DraggableItemProps> = (props) => {
 
   const { item } = props;
-  const { token } = theme.useToken();
+
 
   const {
     attributes,
@@ -26,32 +27,31 @@ const DraggableItem: React.FC<DraggableItemProps> = (props) => {
   } = useSortable({ id: item.id });
 
   const style: React.CSSProperties = {
+    // 💡 Transformaciones y transiciones deben seguir en línea para que DND-Kit funcione
     transform: CSS.Transform.toString(transform),
     transition,
-    padding: token.paddingSM,
-    marginBottom: token.marginXS,
-    backgroundColor: isDragging ? token.colorPrimaryBg : token.colorBgContainer,
-    border: `1px solid ${token.colorBorderSecondary}`,
-    borderRadius: token.borderRadius,
+    // La opacidad también es importante para el feedback visual
     opacity: isDragging ? 0.8 : 1,
-    cursor: 'default',
     zIndex: isDragging ? 1000 : 'auto',
-   
   };
 
+  // 💡 Aplicamos clases condicionales
+  const itemClasses = `${styles.item} ${isDragging ? styles['item-dragging'] : ''}`;
+
   return (
-    <div style={style} ref={setNodeRef}>
-      <Flex justify="start" gap="20px" align="center" style={{ direction: "ltr"}} >
+    <div className={itemClasses} style={style} ref={setNodeRef}>
+      <Flex justify="start" gap="20px" align="center" style={{ direction: "ltr" }} >
         <span
-          style={{ cursor: 'grab', padding: '0 8px' }}
+          className={styles['drag-handle']} // Clase para el manejador de arrastre
           {...attributes}
           {...listeners}
         >
-          <MenuOutlined />
+          <MenuOutlined className={styles['drag-icon']} />
         </span>
-        <div style={{ display: 'flex', alignItems: 'left', fontSize: '16px', gap: '10px' }}> {item.type === 1 ? <PiFolderLight size={25} /> : <CiFileOn size={25} />} {item.name}</div>
-
-     
+        <div className={styles['item-content']}>
+          {item.type === 1 ? <PiFolderLight size={20} className={styles['folder-icon']} /> : <CiFileOn size={20} className={styles['file-icon']} />}
+          <span className={styles['item-name']}>{item.name}</span>
+        </div>
       </Flex>
     </div>
   );
