@@ -270,7 +270,7 @@ export function FolderComponent({
                 >
                  
                     {contentId ? <PiFolderOpenLight className='folder-icon' /> : <PiFolderLight className='folder-icon' />}
-                    <span className="folder-name">{`${folder.id === selectedFolderId ? '•' : ''} ${folder.name}`}</span>
+                    <span className="folder-name">{`${folder.id === selectedFolderId || folder.id === sortFolderId ? '•' : ''} ${folder.name}`}</span>
 
                 </div>
             </Dropdown>

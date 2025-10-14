@@ -15,7 +15,6 @@ import {
     //IconSortAscendingLetters,
     //IconSortDescendingLetters,
 } from '@tabler/icons-react';
-import { LiaSortSolid } from "react-icons/lia";
 import { FaSort } from "react-icons/fa";
 import { cn } from '@heroui/react';
 import { ReactNode, useContext, useState } from 'react';
