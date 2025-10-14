@@ -15,7 +15,8 @@ import {
     //IconSortAscendingLetters,
     //IconSortDescendingLetters,
 } from '@tabler/icons-react';
-import { LuFolderTree } from "react-icons/lu";
+import { LiaSortSolid } from "react-icons/lia";
+import { FaSort } from "react-icons/fa";
 import { cn } from '@heroui/react';
 import { ReactNode, useContext, useState } from 'react';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
@@ -206,7 +207,7 @@ export default function Home() {
                                         {
                                             memberRoll?.write &&
                                             <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setContainerId("root")} title={t('sort_root_label')}>
-                                                <LuFolderTree className='folder-nav-icon' />
+                                                    <FaSort className='folder-nav-icon2' />
                                             </Button>
                                         }
                                     </div>

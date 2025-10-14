@@ -54,6 +54,13 @@ body {
 .folder-nav-icon {
     stroke-width: 1px;
     stroke: rgb(109 74 255 / 99%) !important;
+    
+}
+
+.folder-nav-icon2 {
+    scale: 1.5;
+    
+    fill: rgba(159, 137, 248, 0.99) !important;
 }
 /*
 #searchBox::before{
