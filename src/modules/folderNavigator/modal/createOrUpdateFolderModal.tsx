@@ -98,8 +98,20 @@ export default function CreateOrUpdateFolderModal({
             message.error(request.message);
             return;
         }
+        
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
+        const folderElement = document.getElementById(containerID);
+        if (folderElement) {
+            if (folderElement.classList.contains('opened')) {
+                folderElement.click();
+                setTimeout(() => {
+                    folderElement.click();
+                }, 10);
+            } else {
+                folderElement.click();
+            }
+        }
         setFolder(null);
     };
 
