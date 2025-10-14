@@ -26,6 +26,7 @@ import {
 } from '@dnd-kit/sortable';
 import groupDataByContainer from '../context/utils/groupDataByContainer';
 import { t } from 'i18next';
+import { sortByOrder } from './fucntions';
 
 // ---------------------------------
 
@@ -68,7 +69,8 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
 
         // Ordenar la data inicial por el campo 'order'
         const sortedData = res.data.sort((a: FolderRequestItem, b: FolderRequestItem) => (a.order || 0) - (b.order || 0));
-        setFolderData(sortedData);
+        setFolderData(sortedData.sort(sortByOrder) ?? []);
+        //setFolderData(sortedData);
       })
       .catch(err => console.error('Error fetching folder content:', err))
       .finally(() => setLoading(false));
