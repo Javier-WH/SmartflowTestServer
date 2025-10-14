@@ -88,40 +88,40 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
 
 CREATE OR REPLACE FUNCTION "public"."actualizar_carpeta"("p_foldername" character varying, "p_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    p_container_id UUID;  
-BEGIN
-    -- 1. Obtener el container id de la carpeta
-    SELECT container INTO STRICT p_container_id
-    FROM public.folders
-    WHERE id = p_id;
-
-    -- 2. Actualizar el nombre de la carpeta (sintaxis corregida)
-    UPDATE public.folders
-    SET name = p_folderName  
-    WHERE id = p_id;
-
-    -- 3. Retornar el contenido del contenedor
-    RETURN QUERY
-    SELECT
-        f.id AS itemId,
-        f.name AS name,
-        f.container AS container_id,
-        1 AS type,
-        FALSE AS published
-    FROM public.folders f
-    WHERE f.container IS NOT DISTINCT FROM p_container_id
-    UNION ALL
-    SELECT
-        a.id AS itemId,
-        a.name AS name,
-        a.container AS container_id,
-        0 AS type,
-        a.published AS published
-    FROM public.filesquill a
-    WHERE a.container IS NOT DISTINCT FROM p_container_id;
-END;
+    AS $$
+DECLARE
+    p_container_id UUID;  
+BEGIN
+    -- 1. Obtener el container id de la carpeta
+    SELECT container INTO STRICT p_container_id
+    FROM public.folders
+    WHERE id = p_id;
+
+    -- 2. Actualizar el nombre de la carpeta (sintaxis corregida)
+    UPDATE public.folders
+    SET name = p_folderName  
+    WHERE id = p_id;
+
+    -- 3. Retornar el contenido del contenedor
+    RETURN QUERY
+    SELECT
+        f.id AS itemId,
+        f.name AS name,
+        f.container AS container_id,
+        1 AS type,
+        FALSE AS published
+    FROM public.folders f
+    WHERE f.container IS NOT DISTINCT FROM p_container_id
+    UNION ALL
+    SELECT
+        a.id AS itemId,
+        a.name AS name,
+        a.container AS container_id,
+        0 AS type,
+        a.published AS published
+    FROM public.filesquill a
+    WHERE a.container IS NOT DISTINCT FROM p_container_id;
+END;
 $$;
 
 
@@ -130,34 +130,34 @@ ALTER FUNCTION "public"."actualizar_carpeta"("p_foldername" character varying, "
 
 CREATE OR REPLACE FUNCTION "public"."actualizar_carpeta_root"("p_foldername" character varying, "p_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-
-BEGIN
-    -- 1. Actualizar el nombre de la carpeta (sintaxis corregida)
-    UPDATE public.folders
-    SET name = p_folderName  
-    WHERE id = p_id;
-
-    -- 2. Retornar el contenido del contenedor
-    RETURN QUERY
-    SELECT
-        f.id AS itemId,
-        f.name AS name,
-        f.container AS container_id,
-        1 AS type,
-        FALSE AS published
-    FROM public.folders f
-    WHERE f.container IS NULL
-    UNION ALL
-    SELECT
-        a.id AS itemId,
-        a.name AS name,
-        a.container AS container_id,
-        0 AS type,
-        a.published AS published
-    FROM public.files a
-    WHERE a.container IS NULL;
-END;
+    AS $$
+
+BEGIN
+    -- 1. Actualizar el nombre de la carpeta (sintaxis corregida)
+    UPDATE public.folders
+    SET name = p_folderName  
+    WHERE id = p_id;
+
+    -- 2. Retornar el contenido del contenedor
+    RETURN QUERY
+    SELECT
+        f.id AS itemId,
+        f.name AS name,
+        f.container AS container_id,
+        1 AS type,
+        FALSE AS published
+    FROM public.folders f
+    WHERE f.container IS NULL
+    UNION ALL
+    SELECT
+        a.id AS itemId,
+        a.name AS name,
+        a.container AS container_id,
+        0 AS type,
+        a.published AS published
+    FROM public.files a
+    WHERE a.container IS NULL;
+END;
 $$;
 
 
@@ -196,73 +196,73 @@ ALTER FUNCTION "public"."before_insert_organization"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."borrar_archivo"("p_file_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "old_container_id" "uuid", "old_container_empty" boolean, "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    v_old_container_id UUID;
-    v_old_container_empty BOOLEAN;
-BEGIN
-    -- 1. Obtener el contenedor actual del archivo
-    SELECT container INTO v_old_container_id
-    FROM public.files
-    WHERE id = p_file_id;
-
-    -- 2. Borrar la carpeta
-    DELETE FROM public.files WHERE id = p_file_id;
-
-    -- 3. Comprobar si el contenedor de origen está vacío
-    IF v_old_container_id IS NOT NULL THEN
-        SELECT NOT EXISTS (
-            SELECT 1 FROM public.folders WHERE container = v_old_container_id
-            UNION ALL
-            SELECT 1 FROM public.files WHERE container = v_old_container_id
-        ) INTO v_old_container_empty;
-    ELSE
-        v_old_container_empty := NULL;
-    END IF;
-
-    -- 4. Retornar al menos una fila con los metadatos
-    RETURN QUERY
-    WITH items AS (
-        -- Carpetas en el contenedor original
-        SELECT
-            f.id,
-            f.name,
-            f.container,
-            1 AS type,
-            FALSE AS published
-        FROM public.folders f
-        WHERE f.container IS NOT DISTINCT FROM v_old_container_id
-        UNION ALL
-        -- Archivos en el contenedor original
-        SELECT
-            a.id,
-            a.name,
-            a.container,
-            0 AS type,
-            a.published
-        FROM public.files a
-        WHERE a.container IS NOT DISTINCT FROM v_old_container_id
-    )
-    SELECT
-        i.id::UUID,
-        i.name::VARCHAR,
-        i.container::UUID,
-        v_old_container_id,
-        v_old_container_empty,
-        i.type::integer,
-        i.published::boolean
-    FROM items i
-    UNION ALL
-    SELECT
-        NULL,  -- itemId
-        NULL,  -- name
-        NULL,  -- container_id
-        v_old_container_id,
-        v_old_container_empty,
-        NULL,  -- type
-        NULL   -- published
-    WHERE NOT EXISTS (SELECT 1 FROM items);  -- Solo si no hay registros
-END;
+    AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual del archivo
+    SELECT container INTO v_old_container_id
+    FROM public.files
+    WHERE id = p_file_id;
+
+    -- 2. Borrar la carpeta
+    DELETE FROM public.files WHERE id = p_file_id;
+
+    -- 3. Comprobar si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+            UNION ALL
+            SELECT 1 FROM public.files WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar al menos una fila con los metadatos
+    RETURN QUERY
+    WITH items AS (
+        -- Carpetas en el contenedor original
+        SELECT
+            f.id,
+            f.name,
+            f.container,
+            1 AS type,
+            FALSE AS published
+        FROM public.folders f
+        WHERE f.container IS NOT DISTINCT FROM v_old_container_id
+        UNION ALL
+        -- Archivos en el contenedor original
+        SELECT
+            a.id,
+            a.name,
+            a.container,
+            0 AS type,
+            a.published
+        FROM public.files a
+        WHERE a.container IS NOT DISTINCT FROM v_old_container_id
+    )
+    SELECT
+        i.id::UUID,
+        i.name::VARCHAR,
+        i.container::UUID,
+        v_old_container_id,
+        v_old_container_empty,
+        i.type::integer,
+        i.published::boolean
+    FROM items i
+    UNION ALL
+    SELECT
+        NULL,  -- itemId
+        NULL,  -- name
+        NULL,  -- container_id
+        v_old_container_id,
+        v_old_container_empty,
+        NULL,  -- type
+        NULL   -- published
+    WHERE NOT EXISTS (SELECT 1 FROM items);  -- Solo si no hay registros
+END;
 $$;
 
 
@@ -271,73 +271,73 @@ ALTER FUNCTION "public"."borrar_archivo"("p_file_id" "uuid") OWNER TO "postgres"
 
 CREATE OR REPLACE FUNCTION "public"."borrar_archivo_quill"("p_file_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "old_container_id" "uuid", "old_container_empty" boolean, "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    v_old_container_id UUID;
-    v_old_container_empty BOOLEAN;
-BEGIN
-    -- 1. Obtener el contenedor actual del archivo
-    SELECT container INTO v_old_container_id
-    FROM public.filesquill
-    WHERE id = p_file_id;
-
-    -- 2. Borrar la carpeta
-    DELETE FROM public.filesquill WHERE id = p_file_id;
-
-    -- 3. Comprobar si el contenedor de origen está vacío
-    IF v_old_container_id IS NOT NULL THEN
-        SELECT NOT EXISTS (
-            SELECT 1 FROM public.folders WHERE container = v_old_container_id
-            UNION ALL
-            SELECT 1 FROM public.filesquill WHERE container = v_old_container_id
-        ) INTO v_old_container_empty;
-    ELSE
-        v_old_container_empty := NULL;
-    END IF;
-
-    -- 4. Retornar al menos una fila con los metadatos
-    RETURN QUERY
-    WITH items AS (
-        -- Carpetas en el contenedor original
-        SELECT
-            f.id,
-            f.name,
-            f.container,
-            1 AS type,
-            FALSE AS published
-        FROM public.folders f
-        WHERE f.container IS NOT DISTINCT FROM v_old_container_id
-        UNION ALL
-        -- Archivos en el contenedor original
-        SELECT
-            a.id,
-            a.name,
-            a.container,
-            0 AS type,
-            a.published
-        FROM public.filesquill a
-        WHERE a.container IS NOT DISTINCT FROM v_old_container_id
-    )
-    SELECT
-        i.id::UUID,
-        i.name::VARCHAR,
-        i.container::UUID,
-        v_old_container_id,
-        v_old_container_empty,
-        i.type::integer,
-        i.published::boolean
-    FROM items i
-    UNION ALL
-    SELECT
-        NULL,  -- itemId
-        NULL,  -- name
-        NULL,  -- container_id
-        v_old_container_id,
-        v_old_container_empty,
-        NULL,  -- type
-        NULL   -- published
-    WHERE NOT EXISTS (SELECT 1 FROM items);  -- Solo si no hay registros
-END;
+    AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual del archivo
+    SELECT container INTO v_old_container_id
+    FROM public.filesquill
+    WHERE id = p_file_id;
+
+    -- 2. Borrar la carpeta
+    DELETE FROM public.filesquill WHERE id = p_file_id;
+
+    -- 3. Comprobar si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+            UNION ALL
+            SELECT 1 FROM public.filesquill WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar al menos una fila con los metadatos
+    RETURN QUERY
+    WITH items AS (
+        -- Carpetas en el contenedor original
+        SELECT
+            f.id,
+            f.name,
+            f.container,
+            1 AS type,
+            FALSE AS published
+        FROM public.folders f
+        WHERE f.container IS NOT DISTINCT FROM v_old_container_id
+        UNION ALL
+        -- Archivos en el contenedor original
+        SELECT
+            a.id,
+            a.name,
+            a.container,
+            0 AS type,
+            a.published
+        FROM public.filesquill a
+        WHERE a.container IS NOT DISTINCT FROM v_old_container_id
+    )
+    SELECT
+        i.id::UUID,
+        i.name::VARCHAR,
+        i.container::UUID,
+        v_old_container_id,
+        v_old_container_empty,
+        i.type::integer,
+        i.published::boolean
+    FROM items i
+    UNION ALL
+    SELECT
+        NULL,  -- itemId
+        NULL,  -- name
+        NULL,  -- container_id
+        v_old_container_id,
+        v_old_container_empty,
+        NULL,  -- type
+        NULL   -- published
+    WHERE NOT EXISTS (SELECT 1 FROM items);  -- Solo si no hay registros
+END;
 $$;
 
 
@@ -346,73 +346,73 @@ ALTER FUNCTION "public"."borrar_archivo_quill"("p_file_id" "uuid") OWNER TO "pos
 
 CREATE OR REPLACE FUNCTION "public"."borrar_carpeta"("p_folder_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "old_container_id" "uuid", "old_container_empty" boolean, "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    v_old_container_id UUID;
-    v_old_container_empty BOOLEAN;
-BEGIN
-    -- 1. Obtener el contenedor actual de la carpeta
-    SELECT container INTO v_old_container_id
-    FROM public.folders
-    WHERE id = p_folder_id;
-
-    -- 2. Borrar la carpeta
-    DELETE FROM public.folders WHERE id = p_folder_id;
-
-    -- 3. Comprobar si el contenedor de origen está vacío
-    IF v_old_container_id IS NOT NULL THEN
-        SELECT NOT EXISTS (
-            SELECT 1 FROM public.folders WHERE container = v_old_container_id
-            UNION ALL
-            SELECT 1 FROM public.files WHERE container = v_old_container_id
-        ) INTO v_old_container_empty;
-    ELSE
-        v_old_container_empty := NULL;
-    END IF;
-
-    -- 4. Retornar al menos una fila con los metadatos
-    RETURN QUERY
-    WITH items AS (
-        -- Carpetas en el contenedor original
-        SELECT
-            f.id,
-            f.name,
-            f.container,
-            1 AS type,
-            FALSE AS published
-        FROM public.folders f
-        WHERE f.container IS NOT DISTINCT FROM v_old_container_id
-        UNION ALL
-        -- Archivos en el contenedor original
-        SELECT
-            a.id,
-            a.name,
-            a.container,
-            0 AS type,
-            a.published
-        FROM public.filesquill a
-        WHERE a.container IS NOT DISTINCT FROM v_old_container_id
-    )
-    SELECT
-        i.id::UUID,
-        i.name::VARCHAR,
-        i.container::UUID,
-        v_old_container_id,
-        v_old_container_empty,
-        i.type::integer,
-        i.published::boolean
-    FROM items i
-    UNION ALL
-    SELECT
-        NULL,  -- itemId
-        NULL,  -- name
-        NULL,  -- container_id
-        v_old_container_id,
-        v_old_container_empty,
-        NULL,  -- type
-        NULL   -- published
-    WHERE NOT EXISTS (SELECT 1 FROM items);  -- Solo si no hay registros
-END;
+    AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual de la carpeta
+    SELECT container INTO v_old_container_id
+    FROM public.folders
+    WHERE id = p_folder_id;
+
+    -- 2. Borrar la carpeta
+    DELETE FROM public.folders WHERE id = p_folder_id;
+
+    -- 3. Comprobar si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+            UNION ALL
+            SELECT 1 FROM public.files WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar al menos una fila con los metadatos
+    RETURN QUERY
+    WITH items AS (
+        -- Carpetas en el contenedor original
+        SELECT
+            f.id,
+            f.name,
+            f.container,
+            1 AS type,
+            FALSE AS published
+        FROM public.folders f
+        WHERE f.container IS NOT DISTINCT FROM v_old_container_id
+        UNION ALL
+        -- Archivos en el contenedor original
+        SELECT
+            a.id,
+            a.name,
+            a.container,
+            0 AS type,
+            a.published
+        FROM public.filesquill a
+        WHERE a.container IS NOT DISTINCT FROM v_old_container_id
+    )
+    SELECT
+        i.id::UUID,
+        i.name::VARCHAR,
+        i.container::UUID,
+        v_old_container_id,
+        v_old_container_empty,
+        i.type::integer,
+        i.published::boolean
+    FROM items i
+    UNION ALL
+    SELECT
+        NULL,  -- itemId
+        NULL,  -- name
+        NULL,  -- container_id
+        v_old_container_id,
+        v_old_container_empty,
+        NULL,  -- type
+        NULL   -- published
+    WHERE NOT EXISTS (SELECT 1 FROM items);  -- Solo si no hay registros
+END;
 $$;
 
 
@@ -421,19 +421,19 @@ ALTER FUNCTION "public"."borrar_carpeta"("p_folder_id" "uuid") OWNER TO "postgre
 
 CREATE OR REPLACE FUNCTION "public"."check_folder_constraints"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    AS $$BEGIN
-  IF NEW.container IS NULL THEN
-    PERFORM 1
-    FROM public.folders
-    WHERE name = NEW.name
-    AND organization_id = NEW.organization_id
-    AND container IS NULL;
-  
-    IF FOUND THEN
-      RAISE EXCEPTION 'Folder with name "%" already exists with root container', NEW.name;
-    END IF;
-  END IF;
-  RETURN NEW;
+    AS $$BEGIN
+  IF NEW.container IS NULL THEN
+    PERFORM 1
+    FROM public.folders
+    WHERE name = NEW.name
+    AND organization_id = NEW.organization_id
+    AND container IS NULL;
+  
+    IF FOUND THEN
+      RAISE EXCEPTION 'Folder with name "%" already exists with root container', NEW.name;
+    END IF;
+  END IF;
+  RETURN NEW;
 END;$$;
 
 
@@ -442,37 +442,37 @@ ALTER FUNCTION "public"."check_folder_constraints"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."check_folder_cycle"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    current_container UUID;
-BEGIN
-    -- Si el contenedor no ha cambiado, no hay necesidad de verificar
-    IF TG_OP = 'UPDATE' AND OLD.container IS NOT DISTINCT FROM NEW.container THEN
-        RETURN NEW;
-    END IF;
-
-    -- Si el nuevo contenedor es NULL (raíz), no hay ciclo
-    IF NEW.container IS NULL THEN
-        RETURN NEW;
-    END IF;
-
-    -- Verificar si el nuevo contenedor crea un ciclo
-    current_container := NEW.container;
-
-    WHILE current_container IS NOT NULL LOOP
-        -- Si encontramos el ID de la carpeta actual en la jerarquía, hay un ciclo
-        IF current_container = NEW.id THEN
-            RAISE EXCEPTION 'Ciclo detectado: la carpeta no puede estar contenida dentro de sí misma o dentro de una carpeta que la contiene.';
-        END IF;
-
-        -- Obtener el contenedor del contenedor actual
-        SELECT container INTO current_container
-        FROM folders
-        WHERE id = current_container;
-    END LOOP;
-
-    RETURN NEW;
-END;
+    AS $$
+DECLARE
+    current_container UUID;
+BEGIN
+    -- Si el contenedor no ha cambiado, no hay necesidad de verificar
+    IF TG_OP = 'UPDATE' AND OLD.container IS NOT DISTINCT FROM NEW.container THEN
+        RETURN NEW;
+    END IF;
+
+    -- Si el nuevo contenedor es NULL (raíz), no hay ciclo
+    IF NEW.container IS NULL THEN
+        RETURN NEW;
+    END IF;
+
+    -- Verificar si el nuevo contenedor crea un ciclo
+    current_container := NEW.container;
+
+    WHILE current_container IS NOT NULL LOOP
+        -- Si encontramos el ID de la carpeta actual en la jerarquía, hay un ciclo
+        IF current_container = NEW.id THEN
+            RAISE EXCEPTION 'Ciclo detectado: la carpeta no puede estar contenida dentro de sí misma o dentro de una carpeta que la contiene.';
+        END IF;
+
+        -- Obtener el contenedor del contenedor actual
+        SELECT container INTO current_container
+        FROM folders
+        WHERE id = current_container;
+    END LOOP;
+
+    RETURN NEW;
+END;
 $$;
 
 
@@ -593,42 +593,42 @@ ALTER FUNCTION "public"."clone_organization"("original_org_id" "uuid", "new_org_
 
 CREATE OR REPLACE FUNCTION "public"."crear_carpeta"("p_foldername" character varying, "p_container_id" "uuid", "p_slug" "text") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    p_organization_id UUID;
-BEGIN
-    -- 0. Obtener el ID de la organizacion
-
-    SELECT o.id INTO p_organization_id FROM public.organizations o WHERE o.slug = p_slug;
-
-    -- 1. Insertar la carpeta
-    INSERT INTO public.folders (name, container, organization_id) 
-    VALUES (p_folderName, p_container_id, p_organization_id);
-
-    -- 2. Retornar el contenido del contenedor
-    RETURN QUERY
-    SELECT
-        f.id AS itemId,
-        f.name AS name,
-        f.container AS container_id,
-        1 AS type,  
-        FALSE AS published
-    FROM
-        public.folders f
-    WHERE
-        f.container IS NOT DISTINCT FROM p_container_id  
-    UNION ALL
-    SELECT
-        a.id AS itemId,
-        a.name AS name,
-        a.container AS container_id,
-        0 AS type,
-        a.published AS published
-    FROM
-        public.filesquill a
-    WHERE
-        a.container IS NOT DISTINCT FROM p_container_id;  
-END;
+    AS $$
+DECLARE
+    p_organization_id UUID;
+BEGIN
+    -- 0. Obtener el ID de la organizacion
+
+    SELECT o.id INTO p_organization_id FROM public.organizations o WHERE o.slug = p_slug;
+
+    -- 1. Insertar la carpeta
+    INSERT INTO public.folders (name, container, organization_id) 
+    VALUES (p_folderName, p_container_id, p_organization_id);
+
+    -- 2. Retornar el contenido del contenedor
+    RETURN QUERY
+    SELECT
+        f.id AS itemId,
+        f.name AS name,
+        f.container AS container_id,
+        1 AS type,  
+        FALSE AS published
+    FROM
+        public.folders f
+    WHERE
+        f.container IS NOT DISTINCT FROM p_container_id  
+    UNION ALL
+    SELECT
+        a.id AS itemId,
+        a.name AS name,
+        a.container AS container_id,
+        0 AS type,
+        a.published AS published
+    FROM
+        public.filesquill a
+    WHERE
+        a.container IS NOT DISTINCT FROM p_container_id;  
+END;
 $$;
 
 
@@ -637,23 +637,23 @@ ALTER FUNCTION "public"."crear_carpeta"("p_foldername" character varying, "p_con
 
 CREATE OR REPLACE FUNCTION "public"."create_file"("p_name" character varying, "p_container" "uuid" DEFAULT NULL::"uuid") RETURNS "uuid"
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-  new_id uuid;
-BEGIN
-  -- Insertar el registro manejando el caso especial para container
-  INSERT INTO public.files(name, container)
-  VALUES (
-    p_name,
-    CASE 
-      WHEN p_container IS NULL THEN NULL
-      ELSE p_container
-    END
-  )
-  RETURNING id INTO new_id;
-  
-  RETURN new_id;
-END;
+    AS $$
+DECLARE
+  new_id uuid;
+BEGIN
+  -- Insertar el registro manejando el caso especial para container
+  INSERT INTO public.files(name, container)
+  VALUES (
+    p_name,
+    CASE 
+      WHEN p_container IS NULL THEN NULL
+      ELSE p_container
+    END
+  )
+  RETURNING id INTO new_id;
+  
+  RETURN new_id;
+END;
 $$;
 
 
@@ -662,23 +662,23 @@ ALTER FUNCTION "public"."create_file"("p_name" character varying, "p_container" 
 
 CREATE OR REPLACE FUNCTION "public"."create_file_quill"("p_name" character varying, "p_container" "uuid" DEFAULT NULL::"uuid") RETURNS "uuid"
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-  new_id uuid;
-BEGIN
-  -- Insertar el registro manejando el caso especial para container
-  INSERT INTO public.filesquill(name, container)
-  VALUES (
-    p_name,
-    CASE 
-      WHEN p_container IS NULL THEN NULL
-      ELSE p_container
-    END
-  )
-  RETURNING id INTO new_id;
-  
-  RETURN new_id;
-END;
+    AS $$
+DECLARE
+  new_id uuid;
+BEGIN
+  -- Insertar el registro manejando el caso especial para container
+  INSERT INTO public.filesquill(name, container)
+  VALUES (
+    p_name,
+    CASE 
+      WHEN p_container IS NULL THEN NULL
+      ELSE p_container
+    END
+  )
+  RETURNING id INTO new_id;
+  
+  RETURN new_id;
+END;
 $$;
 
 
@@ -719,24 +719,24 @@ ALTER FUNCTION "public"."create_file_quill"("p_name" character varying, "p_conta
 
 CREATE OR REPLACE FUNCTION "public"."create_file_quill"("p_name" character varying, "p_container" "uuid" DEFAULT NULL::"uuid", "p_organization_id" "uuid" DEFAULT NULL::"uuid") RETURNS "uuid"
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-  new_id uuid;
-BEGIN
-  -- Insertar el registro manejando el caso especial para container
-  INSERT INTO public.filesquill(name, container, organization_id)
-  VALUES (
-    p_name,
-    CASE 
-      WHEN p_container IS NULL THEN NULL
-      ELSE p_container
-    END,
-    p_organization_id
-  )
-  RETURNING id INTO new_id;
-  
-  RETURN new_id;
-END;
+    AS $$
+DECLARE
+  new_id uuid;
+BEGIN
+  -- Insertar el registro manejando el caso especial para container
+  INSERT INTO public.filesquill(name, container, organization_id)
+  VALUES (
+    p_name,
+    CASE 
+      WHEN p_container IS NULL THEN NULL
+      ELSE p_container
+    END,
+    p_organization_id
+  )
+  RETURNING id INTO new_id;
+  
+  RETURN new_id;
+END;
 $$;
 
 
@@ -786,53 +786,53 @@ ALTER FUNCTION "public"."duplicate_filesquill_record"("p_id" "uuid") OWNER TO "p
 
 CREATE OR REPLACE FUNCTION "public"."enviar_email"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
-    AS $$
-declare
-  org_name varchar;
-  org_description text;
-begin
-  -- Obtener datos de la organización
-  select o.name, o.description into org_name, org_description
-  from public.organizations o
-  where o.id = NEW.organization_id;
-
-  -- Enviar email con datos combinados
-  perform net.http_post(
-    url := 'https://api.resend.com/emails',
-    headers := json_build_object(
-      'Content-Type', 'application/json',
-      'Authorization', 'Bearer ' || 're_8vYJDdWb_2cR8MKuB3MvdbAjwvXgUWUjE'
-    )::jsonb,
-    body := json_build_object(
-      'from', 'notreply@andinotechnologies.com',
-      'to', NEW.email,
-      'subject', 'Invitación a Organización',
-      'html', format('
-        <div style="background:#f0f0f0; padding:20px;">
-          <h1>%s</h1>
-          <h5>%s</h5>
-
-          <p>This email has been sent to invite you to join this organization.</p>
-          <p>If you did not request to join the organization, you can ignore this email.</p>
-        
-          <a href="https://smartflo.vercel.app/join/%s" 
-             style="background:#007bff; color:white; padding:10px 20px; text-decoration:none;">
-            go to organization join page
-          </a>
-        </div>
-      ', 
-      org_name, 
-      org_description, 
-      NEW.id)
-    )::jsonb
-  );
-
-  return new;
-exception
-  when others then
-    raise warning 'Error enviando email: %', sqlerrm;
-    return new;
-end;
+    AS $$
+declare
+  org_name varchar;
+  org_description text;
+begin
+  -- Obtener datos de la organización
+  select o.name, o.description into org_name, org_description
+  from public.organizations o
+  where o.id = NEW.organization_id;
+
+  -- Enviar email con datos combinados
+  perform net.http_post(
+    url := 'https://api.resend.com/emails',
+    headers := json_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || 're_8vYJDdWb_2cR8MKuB3MvdbAjwvXgUWUjE'
+    )::jsonb,
+    body := json_build_object(
+      'from', 'notreply@andinotechnologies.com',
+      'to', NEW.email,
+      'subject', 'Invitación a Organización',
+      'html', format('
+        <div style="background:#f0f0f0; padding:20px;">
+          <h1>%s</h1>
+          <h5>%s</h5>
+
+          <p>This email has been sent to invite you to join this organization.</p>
+          <p>If you did not request to join the organization, you can ignore this email.</p>
+        
+          <a href="https://smartflo.vercel.app/join/%s" 
+             style="background:#007bff; color:white; padding:10px 20px; text-decoration:none;">
+            go to organization join page
+          </a>
+        </div>
+      ', 
+      org_name, 
+      org_description, 
+      NEW.id)
+    )::jsonb
+  );
+
+  return new;
+exception
+  when others then
+    raise warning 'Error enviando email: %', sqlerrm;
+    return new;
+end;
 $$;
 
 
@@ -860,43 +860,43 @@ ALTER FUNCTION "public"."generate_random_string"("length" integer) OWNER TO "pos
 
 CREATE OR REPLACE FUNCTION "public"."get_folder_path_contents"("p_folder_id" "uuid") RETURNS TABLE("id" "uuid", "name" character varying, "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    path_ids UUID[];
-BEGIN
-    -- CTE con alias explícitos para evitar ambigüedades
-    WITH RECURSIVE folder_path AS (
-        SELECT 
-            f.id AS folder_id,  -- Alias único
-            f.container
-        FROM public.folders f
-        WHERE f.id = p_folder_id  -- Cualificado con alias de tabla
-        
-        UNION ALL
-        
-        SELECT 
-            f.id AS folder_id,  -- Mismo alias en recursivo
-            f.container
-        FROM public.folders f
-        INNER JOIN folder_path fp ON f.id = fp.container
-    )
-    SELECT ARRAY_AGG(folder_id) INTO path_ids  -- Usamos el alias
-    FROM folder_path
-    WHERE folder_id <> p_folder_id;  -- Referencia no ambigua
-
-    path_ids := ARRAY_REVERSE(path_ids);
-
-    IF array_length(path_ids, 1) > 0 THEN
-        IF (SELECT container FROM public.folders WHERE id = path_ids[1]) IS NULL THEN
-            path_ids := path_ids[2:];
-        END IF;
-    END IF;
-
-    RETURN QUERY
-    SELECT gc.id, gc.name, gc.type, gc.published
-    FROM unnest(path_ids) AS current_folder_id  -- Alias único
-    CROSS JOIN LATERAL getfolderContent(current_folder_id) AS gc;
-END;
+    AS $$
+DECLARE
+    path_ids UUID[];
+BEGIN
+    -- CTE con alias explícitos para evitar ambigüedades
+    WITH RECURSIVE folder_path AS (
+        SELECT 
+            f.id AS folder_id,  -- Alias único
+            f.container
+        FROM public.folders f
+        WHERE f.id = p_folder_id  -- Cualificado con alias de tabla
+        
+        UNION ALL
+        
+        SELECT 
+            f.id AS folder_id,  -- Mismo alias en recursivo
+            f.container
+        FROM public.folders f
+        INNER JOIN folder_path fp ON f.id = fp.container
+    )
+    SELECT ARRAY_AGG(folder_id) INTO path_ids  -- Usamos el alias
+    FROM folder_path
+    WHERE folder_id <> p_folder_id;  -- Referencia no ambigua
+
+    path_ids := ARRAY_REVERSE(path_ids);
+
+    IF array_length(path_ids, 1) > 0 THEN
+        IF (SELECT container FROM public.folders WHERE id = path_ids[1]) IS NULL THEN
+            path_ids := path_ids[2:];
+        END IF;
+    END IF;
+
+    RETURN QUERY
+    SELECT gc.id, gc.name, gc.type, gc.published
+    FROM unnest(path_ids) AS current_folder_id  -- Alias único
+    CROSS JOIN LATERAL getfolderContent(current_folder_id) AS gc;
+END;
 $$;
 
 
@@ -965,29 +965,29 @@ ALTER FUNCTION "public"."get_user_organizations"("p_user_id" "uuid", "p_name" "t
 
 CREATE OR REPLACE FUNCTION "public"."getfilescount"("p_folder_id" "uuid") RETURNS TABLE("filesnumber" character varying)
     LANGUAGE "plpgsql"
-    AS $$
-BEGIN
-    RETURN QUERY
-    WITH RECURSIVE subfolders AS (
-        SELECT 
-            id
-        FROM public.folders
-        WHERE id = p_folder_id  -- Inicia desde la carpeta especificada
-        
-        UNION ALL
-        
-        SELECT 
-            f.id
-        FROM public.folders f
-        INNER JOIN subfolders s 
-            ON f.container = s.id  -- Recursividad hacia subcarpetas
-    )
-    SELECT 
-        COUNT(*)::VARCHAR
-    FROM public.filesquill
-    WHERE container IN (SELECT id FROM subfolders);  -- Archivos en cualquier nivel
-
-END;
+    AS $$
+BEGIN
+    RETURN QUERY
+    WITH RECURSIVE subfolders AS (
+        SELECT 
+            id
+        FROM public.folders
+        WHERE id = p_folder_id  -- Inicia desde la carpeta especificada
+        
+        UNION ALL
+        
+        SELECT 
+            f.id
+        FROM public.folders f
+        INNER JOIN subfolders s 
+            ON f.container = s.id  -- Recursividad hacia subcarpetas
+    )
+    SELECT 
+        COUNT(*)::VARCHAR
+    FROM public.filesquill
+    WHERE container IN (SELECT id FROM subfolders);  -- Archivos en cualquier nivel
+
+END;
 $$;
 
 
@@ -996,59 +996,59 @@ ALTER FUNCTION "public"."getfilescount"("p_folder_id" "uuid") OWNER TO "postgres
 
 CREATE OR REPLACE FUNCTION "public"."getfoldercontentquill"("p_folder_id" "uuid", "p_slug" "text") RETURNS TABLE("id" "uuid", "name" character varying, "type" integer, "published" boolean, "filesnumber" character varying)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    p_organization_id UUID;
-BEGIN
-    -- obtengo el id de la organizacion usando el slug
-    SELECT o.id INTO p_organization_id FROM public.organizations o WHERE o.slug = p_slug;
-
-
-    RETURN QUERY
-    SELECT
-        f.id AS id,
-        f.name AS name,
-        1 AS type,
-        false AS published,
-         (
-            WITH RECURSIVE subfolders AS (
-                SELECT 
-                    folders.id  -- Calificar con el nombre de la tabla
-                FROM folders 
-                WHERE folders.container = f.id  -- f es el alias de la consulta externa
-                UNION ALL
-                SELECT 
-                    fsub.id  -- Calificar con alias de tabla
-                FROM folders fsub
-                INNER JOIN subfolders s ON fsub.container = s.id
-            )
-            SELECT COUNT(*)::VARCHAR
-            FROM public.filesquill
-            WHERE 
-                container = f.id 
-                OR container IN (
-                    SELECT subfolders.id  -- Calificar con el nombre del CTE
-                    FROM subfolders
-                )
-        ) AS filesNumber
-    FROM public.folders f
-    WHERE
-        (p_folder_id IS NULL AND f.container IS NULL AND f.organization_id = p_organization_id)  -- Manejo de NULL
-        OR f.container = p_folder_id                   -- Caso normal
-    
-    UNION ALL
-    
-    SELECT
-        a.id AS id,
-        a.name AS name,
-        0 AS type,
-        a.published AS published,
-        '0' as filesNumber 
-    FROM public.filesquill a
-    WHERE
-        (p_folder_id IS NULL AND a.container IS NULL AND a.organization_id = p_organization_id)  -- Manejo de NULL
-        OR a.container = p_folder_id;                  -- Caso normal
-END;
+    AS $$
+DECLARE
+    p_organization_id UUID;
+BEGIN
+    -- obtengo el id de la organizacion usando el slug
+    SELECT o.id INTO p_organization_id FROM public.organizations o WHERE o.slug = p_slug;
+
+
+    RETURN QUERY
+    SELECT
+        f.id AS id,
+        f.name AS name,
+        1 AS type,
+        false AS published,
+         (
+            WITH RECURSIVE subfolders AS (
+                SELECT 
+                    folders.id  -- Calificar con el nombre de la tabla
+                FROM folders 
+                WHERE folders.container = f.id  -- f es el alias de la consulta externa
+                UNION ALL
+                SELECT 
+                    fsub.id  -- Calificar con alias de tabla
+                FROM folders fsub
+                INNER JOIN subfolders s ON fsub.container = s.id
+            )
+            SELECT COUNT(*)::VARCHAR
+            FROM public.filesquill
+            WHERE 
+                container = f.id 
+                OR container IN (
+                    SELECT subfolders.id  -- Calificar con el nombre del CTE
+                    FROM subfolders
+                )
+        ) AS filesNumber
+    FROM public.folders f
+    WHERE
+        (p_folder_id IS NULL AND f.container IS NULL AND f.organization_id = p_organization_id)  -- Manejo de NULL
+        OR f.container = p_folder_id                   -- Caso normal
+    
+    UNION ALL
+    
+    SELECT
+        a.id AS id,
+        a.name AS name,
+        0 AS type,
+        a.published AS published,
+        '0' as filesNumber 
+    FROM public.filesquill a
+    WHERE
+        (p_folder_id IS NULL AND a.container IS NULL AND a.organization_id = p_organization_id)  -- Manejo de NULL
+        OR a.container = p_folder_id;                  -- Caso normal
+END;
 $$;
 
 
@@ -1057,86 +1057,86 @@ ALTER FUNCTION "public"."getfoldercontentquill"("p_folder_id" "uuid", "p_slug" "
 
 CREATE OR REPLACE FUNCTION "public"."gethierarchyfoldercontent"("p_folder_id" "uuid", "p_slug" "text") RETURNS TABLE("itemid" "uuid", "name" character varying, "type" integer, "published" boolean, "level" integer, "container_id" "uuid")
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    curr_folder_id UUID;         -- Folder actual en el recorrido
-    parent_folder_id UUID;       -- Contenedor del folder actual
-    ancestors UUID[] := ARRAY[]::UUID[];  -- Acumula los id de los padres
-    i INT;
-    rev_array UUID[];            -- Arreglo invertido de ancestros
-BEGIN
-    -- Caso en que no se pasa un id: retornamos el contenido del root
-    IF p_folder_id IS NULL THEN
-        RETURN QUERY
-            SELECT r.id, 
-                   r.name, 
-                   r.type, 
-                   r.published, 
-                   0 AS level,
-                   NULL AS container
-            FROM (
-                  SELECT * FROM getRootContentQuill()
-            ) r;
-        RETURN;
-    END IF;
-    
-    -- Iniciar la búsqueda con la carpeta ingresada
-    curr_folder_id := p_folder_id;
-    
-    LOOP
-        SELECT f.container 
-          INTO parent_folder_id
-        FROM public.folders f
-        WHERE f.id = curr_folder_id;
-        
-        -- Si no hay contenedor, entonces se llegó al global root
-        IF parent_folder_id IS NULL THEN
-            EXIT;
-        END IF;
-        
-        ancestors := ancestors || parent_folder_id;
-        curr_folder_id := parent_folder_id;
-    END LOOP;
-    
-    -- Invertir el arreglo para que el primer elemento sea el de más alto nivel
-    rev_array := (
-        SELECT ARRAY(
-            SELECT t.x
-            FROM unnest(ancestors) WITH ORDINALITY AS t(x, ord)
-            ORDER BY t.ord DESC
-        )
-    );
-    
-    -- Si no hay ancestros, la carpeta es de primer nivel; se usa el contenido del root
-    IF rev_array IS NULL OR array_length(rev_array, 1) = 0 THEN
-        RETURN QUERY
-            SELECT r.id, 
-                   r.name, 
-                   r.type, 
-                   r.published, 
-                   0 AS level,
-                   NULL AS container_id
-            FROM getRootContentQuill() r;
-    ELSE
-        -- Por cada nivel de la jerarquía se obtiene su contenido
-        -- Se asigna level = (i-1) para que el nivel 0 corresponda al root
-        FOR i IN 1..array_length(rev_array, 1) LOOP
-            RETURN QUERY
-              SELECT r.id,
-                     r.name,
-                     r.type,
-                     r.published,
-                     (i - 1) AS level,
-                     CASE
-                       WHEN r.type = 1 THEN (SELECT f.container FROM public.folders f WHERE f.id = r.id)
-                       WHEN r.type = 0 THEN (SELECT a.container FROM public.filesquill a WHERE a.id = r.id)
-                     END AS container_id
-              FROM getfolderContentQuill(rev_array[i], p_slug) r;
-        END LOOP;
-    END IF;
-    
-    RETURN;
-END;
+    AS $$
+DECLARE
+    curr_folder_id UUID;         -- Folder actual en el recorrido
+    parent_folder_id UUID;       -- Contenedor del folder actual
+    ancestors UUID[] := ARRAY[]::UUID[];  -- Acumula los id de los padres
+    i INT;
+    rev_array UUID[];            -- Arreglo invertido de ancestros
+BEGIN
+    -- Caso en que no se pasa un id: retornamos el contenido del root
+    IF p_folder_id IS NULL THEN
+        RETURN QUERY
+            SELECT r.id, 
+                   r.name, 
+                   r.type, 
+                   r.published, 
+                   0 AS level,
+                   NULL AS container
+            FROM (
+                  SELECT * FROM getRootContentQuill()
+            ) r;
+        RETURN;
+    END IF;
+    
+    -- Iniciar la búsqueda con la carpeta ingresada
+    curr_folder_id := p_folder_id;
+    
+    LOOP
+        SELECT f.container 
+          INTO parent_folder_id
+        FROM public.folders f
+        WHERE f.id = curr_folder_id;
+        
+        -- Si no hay contenedor, entonces se llegó al global root
+        IF parent_folder_id IS NULL THEN
+            EXIT;
+        END IF;
+        
+        ancestors := ancestors || parent_folder_id;
+        curr_folder_id := parent_folder_id;
+    END LOOP;
+    
+    -- Invertir el arreglo para que el primer elemento sea el de más alto nivel
+    rev_array := (
+        SELECT ARRAY(
+            SELECT t.x
+            FROM unnest(ancestors) WITH ORDINALITY AS t(x, ord)
+            ORDER BY t.ord DESC
+        )
+    );
+    
+    -- Si no hay ancestros, la carpeta es de primer nivel; se usa el contenido del root
+    IF rev_array IS NULL OR array_length(rev_array, 1) = 0 THEN
+        RETURN QUERY
+            SELECT r.id, 
+                   r.name, 
+                   r.type, 
+                   r.published, 
+                   0 AS level,
+                   NULL AS container_id
+            FROM getRootContentQuill() r;
+    ELSE
+        -- Por cada nivel de la jerarquía se obtiene su contenido
+        -- Se asigna level = (i-1) para que el nivel 0 corresponda al root
+        FOR i IN 1..array_length(rev_array, 1) LOOP
+            RETURN QUERY
+              SELECT r.id,
+                     r.name,
+                     r.type,
+                     r.published,
+                     (i - 1) AS level,
+                     CASE
+                       WHEN r.type = 1 THEN (SELECT f.container FROM public.folders f WHERE f.id = r.id)
+                       WHEN r.type = 0 THEN (SELECT a.container FROM public.filesquill a WHERE a.id = r.id)
+                     END AS container_id
+              FROM getfolderContentQuill(rev_array[i], p_slug) r;
+        END LOOP;
+    END IF;
+    
+    RETURN;
+END;
 $$;
 
 
@@ -1145,19 +1145,19 @@ ALTER FUNCTION "public"."gethierarchyfoldercontent"("p_folder_id" "uuid", "p_slu
 
 CREATE OR REPLACE FUNCTION "public"."getmembers"("a_organization_id" "uuid") RETURNS TABLE("userid" "uuid", "useremail" character varying, "rollid" "uuid", "rollname" character varying)
     LANGUAGE "plpgsql" SECURITY DEFINER
-    AS $$
-BEGIN
-  RETURN QUERY
-    SELECT 
-      u.id as userId,
-      u.email as userEmail,
-      r.id as rollId,
-      r.level as rollName
-    FROM public.organizations_users ou
-    JOIN auth.users u ON ou.user_id = u.id
-    JOIN public.rolls r ON ou.roll_id = r.id
-    WHERE ou.organization_id = a_organization_id; 
-END;
+    AS $$
+BEGIN
+  RETURN QUERY
+    SELECT 
+      u.id as userId,
+      u.email as userEmail,
+      r.id as rollId,
+      r.level as rollName
+    FROM public.organizations_users ou
+    JOIN auth.users u ON ou.user_id = u.id
+    JOIN public.rolls r ON ou.roll_id = r.id
+    WHERE ou.organization_id = a_organization_id; 
+END;
 $$;
 
 
@@ -1166,28 +1166,28 @@ ALTER FUNCTION "public"."getmembers"("a_organization_id" "uuid") OWNER TO "postg
 
 CREATE OR REPLACE FUNCTION "public"."getrootcontent"() RETURNS TABLE("id" "uuid", "name" character varying, "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        f.id AS id,
-        f.name AS name,
-        1 AS type,
-        false AS published 
-    FROM public.folders f
-    WHERE f.container IS NULL
-    
-    UNION ALL
-    
-    SELECT
-        a.id AS id,
-        a.name AS name,
-        0 AS type,
-        a.published AS published  
-    FROM public.files a
-    WHERE a.container IS NULL;
-    
-END;
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        f.id AS id,
+        f.name AS name,
+        1 AS type,
+        false AS published 
+    FROM public.folders f
+    WHERE f.container IS NULL
+    
+    UNION ALL
+    
+    SELECT
+        a.id AS id,
+        a.name AS name,
+        0 AS type,
+        a.published AS published  
+    FROM public.files a
+    WHERE a.container IS NULL;
+    
+END;
 $$;
 
 
@@ -1196,50 +1196,50 @@ ALTER FUNCTION "public"."getrootcontent"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."getrootcontentquill"() RETURNS TABLE("id" "uuid", "name" character varying, "type" integer, "published" boolean, "filesnumber" character varying)
     LANGUAGE "plpgsql"
-    AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        f.id AS id,
-        f.name AS name,
-        1 AS type,
-        false AS published,
-                (
-            WITH RECURSIVE subfolders AS (
-                SELECT 
-                    folders.id  -- Calificar con el nombre de la tabla
-                FROM folders 
-                WHERE folders.container = f.id  -- f es el alias de la consulta externa
-                UNION ALL
-                SELECT 
-                    fsub.id  -- Calificar con alias de tabla
-                FROM folders fsub
-                INNER JOIN subfolders s ON fsub.container = s.id
-            )
-            SELECT COUNT(*)::VARCHAR
-            FROM public.filesquill
-            WHERE 
-                container = f.id 
-                OR container IN (
-                    SELECT subfolders.id  -- Calificar con el nombre del CTE
-                    FROM subfolders
-                )
-        ) AS filesNumber
-    FROM public.folders f
-    WHERE f.container IS NULL
-    
-    UNION ALL
-    
-    SELECT
-        a.id AS id,
-        a.name AS name,
-        0 AS type,
-        a.published AS published,
-        '0' as filesNumber 
-    FROM public.filesquill a
-    WHERE a.container IS NULL;
-    
-END;
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        f.id AS id,
+        f.name AS name,
+        1 AS type,
+        false AS published,
+                (
+            WITH RECURSIVE subfolders AS (
+                SELECT 
+                    folders.id  -- Calificar con el nombre de la tabla
+                FROM folders 
+                WHERE folders.container = f.id  -- f es el alias de la consulta externa
+                UNION ALL
+                SELECT 
+                    fsub.id  -- Calificar con alias de tabla
+                FROM folders fsub
+                INNER JOIN subfolders s ON fsub.container = s.id
+            )
+            SELECT COUNT(*)::VARCHAR
+            FROM public.filesquill
+            WHERE 
+                container = f.id 
+                OR container IN (
+                    SELECT subfolders.id  -- Calificar con el nombre del CTE
+                    FROM subfolders
+                )
+        ) AS filesNumber
+    FROM public.folders f
+    WHERE f.container IS NULL
+    
+    UNION ALL
+    
+    SELECT
+        a.id AS id,
+        a.name AS name,
+        0 AS type,
+        a.published AS published,
+        '0' as filesNumber 
+    FROM public.filesquill a
+    WHERE a.container IS NULL;
+    
+END;
 $$;
 
 
@@ -1248,61 +1248,61 @@ ALTER FUNCTION "public"."getrootcontentquill"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."getrootcontentquillfiltered"("p_slug" "text") RETURNS TABLE("id" "uuid", "name" character varying, "type" integer, "published" boolean, "filesnumber" character varying)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    p_organization_id UUID;
-BEGIN
-    -- Se obtiene el id de la organizacion usando el slug
-    SELECT o.id INTO p_organization_id FROM public.organizations o WHERE o.slug = p_slug;
-
-
-    -- Retornar resultados filtrados
-    RETURN QUERY
-    SELECT
-        f.id,
-        f.name,
-        1::integer,
-        false,
-            (
-            WITH RECURSIVE subfolders AS (
-                SELECT 
-                    folders.id  -- Calificar con el nombre de la tabla
-                FROM folders 
-                WHERE folders.container = f.id  -- f es el alias de la consulta externa
-                UNION ALL
-                SELECT 
-                    fsub.id  -- Calificar con alias de tabla
-                FROM folders fsub
-                INNER JOIN subfolders s ON fsub.container = s.id
-            )
-            SELECT COUNT(*)::VARCHAR
-            FROM public.filesquill
-            WHERE 
-                container = f.id 
-                OR container IN (
-                    SELECT subfolders.id  -- Calificar con el nombre del CTE
-                    FROM subfolders
-                )
-        ) AS filesNumber
-    FROM public.folders f
-    WHERE
-        f.organization_id = p_organization_id AND
-        f.container IS NULL
-    
-    UNION ALL
-    
-    SELECT
-        a.id,
-        a.name,
-        0::integer,
-        a.published,
-        '0' as filesNumber 
-    FROM public.filesquill a
-    WHERE
-        a.organization_id = p_organization_id AND
-        a.container IS NULL;
-        
-END;
+    AS $$
+DECLARE
+    p_organization_id UUID;
+BEGIN
+    -- Se obtiene el id de la organizacion usando el slug
+    SELECT o.id INTO p_organization_id FROM public.organizations o WHERE o.slug = p_slug;
+
+
+    -- Retornar resultados filtrados
+    RETURN QUERY
+    SELECT
+        f.id,
+        f.name,
+        1::integer,
+        false,
+            (
+            WITH RECURSIVE subfolders AS (
+                SELECT 
+                    folders.id  -- Calificar con el nombre de la tabla
+                FROM folders 
+                WHERE folders.container = f.id  -- f es el alias de la consulta externa
+                UNION ALL
+                SELECT 
+                    fsub.id  -- Calificar con alias de tabla
+                FROM folders fsub
+                INNER JOIN subfolders s ON fsub.container = s.id
+            )
+            SELECT COUNT(*)::VARCHAR
+            FROM public.filesquill
+            WHERE 
+                container = f.id 
+                OR container IN (
+                    SELECT subfolders.id  -- Calificar con el nombre del CTE
+                    FROM subfolders
+                )
+        ) AS filesNumber
+    FROM public.folders f
+    WHERE
+        f.organization_id = p_organization_id AND
+        f.container IS NULL
+    
+    UNION ALL
+    
+    SELECT
+        a.id,
+        a.name,
+        0::integer,
+        a.published,
+        '0' as filesNumber 
+    FROM public.filesquill a
+    WHERE
+        a.organization_id = p_organization_id AND
+        a.container IS NULL;
+        
+END;
 $$;
 
 
@@ -1360,61 +1360,61 @@ ALTER FUNCTION "public"."is_user_in_organization"("p_email" "text", "p_organizat
 
 CREATE OR REPLACE FUNCTION "public"."move_file"("p_file_id" "uuid", "p_new_container_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "old_container_id" "uuid", "old_container_empty" boolean, "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    v_old_container_id UUID;
-    v_old_container_empty BOOLEAN;
-BEGIN
-    -- 1. Obtener el contenedor actual de la carpeta y almacenarlo en una variable
-    SELECT f.container INTO v_old_container_id
-    FROM public.files f
-    WHERE f.id = p_file_id;
-
-    -- 2. Mover la carpeta actualizando el campo 'container'
-    UPDATE public.files
-    SET container = p_new_container_id
-    WHERE id = p_file_id;
-
-    -- 3. Comprobar en la tabla de archivos si el contenedor de origen está vacío
-    IF v_old_container_id IS NOT NULL THEN
-        SELECT NOT EXISTS (
-            SELECT 1 FROM public.folders WHERE container = v_old_container_id
-             UNION ALL
-            SELECT 1 FROM public.files WHERE container = v_old_container_id
-        ) INTO v_old_container_empty;
-    ELSE
-        v_old_container_empty := NULL;
-    END IF;
-
-
-    
-    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
-    RETURN QUERY
-    SELECT
-        f.id AS itemId,
-        f.name AS name,
-        f.container AS container_id,
-        v_old_container_id AS old_container_id,
-        v_old_container_empty AS old_container_empty,
-        1 as type,
-        false as published
-    FROM public.folders f
-    WHERE
-        f.container = v_old_container_id OR f.container = p_new_container_id
-    UNION ALL 
-       SELECT
-        a.id AS itemId,
-        a.name AS name,
-        a.container AS container_id,
-        v_old_container_id AS old_container_id,
-        v_old_container_empty AS old_container_empty,
-        0 as type,
-        a.published as published
-    FROM public.files a
-    WHERE
-        a.container = v_old_container_id OR a.container = p_new_container_id;
-
-END;
+    AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual de la carpeta y almacenarlo en una variable
+    SELECT f.container INTO v_old_container_id
+    FROM public.files f
+    WHERE f.id = p_file_id;
+
+    -- 2. Mover la carpeta actualizando el campo 'container'
+    UPDATE public.files
+    SET container = p_new_container_id
+    WHERE id = p_file_id;
+
+    -- 3. Comprobar en la tabla de archivos si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+             UNION ALL
+            SELECT 1 FROM public.files WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+
+    
+    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
+    RETURN QUERY
+    SELECT
+        f.id AS itemId,
+        f.name AS name,
+        f.container AS container_id,
+        v_old_container_id AS old_container_id,
+        v_old_container_empty AS old_container_empty,
+        1 as type,
+        false as published
+    FROM public.folders f
+    WHERE
+        f.container = v_old_container_id OR f.container = p_new_container_id
+    UNION ALL 
+       SELECT
+        a.id AS itemId,
+        a.name AS name,
+        a.container AS container_id,
+        v_old_container_id AS old_container_id,
+        v_old_container_empty AS old_container_empty,
+        0 as type,
+        a.published as published
+    FROM public.files a
+    WHERE
+        a.container = v_old_container_id OR a.container = p_new_container_id;
+
+END;
 $$;
 
 
@@ -1423,59 +1423,59 @@ ALTER FUNCTION "public"."move_file"("p_file_id" "uuid", "p_new_container_id" "uu
 
 CREATE OR REPLACE FUNCTION "public"."move_file_quill"("p_file_id" "uuid", "p_new_container_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "old_container_id" "uuid", "old_container_empty" boolean, "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    v_old_container_id UUID;
-    v_old_container_empty BOOLEAN;
-BEGIN
-    -- 1. Obtener el contenedor actual de la carpeta y almacenarlo en una variable
-    SELECT f.container INTO v_old_container_id
-    FROM public.filesquill f
-    WHERE f.id = p_file_id;
-
-    -- 2. Mover la carpeta actualizando el campo 'container'
-    UPDATE public.filesquill
-    SET container = p_new_container_id
-    WHERE id = p_file_id;
-
-    -- 3. Comprobar en la tabla de archivos si el contenedor de origen está vacío
-    IF v_old_container_id IS NOT NULL THEN
-        SELECT NOT EXISTS (
-            SELECT 1 FROM public.folders WHERE container = v_old_container_id
-             UNION ALL
-            SELECT 1 FROM public.filesquill WHERE container = v_old_container_id
-        ) INTO v_old_container_empty;
-    ELSE
-        v_old_container_empty := NULL;
-    END IF;
-
-    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
-    RETURN QUERY
-    SELECT
-        f.id AS itemId,
-        f.name AS name,
-        f.container AS container_id,
-        v_old_container_id AS old_container_id,
-        v_old_container_empty AS old_container_empty,
-        1 as type,
-        false as published
-    FROM public.folders f
-    WHERE
-        f.container = v_old_container_id OR f.container = p_new_container_id
-    UNION ALL 
-       SELECT
-        a.id AS itemId,
-        a.name AS name,
-        a.container AS container_id,
-        v_old_container_id AS old_container_id,
-        v_old_container_empty AS old_container_empty,
-        0 as type,
-        a.published as published
-    FROM public.filesquill a
-    WHERE
-        a.container = v_old_container_id OR a.container = p_new_container_id;
-
-END;
+    AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual de la carpeta y almacenarlo en una variable
+    SELECT f.container INTO v_old_container_id
+    FROM public.filesquill f
+    WHERE f.id = p_file_id;
+
+    -- 2. Mover la carpeta actualizando el campo 'container'
+    UPDATE public.filesquill
+    SET container = p_new_container_id
+    WHERE id = p_file_id;
+
+    -- 3. Comprobar en la tabla de archivos si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+             UNION ALL
+            SELECT 1 FROM public.filesquill WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
+    RETURN QUERY
+    SELECT
+        f.id AS itemId,
+        f.name AS name,
+        f.container AS container_id,
+        v_old_container_id AS old_container_id,
+        v_old_container_empty AS old_container_empty,
+        1 as type,
+        false as published
+    FROM public.folders f
+    WHERE
+        f.container = v_old_container_id OR f.container = p_new_container_id
+    UNION ALL 
+       SELECT
+        a.id AS itemId,
+        a.name AS name,
+        a.container AS container_id,
+        v_old_container_id AS old_container_id,
+        v_old_container_empty AS old_container_empty,
+        0 as type,
+        a.published as published
+    FROM public.filesquill a
+    WHERE
+        a.container = v_old_container_id OR a.container = p_new_container_id;
+
+END;
 $$;
 
 
@@ -1484,76 +1484,76 @@ ALTER FUNCTION "public"."move_file_quill"("p_file_id" "uuid", "p_new_container_i
 
 CREATE OR REPLACE FUNCTION "public"."move_file_to_root"("p_file_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "old_container_id" "uuid", "old_container_empty" boolean, "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    v_old_container_id UUID;
-    v_old_container_empty BOOLEAN;
-BEGIN
-    -- 1. Obtener el contenedor actual del archivo y almacenarlo en una variable
-    SELECT f.container INTO v_old_container_id
-    FROM public.files f
-    WHERE f.id = p_file_id;
-
-    -- 2. Mover el archivo al root
-    UPDATE public.files
-    SET container = NULL
-    WHERE id = p_file_id;
-
-    -- 3. Comprobar si el contenedor de origen está vacío
-    IF v_old_container_id IS NOT NULL THEN
-        SELECT NOT EXISTS (
-            SELECT 1 FROM public.folders WHERE container = v_old_container_id
-            UNION ALL
-            SELECT 1 FROM public.files WHERE container = v_old_container_id
-        ) INTO v_old_container_empty;
-    ELSE
-        v_old_container_empty := NULL;
-    END IF;
-
-    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
-    RETURN QUERY
-    WITH combined AS (
-        SELECT
-            f.id AS itemId,
-            f.name AS name,
-            f.container AS container_id,
-            v_old_container_id AS old_container_id,
-            v_old_container_empty AS old_container_empty,
-            1 AS type,
-            FALSE AS published
-        FROM
-            public.folders f
-        WHERE
-            (v_old_container_id IS NULL AND f.container IS NULL)  -- Manejo de NULL
-            OR f.container = v_old_container_id                   -- Caso normal
-        UNION ALL
-        SELECT
-            a.id AS itemId,
-            a.name AS name,
-            a.container AS container_id,
-            v_old_container_id AS old_container_id,
-            v_old_container_empty AS old_container_empty,
-            0 AS type,
-            a.published AS published
-        FROM
-            public.files a
-        WHERE
-            (v_old_container_id IS NULL AND a.container IS NULL)  -- Manejo de NULL
-            OR a.container = v_old_container_id                   -- Caso normal
-    )
-    SELECT *
-    FROM combined
-    UNION ALL
-    SELECT
-        NULL AS itemId,
-        'No items found' AS name,
-        NULL AS container_id,
-        v_old_container_id AS old_container_id,
-        v_old_container_empty AS old_container_empty,
-        -1 AS type,  -- Tipo ficticio para indicar que no se encontraron elementos
-        FALSE AS published
-    WHERE NOT EXISTS (SELECT 1 FROM combined);
-END;
+    AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual del archivo y almacenarlo en una variable
+    SELECT f.container INTO v_old_container_id
+    FROM public.files f
+    WHERE f.id = p_file_id;
+
+    -- 2. Mover el archivo al root
+    UPDATE public.files
+    SET container = NULL
+    WHERE id = p_file_id;
+
+    -- 3. Comprobar si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+            UNION ALL
+            SELECT 1 FROM public.files WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
+    RETURN QUERY
+    WITH combined AS (
+        SELECT
+            f.id AS itemId,
+            f.name AS name,
+            f.container AS container_id,
+            v_old_container_id AS old_container_id,
+            v_old_container_empty AS old_container_empty,
+            1 AS type,
+            FALSE AS published
+        FROM
+            public.folders f
+        WHERE
+            (v_old_container_id IS NULL AND f.container IS NULL)  -- Manejo de NULL
+            OR f.container = v_old_container_id                   -- Caso normal
+        UNION ALL
+        SELECT
+            a.id AS itemId,
+            a.name AS name,
+            a.container AS container_id,
+            v_old_container_id AS old_container_id,
+            v_old_container_empty AS old_container_empty,
+            0 AS type,
+            a.published AS published
+        FROM
+            public.files a
+        WHERE
+            (v_old_container_id IS NULL AND a.container IS NULL)  -- Manejo de NULL
+            OR a.container = v_old_container_id                   -- Caso normal
+    )
+    SELECT *
+    FROM combined
+    UNION ALL
+    SELECT
+        NULL AS itemId,
+        'No items found' AS name,
+        NULL AS container_id,
+        v_old_container_id AS old_container_id,
+        v_old_container_empty AS old_container_empty,
+        -1 AS type,  -- Tipo ficticio para indicar que no se encontraron elementos
+        FALSE AS published
+    WHERE NOT EXISTS (SELECT 1 FROM combined);
+END;
 $$;
 
 
@@ -1562,99 +1562,99 @@ ALTER FUNCTION "public"."move_file_to_root"("p_file_id" "uuid") OWNER TO "postgr
 
 CREATE OR REPLACE FUNCTION "public"."move_file_to_root_quill"("p_file_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "old_container_id" "uuid", "old_container_empty" boolean, "type" integer, "published" boolean, "filesnumber" character varying)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    v_old_container_id UUID;
-    v_old_container_empty BOOLEAN;
-BEGIN
-    -- 1. Obtener el contenedor actual del archivo y almacenarlo en una variable
-    SELECT f.container INTO v_old_container_id
-    FROM public.filesquill f
-    WHERE f.id = p_file_id;
-
-    -- 2. Mover el archivo al root
-    UPDATE public.filesquill
-    SET container = NULL
-    WHERE id = p_file_id;
-
-    -- 3. Comprobar si el contenedor de origen está vacío
-    IF v_old_container_id IS NOT NULL THEN
-        SELECT NOT EXISTS (
-            SELECT 1 FROM public.folders WHERE container = v_old_container_id
-            UNION ALL
-            SELECT 1 FROM public.filesquill WHERE container = v_old_container_id
-        ) INTO v_old_container_empty;
-    ELSE
-        v_old_container_empty := NULL;
-    END IF;
-
-    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
-    RETURN QUERY
-    WITH combined AS (
-        SELECT
-            f.id AS itemId,
-            f.name AS name,
-            f.container AS container_id,
-            v_old_container_id AS old_container_id,
-            v_old_container_empty AS old_container_empty,
-            1 AS type,
-            FALSE AS published,
-            (
-            WITH RECURSIVE subfolders AS (
-                SELECT 
-                    folders.id  -- Calificar con el nombre de la tabla
-                FROM folders 
-                WHERE folders.container = f.id  -- f es el alias de la consulta externa
-                UNION ALL
-                SELECT 
-                    fsub.id  -- Calificar con alias de tabla
-                FROM folders fsub
-                INNER JOIN subfolders s ON fsub.container = s.id
-            )
-            SELECT COUNT(*)::VARCHAR
-            FROM public.filesquill
-            WHERE 
-                container = f.id 
-                OR container IN (
-                    SELECT subfolders.id  -- Calificar con el nombre del CTE
-                    FROM subfolders
-                )
-        ) AS filesNumber
-        FROM
-            public.folders f
-        WHERE
-            (v_old_container_id IS NULL AND f.container IS NULL) 
-            OR f.container = v_old_container_id                   
-        UNION ALL
-        SELECT
-            a.id AS itemId,
-            a.name AS name,
-            a.container AS container_id,
-            v_old_container_id AS old_container_id,
-            v_old_container_empty AS old_container_empty,
-            0 AS type,
-            a.published AS published,
-            '0' as filesNumber 
-        FROM
-            public.filesquill a
-        WHERE
-            (v_old_container_id IS NULL AND a.container IS NULL) 
-            OR a.container = v_old_container_id                   
-    )
-    SELECT *
-    FROM combined
-    UNION ALL
-    SELECT
-        NULL AS itemId,
-        'No items found' AS name,
-        NULL AS container_id,
-        v_old_container_id AS old_container_id,
-        v_old_container_empty AS old_container_empty,
-        -1 AS type,  -- Tipo ficticio para indicar que no se encontraron elementos
-        FALSE AS published,
-        '0' as filesNumber 
-    WHERE NOT EXISTS (SELECT 1 FROM combined);
-END;
+    AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual del archivo y almacenarlo en una variable
+    SELECT f.container INTO v_old_container_id
+    FROM public.filesquill f
+    WHERE f.id = p_file_id;
+
+    -- 2. Mover el archivo al root
+    UPDATE public.filesquill
+    SET container = NULL
+    WHERE id = p_file_id;
+
+    -- 3. Comprobar si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+            UNION ALL
+            SELECT 1 FROM public.filesquill WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
+    RETURN QUERY
+    WITH combined AS (
+        SELECT
+            f.id AS itemId,
+            f.name AS name,
+            f.container AS container_id,
+            v_old_container_id AS old_container_id,
+            v_old_container_empty AS old_container_empty,
+            1 AS type,
+            FALSE AS published,
+            (
+            WITH RECURSIVE subfolders AS (
+                SELECT 
+                    folders.id  -- Calificar con el nombre de la tabla
+                FROM folders 
+                WHERE folders.container = f.id  -- f es el alias de la consulta externa
+                UNION ALL
+                SELECT 
+                    fsub.id  -- Calificar con alias de tabla
+                FROM folders fsub
+                INNER JOIN subfolders s ON fsub.container = s.id
+            )
+            SELECT COUNT(*)::VARCHAR
+            FROM public.filesquill
+            WHERE 
+                container = f.id 
+                OR container IN (
+                    SELECT subfolders.id  -- Calificar con el nombre del CTE
+                    FROM subfolders
+                )
+        ) AS filesNumber
+        FROM
+            public.folders f
+        WHERE
+            (v_old_container_id IS NULL AND f.container IS NULL) 
+            OR f.container = v_old_container_id                   
+        UNION ALL
+        SELECT
+            a.id AS itemId,
+            a.name AS name,
+            a.container AS container_id,
+            v_old_container_id AS old_container_id,
+            v_old_container_empty AS old_container_empty,
+            0 AS type,
+            a.published AS published,
+            '0' as filesNumber 
+        FROM
+            public.filesquill a
+        WHERE
+            (v_old_container_id IS NULL AND a.container IS NULL) 
+            OR a.container = v_old_container_id                   
+    )
+    SELECT *
+    FROM combined
+    UNION ALL
+    SELECT
+        NULL AS itemId,
+        'No items found' AS name,
+        NULL AS container_id,
+        v_old_container_id AS old_container_id,
+        v_old_container_empty AS old_container_empty,
+        -1 AS type,  -- Tipo ficticio para indicar que no se encontraron elementos
+        FALSE AS published,
+        '0' as filesNumber 
+    WHERE NOT EXISTS (SELECT 1 FROM combined);
+END;
 $$;
 
 
@@ -1663,76 +1663,76 @@ ALTER FUNCTION "public"."move_file_to_root_quill"("p_file_id" "uuid") OWNER TO "
 
 CREATE OR REPLACE FUNCTION "public"."move_folder_to_root"("p_folder_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "old_container_id" "uuid", "old_container_empty" boolean, "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    v_old_container_id UUID;
-    v_old_container_empty BOOLEAN;
-BEGIN
-    -- 1. Obtener el contenedor actual de la carpeta y almacenarlo en una variable
-    SELECT f.container INTO v_old_container_id
-    FROM public.folders f
-    WHERE f.id = p_folder_id;
-
-    -- 2. Mover la carpeta al root
-    UPDATE public.folders
-    SET container = NULL
-    WHERE id = p_folder_id;
-
-    -- 3. Comprobar si el contenedor de origen está vacío
-    IF v_old_container_id IS NOT NULL THEN
-        SELECT NOT EXISTS (
-            SELECT 1 FROM public.folders WHERE container = v_old_container_id
-            UNION ALL
-            SELECT 1 FROM public.files WHERE container = v_old_container_id
-        ) INTO v_old_container_empty;
-    ELSE
-        v_old_container_empty := NULL;
-    END IF;
-
-    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
-    RETURN QUERY
-    WITH combined AS (
-        SELECT
-            f.id AS itemId,
-            f.name AS name,
-            f.container AS container_id,
-            v_old_container_id AS old_container_id,
-            v_old_container_empty AS old_container_empty,
-            1 AS type,
-            FALSE AS published
-        FROM
-            public.folders f
-        WHERE
-            (v_old_container_id IS NULL AND f.container IS NULL)  -- Manejo de NULL
-            OR f.container = v_old_container_id                   -- Caso normal
-        UNION ALL
-        SELECT
-            a.id AS itemId,
-            a.name AS name,
-            a.container AS container_id,
-            v_old_container_id AS old_container_id,
-            v_old_container_empty AS old_container_empty,
-            0 AS type,
-            a.published AS published
-        FROM
-            public.files a
-        WHERE
-            (v_old_container_id IS NULL AND a.container IS NULL)  -- Manejo de NULL
-            OR a.container = v_old_container_id                   -- Caso normal
-    )
-    SELECT *
-    FROM combined
-    UNION ALL
-    SELECT
-        NULL AS itemId,
-        'No items found' AS name,
-        NULL AS container_id,
-        v_old_container_id AS old_container_id,
-        v_old_container_empty AS old_container_empty,
-        -1 AS type,  -- Tipo ficticio para indicar que no se encontraron elementos
-        FALSE AS published
-    WHERE NOT EXISTS (SELECT 1 FROM combined);
-END;
+    AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual de la carpeta y almacenarlo en una variable
+    SELECT f.container INTO v_old_container_id
+    FROM public.folders f
+    WHERE f.id = p_folder_id;
+
+    -- 2. Mover la carpeta al root
+    UPDATE public.folders
+    SET container = NULL
+    WHERE id = p_folder_id;
+
+    -- 3. Comprobar si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+            UNION ALL
+            SELECT 1 FROM public.files WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
+    RETURN QUERY
+    WITH combined AS (
+        SELECT
+            f.id AS itemId,
+            f.name AS name,
+            f.container AS container_id,
+            v_old_container_id AS old_container_id,
+            v_old_container_empty AS old_container_empty,
+            1 AS type,
+            FALSE AS published
+        FROM
+            public.folders f
+        WHERE
+            (v_old_container_id IS NULL AND f.container IS NULL)  -- Manejo de NULL
+            OR f.container = v_old_container_id                   -- Caso normal
+        UNION ALL
+        SELECT
+            a.id AS itemId,
+            a.name AS name,
+            a.container AS container_id,
+            v_old_container_id AS old_container_id,
+            v_old_container_empty AS old_container_empty,
+            0 AS type,
+            a.published AS published
+        FROM
+            public.files a
+        WHERE
+            (v_old_container_id IS NULL AND a.container IS NULL)  -- Manejo de NULL
+            OR a.container = v_old_container_id                   -- Caso normal
+    )
+    SELECT *
+    FROM combined
+    UNION ALL
+    SELECT
+        NULL AS itemId,
+        'No items found' AS name,
+        NULL AS container_id,
+        v_old_container_id AS old_container_id,
+        v_old_container_empty AS old_container_empty,
+        -1 AS type,  -- Tipo ficticio para indicar que no se encontraron elementos
+        FALSE AS published
+    WHERE NOT EXISTS (SELECT 1 FROM combined);
+END;
 $$;
 
 
@@ -1741,62 +1741,62 @@ ALTER FUNCTION "public"."move_folder_to_root"("p_folder_id" "uuid") OWNER TO "po
 
 CREATE OR REPLACE FUNCTION "public"."mover_carpeta"("p_folder_id" "uuid", "p_new_container_id" "uuid") RETURNS TABLE("itemid" "uuid", "name" character varying, "container_id" "uuid", "old_container_id" "uuid", "old_container_empty" boolean, "type" integer, "published" boolean)
     LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    v_old_container_id UUID;
-    v_old_container_empty BOOLEAN;
-BEGIN
-    -- 1. Obtener el contenedor actual de la carpeta y almacenarlo en una variable
-    SELECT f.container INTO v_old_container_id
-    FROM public.folders f
-    WHERE f.id = p_folder_id;
-
-    -- 2. Mover la carpeta actualizando el campo 'container'
-    UPDATE public.folders
-    SET container = p_new_container_id
-    WHERE id = p_folder_id;
-
-    -- 3. Comprobar si el contenedor de origen está vacío
-    IF v_old_container_id IS NOT NULL THEN
-        SELECT NOT EXISTS (
-            SELECT 1 FROM public.folders WHERE container = v_old_container_id
-            UNION ALL
-            SELECT 1 FROM public.filesquill WHERE container = v_old_container_id
-        ) INTO v_old_container_empty;
-    ELSE
-        v_old_container_empty := NULL;
-    END IF;
-
-    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
-    RETURN QUERY
-    SELECT
-        f.id AS itemId,
-        f.name AS name,
-        f.container AS container_id,
-        v_old_container_id AS old_container_id,
-        v_old_container_empty AS old_container_empty,
-        1 AS type,
-        FALSE AS published
-    FROM
-        public.folders f
-    WHERE
-        (v_old_container_id IS NOT NULL AND f.container = v_old_container_id)
-        OR (p_new_container_id IS NOT NULL AND f.container = p_new_container_id)
-    UNION ALL
-    SELECT
-        a.id AS itemId,
-        a.name AS name,
-        a.container AS container_id,
-        v_old_container_id AS old_container_id,
-        v_old_container_empty AS old_container_empty,
-        0 AS type,
-        a.published AS published
-    FROM
-        public.filesquill a
-    WHERE
-        (v_old_container_id IS NOT NULL AND a.container = v_old_container_id)
-        OR (p_new_container_id IS NOT NULL AND a.container = p_new_container_id);
-END;
+    AS $$
+DECLARE
+    v_old_container_id UUID;
+    v_old_container_empty BOOLEAN;
+BEGIN
+    -- 1. Obtener el contenedor actual de la carpeta y almacenarlo en una variable
+    SELECT f.container INTO v_old_container_id
+    FROM public.folders f
+    WHERE f.id = p_folder_id;
+
+    -- 2. Mover la carpeta actualizando el campo 'container'
+    UPDATE public.folders
+    SET container = p_new_container_id
+    WHERE id = p_folder_id;
+
+    -- 3. Comprobar si el contenedor de origen está vacío
+    IF v_old_container_id IS NOT NULL THEN
+        SELECT NOT EXISTS (
+            SELECT 1 FROM public.folders WHERE container = v_old_container_id
+            UNION ALL
+            SELECT 1 FROM public.filesquill WHERE container = v_old_container_id
+        ) INTO v_old_container_empty;
+    ELSE
+        v_old_container_empty := NULL;
+    END IF;
+
+    -- 4. Retornar el contenido de los contenedores de origen y destino, y si el contenedor de origen está vacío
+    RETURN QUERY
+    SELECT
+        f.id AS itemId,
+        f.name AS name,
+        f.container AS container_id,
+        v_old_container_id AS old_container_id,
+        v_old_container_empty AS old_container_empty,
+        1 AS type,
+        FALSE AS published
+    FROM
+        public.folders f
+    WHERE
+        (v_old_container_id IS NOT NULL AND f.container = v_old_container_id)
+        OR (p_new_container_id IS NOT NULL AND f.container = p_new_container_id)
+    UNION ALL
+    SELECT
+        a.id AS itemId,
+        a.name AS name,
+        a.container AS container_id,
+        v_old_container_id AS old_container_id,
+        v_old_container_empty AS old_container_empty,
+        0 AS type,
+        a.published AS published
+    FROM
+        public.filesquill a
+    WHERE
+        (v_old_container_id IS NOT NULL AND a.container = v_old_container_id)
+        OR (p_new_container_id IS NOT NULL AND a.container = p_new_container_id);
+END;
 $$;
 
 
@@ -1805,51 +1805,51 @@ ALTER FUNCTION "public"."mover_carpeta"("p_folder_id" "uuid", "p_new_container_i
 
 CREATE OR REPLACE FUNCTION "public"."partial_search_filesquill"("search_term" "text", "p_slug" "uuid") RETURNS TABLE("id" "uuid", "name" character varying, "content" "text", "searchtext" "text", "container" "uuid", "created_at" timestamp with time zone, "updated_at" timestamp with time zone, "similarity_score" real, "type" integer)
     LANGUAGE "plpgsql" STABLE
-    AS $$
-DECLARE
-    -- Define un límite para cada subconsulta. Puedes ajustar este valor.
-    -- Un valor de 100 para cada uno asegura que podemos obtener hasta 100 resultados combinados.
-    subquery_limit CONSTANT INTEGER := 100;
-BEGIN
-
-  RETURN QUERY
-  (SELECT
-    f.id,
-    f.name,
-    f.content,
-    f.searchable_text, 
-    f.container,
-    f.created_at,
-    f.updated_at,
-    similarity(f.searchable_text, search_term)::float4 AS similarity_score, -- ¡Alias explícito aquí!
-    1 as type
-  FROM public.filesquill f
-  WHERE f.searchable_text %> search_term AND f.organization_id = p_slug
-  ORDER BY similarity_score DESC -- Ahora 'similarity_score' es reconocido
-  LIMIT subquery_limit)
-  
-  UNION ALL
-  
-  (SELECT
-    x.id,
-    x.name,
-    null::text AS content,        
-    null::text AS searchText,        
-    x.container,
-    x.created_at,
-    null::timestamptz AS updated_at, 
-    similarity(x.name, search_term)::float4 AS similarity_score, -- ¡Alias explícito y cálculo de similitud para carpetas!
-    0 as type
-  FROM public.folders x
-  WHERE x.name % search_term AND x.organization_id = p_slug -- Usar operador % de pg_trgm
-  ORDER BY similarity_score DESC -- Ahora 'similarity_score' es reconocido
-  LIMIT subquery_limit)
-  
-  -- El ORDER BY y LIMIT final se aplican a la unión de los resultados ya limitados
-  ORDER BY similarity_score DESC, type DESC
-  LIMIT 100;
-
-END;
+    AS $$
+DECLARE
+    -- Define un límite para cada subconsulta. Puedes ajustar este valor.
+    -- Un valor de 100 para cada uno asegura que podemos obtener hasta 100 resultados combinados.
+    subquery_limit CONSTANT INTEGER := 100;
+BEGIN
+
+  RETURN QUERY
+  (SELECT
+    f.id,
+    f.name,
+    f.content,
+    f.searchable_text, 
+    f.container,
+    f.created_at,
+    f.updated_at,
+    similarity(f.searchable_text, search_term)::float4 AS similarity_score, -- ¡Alias explícito aquí!
+    1 as type
+  FROM public.filesquill f
+  WHERE f.searchable_text %> search_term AND f.organization_id = p_slug
+  ORDER BY similarity_score DESC -- Ahora 'similarity_score' es reconocido
+  LIMIT subquery_limit)
+  
+  UNION ALL
+  
+  (SELECT
+    x.id,
+    x.name,
+    null::text AS content,        
+    null::text AS searchText,        
+    x.container,
+    x.created_at,
+    null::timestamptz AS updated_at, 
+    similarity(x.name, search_term)::float4 AS similarity_score, -- ¡Alias explícito y cálculo de similitud para carpetas!
+    0 as type
+  FROM public.folders x
+  WHERE x.name % search_term AND x.organization_id = p_slug -- Usar operador % de pg_trgm
+  ORDER BY similarity_score DESC -- Ahora 'similarity_score' es reconocido
+  LIMIT subquery_limit)
+  
+  -- El ORDER BY y LIMIT final se aplican a la unión de los resultados ya limitados
+  ORDER BY similarity_score DESC, type DESC
+  LIMIT 100;
+
+END;
 $$;
 
 
