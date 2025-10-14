@@ -56,6 +56,9 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
       setIsModalOpen(false);
       return;
     }
+    
+    
+    
 
     const container = containerid === "root" ? null : containerid;
 
