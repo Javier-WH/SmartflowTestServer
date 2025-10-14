@@ -1,0 +1,72 @@
+/* Variables de color (tomadas de SortModal.module.css para consistencia) */
+:root {
+  --gray-light: #f5f5f5;
+  --gray-medium: #e0e0e0;
+  --gray-dark: #616161;
+  --gray-darker: #212121;
+}
+
+/* 1. Estilo base del elemento */
+.item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background-color: #ffffff;
+  border: 1px solid var(--gray-medium);
+  border-radius: 4px;
+  box-shadow: none;
+  border-radius: 15px;
+  cursor: default;
+  user-select: none;
+  transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+/* 2. Estado de arrastre */
+.item-dragging {
+  background-color: var(--gray-light);
+  /* Un color muy suave al arrastrar */
+  border-color: var(--gray-dark);
+  /* Borde un poco más visible */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: grabbing !important;
+}
+
+/* 3. Manejador de arrastre */
+.drag-handle {
+  cursor: grab;
+  /* Indicador visual de que se puede arrastrar */
+  padding: 0 10px;
+  color: var(--gray-dark);
+  /* El icono de las tres líneas en gris */
+  transition: color 0.15s;
+}
+
+.drag-handle:hover {
+  color: var(--gray-darker);
+  /* Gris más oscuro al pasar el ratón */
+}
+
+.drag-icon {
+  font-size: 16px;
+}
+
+/* 4. Contenido del elemento (Icono y Nombre) */
+.item-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--gray-darker);
+  /* Nombre en gris oscuro */
+}
+
+.item-name {
+  font-weight: 500;
+}
+
+.folder-icon,
+.file-icon {
+  color: var(--gray-dark);
+  /* Iconos también en gris oscuro */
+}

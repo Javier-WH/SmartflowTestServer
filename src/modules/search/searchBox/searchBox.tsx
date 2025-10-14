@@ -18,7 +18,7 @@ export default function SearchBox({
 }: { data: SearchBoxInterface[]; word: string; closeBox: () => void }) {
     const { memberRoll } = useContext(MainContext) as MainContextValues;
     const { getHierarchyFolderContent } = useFolderManager();
-    const hasResults = data.length > 0 && word.length > 0;
+    const hasResults = data?.length > 0 && word?.length > 0;
     const { organization_id: slug } = useParams();
     const navigate = useNavigate();
 
@@ -221,10 +221,10 @@ function getSelectedText(searchWord: string, htmlString: string): string | null 
             fragment.append(
                 document.createTextNode(textContent.slice(0, matchIndex)),
                 Object.assign(document.createElement('strong'), {
-                    textContent: textContent.slice(matchIndex, matchIndex + searchWord.length),
+                    textContent: textContent.slice(matchIndex, matchIndex + searchWord?.length),
                     style: 'font-size:inherit;',
                 }),
-                document.createTextNode(textContent.slice(matchIndex + searchWord.length)),
+                document.createTextNode(textContent.slice(matchIndex + searchWord?.length)),
             );
 
             cleanParent.appendChild(fragment);

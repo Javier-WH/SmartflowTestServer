@@ -16,6 +16,7 @@ import { PiFolderLight } from "react-icons/pi";
 import { PiFolderOpenLight } from "react-icons/pi";
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import './folderContainer.css';
+import SortModal from '../sortModal/sortModal';
 
 export function FolderComponent({
     folder,
@@ -39,6 +40,7 @@ export function FolderComponent({
     const [contentId, setContentId] = useState<string | null>(null);
     const { organization_id: slug } = useParams();
     const [/*filesCount*/, setFilesCount] = useState<string | number>('0');
+    const [sortFolderId, setSortFolderId] = useState<string | null>(null);
 
     // updates the number of files when a file is moved
     useEffect(() => {
@@ -137,8 +139,17 @@ export function FolderComponent({
         }
         const request = await moveFolderToRoot(folder.id);
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
+       
         setUpdateFolderRequest(gruppedByContainer);
         setFileCountUpdateRequest(true);
+    };
+
+    const handleSortFolder = () => {
+        if (!memberRoll.write) {
+            message.error(t('can_not_create_file_message'));
+            return;
+        }
+        setSortFolderId(folder.id);
     };
 
     const menu: MenuProps['items'] = [
@@ -163,10 +174,15 @@ export function FolderComponent({
             onClick: () => handleDeleteFolder(),
         },
         {
+            key: '5',
+            label: <div style={{ textAlign: 'left' }}>{t('sort_folder_label')}</div>,
+            onClick: () => handleSortFolder(),
+        },
+        {
             type: 'divider',
         },
         {
-            key: '5',
+            key: '6',
             label: <div style={{ textAlign: 'left' }}>{t('create_new_file_label')}</div>,
             onClick: () => handleCreateFile(),
         },
@@ -223,6 +239,8 @@ export function FolderComponent({
             return;
         }
 
+   
+
         if (request.data) {
             const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
             setUpdateFolderRequest(gruppedByContainer);
@@ -232,7 +250,7 @@ export function FolderComponent({
             setFileCountUpdateRequest(true);
         }
     };
-
+   
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
@@ -250,20 +268,10 @@ export function FolderComponent({
                     onDragLeave={handleDragLeave}
                     title={folder.name}
                 >
-                    {/*<img
-                        style={{ pointerEvents: 'none' }}
-                        src={contentId ? openedFolder : closedFolder}
-                        alt=""
-                        width={30}
-                    />*/}
-
+                 
                     {contentId ? <PiFolderOpenLight className='folder-icon' /> : <PiFolderLight className='folder-icon' />}
-                    <span className="folder-name">{`${folder.id === selectedFolderId ? '•' : ''} ${folder.name}`}</span>
+                    <span className="folder-name">{`${folder.id === selectedFolderId || folder.id === sortFolderId ? '•' : ''} ${folder.name}`}</span>
 
-                    {/*<div className="folder-count-container">
-                        <span className="folder-count">{`${filesCount} ${filesCount === '1' ? t('page_label') : t('pages_label')} `}</span>
-                        <MdFolder />
-                    </div>*/}
                 </div>
             </Dropdown>
             <div className="ml-8">
@@ -273,6 +281,7 @@ export function FolderComponent({
                     </div>
                 )}
             </div>
+            <SortModal containerid={sortFolderId} setContainerid={setSortFolderId} slug = {slug} folderName = {folder.name}/>
         </div>
     );
 }

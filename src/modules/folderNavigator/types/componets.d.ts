@@ -7,5 +7,6 @@ export interface ContainerElement {
   content?: string;
   published?: boolean;
   filesnumber?: string;
+  order?: number
 }
 

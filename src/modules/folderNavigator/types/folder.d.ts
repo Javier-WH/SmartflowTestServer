@@ -18,7 +18,8 @@ export interface FolderRequestItem {
   container?: string;
   published?: boolean;
   type: number;
-  filesnumber?: string
+  filesnumber?: string,
+  order?: number
 }
 
 type FolderResquest = {
@@ -34,6 +35,13 @@ export interface FolderData {
   published: boolean;
   type: number;
   filesnumber?: string
+  order?: number
+}
+
+export interface SortableContent {
+  id: string,
+  type: number,
+  order: number
 }
 
 
