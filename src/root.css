@@ -21,7 +21,8 @@
     --strokeColor: rgb(135, 135, 135);
     --selectedFileColor: rgb(233, 232, 232);
     --hoverColor: rgb(231, 231, 231);
-   
+    --strokeIconColor: rgb(109 74 255 / 99%) !important;
+    --strokeIconColor2: rgba(159, 137, 248, 0.99) !important;
 }
 
 
