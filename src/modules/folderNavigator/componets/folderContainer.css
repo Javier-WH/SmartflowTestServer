@@ -13,6 +13,7 @@
     border-radius: 15px;
 }
 
+.folder-on-popover-open,
 .folder:hover,
 .file:hover{
     border: 1px solid var(--hoverColor) !important;
@@ -156,4 +157,23 @@
 .folder.drag-over {
     border-color: var(--strokeColor) !important;
     border-radius: 15px !important;
+}
+
+
+.folderPopPup{
+    display: flex;
+    gap: 10px;
+}
+
+.folderPopPup svg {
+    width: 25px;
+    height: 25px;
+    stroke: var(--strokeIconColor2);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.folderPopPup svg:hover {
+    stroke: var(--strokeIconColor);
+    scale: 1.3;
 }
