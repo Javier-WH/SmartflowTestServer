@@ -1,25 +1,22 @@
-import { Dropdown, message } from 'antd';
+import { Dropdown, message, Popover } from 'antd';
 import type { MenuProps } from 'antd';
 import type { ContainerElement } from '../types/componets';
 import FolderContainer from './folderContainer';
 import { useState, useContext, useEffect } from 'react';
-//import openedFolder from '../assets/svg/opened_folder.svg';
-//import closedFolder from '../assets/svg/closed_folder.svg';
 import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
 import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useNavigate, useParams } from 'react-router-dom';
-//import { MdFolder } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import { PiFolderLight } from "react-icons/pi";
 import { PiFolderOpenLight } from "react-icons/pi";
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import './folderContainer.css';
 import SortModal from '../sortModal/sortModal';
-import { LuFolderRoot, LuFolderPlus, LuFolderPen, LuFolderX, LuFolders, LuFilePlus2 } from "react-icons/lu";
+import { LuFolderOutput, LuFolderPlus, LuFolderPen, LuFolderX, LuFolders, LuFilePlus2 } from "react-icons/lu";
 
-import { Popover } from 'antd';
+
 
 export function FolderComponent({
     folder,
@@ -262,12 +259,12 @@ export function FolderComponent({
 
     const popoverContent = (
         <div className='folderPopPup'>
-            <LuFolderRoot onClick={() => handleMoveToRoot()}/> 
-            <LuFolderPlus onClick={() => handleCreateOrUpdateFolder()} /> 
-            <LuFolderPen onClick={() => handleCreateOrUpdateFolder(true)} /> 
-            <LuFolderX onClick={() => handleDeleteFolder()} /> 
-            <LuFolders onClick={() => handleSortFolder()} /> 
-            <LuFilePlus2 onClick={() => handleCreateFile()} />
+            <LuFolderOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()}/> 
+            <LuFolderPlus title={t('create_new_folder_label')} onClick={() => handleCreateOrUpdateFolder()} /> 
+            <LuFolderPen title={t('rename_folder_label')} onClick={() => handleCreateOrUpdateFolder(true)} /> 
+            <LuFolderX title={t('delete_folder_label')} onClick={() => handleDeleteFolder()} /> 
+            <LuFolders title={t('sort_folder_label')} onClick={() => handleSortFolder()} /> 
+            <LuFilePlus2 title={t('create_new_file_label')} onClick={() => handleCreateFile()} />
         </div>
     );
 
