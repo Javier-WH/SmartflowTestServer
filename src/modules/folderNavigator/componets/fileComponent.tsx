@@ -1,4 +1,4 @@
-import { Dropdown, message, Modal, Spin, Button } from 'antd';
+import { Dropdown, message, Modal, Spin, Button, Popover } from 'antd';
 import type { MenuProps } from 'antd';
 import type { ContainerElement } from '../types/componets';
 //import publishedIcon from '../assets/svg/publishedFile.svg';
@@ -15,7 +15,7 @@ const pageType = import.meta.env.VITE_PAGE_TYPE;
 import { useTranslation } from 'react-i18next';
 import { CiFileOn } from "react-icons/ci";
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
-
+import { LuFileX2, LuFileOutput, LuFiles } from "react-icons/lu";
 
 export function FileComponent({ file }: { file: ContainerElement }) {
     const {
@@ -34,10 +34,10 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     const { organization_id } = useParams();
     const [fileName, setFileName] = useState<string>(file.name);
     const { t } = useTranslation();
-
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [pendingNavigationId, setPendingNavigationId] = useState<string | null>(null);
     const [forceNavigation, setForceNavigation] = useState(false);
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
     useEffect(() => {
         if (changleFileNameRequest?.fileId !== file.id) return;
@@ -58,7 +58,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
             setIsSaveModalOpen(false);
             setPendingNavigationId(null);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isSaving, pendingNavigationId]);
 
     const handleClick = (id: string) => {
@@ -96,17 +96,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         setPendingNavigationId(null);
         setForceNavigation(false);
     };
-    /*const handleClick = (id: string) => {
-        if(isSaving) {
-            message.warning(t('wait_until_saving_changes_warning'));
-            return;
-        }
-        if (pageType === 'quill') {
-            navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
-            return;
-        }
-        navigate(`/page/${id}`);
-    };*/
+
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, itemId: string, itemType: number) => {
         event.dataTransfer.setData('id', itemId);
@@ -196,25 +186,45 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         },
     ];
 
+    const handleOpenChange = (newOpen) => {
+        setIsPopoverOpen(newOpen);
+    };
+
+    const popoverContent = (
+        <div className='folderPopPup'>
+            <LuFileOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()} />
+            <LuFileX2 title={t('delete_file_label')} onClick={() => handleDelete()}/>
+            <LuFiles title={t('duplicate_file_label')} onClick={() => handleDuplicate()} />
+        </div>
+    );
+
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
-                <div
-                    key={file.id}
-                    id={file.id}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, }}
-                    onClick={() => handleClick(file.id)}
-                    className={`file p-2 rounded-lg ${selectedFileId === file.id ? 'selected-file' : ''}`}
-                    draggable
-                    onDragStart={event => handleDragStart(event, file.id, file.type)}
+                <Popover
+                    placement="top"
+                    content={popoverContent}
+                    open={isPopoverOpen}
+                    onOpenChange={handleOpenChange}
+                    trigger="hover"
                 >
-                    {/*<img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />*/}
-                    <CiFileOn size={25} />
-                    <span className="truncate max-h-[50px] w-full file-name" title={fileName}>
-                        {fileName === 'untitled' ? t('untitled_file') : fileName}
-                    </span>
+                    <div
+                        key={file.id}
+                        id={file.id}
+                        style={{ display: 'flex', alignItems: 'center', gap: 10, }}
+                        onClick={() => handleClick(file.id)}
+                        className={`file p-2 rounded-lg ${selectedFileId === file.id ? 'selected-file' : ''} ${isPopoverOpen ? 'folder-on-popover-open' : ''}`}
+                        draggable
+                        onDragStart={event => handleDragStart(event, file.id, file.type)}
+                    >
+                        {/*<img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />*/}
+                        <CiFileOn size={25} />
+                        <span className="truncate max-h-[50px] w-full file-name" title={fileName}>
+                            {fileName === 'untitled' ? t('untitled_file') : fileName}
+                        </span>
 
-                </div>
+                    </div>
+                </Popover>
             </Dropdown>
             {/* Modal de guardado */}
             <Modal
