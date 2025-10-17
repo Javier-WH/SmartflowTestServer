@@ -1,8 +1,8 @@
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { t } from 'i18next';
 import supabase from '../../../lib/supabase';
 import errorManager from '../errorManager/errorManager';
 import type { OrganizationsResponse } from '../types/organizations';
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 export interface UpdateOrganizationData {
     name?: string;
@@ -26,7 +26,12 @@ export default function useOrganizations(user_id?: string, search?: string) {
         mutate,
     } = useQuery(
         user_id
-            ? supabase.rpc('get_user_organizations', { p_user_id: user_id, ...(search && { p_name: search }), p_page: 1, p_page_size: 100 })
+            ? supabase.rpc('get_user_organizations', {
+                  p_user_id: user_id,
+                  ...(search && { p_name: search }),
+                  p_page: 1,
+                  p_page_size: 100,
+              })
             : null,
     );
 
@@ -51,8 +56,6 @@ export default function useOrganizations(user_id?: string, search?: string) {
             p_page: page,
             p_page_size: pageSize,
         });
-
-      
 
         if (response.error) return errorManager(response.error);
 
@@ -88,6 +91,8 @@ export default function useOrganizations(user_id?: string, search?: string) {
             .select('*, organizations_users(*)')
             .single();
 
+        console.error('error', response.error);
+
         if (response.error) return errorManager(response.error);
 
         const joinResponse = await supabase
@@ -101,6 +106,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
             ])
             .select('*');
 
+        console.log('joinResponse error', joinResponse.error);
         if (joinResponse.error) return errorManager(joinResponse.error);
 
         return { error: false, message: t('Organization_created_successfully'), data: response.data };
@@ -158,8 +164,17 @@ export default function useOrganizations(user_id?: string, search?: string) {
      * @param {string} organization_id - The ID of the organization in which to update the user's role.
      * @returns {Promise<OrganizationsResponse>} - A promise that resolves to an object with error status, message, and optional data.
      */
-    const updateUserRoll = async ({ roll_id, user_id, organization_id }: { roll_id: string, user_id: string, organization_id : string }): Promise<OrganizationsResponse> => {
-        const response = await supabase.from('organizations_users')
+    const updateUserRoll = async ({
+        roll_id,
+        user_id,
+        organization_id,
+    }: {
+        roll_id: string;
+        user_id: string;
+        organization_id: string;
+    }): Promise<OrganizationsResponse> => {
+        const response = await supabase
+            .from('organizations_users')
             .update({ roll_id })
             .eq('user_id', user_id)
             .eq('organization_id', organization_id)
@@ -198,11 +213,11 @@ export default function useOrganizations(user_id?: string, search?: string) {
         if (response.error) return errorManager(response.error);
 
         // update the status of the invitation
-        const organization_id = response.data[0].organization_id
+        const organization_id = response.data[0].organization_id;
         const updateResponse = await supabase
             .from('organization_invitations')
             .update({ status: 'accepted' })
-            .eq('organization_id', organization_id)
+            .eq('organization_id', organization_id);
 
         if (updateResponse.error) return errorManager(updateResponse.error);
 
@@ -243,7 +258,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
         organizationId: string,
         email: string,
         inviterUserId: string,
-        level_id?: string
+        level_id?: string,
     ): Promise<OrganizationActionResponse> => {
         // First, check if the organization exists and the inviter is the creator
         const orgResponse = await supabase
@@ -253,7 +268,6 @@ export default function useOrganizations(user_id?: string, search?: string) {
             //.eq('user_id', inviterUserId)
             .single();
 
- 
         if (orgResponse.error) {
             return {
                 error: true,
@@ -263,26 +277,25 @@ export default function useOrganizations(user_id?: string, search?: string) {
             };
         }
 
-   
         const isUserInOrganization = await supabase.rpc('is_user_in_organization', {
             p_email: email.toLowerCase().trim(),
             p_organization_id: organizationId,
-          });
+        });
 
-          if (isUserInOrganization.error) {
+        if (isUserInOrganization.error) {
             return {
-              error: true,
-              message: t('Something_went_wrong'),
-              data: null,
+                error: true,
+                message: t('Something_went_wrong'),
+                data: null,
             };
-          }
-          if (isUserInOrganization.data) {
+        }
+        if (isUserInOrganization.data) {
             return {
-              error: true,
-              message: t('User_already_in_organization'),
-              data: null,
+                error: true,
+                message: t('User_already_in_organization'),
+                data: null,
             };
-          }
+        }
 
         // Create an invitation record
         const invitationResponse = await supabase
@@ -292,10 +305,9 @@ export default function useOrganizations(user_id?: string, search?: string) {
                 email: email.toLowerCase().trim(),
                 invited_by: inviterUserId,
                 status: 'pending',
-                level_id: level_id || null
+                level_id: level_id || null,
             })
             .select();
-
 
         if (invitationResponse.error) {
             // Check if it's a unique constraint error (invitation already exists)
@@ -328,9 +340,11 @@ export default function useOrganizations(user_id?: string, search?: string) {
      * @returns {Promise<OrganizationActionResponse>} - A promise that resolves to an object with error status, message, and optional data.
      */
     const deleteInvitation = async (organization_id: string, email: string): Promise<OrganizationActionResponse> => {
-        const response = await supabase.from('organization_invitations')
-            .delete().eq('organization_id', organization_id)
-            .eq('email', email)
+        const response = await supabase
+            .from('organization_invitations')
+            .delete()
+            .eq('organization_id', organization_id)
+            .eq('email', email);
         if (response.error) return errorManager(response.error);
         return { error: false, message: t('Invitation_deleted_successfully'), data: response.data };
     };
@@ -358,15 +372,15 @@ export default function useOrganizations(user_id?: string, search?: string) {
      */
 
     const getOrganizationInvite = async (id: string): Promise<OrganizationActionResponse> => {
-        const response = await supabase.from('organization_invitations')
+        const response = await supabase
+            .from('organization_invitations')
             .select('*')
             .eq('id', id)
             .eq('status', 'pending');
 
         if (response.error) return errorManager(response.error);
-        return { error: false, message: t('Invitation_retrieved_successfully'), data: response.data }
+        return { error: false, message: t('Invitation_retrieved_successfully'), data: response.data };
     };
-
 
     /**
      * Retrieves the members of a specified organization.
@@ -376,20 +390,17 @@ export default function useOrganizations(user_id?: string, search?: string) {
      */
 
     const getOrganizationMembers = async (a_organization_id: string): Promise<OrganizationActionResponse> => {
-        const response = await supabase
-            .rpc('getmembers', {
-                a_organization_id
-            });
+        const response = await supabase.rpc('getmembers', {
+            a_organization_id,
+        });
 
         if (response.error) {
             console.log(error);
-            return errorManager(error)
+            return errorManager(error);
         } else {
-            return { error: false, message: t("Members_retrieved_successfully"), data: response.data };
+            return { error: false, message: t('Members_retrieved_successfully'), data: response.data };
         }
-    }
-
-
+    };
 
     return {
         data: organizations,
@@ -408,6 +419,6 @@ export default function useOrganizations(user_id?: string, search?: string) {
         leaveOrganization,
         inviteUserToOrganization,
         getOrganizationInvite,
-        getOrganizationMembers
+        getOrganizationMembers,
     };
 }

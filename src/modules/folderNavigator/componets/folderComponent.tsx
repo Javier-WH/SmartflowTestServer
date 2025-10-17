@@ -1,20 +1,19 @@
-import { Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
-import type { ContainerElement } from '../types/componets';
-import FolderContainer from './folderContainer';
-import { useState, useContext, useEffect } from 'react';
+import { Dropdown, message } from 'antd';
+import { useContext, useEffect, useState } from 'react';
+//import { MdFolder } from 'react-icons/md';
+import { useTranslation } from 'react-i18next';
+import { PiFolderLight, PiFolderOpenLight } from 'react-icons/pi';
+import { useNavigate, useParams } from 'react-router-dom';
+import { MainContext, type MainContextValues } from '@/modules/mainContext';
+import { FolderNavigatorContext } from '../context/folderNavigatorContext';
+import useFilesManager from '../hooks/useFileManager';
 //import openedFolder from '../assets/svg/opened_folder.svg';
 //import closedFolder from '../assets/svg/closed_folder.svg';
 import useFolderManager from '../hooks/useFolderManager';
-import useFilesManager from '../hooks/useFileManager';
-import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/folder';
-import { FolderNavigatorContext } from '../context/folderNavigatorContext';
-import { useNavigate, useParams } from 'react-router-dom';
-//import { MdFolder } from 'react-icons/md';
-import { useTranslation } from 'react-i18next';
-import { PiFolderLight } from "react-icons/pi";
-import { PiFolderOpenLight } from "react-icons/pi";
-import { MainContext, type MainContextValues } from '@/modules/mainContext';
+import type { ContainerElement } from '../types/componets';
+import type { Folder, FolderData, FolderNavigatorContextValues } from '../types/folder';
+import FolderContainer from './folderContainer';
 import './folderContainer.css';
 import SortModal from '../sortModal/sortModal';
 
@@ -22,7 +21,11 @@ export function FolderComponent({
     folder,
     containerid,
     depth,
-}: { folder: ContainerElement; containerid: string | null; depth: number }) {
+}: {
+    folder: ContainerElement;
+    containerid: string | null;
+    depth: number;
+}) {
     const {
         setModalFolder,
         setModalDeleteFolder,
@@ -39,7 +42,7 @@ export function FolderComponent({
     const { moveFile, createFile } = useFilesManager();
     const [contentId, setContentId] = useState<string | null>(null);
     const { organization_id: slug } = useParams();
-    const [/*filesCount*/, setFilesCount] = useState<string | number>('0');
+    const [/*filesCount*/ , setFilesCount] = useState<string | number>('0');
     const [sortFolderId, setSortFolderId] = useState<string | null>(null);
 
     // updates the number of files when a file is moved
@@ -139,7 +142,7 @@ export function FolderComponent({
         }
         const request = await moveFolderToRoot(folder.id);
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
-       
+
         setUpdateFolderRequest(gruppedByContainer);
         setFileCountUpdateRequest(true);
     };
@@ -239,8 +242,6 @@ export function FolderComponent({
             return;
         }
 
-   
-
         if (request.data) {
             const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
             setUpdateFolderRequest(gruppedByContainer);
@@ -250,7 +251,7 @@ export function FolderComponent({
             setFileCountUpdateRequest(true);
         }
     };
-   
+
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
@@ -260,7 +261,9 @@ export function FolderComponent({
                     data-depth={depth}
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => toggleFolder(folder.id ?? null)}
-                    className={`folder ${contentId === null ? '' : 'opened'}` /*${folder.id === selectedFolderId ? 'selected-folder' : ''}`*/}
+                    className={
+                        `folder ${contentId === null ? '' : 'opened'}` /*${folder.id === selectedFolderId ? 'selected-folder' : ''}`*/
+                    }
                     draggable
                     onDragStart={event => handleDragStart(event, folder.id, folder.type)}
                     onDragOver={handleDragOver}
@@ -268,10 +271,12 @@ export function FolderComponent({
                     onDragLeave={handleDragLeave}
                     title={folder.name}
                 >
-                 
-                    {contentId ? <PiFolderOpenLight className='folder-icon' /> : <PiFolderLight className='folder-icon' />}
+                    {contentId ? (
+                        <PiFolderOpenLight className="folder-icon" />
+                    ) : (
+                        <PiFolderLight className="folder-icon" />
+                    )}
                     <span className="folder-name">{`${folder.id === selectedFolderId || folder.id === sortFolderId ? '•' : ''} ${folder.name}`}</span>
-
                 </div>
             </Dropdown>
             <div className="ml-8">
@@ -281,7 +286,12 @@ export function FolderComponent({
                     </div>
                 )}
             </div>
-            <SortModal containerid={sortFolderId} setContainerid={setSortFolderId} slug = {slug} folderName = {folder.name}/>
+            <SortModal
+                containerid={sortFolderId}
+                setContainerid={setSortFolderId}
+                slug={slug}
+                folderName={folder.name}
+            />
         </div>
     );
 }

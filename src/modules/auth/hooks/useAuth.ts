@@ -1,10 +1,8 @@
-import type { ForgotPasswordParams, ResetPasswordParams, SignInParams, SignUpParams } from '../types/auth';
-
-import AuthService from '../services/auth';
-
-import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
+import AuthService from '../services/auth';
+import type { ForgotPasswordParams, ResetPasswordParams, SignInParams, SignUpParams } from '../types/auth';
 
 const useAuth = () => {
     const { user, token, logout, setUser, setToken } = useContext(AuthContext);
@@ -46,10 +44,10 @@ const useAuth = () => {
     }
 
     async function signOut() {
-        logout();
         const response = await AuthService.signOut();
 
         if (!response.error) {
+            logout();
             navigate('/auth/signin');
         }
 
