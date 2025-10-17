@@ -1,8 +1,8 @@
+import { type ReactNode, useContext, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import FolderNavigator from '@/modules/folderNavigator/folderNavigator';
 import '../css/home.css';
-//import SearchInput from '@/modules/search/searchInput';
-import { Button } from '@/components/ui';
+import { cn } from '@heroui/react';
 import {
     IconChevronDown,
     IconChevronLeft,
@@ -11,71 +11,60 @@ import {
     IconFile,
     IconFilePlus,
     IconFolderPlus,
-    //IconFolderCode,
-    //IconSortAscendingLetters,
-    //IconSortDescendingLetters,
 } from '@tabler/icons-react';
-import { FaSort } from "react-icons/fa";
-import { cn } from '@heroui/react';
-import { ReactNode, useContext, useState } from 'react';
-import { MainContext, type MainContextValues } from '@/modules/mainContext';
-import type { Folder } from '@/modules/folderNavigator/types/folder';
 import { message } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { FaSort } from 'react-icons/fa';
+import { Button } from '@/components/ui';
 import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
 import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
-import { useTranslation } from 'react-i18next';
 import SortModal from '@/modules/folderNavigator/sortModal/sortModal';
-
+import type { Folder } from '@/modules/folderNavigator/types/folder';
+import { MainContext, type MainContextValues } from '@/modules/mainContext';
 
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-    const [containerId, setContainerId] = useState<"root" | null>(null);
+    const [containerId, setContainerId] = useState<'root' | null>(null);
     const { setNewFolderRequest, memberRoll, setUpdateFolderRequestFromMain, selectedFolderId } = useContext(
         MainContext,
     ) as MainContextValues;
     const { createFile } = useFilesManager();
     const { getRootContent } = useFolderManager();
-    const { organization_id: slug } = useParams();
+    const { working_group_id: slug } = useParams();
     const navigate = useNavigate();
     const { t } = useTranslation();
 
-
-
-
+    console.log({ memberRoll });
 
     const getLevelTitle = (level: string): ReactNode => {
-
-        if (level.toLocaleLowerCase() === "creator") {
-            return <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
-                {t('creator_label')}
-            </span>
-
+        if (level.toLocaleLowerCase() === 'creator') {
+            return (
+                <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
+                    {t('creator_label')}
+                </span>
+            );
+        } else if (level.toLocaleLowerCase() === 'admin') {
+            return (
+                <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full tracking-tight">
+                    {t('admin_label')}
+                </span>
+            );
+        } else if (level.toLocaleLowerCase() === 'editor') {
+            return (
+                <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full tracking-tight">
+                    {t('editor_label')}
+                </span>
+            );
+        } else if (level.toLocaleLowerCase() === 'lector') {
+            return (
+                <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full tracking-tight">
+                    {t('lector_label')}
+                </span>
+            );
+        } else {
+            return <div></div>;
         }
-        else if (level.toLocaleLowerCase() === "admin") {
-            return <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full tracking-tight">
-                {t('admin_label')}
-            </span>
-        }
-
-
-        else if (level.toLocaleLowerCase() === "editor") {
-            return <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full tracking-tight">
-                {t('editor_label')}
-            </span>
-        }
-
-        else if (level.toLocaleLowerCase() === "lector") {
-            return <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full tracking-tight">
-                {t('lector_label')}
-            </span>
-        }
-        else {
-            return <div></div>
-        }
-    }
-
-
-
+    };
 
     const handleCreateFolder = () => {
         if (!memberRoll?.write) {
@@ -97,7 +86,7 @@ export default function Home() {
             return;
         }
         if (!slug) {
-            message.error(t('can_not_find_organization_message'));
+            message.error(t('can_not_find_working_group_message'));
             return;
         }
         createFile('untitled', selectedFolderId ?? null, slug).then(res => {
@@ -146,7 +135,12 @@ export default function Home() {
 
     return (
         <>
-            <SortModal containerid={containerId} setContainerid={setContainerId} slug={slug} folderName={`${localStorage.getItem("OrgName") || "Root"}`} />
+            <SortModal
+                containerid={containerId}
+                setContainerid={setContainerId}
+                slug={slug}
+                folderName={`${localStorage.getItem('OrgName') || 'Root'}`}
+            />
             <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
                 {/* Mobile Header Container */}
                 <Button
@@ -179,15 +173,12 @@ export default function Home() {
                         >
                             {/* <SearchInput /> */}
                             <div className="border-2 h-full py-1 rounded-lg flex flex-col mt-[0px] relative pt-6 custom-shadow">
-
                                 <div className="rounded-tl-lg rounded-tr-lg text-center leading-[40px] absolute top-0 left-0 w-full h-[40px] pl-10 pr-10 truncate overflow-hidden whitespace-nowrap text-gray-500 bg-default-50 border-b-1 ">
-                                    {`${localStorage.getItem("OrgName") || ""}`}
+                                    {`${localStorage.getItem('OrgName') || ''}`}
                                 </div>
 
-                                <div className='absolute top-[50px] left-[50%] transform -translate-x-1/2'>
-                                    {
-                                        getLevelTitle(memberRoll?.level || "")
-                                    }
+                                <div className="absolute top-[50px] left-[50%] transform -translate-x-1/2">
+                                    {getLevelTitle(memberRoll?.level || '')}
                                 </div>
                                 <div className="flex justify-between gap-1 px-1 mt-5 ml-2">
                                     <div>
@@ -203,21 +194,35 @@ export default function Home() {
                                         <IconSortDescendingLetters className='folder-nav-icon' />
                                     </Button>*/}
 
-                                        {
-                                            memberRoll?.write &&
-                                            <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setContainerId("root")} title={t('sort_root_label')}>
-                                                    <FaSort className='folder-nav-icon2' />
+                                        {memberRoll?.write && (
+                                            <Button
+                                                className="folder-nav-button"
+                                                variant="light"
+                                                isIconOnly
+                                                onPress={() => setContainerId('root')}
+                                                title={t('sort_root_label')}
+                                            >
+                                                <FaSort className="folder-nav-icon2" />
                                             </Button>
-                                        }
+                                        )}
                                     </div>
 
                                     <div>
-
-                                        <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreatePage}>
-                                            <IconFilePlus className='folder-nav-icon' />
+                                        <Button
+                                            className="folder-nav-button"
+                                            variant="light"
+                                            isIconOnly
+                                            onPress={handleCreatePage}
+                                        >
+                                            <IconFilePlus className="folder-nav-icon" />
                                         </Button>
-                                        <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreateFolder}>
-                                            <IconFolderPlus className='folder-nav-icon' />
+                                        <Button
+                                            className="folder-nav-button"
+                                            variant="light"
+                                            isIconOnly
+                                            onPress={handleCreateFolder}
+                                        >
+                                            <IconFolderPlus className="folder-nav-icon" />
                                         </Button>
                                     </div>
                                 </div>
@@ -262,8 +267,9 @@ export default function Home() {
                 </div>
 
                 <section
-                    className={`grow transition-all duration-200 ease-in-out ${isSidebarCollapsed ? 'w-full md:w-[calc(100%-4rem-0.5rem)]' : 'w-full md:w-[calc(75%-0.5rem)]'
-                        } ${isSidebarCollapsed ? 'mt-0' : 'mt-2 md:mt-0'}`}
+                    className={`grow transition-all duration-200 ease-in-out ${
+                        isSidebarCollapsed ? 'w-full md:w-[calc(100%-4rem-0.5rem)]' : 'w-full md:w-[calc(75%-0.5rem)]'
+                    } ${isSidebarCollapsed ? 'mt-0' : 'mt-2 md:mt-0'}`}
                 >
                     <Outlet />
                 </section>

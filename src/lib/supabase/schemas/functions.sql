@@ -6,10 +6,10 @@ create or replace function public.enviar_email()
   org_name varchar;
   org_description text;
 begin
-  -- obtener datos de la organización
+  -- obtener datos del grupo de trabajo
   select o.name, o.description into org_name, org_description
-  from public.organizations o
-  where o.id = new.organization_id;
+  from public.working_group o
+  where o.id = new.working_group_id;
 
   -- enviar email con datos combinados
   perform net.http_post(
@@ -21,18 +21,18 @@ begin
     body := json_build_object(
       'from', 'noreply@smartflo.pro',
       'to', new.email,
-      'subject', 'invitación a organización',
+      'subject', 'Invitación a grupo de trabajo',
       'html', format('
         <div style=background:#f0f0f0; padding:20px;>
           <h1>%s</h1>
           <h5>%s</h5>
 
-          <p>this email has been sent to invite you to join this organization.</p>
-          <p>if you did not request to join the organization, you can ignore this email.</p>
+          <p>this email has been sent to invite you to join this working_group.</p>
+          <p>if you did not request to join the working_group, you can ignore this email.</p>
         
           <a href=https://smartflo.pro/join/%s 
              style=background:#007bff; color:white; padding:10px 20px; text-decoration:none;>
-            go to organization join page
+            go to working_group join page
           </a>
         </div>
       ', 

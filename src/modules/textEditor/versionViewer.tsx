@@ -57,7 +57,7 @@ Font.whitelist = options.fontList;
 Quill.register(Font, true);
 
 export default function VersionViewer() {
-    const { id, organization_id } = useParams();
+    const { id, working_group_id } = useParams();
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [title, setTitle] = useState('');
@@ -85,7 +85,7 @@ export default function VersionViewer() {
                 ...(htmlContent ? { content: htmlContent } : {}),
                 ...(title ? { name: title } : {}),
             })
-            navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: true } })
+            navigate(`/${working_group_id}/edit/${id}`, { state: { readOnly: true } })
 
         },
         400,
@@ -286,7 +286,7 @@ export default function VersionViewer() {
                 <div className="flex items-center ml-[-15px] w-[200px]">
                     <button
                         title={t("back_to_document_button")}
-                        onClick={() => navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: true } })}
+                        onClick={() => navigate(`/${working_group_id}/edit/${id}`, { state: { readOnly: true } })}
                         className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 back-button"
                     >
                         <IoIosArrowRoundBack className="text-2xl text-gray-500 hover:text-gray-700" />

@@ -13,7 +13,7 @@ create table if not exists public.filesquill (
     container uuid references public.folders(id) on delete cascade on update cascade,
     content text,
     published boolean default false,
-    organization_id uuid references public.organizations(id) on delete cascade on update cascade,
+    working_group_id uuid references public.working_group(id) on delete cascade on update cascade,
     "order" bigint default 0 not null,
     searchable_text text,
     created_at timestamp with time zone default now(),
@@ -42,21 +42,21 @@ create or replace function public.create_file_quill(p_name character varying, p_
     language plpgsql
     as $$declare
   new_id uuid;
-  p_organization_id uuid;
+  p_working_group_id uuid;
 begin
-  -- obtener el organization_id usando el slug
+  -- obtener el working_group_id usando el slug
 
-    select o.id into p_organization_id from public.organizations o where o.slug =  p_slug;
+    select o.id into p_working_group_id from public.working_group o where o.slug =  p_slug;
 
   -- insertar el registro manejando el caso especial para container
-  insert into public.filesquill(name, container, organization_id, content)
+  insert into public.filesquill(name, container, working_group_id, content)
   values (
     p_name,
     case 
       when p_container is null then null
       else p_container
     end,
-    p_organization_id,
+    p_working_group_id,
     '<p><br></p><guided-checklist class="guided-checklist-block" title="" items="[{&quot;id&quot;:&quot;fd2390ff-4643-4dd1-9622-9f5061186ea7&quot;,&quot;index&quot;:0,&quot;text&quot;:&quot;&quot;,&quot;guidande&quot;:&quot;&quot;}]" contenteditable="false" readonly="false"></guided-checklist><p><br></p><p><br></p>'
   )
   returning id into new_id;
@@ -160,7 +160,7 @@ begin
         container,
         content,
         published,
-        organization_id
+        working_group_id
     )
     select
         gen_random_uuid(),
@@ -168,7 +168,7 @@ begin
         container,
         content,
         published,
-        organization_id
+        working_group_id
     from
         public.filesquill
     where
@@ -402,7 +402,7 @@ begin
         )::real as similarity_score,
         1 as type
     from public.filesquill f
-    where f.organization_id = p_slug
+    where f.working_group_id = p_slug
       and (f.searchable_text %> clean_search_term or f.name ilike '%' || clean_search_term || '%')
     order by similarity_score desc
     limit subquery_limit)
@@ -419,7 +419,7 @@ begin
         (similarity(x.name, clean_search_term) * 1.5)::real as similarity_score,
         0 as type
     from public.folders x
-    where x.organization_id = p_slug
+    where x.working_group_id = p_slug
       and (x.name %> clean_search_term or x.name ilike '%' || clean_search_term || '%')
     order by similarity_score desc
     limit subquery_limit)

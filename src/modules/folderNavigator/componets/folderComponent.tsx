@@ -41,7 +41,7 @@ export function FolderComponent({
     const { moveFolder, moveFolderToRoot, getFilesCount } = useFolderManager();
     const { moveFile, createFile } = useFilesManager();
     const [contentId, setContentId] = useState<string | null>(null);
-    const { organization_id: slug } = useParams();
+    const { working_group_id: slug } = useParams();
     const [/*filesCount*/ , setFilesCount] = useState<string | number>('0');
     const [sortFolderId, setSortFolderId] = useState<string | null>(null);
 
@@ -104,7 +104,7 @@ export function FolderComponent({
             return;
         }
         if (!slug) {
-            message.error(t('can_not_find_organization_message'));
+            message.error(t('can_not_find_working_group_message'));
             return;
         }
         createFile('untitled', folder.id, slug).then(res => {

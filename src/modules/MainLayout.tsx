@@ -5,8 +5,8 @@ import UserMenu from '@/components/ui/UserMenu';
 import logo from '../assets/svg/Logo_Smartflo.svg';
 import useAuth from './auth/hooks/useAuth';
 import { MainContext, MainContextProvider, type MainContextValues } from './mainContext';
-import useOrganizations from './organizations/hook/useOrganizations';
 import SearchInput from './search/searchInput';
+import useWorkingGroup from './working_group/hook/useWorkingGroup';
 
 function Header() {
     const { setParentFolders } = useContext(MainContext) as MainContextValues;
@@ -16,7 +16,7 @@ function Header() {
 
     return (
         <header className="flex justify-end md:justify-between items-center px-8 w-full h-[50px] top-0  shadow-md">
-            <Link to="/organizations" onClick={() => setParentFolders('')}>
+            <Link to="/working_group" onClick={() => setParentFolders('')}>
                 <h1 className="max-md:hidden md:block font-[300] text-[40px] tracking-[0.3rem] cursor-pointer">
                     {/*<span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO*/}
                     <img src={logo} alt="logo" style={{ width: '200px', height: '35px' }} />
@@ -30,7 +30,7 @@ function Header() {
                     </li>
                 </nav>
 
-                {parms?.organization_id && !isMembersPage && (
+                {parms?.working_group_id && !isMembersPage && (
                     <div className="search-continer ml-auto w-[300px]">
                         <SearchInput />
                         <nav></nav>
@@ -48,7 +48,7 @@ function Header() {
 export default function MainLayout() {
     const { user } = useAuth();
 
-    const { isLoading } = useOrganizations(user?.id);
+    const { isLoading } = useWorkingGroup(user?.id);
 
     if (isLoading) {
         return (

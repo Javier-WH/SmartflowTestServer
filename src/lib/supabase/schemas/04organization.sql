@@ -1,4 +1,4 @@
-create table if not exists public.organizations (
+create table if not exists public.working_group (
     id uuid primary key default uuid_generate_v4(),
     user_id uuid references auth.users(id) on delete cascade not null,
     name varchar(100) not null,
@@ -9,51 +9,51 @@ create table if not exists public.organizations (
     unique(name, user_id)
 );
 
-create table if not exists public.organizations_users (
+create table if not exists public.working_group_users (
     id uuid primary key default uuid_generate_v4(),
     user_id uuid references auth.users(id) on delete cascade not null,
-    organization_id uuid references public.organizations(id) on delete cascade not null,
+    working_group_id uuid references public.working_group(id) on delete cascade not null,
     roll_id uuid references public.rolls(id) on update cascade not null,
     created_at timestamp with time zone default now() not null,
-    unique(user_id, organization_id)
+    unique(user_id, working_group_id)
 );
 
 
-create table if not exists public.organization_invitations (
+create table if not exists public.working_group_invitations (
     id uuid primary key default uuid_generate_v4(),
     level_id uuid references public.rolls(id) on delete cascade not null,
-    organization_id uuid references public.organizations(id) on delete cascade not null,
+    working_group_id uuid references public.working_group(id) on delete cascade not null,
     invited_by uuid references auth.users(id) on delete cascade not null,
     email varchar(100) not null,
     status varchar(50) not null,
     created_at timestamp without time zone default now()
 );
 
-create or replace function public.spreadtutorial(p_organization_id uuid, p_role_id uuid) 
+create or replace function public.spreadtutorial(p_working_group_id uuid, p_role_id uuid) 
     returns void
     language plpgsql
     as $$
 begin
-    insert into public.organizations_users (user_id, organization_id, roll_id)
+    insert into public.working_group_users (user_id, working_group_id, roll_id)
     select
         u.id,
-        p_organization_id,
+        p_working_group_id,
         p_role_id
     from
         auth.users u
     where
         -- la clusula 'not exists' se asegura de que solo seleccionemos usuarios
-        -- que no tengan ya un registro en 'organizations_users' para esta organizacin.
+        -- que no tengan ya un registro en 'working_group_users' para este grupo de trabajo
         not exists (
             select 1
-            from public.organizations_users ou
+            from public.working_group_users ou
             where ou.user_id = u.id
-            and ou.organization_id = p_organization_id
+            and ou.working_group_id = p_working_group_id
         );
 end;
 $$;
 
-create or replace function public.before_insert_organization() 
+create or replace function public.before_insert_working_group() 
     returns trigger
     language plpgsql
     as $$
@@ -67,7 +67,7 @@ begin
     random_slug := generate_random_string(20);
     
     -- check if the slug already exists
-    select exists(select 1 from organizations where slug = random_slug) into slug_exists;
+    select exists(select 1 from working_group where slug = random_slug) into slug_exists;
     
     -- exit the loop if the slug is unique
     exit when not slug_exists;
@@ -80,7 +80,7 @@ begin
 end;
 $$;
 
-create or replace function public.clone_organization(original_org_id uuid, new_org_name character varying, new_org_slug character varying)
+create or replace function public.clone_working_group(original_org_id uuid, new_org_name character varying, new_org_slug character varying)
     returns uuid
     language plpgsql security definer
     as $$
@@ -99,28 +99,28 @@ begin
         new_folder_id uuid not null
     ) on commit drop;
 
-    -- 1. crear nueva organizacin
-    insert into organizations (name, description, slug, open, user_id)
+    -- 1. crear nuevo grupo de trabajo
+    insert into working_group (name, description, slug, open, user_id)
     select new_org_name, description, new_org_slug, open, user_id
-    from organizations 
+    from working_group 
     where id = original_org_id
     returning id into new_org_id;
 
-    -- 2. clonar usuarios de la organizacin
-    insert into organizations_users (user_id, organization_id, roll_id)
+    -- 2. clonar usuarios del grupo de trabajo
+    insert into working_group_users (user_id, working_group_id, roll_id)
     select user_id, new_org_id, roll_id
-    from organizations_users 
-    where organization_id = original_org_id;
+    from working_group_users 
+    where working_group_id = original_org_id;
 
     -- 3. clonar carpetas usando enfoque recursivo
     -- primero las carpetas raz (container is null)
     for folder_record in 
         select * from folders 
-        where organization_id = original_org_id 
+        where working_group_id = original_org_id 
         and container is null
         order by created_at
     loop
-        insert into folders (name, container, organization_id)
+        insert into folders (name, container, working_group_id)
         values (folder_record.name, null, new_org_id)
         returning id into temp_new_folder_id;
         
@@ -136,7 +136,7 @@ begin
         for folder_record in 
             select f.* 
             from folders f
-            where f.organization_id = original_org_id 
+            where f.working_group_id = original_org_id 
             and f.container is not null
             and f.id not in (select old_folder_id from folder_mapping)
             and f.container in (select old_folder_id from folder_mapping)
@@ -146,7 +146,7 @@ begin
             from folder_mapping fm
             where fm.old_folder_id = folder_record.container;
             
-            insert into folders (name, container, organization_id)
+            insert into folders (name, container, working_group_id)
             values (folder_record.name, mapped_folder_id, new_org_id)
             returning id into temp_new_folder_id;
             
@@ -164,7 +164,7 @@ begin
     for file_record in 
         select f.* 
         from filesquill f
-        where f.organization_id = original_org_id
+        where f.working_group_id = original_org_id
     loop
         if file_record.container is not null then
             select fm.new_folder_id into mapped_folder_id
@@ -174,7 +174,7 @@ begin
             mapped_folder_id := null;
         end if;
 
-        insert into filesquill (name, container, content, published, organization_id)
+        insert into filesquill (name, container, content, published, working_group_id)
         values (
             file_record.name, 
             mapped_folder_id, 
@@ -189,7 +189,7 @@ begin
 end;
 $$;
 
-create or replace function public.getmembers(a_organization_id uuid)
+create or replace function public.getmembers(a_working_group_id uuid)
     returns table(userid uuid, useremail character varying, rollid uuid, rollname character varying)
     language plpgsql security definer
     as $$
@@ -200,10 +200,10 @@ begin
       u.email as useremail,
       r.id as rollid,
       r.level as rollname
-    from public.organizations_users ou
+    from public.working_group_users ou
     join auth.users u on ou.user_id = u.id
     join public.rolls r on ou.roll_id = r.id
-    where ou.organization_id = a_organization_id; 
+    where ou.working_group_id = a_working_group_id; 
 end;
 $$;
 
@@ -261,10 +261,10 @@ create or replace function public.getrootcontentquillfiltered(p_slug text)
     language plpgsql
     as $$
 declare
-    p_organization_id uuid;
+    p_working_group_id uuid;
 begin
-    -- se obtiene el id de la organizacion usando el slug
-    select o.id into p_organization_id from public.organizations o where o.slug = p_slug;
+    -- se obtiene el id del grupo de trabajo usando el slug
+    select o.id into p_working_group_id from public.working_group o where o.slug = p_slug;
     -- retornar resultados filtrados
 
     return query
@@ -298,7 +298,7 @@ begin
          f.order as order
     from public.folders f
     where
-        f.organization_id = p_organization_id and
+        f.working_group_id = p_working_group_id and
         f.container is null
     union all
     select
@@ -310,7 +310,7 @@ begin
         a.order as order
     from public.filesquill a
     where
-        a.organization_id = p_organization_id and
+        a.working_group_id = p_working_group_id and
         a.container is null;
 end;
 $$;

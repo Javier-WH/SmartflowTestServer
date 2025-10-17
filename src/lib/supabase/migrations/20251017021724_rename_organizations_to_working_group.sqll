@@ -1,0 +1,6 @@
+ALTER TABLE public.organizations RENAME TO working_group;
+ALTER TABLE public.organizations_users RENAME TO working_group_users;
+ALTER TABLE public.organization_invitations RENAME TO working_group_invitations;
+
+alter table public.working_group_users rename column organization_id to working_group_id;
+alter table public.working_group_invitations rename column organization_id to working_group_id;

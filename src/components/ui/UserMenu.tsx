@@ -9,17 +9,17 @@ export default function UserMenu() {
     const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
-    const { organization_id } = useParams();
+    const { working_group_id } = useParams();
     const { setParentFolders } = useContext(MainContext) as MainContextValues;
     const isMembersPage = location.pathname.endsWith('/members');
     const { user, signOut } = useAuth();
 
     const isHomePage = location.pathname === '/home';
-    const isOrganizationsPage = location.pathname.startsWith('/organizations');
+    const isWorkingGroupPage = location.pathname.startsWith('/working_group');
     const isTaskManagerPage = location.pathname.startsWith('/task_manager');
 
     const renderMenu = () => {
-        if (isHomePage || isOrganizationsPage || isTaskManagerPage) {
+        if (isHomePage || isWorkingGroupPage || isTaskManagerPage) {
             return (
                 <DropdownMenu aria-label="User Actions" variant="flat">
                     <DropdownItem key="logout" color="danger" onPress={signOut}>
@@ -29,23 +29,23 @@ export default function UserMenu() {
             );
         }
 
-        if (organization_id) {
+        if (working_group_id) {
             return (
                 <DropdownMenu aria-label="User Actions" variant="flat">
                     <DropdownItem
-                        key="organizations"
+                        key="working_group"
                         onPress={() => {
-                            navigate('/organizations');
+                            navigate('/working_group');
                             setParentFolders('');
                         }}
                     >
-                        {t('organizations_label')}
+                        {t('working_group_label')}
                     </DropdownItem>
                     {!isMembersPage ? (
                         <DropdownItem
                             key="members"
                             onPress={() => {
-                                navigate(`/${organization_id}/members`);
+                                navigate(`/${working_group_id}/members`);
                                 setParentFolders('');
                             }}
                         >
@@ -55,7 +55,7 @@ export default function UserMenu() {
                         <DropdownItem
                             key="members"
                             onPress={() => {
-                                navigate(`/${organization_id}/home`);
+                                navigate(`/${working_group_id}/home`);
                                 setParentFolders('');
                             }}
                         >

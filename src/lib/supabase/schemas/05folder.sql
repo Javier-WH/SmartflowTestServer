@@ -1,11 +1,11 @@
 create table if not exists public.folders (
     id uuid primary key default uuid_generate_v4(),
     container uuid references public.folders(id) on delete cascade on update cascade,
-    organization_id uuid references public.organizations(id) on delete cascade on update cascade not null,
+    working_group_id uuid references public.working_group(id) on delete cascade on update cascade not null,
     name varchar(100) not null,
     "order" bigint default 0 not null,
     created_at timestamp with time zone default now(),
-    unique(name, container, organization_id)
+    unique(name, container, working_group_id)
 );
 
 create or replace function public.crear_carpeta(p_foldername varchar(100), p_container_id uuid, p_slug text)
@@ -13,15 +13,15 @@ create or replace function public.crear_carpeta(p_foldername varchar(100), p_con
     language plpgsql
     as $$
 declare
-    p_organization_id uuid;
+    p_working_group_id uuid;
 begin
-    -- 0. obtener el id de la organizacion
+    -- 0. obtener el id del grupo de trabajo
 
-    select o.id into p_organization_id from public.organizations o where o.slug = p_slug;
+    select o.id into p_working_group_id from public.working_group o where o.slug = p_slug;
 
     -- 1. insertar la carpeta
-    insert into public.folders (name, container, organization_id) 
-    values (p_foldername, p_container_id, p_organization_id);
+    insert into public.folders (name, container, working_group_id) 
+    values (p_foldername, p_container_id, p_working_group_id);
 
     -- 2. retornar el contenido del contenedor
     return query
@@ -209,7 +209,7 @@ begin
     perform 1
     from public.folders
     where name = new.name
-    and organization_id = new.organization_id
+    and working_group_id = new.working_group_id
     and container is null;
   
     if found then
@@ -331,10 +331,10 @@ create or replace function public.getfoldercontentquill(p_folder_id uuid, p_slug
     language plpgsql
     as $$
 declare
-    p_organization_id uuid;
+    p_working_group_id uuid;
 begin
-    -- obtengo el id de la organizacion usando el slug
-    select o.id into p_organization_id from public.organizations o where o.slug = p_slug;
+    -- obtengo el id del grupo de trabajo usando el slug
+    select o.id into p_working_group_id from public.working_group o where o.slug = p_slug;
     return query
     select
         f.id as id,
@@ -365,7 +365,7 @@ begin
         f.order as order
     from public.folders f
     where
-        (p_folder_id is null and f.container is null and f.organization_id = p_organization_id)  -- manejo de null
+        (p_folder_id is null and f.container is null and f.working_group_id = p_working_group_id)  -- manejo de null
         or f.container = p_folder_id                   -- caso normal
     
     union all
@@ -379,7 +379,7 @@ begin
         a.order as order
     from public.filesquill a
     where
-        (p_folder_id is null and a.container is null and a.organization_id = p_organization_id)  -- manejo de null
+        (p_folder_id is null and a.container is null and a.working_group_id = p_working_group_id)  -- manejo de null
         or a.container = p_folder_id;                  -- caso normal
 end;
 $$;
