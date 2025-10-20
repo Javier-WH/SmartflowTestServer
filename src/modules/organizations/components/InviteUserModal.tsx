@@ -1,9 +1,10 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
-import { Button, Input } from '@/components/ui';
+import { Input } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 import type { Organization } from '../types/organizations';
 import { UserRoll } from '../organizations';
-import { FiMail, FiUserPlus, FiX, FiCheck, FiUsers } from 'react-icons/fi';
+import { FiMail, FiCheck, FiUsers } from 'react-icons/fi';
+import Boton from '@/components/ui/Boton';
 
 export interface InviteUserModalProps {
     isOpen: boolean;
@@ -26,7 +27,6 @@ export default function InviteUserModal({
     inviteEmail,
     setInviteEmail,
     handleSubmit,
-    isInviting,
     inviteError,
     setInviteUserLevelId,
     inviteUserLevelId,
@@ -160,21 +160,8 @@ export default function InviteUserModal({
                                 {inviteError && <p className="text-danger text-sm mt-2">{inviteError}</p>}
                             </ModalBody>
                             <ModalFooter className="p-5 pt-4 border-t border-gray-100">
-                                <Button
-                                    className="rounded-[15px] px-5 bg-gray-100 text-gray-700 font-medium hover:bg-gray-200"
-                                    onPress={onClose}
-                                >
-                                    <FiX className="mr-2" />
-                                    {t('cancel_label')}
-                                </Button>
-                                <Button
-                                    type="submit"
-                                    className="bg-white text-gray-800 border border-gray-300 rounded-[15px] px-6 py-2 font-medium transition-colors duration-200 hover:bg-gray-100"
-                                    isLoading={isInviting}
-                                >
-                                    <FiUserPlus className="mr-2" />
-                                    {t('send_button')}
-                                </Button>
+                                <Boton neutral onClick={onClose} text={t('cancel_label')} />
+                                <Boton type="submit" text={t('send_button')} />
                             </ModalFooter>
                         </form>
                     </>

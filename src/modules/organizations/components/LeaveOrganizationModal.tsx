@@ -1,6 +1,7 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter} from "@heroui/react";
 import type { Organization } from '../types/organizations';
 import { useTranslation } from 'react-i18next';
+import Boton from "@/components/ui/Boton";
 
 interface LeaveOrganizationModalProps {
     isOpen: boolean;
@@ -16,7 +17,6 @@ export default function LeaveOrganizationModal({
     onClose,
     selectedOrganization,
     handleLeaveConfirm,
-    isSubmitting,
     formError,
 }: LeaveOrganizationModalProps) {
     const { t } = useTranslation();
@@ -36,12 +36,9 @@ export default function LeaveOrganizationModal({
                             {formError && <p className="text-danger text-sm mt-2">{formError}</p>}
                         </ModalBody>
                         <ModalFooter>
-                            <Button variant="flat" onPress={onClose}>
-                                {t("cancel_label")}
-                            </Button>
-                            <Button color="warning" onPress={handleLeaveConfirm} isLoading={isSubmitting}>
-                                {t("leave_label")}
-                            </Button>
+                            <Boton neutral onClick={onClose} text={t("cancel_label")} />
+                            <Boton danger onClick={handleLeaveConfirm} text={t("leave_label")} />
+                         
                         </ModalFooter>
                     </>
                 )}

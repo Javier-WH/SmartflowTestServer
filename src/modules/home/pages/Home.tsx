@@ -1,20 +1,15 @@
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import FolderNavigator from '@/modules/folderNavigator/folderNavigator';
 import '../css/home.css';
-//import SearchInput from '@/modules/search/searchInput';
-import { Button } from '@/components/ui';
+
 import Boton from '@/components/ui/Boton';
 import {
     IconChevronDown,
     IconChevronLeft,
     IconChevronRight,
     IconChevronUp,
-    IconFile,
     IconFilePlus,
-    IconFolderPlus,
-    //IconFolderCode,
-    //IconSortAscendingLetters,
-    //IconSortDescendingLetters,
+    IconFolderPlus
 } from '@tabler/icons-react';
 import { FaSort } from "react-icons/fa";
 import { cn } from '@heroui/react';
@@ -74,8 +69,6 @@ export default function Home() {
             return <div></div>
         }
     }
-
-
 
 
     const handleCreateFolder = () => {
@@ -140,10 +133,6 @@ export default function Home() {
         setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
-    /*const colapseAllFolders = () => {
-        const openedRootFolder = document.querySelectorAll('.folder[data-depth="0"].opened');
-        openedRootFolder.forEach(folder => (folder as HTMLElement).click());
-    }*/
 
     return (
         <>
@@ -188,7 +177,6 @@ export default function Home() {
                                     }
 
                                     <div className='flex gap-1'>
-                                        
                                         <Boton width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
                                         <Boton width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
                                     </div>
@@ -208,8 +196,8 @@ export default function Home() {
                         </div>
 
                         {/* Desktop Toggle Button */}
-                        <div className="absolute right-[-15px] top-1/2 -translate-y-1/2">
-                            <Boton neutral text='' width='w-[10px]' height='h-[33px]' icon={isSidebarCollapsed ? <IconChevronRight /> : <IconChevronLeft />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
+                        <div className="absolute right-[-13px] top-1/2 -translate-y-1/2">
+                            <Boton neutral text='' width='w-[10px]' height='h-[35px]' icon={isSidebarCollapsed ? <IconChevronRight /> : <IconChevronLeft />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
                         </div>
                 
                     </nav>
