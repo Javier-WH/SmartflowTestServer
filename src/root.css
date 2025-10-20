@@ -3,7 +3,12 @@
 }
 
 :root {
-    --mainColor: hsla(205, 76%, 39%);
+    /*global*/
+    --mainColor: rgb(109 74 255 / 99%);
+    --backgroundColor: rgba(255, 255, 255);
+    --backGroundDangerColor: rgb(255, 34, 34);
+    --backGroundNeutralColor: rgb(82, 82, 82);
+    
     --secondaryColor: hsla(205, 79%, 92%);
     --tercearyColor: rgba(255, 255, 255);
     --currentColor: hsl(205, 65%, 55%);
@@ -11,7 +16,7 @@
     --folderTextColor: hsla(209, 34%, 30%);
     --titleFontFamily: Roboto, sans-serif;
     --folderFontFamily:
-        "SF Pro", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    "SF Pro", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --navBarHeight: 300px;
     --pageBarColor: hsla(211, 39%, 23%);
     --pageWidth: 700px;
@@ -23,6 +28,17 @@
     --hoverColor: rgb(231, 231, 231);
     --strokeIconColor: rgb(109 74 255 / 99%) !important;
     --strokeIconColor2: rgba(159, 137, 248, 0.99) !important;
+    
+    /*button*/
+    --buttonTextColor: var(--mainColor);
+    --buttonborderColor: var(--mainColor);
+    --buttonBorderThickness: 1px;
+    
+    --boxShadow: 2px 2px 3px 0px rgba(160, 160, 157, 0.99);
+    --cornetRounded: 30px;
+    --butonTextSize: 14px;
+
+    
 }
 
 
@@ -33,11 +49,7 @@ body {
 * {
     font-family: "Inter", sans-serif;
 }
-/*
-.users__avatar span span  {
-    background-color: rgb(243, 148, 238);
-}
-*/
+
 .users__avatar svg{
    color: gray;
 }
@@ -54,13 +66,11 @@ body {
 }
 .folder-nav-icon {
     stroke-width: 1px;
-    stroke: rgb(109 74 255 / 99%) !important;
-    
+    stroke: rgb(109 74 255 / 99%) !important;  
 }
 
 .folder-nav-icon2 {
     scale: 1.5;
-    
     fill: rgba(159, 137, 248, 0.99) !important;
 }
 /*

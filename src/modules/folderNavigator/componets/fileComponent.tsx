@@ -1,4 +1,4 @@
-import { Dropdown, message, Modal, Spin, Button, Popover } from 'antd';
+import { Dropdown, message, Modal, Spin, Button } from 'antd';
 import type { MenuProps } from 'antd';
 import type { ContainerElement } from '../types/componets';
 //import publishedIcon from '../assets/svg/publishedFile.svg';
@@ -15,7 +15,7 @@ const pageType = import.meta.env.VITE_PAGE_TYPE;
 import { useTranslation } from 'react-i18next';
 import { CiFileOn } from "react-icons/ci";
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
-import { LuFileX2, LuFileOutput, LuFiles } from "react-icons/lu";
+
 
 export function FileComponent({ file }: { file: ContainerElement }) {
     const {
@@ -37,7 +37,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [pendingNavigationId, setPendingNavigationId] = useState<string | null>(null);
     const [forceNavigation, setForceNavigation] = useState(false);
-    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    
 
     useEffect(() => {
         if (changleFileNameRequest?.fileId !== file.id) return;
@@ -186,34 +186,18 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         },
     ];
 
-    const handleOpenChange = (newOpen) => {
-        setIsPopoverOpen(newOpen);
-    };
 
-    const popoverContent = (
-        <div className='folderPopPup'>
-            <LuFileOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()} />
-            <LuFileX2 title={t('delete_file_label')} onClick={() => handleDelete()}/>
-            <LuFiles title={t('duplicate_file_label')} onClick={() => handleDuplicate()} />
-        </div>
-    );
 
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
-                <Popover
-                    placement="top"
-                    content={popoverContent}
-                    open={isPopoverOpen}
-                    onOpenChange={handleOpenChange}
-                    trigger="hover"
-                >
+                
                     <div
                         key={file.id}
                         id={file.id}
                         style={{ display: 'flex', alignItems: 'center', gap: 10, }}
                         onClick={() => handleClick(file.id)}
-                        className={`file p-2 rounded-lg ${selectedFileId === file.id ? 'selected-file' : ''} ${isPopoverOpen ? 'folder-on-popover-open' : ''}`}
+                        className={`file p-2 rounded-lg ${selectedFileId === file.id ? 'selected-file' : ''}`}
                         draggable
                         onDragStart={event => handleDragStart(event, file.id, file.type)}
                     >
@@ -224,7 +208,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                         </span>
 
                     </div>
-                </Popover>
+               
             </Dropdown>
             {/* Modal de guardado */}
             <Modal

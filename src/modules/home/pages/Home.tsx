@@ -3,6 +3,7 @@ import FolderNavigator from '@/modules/folderNavigator/folderNavigator';
 import '../css/home.css';
 //import SearchInput from '@/modules/search/searchInput';
 import { Button } from '@/components/ui';
+import Boton from '@/components/ui/Boton';
 import {
     IconChevronDown,
     IconChevronLeft,
@@ -46,26 +47,26 @@ export default function Home() {
     const getLevelTitle = (level: string): ReactNode => {
 
         if (level.toLocaleLowerCase() === "creator") {
-            return <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
+            return <span className="text-xsh-[25px] bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
                 {t('creator_label')}
             </span>
 
         }
         else if (level.toLocaleLowerCase() === "admin") {
-            return <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full tracking-tight">
+            return <span className="text-xs h-[25px] bg-green-500/20 text-green-500 px-2 py-1 rounded-full tracking-tight">
                 {t('admin_label')}
             </span>
         }
 
 
         else if (level.toLocaleLowerCase() === "editor") {
-            return <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full tracking-tight">
+            return <span className="text-xs h-[25px] bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full tracking-tight">
                 {t('editor_label')}
             </span>
         }
 
         else if (level.toLocaleLowerCase() === "lector") {
-            return <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full tracking-tight">
+            return <span className="text-xs h-[25px] bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full tracking-tight">
                 {t('lector_label')}
             </span>
         }
@@ -184,41 +185,22 @@ export default function Home() {
                                     {`${localStorage.getItem("OrgName") || ""}`}
                                 </div>
 
-                                <div className='absolute top-[50px] left-[50%] transform -translate-x-1/2'>
-                                    {
-                                        getLevelTitle(memberRoll?.level || "")
-                                    }
-                                </div>
+
                                 <div className="flex justify-between gap-1 px-1 mt-5 ml-2">
-                                    <div>
-                                        {/* <Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
-                                        <IconFolderCode className='folder-nav-icon' />
-                                    </Button>
-
-                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('asc')}>
-                                        <IconSortAscendingLetters className='folder-nav-icon' />
-                                    </Button>
-
-                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('desc')}>
-                                        <IconSortDescendingLetters className='folder-nav-icon' />
-                                    </Button>*/}
-
+                                    <div className='flex gap-1'>
                                         {
                                             memberRoll?.write &&
-                                            <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setContainerId("root")} title={t('sort_root_label')}>
-                                                    <FaSort className='folder-nav-icon2' />
-                                            </Button>
+                                            <Boton width='w-10' icon={<FaSort />} borderless title={t('sort_root_label')} onClick={() => setContainerId("root")} />
                                         }
                                     </div>
 
-                                    <div>
+                                    {
+                                        getLevelTitle(memberRoll?.level || "")
+                                    }
 
-                                        <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreatePage}>
-                                            <IconFilePlus className='folder-nav-icon' />
-                                        </Button>
-                                        <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreateFolder}>
-                                            <IconFolderPlus className='folder-nav-icon' />
-                                        </Button>
+                                    <div className='flex gap-1'>
+                                        <Boton width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
+                                        <Boton width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
                                     </div>
                                 </div>
 
