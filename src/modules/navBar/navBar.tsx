@@ -80,12 +80,7 @@ export default function NavBar() {
                 return;
             }
             const id = res.data;
-            const pageType = import.meta.env.VITE_PAGE_TYPE;
-            if (pageType === 'quill') {
-                navigate(`/textEditor/${id}`);
-            } else {
-                navigate(`/page/${id}`);
-            }
+            navigate(`/textEditor/${id}`);
         });
     };
 

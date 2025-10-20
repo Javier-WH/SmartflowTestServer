@@ -113,7 +113,6 @@ export function FolderComponent({
                 return;
             }
             const id = res.data;
-            const pageType = import.meta.env.VITE_PAGE_TYPE;
 
             const currentFolder = document.getElementById(folder.id);
             if (currentFolder) {
@@ -127,11 +126,7 @@ export function FolderComponent({
                 }
             }
 
-            if (pageType === 'quill') {
-                navigate(`/${slug}/edit/${id}`);
-            } else {
-                navigate(`/page/${id}`);
-            }
+            navigate(`/${slug}/edit/${id}`);
         });
     };
 

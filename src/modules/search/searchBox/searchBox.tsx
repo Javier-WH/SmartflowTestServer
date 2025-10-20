@@ -53,20 +53,15 @@ export default function SearchBox({
             return;
         }
         if (type === 1) {
-            const pageType = import.meta.env.VITE_PAGE_TYPE;
-            if (pageType === 'quill') {
-                console.log(memberRoll);
-                if (memberRoll) {
-                    navigate(`/${slug}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
-                    return;
-                } else {
-                    message.error('Member roll data is unavailable.');
-                }
-
-                //navigate(`/textEditor/${id}`);
+            console.log(memberRoll);
+            if (memberRoll) {
+                navigate(`/${slug}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
+                return;
             } else {
-                navigate(`/page/${id}`);
+                message.error('Member roll data is unavailable.');
             }
+
+            //navigate(`/textEditor/${id}`);
         } else if (type === 0) {
             try {
                 //navigate('/home')

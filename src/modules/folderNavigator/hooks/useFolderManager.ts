@@ -2,8 +2,6 @@ import supabase from '../../../lib/supabase';
 import errorManager from '../errorManager/folderErrorManager';
 import type { FolderResponse, SortableContent } from '../types/folder';
 
-const pageType = import.meta.env.VITE_PAGE_TYPE;
-
 const createFolder = async (folderName: string, containerId: string | null, slug: string): Promise<FolderResponse> => {
     const { data, error } = await supabase
         .rpc('crear_carpeta', {
@@ -113,9 +111,7 @@ const moveFolderToRoot = async (folderId: string | null): Promise<FolderResponse
  * @returns A FolderResponse object with the content of the folder.
  */
 const getFolderContent = async (folderId: string | null, slug: string): Promise<FolderResponse> => {
-    const functionName = pageType === 'quill' ? 'getfoldercontentquill' : 'getfoldercontent';
-
-    const { data, error } = await supabase.rpc(functionName, {
+    const { data, error } = await supabase.rpc('getfoldercontentquill', {
         p_folder_id: folderId,
         p_slug: slug,
     });
@@ -142,8 +138,7 @@ const getRootContent = async (slug: string): Promise<FolderResponse> => {
 };
 
 const getAllRootContent = async (): Promise<FolderResponse> => {
-    const functionName = pageType === 'quill' ? 'getrootcontentquill' : 'getrootcontent';
-    const { data, error } = await supabase.rpc(functionName);
+    const { data, error } = await supabase.rpc('getrootcontentquill');
     if (error) {
         console.log(error);
         return errorManager(error);
@@ -152,8 +147,7 @@ const getAllRootContent = async (): Promise<FolderResponse> => {
 };
 
 const getHierarchyFolderContent = async (folderId: string | null, p_slug: string): Promise<FolderResponse> => {
-    const functionName = pageType === 'quill' ? 'gethierarchyfoldercontent' : 'gethierarchyfoldercontent';
-    const { data, error } = await supabase.rpc(functionName, {
+    const { data, error } = await supabase.rpc('gethierarchyfoldercontent', {
         p_folder_id: folderId,
         p_slug,
     });

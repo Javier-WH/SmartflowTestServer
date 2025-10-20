@@ -8,15 +8,13 @@ import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import type { ContainerElement } from '../types/componets';
 import type { File } from '../types/file';
 import './folderContainer.css';
-import useFilesManager from '../hooks/useFileManager';
-import useFolderManager from '../hooks/useFolderManager';
-import type { FolderData, FolderNavigatorContextValues } from '../types/folder';
-
-const pageType = import.meta.env.VITE_PAGE_TYPE;
 
 import { useTranslation } from 'react-i18next';
 import { CiFileOn } from 'react-icons/ci';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
+import useFilesManager from '../hooks/useFileManager';
+import useFolderManager from '../hooks/useFolderManager';
+import type { FolderData, FolderNavigatorContextValues } from '../types/folder';
 
 export function FileComponent({ file }: { file: ContainerElement }) {
     const {
@@ -72,10 +70,8 @@ export function FileComponent({ file }: { file: ContainerElement }) {
 
     const performNavigation = (id: string) => {
         setTimeout(() => {
-            if (pageType === 'quill') {
-                navigate(`/${working_group_id}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
-                return;
-            }
+            navigate(`/${working_group_id}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
+            return;
         }, 200);
         //navigate(`/page/${id}`);
     };
