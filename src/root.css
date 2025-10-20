@@ -7,7 +7,7 @@
     --mainColor: rgb(109 74 255 / 99%);
     --backgroundColor: rgba(255, 255, 255);
     --backGroundDangerColor: rgb(255, 34, 34);
-    --backGroundNeutralColor: rgb(82, 82, 82);
+    --backGroundNeutralColor: rgb(180, 180, 180);
     
     --secondaryColor: hsla(205, 79%, 92%);
     --tercearyColor: rgba(255, 255, 255);
@@ -32,6 +32,8 @@
     /*button*/
     --buttonTextColor: var(--mainColor);
     --buttonborderColor: var(--mainColor);
+    --buttonTextColor2: rgb(187, 29, 29);
+    --buttonborderColor2: green;
     --buttonBorderThickness: 1px;
     
     --boxShadow: 2px 2px 3px 0px rgba(160, 160, 157, 0.99);

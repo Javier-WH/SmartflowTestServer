@@ -150,22 +150,11 @@ export default function Home() {
             <SortModal containerid={containerId} setContainerid={setContainerId} slug={slug} folderName={`${localStorage.getItem("OrgName") || "Root"}`} />
             <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
                 {/* Mobile Header Container */}
-                <Button
-                    isIconOnly
-                    className="md:hidden flex items-center justify-between py-6 px-4 bg-gray-100 rounded-lg w-full shadow-md cursor-pointer"
-                    onPress={handleToggleSidebar}
-                >
-                    <span className="flex gap-2 items-center font-medium text-black">
-                        <IconFile className="text-primary" />
-                        {t('document_explorer_title')}
-                    </span>
-
-                    {isSidebarCollapsed ? (
-                        <IconChevronDown className="text-primary" />
-                    ) : (
-                        <IconChevronUp className="text-primary" />
-                    )}
-                </Button>
+                <div className='md:hidden w-full'>
+                    <Boton neutral text={t('document_explorer_title')} height='h-[30px]' width='w-full' icon={isSidebarCollapsed ? <IconChevronDown /> : <IconChevronUp />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
+                </div>
+                
+       
 
                 <div
                     className={cn('flex flex-col gap-2 h-full relative', {
@@ -199,6 +188,7 @@ export default function Home() {
                                     }
 
                                     <div className='flex gap-1'>
+                                        
                                         <Boton width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
                                         <Boton width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
                                     </div>
@@ -213,33 +203,15 @@ export default function Home() {
                         <div
                             className={`flex flex-col items-center gap-2 pt-4 mt-6 ${isSidebarCollapsed ? 'opacity-100 visible' : 'opacity-0 invisible absolute'}`}
                         >
-                            <Button variant="light" isIconOnly onPress={handleCreatePage}>
-                                <IconFilePlus />
-                            </Button>
-                            <Button variant="light" isIconOnly onPress={handleCreateFolder}>
-                                <IconFolderPlus />
-                            </Button>
+                            <Boton trasparent width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
+                            <Boton trasparent width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
                         </div>
 
                         {/* Desktop Toggle Button */}
-                        <Button
-                            onPress={handleToggleSidebar}
-                            isIconOnly
-                            color="primary"
-                            className={cn(
-                                'max-sm:hidden md:flex absolute -translate-y-1/2 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out text-primary',
-                                {
-                                    'left-1/2 -translate-x-1/2 bottom-4': isSidebarCollapsed,
-                                    'left-[95%] top-1/2': !isSidebarCollapsed,
-                                },
-                            )}
-                        >
-                            {isSidebarCollapsed ? (
-                                <IconChevronRight key="sidebar-collapsed" size={16} />
-                            ) : (
-                                <IconChevronLeft key="sidebar-expanded" size={16} />
-                            )}
-                        </Button>
+                        <div className="absolute right-[-15px] top-1/2 -translate-y-1/2">
+                            <Boton neutral text='' width='w-[10px]' height='h-[33px]' icon={isSidebarCollapsed ? <IconChevronRight /> : <IconChevronLeft />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
+                        </div>
+                
                     </nav>
                 </div>
 

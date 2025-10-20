@@ -12,12 +12,12 @@ export interface BotonProps {
   danger?: boolean;
   neutral?: boolean;
   textSize?: string;
+  trasparent?: boolean 
 }
 
 
 /**
  * A custom button component with various styling options.
- * 
  * @param {string} [text=''] - The text content of the button.
  * @param {React.ReactNode} [icon] - The icon element of the button.
  * @param {string} [title=''] - The title attribute of the button.
@@ -28,6 +28,7 @@ export interface BotonProps {
  * @param {boolean} [danger=false] - If true, the button will have a danger background and white text.
  * @param {boolean} [neutral=false] - If true, the button will have a neutral background and white text.
  * @param {string} [textSize] - The font size of the button.
+ * @param {boolean} [trasparent=false] - If true, the button will have a transparent background.
  */
 export const Boton: React.FC<BotonProps> = ({
   text = '',
@@ -39,26 +40,34 @@ export const Boton: React.FC<BotonProps> = ({
   borderless = false,
   danger = false,
   neutral = false,
-  textSize 
+  textSize,
+  trasparent = false,
 }) => {
 
   const baseClasses: string = 'flex items-center justify-center font-semibold transition duration-150 ease-in-out cursor-pointer focus:outline-none';
 
   // Logic to determine **background** and **text** color (Base state)
-  const backgroundAndTextColor = neutral
-    ? 'text-[var(--backGroundNeutralColor)]' // Neutral: Background and Text with neutral color (default is a white/light background)
-    : danger
-      ? 'bg-[var(--backGroundDangerColor)] text-white'
-      : 'bg-[var(--backgroundColor)] text-[var(--buttonTextColor)]';
+  // CLAVE: Se agregó 'bg-white' o 'bg-[var(--backgroundColor)]' en el estado neutral
+  const backgroundAndTextColor = trasparent
+    ? 'bg-transparent text-[var(--buttonTextColor)]' // Transparent: Fondo transparente
+    : neutral
+      ? 'bg-white text-[var(--backGroundNeutralColor)]' // <-- CORREGIDO: Se agregó bg-white (o el color de fondo base)
+      : danger
+        ? 'bg-[var(--backGroundDangerColor)] text-white'
+        : 'bg-[var(--backgroundColor)] text-[var(--buttonTextColor)]';
 
   // Conditional Border Classes based on the 'borderless' prop (Base state)
   const borderClasses = borderless
     ? 'border-0'
-    : neutral
-      ? `border border-[var(--backGroundNeutralColor)]`
-      : danger
-        ? `border border-[var(--backGroundDangerColor)]`
-        : `border border-[var(--buttonborderColor)]`;
+    : trasparent
+      ? `border border-[var(--buttonborderColor)]` // Transparente: Borde de color primario
+      : neutral
+        ? `border border-[var(--backGroundNeutralColor)]`
+        : danger
+          ? `border border-[var(--backGroundDangerColor)]`
+          : `border border-[var(--buttonborderColor)]`;
+  // --------------------------------------------------------------------
+
 
   // --------------------------------------------------------------------
   // Logic to determine **hover** colors (Inversion or subtle)
@@ -67,9 +76,16 @@ export const Boton: React.FC<BotonProps> = ({
   let hoverBorderClass: string = '';
 
   // Determine if the button has text content (different from empty string)
-  const hasTextContent = !!text;
+  const hasTextContent = text === 'empty' || !!text;
 
-  if (hasTextContent) {
+  if (trasparent) {
+
+    hoverBgClass = 'hover:bg-[var(--backgroundColor)]';
+    hoverTextClass = 'hover:text-[var(--buttonTextColor)]';
+    if (!borderless) {
+      hoverBorderClass = 'hover:border-[var(--buttonTextColor)]';
+    }
+  } else if (hasTextContent) {
     // --------------------------------
     // Apply Color Inversion
     // --------------------------------
@@ -97,7 +113,7 @@ export const Boton: React.FC<BotonProps> = ({
     }
   } else {
     // --------------------------------
-    // Apply Subtle Hover (No Inversion)
+    // Apply Subtle Hover (No Inversion) - For Icon-Only Buttons
     // --------------------------------
     // If there is no text (icon only or empty), apply a subtle hover (brightness)
     hoverBgClass = 'hover:brightness-[0.98]';
@@ -107,10 +123,10 @@ export const Boton: React.FC<BotonProps> = ({
 
   // Appearance classes using CSS Variables (Arbitrary Values)
   const appearanceClasses: string = `
-    ${backgroundAndTextColor} 
-    ${borderClasses}
-    ${hoverBgClass} ${hoverTextClass} ${hoverBorderClass}
-    active:brightness-90 
+   ${backgroundAndTextColor} 
+   ${borderClasses}
+  ${hoverBgClass} ${hoverTextClass} ${hoverBorderClass}
+   active:brightness-90 
   `.replace(/\s+/g, ' ').trim(); // Cleanup spaces for a clean class string
 
   // Dimension classes injected + default horizontal padding (px-4)
@@ -133,7 +149,7 @@ export const Boton: React.FC<BotonProps> = ({
 
   // Apply border thickness, box shadow, border radius, and FONT SIZE using inline style.
   const customStyle: React.CSSProperties = {
- 
+
     fontSize: buttonFontSize,
 
     borderRadius: 'var(--cornetRounded)',
@@ -143,7 +159,7 @@ export const Boton: React.FC<BotonProps> = ({
     })
   };
 
-  
+
   const iconElement = icon ? (
     <span className={`${text ? 'mr-2' : ''} ${iconStyleClasses}`}>{icon}</span>
   ) : null;
@@ -158,7 +174,10 @@ export const Boton: React.FC<BotonProps> = ({
       type="button"
     >
       {iconElement}
-      <span>{text || (icon ? '' : 'Button')}</span>
+      {
+        text.length > 0  &&
+        <span>{ text }</span>
+      }
     </button>
   );
 };
