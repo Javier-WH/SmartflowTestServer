@@ -2,23 +2,20 @@ import { FolderData, FolderResquest } from "../../types/folder";
 
 const groupDataByContainer = (request: { data: FolderData[] }): FolderResquest => {
 
-  const containersToClear: Set<string> = new Set();
 
-  
-  request?.data?.forEach(f => {
-    if (f.old_container_empty === true && f.old_container_id) {
-      containersToClear.add(f.old_container_id);
-    }
-  });
 
   
   const gruppedByContainer = request?.data?.reduce((acumulador: FolderResquest, _folder: FolderData) => {
 
-    const { container_id, itemid, name, published, type, filesnumber, order } = _folder;
+    const { container_id, itemid, name, published, type, filesnumber, order, old_container_empty, old_container_id } = _folder;
     const currentContainerId = container_id || 'null_root';
 
     if (!acumulador[currentContainerId]) {
       acumulador[currentContainerId] = [];
+    }
+
+    if (old_container_empty === true && old_container_id) {
+      acumulador[old_container_id] = []
     }
 
 

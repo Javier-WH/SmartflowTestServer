@@ -15,7 +15,7 @@ const pageType = import.meta.env.VITE_PAGE_TYPE;
 import { useTranslation } from 'react-i18next';
 import { CiFileOn } from "react-icons/ci";
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
-import { LuFileX2, LuFileOutput, LuFiles } from "react-icons/lu";
+
 
 export function FileComponent({ file }: { file: ContainerElement }) {
     const {
@@ -188,13 +188,6 @@ export function FileComponent({ file }: { file: ContainerElement }) {
 
 
 
-    const popoverContent = (
-        <div className='folderPopPup'>
-            <LuFileOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()} />
-            <LuFileX2 title={t('delete_file_label')} onClick={() => handleDelete()}/>
-            <LuFiles title={t('duplicate_file_label')} onClick={() => handleDuplicate()} />
-        </div>
-    );
 
     return (
         <div>

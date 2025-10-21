@@ -1,6 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
 import { Spinner, useDisclosure } from '@heroui/react';
-import { Button, Input } from '@/components/ui';
+import { Input } from '@/components/ui';
 import { PlusOutlined, TeamOutlined, SearchOutlined } from '@ant-design/icons';
 import useOrganizations from './hook/useOrganizations';
 import useAuth from '../auth/hooks/useAuth';
@@ -8,6 +8,7 @@ import type { Organization, OrganizationFormData } from './types/organizations';
 import CreateOrganizationModal from './components/CreateOrganizationModal';
 import OrganizationCard from './components/organization-card';
 import { useTranslation } from 'react-i18next';
+import Boton from '@/components/ui/Boton';
 
 export interface UserRoll {
     id: string;
@@ -147,9 +148,7 @@ export default function Organizations() {
         return (
             <div className="flex flex-col justify-center items-center h-[calc(100vh-120px)]">
                 <p className="text-danger text-lg">{t('error_loading_organizations')}</p>
-                <Button color="primary" className="mt-4" onClick={() => window.location.reload()}>
-                    Try Again
-                </Button>
+                <Boton text={t("reload")} icon={<TeamOutlined />} onClick={() => window.location.reload()} />
             </div>
         );
     }
@@ -174,9 +173,7 @@ export default function Organizations() {
                         />
                     </div>
                     <div className="flex justify-between items-center create-workgroup-button">
-                        <Button  startContent={<PlusOutlined />} onClick={handleCreateOrganization}>
-                            {t("create_organization_button")}
-                        </Button>
+                        <Boton text={t("create_organization_button")} icon={<PlusOutlined />} onClick={handleCreateOrganization} />
                     </div>
                 </div>
 
@@ -187,13 +184,9 @@ export default function Organizations() {
                             {searchTerm ? t("no_organization_matched_message") : t("no_organizations_found_message")}
                         </p>
                         {searchTerm ? (
-                            <Button color="primary" variant="light" onClick={() => setSearchTerm('')} className="mt-2">
-                                {t("clear_search_button")}
-                            </Button>
+                            <Boton text={t("clear_search_button")} onClick={() => setSearchTerm('')} />
                         ) : (
-                            <Button color="primary" className="mt-4" onClick={handleCreateOrganization}>
-                                {t("create_your_first_organization_message")}
-                            </Button>
+                            <Boton text={t("create_your_first_organization_message")} onClick={handleCreateOrganization} />
                         )}
                     </div>
                 ) : (

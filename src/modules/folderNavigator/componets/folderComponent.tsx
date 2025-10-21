@@ -240,7 +240,7 @@ export function FolderComponent({
             return;
         }
 
-
+       
 
         if (request.data) {
             const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
@@ -255,16 +255,6 @@ export function FolderComponent({
 
 
 
-    const popoverContent = (
-        <div className='folderPopPup'>
-            <LuFolderOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()}/> 
-            <LuFolderPlus title={t('create_new_folder_label')} onClick={() => handleCreateOrUpdateFolder()} /> 
-            <LuFolderPen title={t('rename_folder_label')} onClick={() => handleCreateOrUpdateFolder(true)} /> 
-            <LuFolderX title={t('delete_folder_label')} onClick={() => handleDeleteFolder()} /> 
-            <LuFolders title={t('sort_folder_label')} onClick={() => handleSortFolder()} /> 
-            <LuFilePlus2 title={t('create_new_file_label')} onClick={() => handleCreateFile()} />
-        </div>
-    );
 
     return (
         <div>

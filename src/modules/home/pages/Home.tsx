@@ -1,19 +1,15 @@
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import FolderNavigator from '@/modules/folderNavigator/folderNavigator';
 import '../css/home.css';
-//import SearchInput from '@/modules/search/searchInput';
-import { Button } from '@/components/ui';
+
+import Boton from '@/components/ui/Boton';
 import {
     IconChevronDown,
     IconChevronLeft,
     IconChevronRight,
     IconChevronUp,
-    IconFile,
     IconFilePlus,
-    IconFolderPlus,
-    //IconFolderCode,
-    //IconSortAscendingLetters,
-    //IconSortDescendingLetters,
+    IconFolderPlus
 } from '@tabler/icons-react';
 import { FaSort } from "react-icons/fa";
 import { cn } from '@heroui/react';
@@ -46,26 +42,26 @@ export default function Home() {
     const getLevelTitle = (level: string): ReactNode => {
 
         if (level.toLocaleLowerCase() === "creator") {
-            return <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
+            return <span className="text-xsh-[25px] bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
                 {t('creator_label')}
             </span>
 
         }
         else if (level.toLocaleLowerCase() === "admin") {
-            return <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full tracking-tight">
+            return <span className="text-xs h-[25px] bg-green-500/20 text-green-500 px-2 py-1 rounded-full tracking-tight">
                 {t('admin_label')}
             </span>
         }
 
 
         else if (level.toLocaleLowerCase() === "editor") {
-            return <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full tracking-tight">
+            return <span className="text-xs h-[25px] bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full tracking-tight">
                 {t('editor_label')}
             </span>
         }
 
         else if (level.toLocaleLowerCase() === "lector") {
-            return <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full tracking-tight">
+            return <span className="text-xs h-[25px] bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full tracking-tight">
                 {t('lector_label')}
             </span>
         }
@@ -73,8 +69,6 @@ export default function Home() {
             return <div></div>
         }
     }
-
-
 
 
     const handleCreateFolder = () => {
@@ -139,32 +133,17 @@ export default function Home() {
         setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
-    /*const colapseAllFolders = () => {
-        const openedRootFolder = document.querySelectorAll('.folder[data-depth="0"].opened');
-        openedRootFolder.forEach(folder => (folder as HTMLElement).click());
-    }*/
 
     return (
         <>
             <SortModal containerid={containerId} setContainerid={setContainerId} slug={slug} folderName={`${localStorage.getItem("OrgName") || "Root"}`} />
             <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
                 {/* Mobile Header Container */}
-                <Button
-                    isIconOnly
-                    className="md:hidden flex items-center justify-between py-6 px-4 bg-gray-100 rounded-lg w-full shadow-md cursor-pointer"
-                    onPress={handleToggleSidebar}
-                >
-                    <span className="flex gap-2 items-center font-medium text-black">
-                        <IconFile className="text-primary" />
-                        {t('document_explorer_title')}
-                    </span>
-
-                    {isSidebarCollapsed ? (
-                        <IconChevronDown className="text-primary" />
-                    ) : (
-                        <IconChevronUp className="text-primary" />
-                    )}
-                </Button>
+                <div className='md:hidden w-full'>
+                    <Boton neutral text={t('document_explorer_title')} height='h-[30px]' width='w-full' icon={isSidebarCollapsed ? <IconChevronDown /> : <IconChevronUp />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
+                </div>
+                
+       
 
                 <div
                     className={cn('flex flex-col gap-2 h-full relative', {
@@ -184,41 +163,22 @@ export default function Home() {
                                     {`${localStorage.getItem("OrgName") || ""}`}
                                 </div>
 
-                                <div className='absolute top-[50px] left-[50%] transform -translate-x-1/2'>
-                                    {
-                                        getLevelTitle(memberRoll?.level || "")
-                                    }
-                                </div>
+
                                 <div className="flex justify-between gap-1 px-1 mt-5 ml-2">
-                                    <div>
-                                        {/* <Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
-                                        <IconFolderCode className='folder-nav-icon' />
-                                    </Button>
-
-                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('asc')}>
-                                        <IconSortAscendingLetters className='folder-nav-icon' />
-                                    </Button>
-
-                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('desc')}>
-                                        <IconSortDescendingLetters className='folder-nav-icon' />
-                                    </Button>*/}
-
+                                    <div className='flex gap-1'>
                                         {
                                             memberRoll?.write &&
-                                            <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setContainerId("root")} title={t('sort_root_label')}>
-                                                    <FaSort className='folder-nav-icon2' />
-                                            </Button>
+                                            <Boton width='w-10' icon={<FaSort />} borderless title={t('sort_root_label')} onClick={() => setContainerId("root")} />
                                         }
                                     </div>
 
-                                    <div>
+                                    {
+                                        getLevelTitle(memberRoll?.level || "")
+                                    }
 
-                                        <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreatePage}>
-                                            <IconFilePlus className='folder-nav-icon' />
-                                        </Button>
-                                        <Button className='folder-nav-button' variant="light" isIconOnly onPress={handleCreateFolder}>
-                                            <IconFolderPlus className='folder-nav-icon' />
-                                        </Button>
+                                    <div className='flex gap-1'>
+                                        <Boton width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
+                                        <Boton width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
                                     </div>
                                 </div>
 
@@ -231,33 +191,15 @@ export default function Home() {
                         <div
                             className={`flex flex-col items-center gap-2 pt-4 mt-6 ${isSidebarCollapsed ? 'opacity-100 visible' : 'opacity-0 invisible absolute'}`}
                         >
-                            <Button variant="light" isIconOnly onPress={handleCreatePage}>
-                                <IconFilePlus />
-                            </Button>
-                            <Button variant="light" isIconOnly onPress={handleCreateFolder}>
-                                <IconFolderPlus />
-                            </Button>
+                            <Boton trasparent width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
+                            <Boton trasparent width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
                         </div>
 
                         {/* Desktop Toggle Button */}
-                        <Button
-                            onPress={handleToggleSidebar}
-                            isIconOnly
-                            color="primary"
-                            className={cn(
-                                'max-sm:hidden md:flex absolute -translate-y-1/2 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out text-primary',
-                                {
-                                    'left-1/2 -translate-x-1/2 bottom-4': isSidebarCollapsed,
-                                    'left-[95%] top-1/2': !isSidebarCollapsed,
-                                },
-                            )}
-                        >
-                            {isSidebarCollapsed ? (
-                                <IconChevronRight key="sidebar-collapsed" size={16} />
-                            ) : (
-                                <IconChevronLeft key="sidebar-expanded" size={16} />
-                            )}
-                        </Button>
+                        <div className="absolute right-[-13px] top-1/2 -translate-y-1/2">
+                            <Boton neutral text='' width='w-[10px]' height='h-[35px]' icon={isSidebarCollapsed ? <IconChevronRight /> : <IconChevronLeft />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
+                        </div>
+                
                     </nav>
                 </div>
 
