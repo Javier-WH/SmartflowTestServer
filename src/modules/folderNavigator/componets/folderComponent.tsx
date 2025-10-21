@@ -14,8 +14,8 @@ import { PiFolderOpenLight } from "react-icons/pi";
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import './folderContainer.css';
 import SortModal from '../sortModal/sortModal';
-
-
+import { LuFolderOutput, LuFolderPlus, LuFolderPen, LuFolderX, LuFolders, LuFilePlus2 } from "react-icons/lu";
+//sdsa
 
 
 export function FolderComponent({
@@ -41,7 +41,7 @@ export function FolderComponent({
     const { organization_id: slug } = useParams();
     const [/*filesCount*/, setFilesCount] = useState<string | number>('0');
     const [sortFolderId, setSortFolderId] = useState<string | null>(null);
-
+  
 
     // updates the number of files when a file is moved
     useEffect(() => {
@@ -252,7 +252,6 @@ export function FolderComponent({
         }
     };
 
- 
 
 
 
@@ -260,13 +259,13 @@ export function FolderComponent({
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
-           
+         
                     <div
                         id={folder.id}
                         data-depth={depth}
                         style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                         onClick={() => toggleFolder(folder.id ?? null)}
-                        className={`folder ${contentId === null ? '' : 'opened'}`}
+                        className={`folder ${contentId === null ? '' : 'opened'} `}
                         draggable
                         onDragStart={event => handleDragStart(event, folder.id, folder.type)}
                         onDragOver={handleDragOver}
