@@ -11,6 +11,7 @@ import './folderContainer.css';
 
 import { useTranslation } from 'react-i18next';
 import { CiFileOn } from 'react-icons/ci';
+import { LuFileOutput, LuFiles, LuFileX2 } from 'react-icons/lu';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import useFilesManager from '../hooks/useFileManager';
 import useFolderManager from '../hooks/useFolderManager';
@@ -33,7 +34,6 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     const { working_group_id } = useParams();
     const [fileName, setFileName] = useState<string>(file.name);
     const { t } = useTranslation();
-
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [pendingNavigationId, setPendingNavigationId] = useState<string | null>(null);
     const [forceNavigation, setForceNavigation] = useState(false);
@@ -92,17 +92,6 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         setPendingNavigationId(null);
         setForceNavigation(false);
     };
-    /*const handleClick = (id: string) => {
-        if(isSaving) {
-            message.warning(t('wait_until_saving_changes_warning'));
-            return;
-        }
-        if (pageType === 'quill') {
-            navigate(`/${working_group_id}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
-            return;
-        }
-        navigate(`/page/${id}`);
-    };*/
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, itemId: string, itemType: number) => {
         event.dataTransfer.setData('id', itemId);
@@ -190,6 +179,14 @@ export function FileComponent({ file }: { file: ContainerElement }) {
             onClick: () => handleDuplicate(),
         },
     ];
+
+    const popoverContent = (
+        <div className="folderPopPup">
+            <LuFileOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()} />
+            <LuFileX2 title={t('delete_file_label')} onClick={() => handleDelete()} />
+            <LuFiles title={t('duplicate_file_label')} onClick={() => handleDuplicate()} />
+        </div>
+    );
 
     return (
         <div>

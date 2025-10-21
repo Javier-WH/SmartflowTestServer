@@ -1,20 +1,18 @@
 import type { MenuProps } from 'antd';
 import { Dropdown, message } from 'antd';
 import { useContext, useEffect, useState } from 'react';
-//import { MdFolder } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import { PiFolderLight, PiFolderOpenLight } from 'react-icons/pi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import useFilesManager from '../hooks/useFileManager';
-//import openedFolder from '../assets/svg/opened_folder.svg';
-//import closedFolder from '../assets/svg/closed_folder.svg';
 import useFolderManager from '../hooks/useFolderManager';
 import type { ContainerElement } from '../types/componets';
 import type { Folder, FolderData, FolderNavigatorContextValues } from '../types/folder';
 import FolderContainer from './folderContainer';
 import './folderContainer.css';
+import { LuFilePlus2, LuFolderOutput, LuFolderPen, LuFolderPlus, LuFolders, LuFolderX } from 'react-icons/lu';
 import SortModal from '../sortModal/sortModal';
 
 export function FolderComponent({
@@ -247,18 +245,26 @@ export function FolderComponent({
         }
     };
 
+    const popoverContent = (
+        <div className="folderPopPup">
+            <LuFolderOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()} />
+            <LuFolderPlus title={t('create_new_folder_label')} onClick={() => handleCreateOrUpdateFolder()} />
+            <LuFolderPen title={t('rename_folder_label')} onClick={() => handleCreateOrUpdateFolder(true)} />
+            <LuFolderX title={t('delete_folder_label')} onClick={() => handleDeleteFolder()} />
+            <LuFolders title={t('sort_folder_label')} onClick={() => handleSortFolder()} />
+            <LuFilePlus2 title={t('create_new_file_label')} onClick={() => handleCreateFile()} />
+        </div>
+    );
+
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
-                {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
                 <div
                     id={folder.id}
                     data-depth={depth}
                     style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                     onClick={() => toggleFolder(folder.id ?? null)}
-                    className={
-                        `folder ${contentId === null ? '' : 'opened'}` /*${folder.id === selectedFolderId ? 'selected-folder' : ''}`*/
-                    }
+                    className={`folder ${contentId === null ? '' : 'opened'} `}
                     draggable
                     onDragStart={event => handleDragStart(event, folder.id, folder.type)}
                     onDragOver={handleDragOver}

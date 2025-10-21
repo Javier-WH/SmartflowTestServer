@@ -3,7 +3,7 @@ import ErrorPage from './errorsHandler/errorPage';
 import ForgotPassword from './modules/auth/pages/ForgotPassword';
 import ResetPassword from './modules/auth/pages/ResetPassword';
 import SignIn from './modules/auth/pages/SignIn';
-// import SignUp from './modules/auth/pages/SignUp';
+import SignUp from './modules/auth/pages/SignUp';
 import Home from './modules/home/pages/Home';
 import UserJoinWorkingGroup from './modules/joinWorkingGroup/joinWorkingGroup';
 import Members from './modules/joinWorkingGroup/members';
@@ -77,10 +77,10 @@ const router = createBrowserRouter([
                 path: 'signin',
                 element: <SignIn />,
             },
-            /* {
+            {
                 path: 'signup',
                 element: <SignUp />,
-            },*/
+            },
         ],
     },
     {
