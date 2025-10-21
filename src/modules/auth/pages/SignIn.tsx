@@ -134,7 +134,7 @@ const SignIn = () => {
                         {t('forgot_password_message')}
                     </Link>
 
-                   {/* <div className="text-center">
+                   {<div className="text-center">
                         <span>
                             {t('dont_have_account_message')}{' '}
                             <Link
@@ -144,7 +144,7 @@ const SignIn = () => {
                                 {t('sign_up_button')}
                             </Link>
                         </span>
-                    </div>*/}
+                    </div>}
                 </CardBody>
             </Card>
         </form>

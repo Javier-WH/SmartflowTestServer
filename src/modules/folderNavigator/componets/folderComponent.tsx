@@ -1,22 +1,22 @@
-import { Dropdown, message } from 'antd';
+import { Dropdown, message, Popover } from 'antd';
 import type { MenuProps } from 'antd';
 import type { ContainerElement } from '../types/componets';
 import FolderContainer from './folderContainer';
 import { useState, useContext, useEffect } from 'react';
-//import openedFolder from '../assets/svg/opened_folder.svg';
-//import closedFolder from '../assets/svg/closed_folder.svg';
 import useFolderManager from '../hooks/useFolderManager';
 import useFilesManager from '../hooks/useFileManager';
 import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/folder';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import { useNavigate, useParams } from 'react-router-dom';
-//import { MdFolder } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import { PiFolderLight } from "react-icons/pi";
 import { PiFolderOpenLight } from "react-icons/pi";
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import './folderContainer.css';
 import SortModal from '../sortModal/sortModal';
+import { LuFolderOutput, LuFolderPlus, LuFolderPen, LuFolderX, LuFolders, LuFilePlus2 } from "react-icons/lu";
+
+
 
 export function FolderComponent({
     folder,
@@ -41,6 +41,7 @@ export function FolderComponent({
     const { organization_id: slug } = useParams();
     const [/*filesCount*/, setFilesCount] = useState<string | number>('0');
     const [sortFolderId, setSortFolderId] = useState<string | null>(null);
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
     // updates the number of files when a file is moved
     useEffect(() => {
@@ -139,7 +140,7 @@ export function FolderComponent({
         }
         const request = await moveFolderToRoot(folder.id);
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
-       
+
         setUpdateFolderRequest(gruppedByContainer);
         setFileCountUpdateRequest(true);
     };
@@ -239,7 +240,7 @@ export function FolderComponent({
             return;
         }
 
-   
+
 
         if (request.data) {
             const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
@@ -250,29 +251,52 @@ export function FolderComponent({
             setFileCountUpdateRequest(true);
         }
     };
-   
+
+    const handleOpenChange = (newOpen) => {
+        setIsPopoverOpen(newOpen);
+    };
+
+
+    const popoverContent = (
+        <div className='folderPopPup'>
+            <LuFolderOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()}/> 
+            <LuFolderPlus title={t('create_new_folder_label')} onClick={() => handleCreateOrUpdateFolder()} /> 
+            <LuFolderPen title={t('rename_folder_label')} onClick={() => handleCreateOrUpdateFolder(true)} /> 
+            <LuFolderX title={t('delete_folder_label')} onClick={() => handleDeleteFolder()} /> 
+            <LuFolders title={t('sort_folder_label')} onClick={() => handleSortFolder()} /> 
+            <LuFilePlus2 title={t('create_new_file_label')} onClick={() => handleCreateFile()} />
+        </div>
+    );
+
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
-                {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-                <div
-                    id={folder.id}
-                    data-depth={depth}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10 }}
-                    onClick={() => toggleFolder(folder.id ?? null)}
-                    className={`folder ${contentId === null ? '' : 'opened'}` /*${folder.id === selectedFolderId ? 'selected-folder' : ''}`*/}
-                    draggable
-                    onDragStart={event => handleDragStart(event, folder.id, folder.type)}
-                    onDragOver={handleDragOver}
-                    onDrop={event => handleDrop(event, folder.id, folder.type)}
-                    onDragLeave={handleDragLeave}
-                    title={folder.name}
+                <Popover
+                    placement="top"
+                    content={popoverContent}
+                    open={isPopoverOpen}
+                    onOpenChange={handleOpenChange}
+                    trigger="hover" 
                 >
-                 
-                    {contentId ? <PiFolderOpenLight className='folder-icon' /> : <PiFolderLight className='folder-icon' />}
-                    <span className="folder-name">{`${folder.id === selectedFolderId || folder.id === sortFolderId ? '•' : ''} ${folder.name}`}</span>
+                    <div
+                        id={folder.id}
+                        data-depth={depth}
+                        style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+                        onClick={() => toggleFolder(folder.id ?? null)}
+                        className={`folder ${contentId === null ? '' : 'opened'} ${isPopoverOpen ? 'folder-on-popover-open' : ''}`}
+                        draggable
+                        onDragStart={event => handleDragStart(event, folder.id, folder.type)}
+                        onDragOver={handleDragOver}
+                        onDrop={event => handleDrop(event, folder.id, folder.type)}
+                        onDragLeave={handleDragLeave}
+                        title={folder.name}
+                    >
 
-                </div>
+                        {contentId ? <PiFolderOpenLight className='folder-icon' /> : <PiFolderLight className='folder-icon' />}
+                        <span className="folder-name">{`${folder.id === selectedFolderId || folder.id === sortFolderId ? '•' : ''} ${folder.name}`}</span>
+
+                    </div>
+                </Popover>
             </Dropdown>
             <div className="ml-8">
                 {contentId && (
@@ -281,7 +305,7 @@ export function FolderComponent({
                     </div>
                 )}
             </div>
-            <SortModal containerid={sortFolderId} setContainerid={setSortFolderId} slug = {slug} folderName = {folder.name}/>
+            <SortModal containerid={sortFolderId} setContainerid={setSortFolderId} slug={slug} folderName={folder.name} />
         </div>
     );
 }
