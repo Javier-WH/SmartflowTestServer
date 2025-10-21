@@ -1,4 +1,4 @@
-import { Dropdown, message, Popover } from 'antd';
+import { Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
 import type { ContainerElement } from '../types/componets';
 import FolderContainer from './folderContainer';
@@ -41,7 +41,7 @@ export function FolderComponent({
     const { organization_id: slug } = useParams();
     const [/*filesCount*/, setFilesCount] = useState<string | number>('0');
     const [sortFolderId, setSortFolderId] = useState<string | null>(null);
-    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  
 
     // updates the number of files when a file is moved
     useEffect(() => {
@@ -252,9 +252,7 @@ export function FolderComponent({
         }
     };
 
-    const handleOpenChange = (newOpen) => {
-        setIsPopoverOpen(newOpen);
-    };
+
 
 
     const popoverContent = (
@@ -271,19 +269,13 @@ export function FolderComponent({
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
-                <Popover
-                    placement="top"
-                    content={popoverContent}
-                    open={isPopoverOpen}
-                    onOpenChange={handleOpenChange}
-                    trigger="hover" 
-                >
+         
                     <div
                         id={folder.id}
                         data-depth={depth}
                         style={{ display: 'flex', alignItems: 'center', gap: 10 }}
                         onClick={() => toggleFolder(folder.id ?? null)}
-                        className={`folder ${contentId === null ? '' : 'opened'} ${isPopoverOpen ? 'folder-on-popover-open' : ''}`}
+                        className={`folder ${contentId === null ? '' : 'opened'} `}
                         draggable
                         onDragStart={event => handleDragStart(event, folder.id, folder.type)}
                         onDragOver={handleDragOver}
@@ -296,7 +288,7 @@ export function FolderComponent({
                         <span className="folder-name">{`${folder.id === selectedFolderId || folder.id === sortFolderId ? '•' : ''} ${folder.name}`}</span>
 
                     </div>
-                </Popover>
+               
             </Dropdown>
             <div className="ml-8">
                 {contentId && (
