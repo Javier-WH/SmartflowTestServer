@@ -188,10 +188,11 @@ export function FileComponent({ file }: { file: ContainerElement }) {
 
 
 
+
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
-                
+         
                     <div
                         key={file.id}
                         id={file.id}
@@ -208,7 +209,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                         </span>
 
                     </div>
-               
+                
             </Dropdown>
             {/* Modal de guardado */}
             <Modal

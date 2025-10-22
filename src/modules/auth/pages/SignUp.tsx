@@ -152,6 +152,7 @@ const SignUp = () => {
                             <Link to="/auth/signin" className="text-center text-primary underline">
                                 {t("login_button")}
                             </Link>
+                            
                         </span>
                     </div>
                 </CardBody>
