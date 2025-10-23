@@ -3,10 +3,11 @@ import { type FormEvent, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AlertMessage from '../components/ErrorMessage';
 import { Card, CardBody } from '@heroui/react';
-import { Button, Input } from '@/components/ui';
+import { Input } from '@/components/ui';
 import { IconEyeOff, IconEye } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/useAuth';
+import Boton from '@/components/ui/Boton';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -142,9 +143,14 @@ const SignUp = () => {
 
                     {error && <AlertMessage text={error} />}
 
-                    <Button type="submit" isLoading={loading}>
-                        {t('sign_up_button_label')}
-                    </Button>
+                    <Boton
+                        type="submit"
+                        text={t('sign_up_button_label')}
+                        loading={loading}
+                        disabled={loading}
+                    />
+
+             
 
                     <div className="text-center">
                         <span>

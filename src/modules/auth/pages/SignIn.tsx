@@ -1,7 +1,7 @@
 import { type FormEvent, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AlertMessage from '../components/ErrorMessage';
-import { Button, Input } from '@/components/ui';
+import { Input } from '@/components/ui';
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import useAuth from '../hooks/useAuth';
 import { Card, CardBody } from '@heroui/react';
