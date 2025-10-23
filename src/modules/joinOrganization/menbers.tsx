@@ -15,6 +15,7 @@ import InviteUserModal from '../organizations/components/InviteUserModal';
 import { MainContext, MainContextValues } from '../mainContext';
 import { useTranslation } from 'react-i18next';
 import { FiSearch, FiUsers } from 'react-icons/fi';
+import Boton from '@/components/ui/Boton';
 
 
 export interface Org {
@@ -244,14 +245,9 @@ export default function Menbers() {
                             <h1 className="text-2xl font-semibold text-gray-800 " >{organization?.name}</h1>
                         </div>
                         {(organization?.user_id === user?.id || memberRoll?.invite) && (
-                            <Button
-                                className="bg-white text-gray-800 border border-gray-300 rounded-[15px] px-6 py-2 font-medium transition-colors duration-200 hover:bg-gray-100"
-                                onPress={() => {
-                                    setInviteUserOpen(true);
-                                }}
-                            >
-                                {t('invite_member_label')}
-                            </Button>
+
+                                <Boton text={t('invite_member_label')} onClick={() => setInviteUserOpen(true)}/>
+                    
                         )}
                     </div>
 

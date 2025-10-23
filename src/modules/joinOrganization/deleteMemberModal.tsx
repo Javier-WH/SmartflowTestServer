@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Modal, ModalContent, ModalHeader, ModalBody, Button, Input } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader } from "@heroui/react";
 import { Member, Org } from './menbers.tsx';
-import { useState } from 'react';
 import useOrganizations from '../organizations/hook/useOrganizations.ts';
+import Boton from "@/components/ui/Boton.tsx";
+import { t } from "i18next";
 
 
 
@@ -15,8 +16,6 @@ interface EditMemberModalProps {
 export default function DeleteMemberModal({ member, setMember, organization }: EditMemberModalProps) {
 
   const { leaveOrganization, deleteInvitation } = useOrganizations();
-
-  const [deleteInput, setDeleteInput] = useState<string>('');
 
 
   const handleDeleteMember = async () => {
@@ -35,27 +34,9 @@ export default function DeleteMemberModal({ member, setMember, organization }: E
     >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">Delete Member</ModalHeader>
-        <ModalBody>
-          {member && (<>
-            <label htmlFor="">
-              Write <strong>{member.useremail}</strong> to confirm deletion
-            </label>
-            <Input
-              label="Delete Member"
-              value={deleteInput}
-              onChange={(e) => setDeleteInput(e.target.value)}
-            />
-          </>
-          )}
-          <br />
-          <Button 
-            onClick={handleDeleteMember}
-            disabled={deleteInput !== member?.useremail} 
-            color={ deleteInput === member?.useremail ? 'danger' : 'default'}
-          >
-            Delete Member
-          </Button>
-        </ModalBody>
+
+        <Boton danger text={t('delete_menber_label')} onClick={handleDeleteMember} />
+
       </ModalContent>
     </Modal>
   );

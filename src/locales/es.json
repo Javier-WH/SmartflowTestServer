@@ -212,6 +212,7 @@
   "sort_folder_label": "Ordenar Carpeta",
   "sort_root_label": "Ordenar",
   "save_order_label": "Guardar Orden",
-  "order_message": "Arrastra y suelta los archivos y carpetas para cambiar su orden."
+  "order_message": "Arrastra y suelta los archivos y carpetas para cambiar su orden.",
+  "delete_menber_label": "Eliminar Miembro"
 
 }
