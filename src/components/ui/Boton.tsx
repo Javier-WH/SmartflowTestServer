@@ -15,6 +15,7 @@ export interface BotonProps {
   trasparent?: boolean;
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
+  loading?: boolean;
 }
 
 
@@ -31,6 +32,10 @@ export interface BotonProps {
  * @param {boolean} [neutral=false] - If true, the button will have a neutral background and white text.
  * @param {string} [textSize] - The font size of the button.
  * @param {boolean} [trasparent=false] - If true, the button will have a transparent background.
+ * @param {'button' | 'submit' | 'reset'} [type='button'] - The type attribute of the button.
+ * @param {boolean} [disabled=false] - If true, the button will be disabled.
+ * @param {boolean} [loading=false] - If true, the button will show a loading state.
+ * @return {JSX.Element} The rendered button component.
  */
 export const Boton: React.FC<BotonProps> = ({
   text = '',
@@ -45,7 +50,8 @@ export const Boton: React.FC<BotonProps> = ({
   textSize,
   trasparent = false,
   type = 'button',
-  disabled = false
+  disabled = false,
+  loading = false
 }) => {
 
   const baseClasses: string = 'flex items-center justify-center font-semibold transition duration-150 ease-in-out cursor-pointer focus:outline-none';
@@ -168,6 +174,25 @@ export const Boton: React.FC<BotonProps> = ({
     <span className={`${text ? 'mr-2' : ''} ${iconStyleClasses}`}>{icon}</span>
   ) : null;
 
+  const loadingIcon = (
+    <span className="animate-spin mr-2 [&>svg]:stroke-current [&>svg]:stroke-[1px]">
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+        />
+      </svg>
+    </span>
+  );
 
   return (
     <button
@@ -178,7 +203,7 @@ export const Boton: React.FC<BotonProps> = ({
       type={type}
       disabled={disabled}
     >
-      {iconElement}
+      {loading ? loadingIcon : iconElement}
       {
         text.length > 0  &&
         <span>{ text }</span>
