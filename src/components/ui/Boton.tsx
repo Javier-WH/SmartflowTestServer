@@ -14,6 +14,7 @@ export interface BotonProps {
   textSize?: string;
   trasparent?: boolean;
   type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 }
 
 
@@ -44,6 +45,7 @@ export const Boton: React.FC<BotonProps> = ({
   textSize,
   trasparent = false,
   type = 'button',
+  disabled = false
 }) => {
 
   const baseClasses: string = 'flex items-center justify-center font-semibold transition duration-150 ease-in-out cursor-pointer focus:outline-none';
@@ -174,6 +176,7 @@ export const Boton: React.FC<BotonProps> = ({
       title={title}
       onClick={onClick}
       type={type}
+      disabled={disabled}
     >
       {iconElement}
       {

@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { MainContext, MainContextValues } from '@/modules/mainContext';
 import './createOrUpdateFolderModal.css';
 import { t } from 'i18next';
+import Boton from '@/components/ui/Boton';
 
 export default function DeleteFolderModal({
     folder,
@@ -25,7 +26,7 @@ export default function DeleteFolderModal({
     const { deleteFolder } = useFolderManager();
     const { organization_id } = useParams();
     const navigate = useNavigate();
- 
+
     const inputRef = useRef<any | null>(null);
 
     useEffect(() => {
@@ -61,17 +62,19 @@ export default function DeleteFolderModal({
             open={folder != null}
             onOk={handleOk}
             onCancel={handleCancel}
-            okText={t('delete_label')}
-            cancelText={t('cancel_label')}
             className="createOrUpdateFolderModal"
-            okButtonProps={{ danger: true }}
+            footer={[<div key="buttons" className="flex justify-end gap-2">
+                <Boton neutral text={t('cancel_label')} onClick={handleCancel} />
+                <Boton danger text={t('delete_label')} onClick={handleOk} />
+            </div>
+            ]}
         >
             <div>
                 <div>
-                    <label htmlFor="">{t('are_you_sure_you_want_to_delete_message')}</label>    
+                    <label htmlFor="">{t('are_you_sure_you_want_to_delete_message')}</label>
                 </div>
             </div>
-        </Modal>
+        </Modal >
     );
 }
 
