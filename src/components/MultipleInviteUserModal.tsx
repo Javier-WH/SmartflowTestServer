@@ -4,7 +4,7 @@ import { Input } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 import type { Organization } from '../modules/organizations/types/organizations';
 import { UserRoll } from '../modules/organizations/organizations';
-import { FiMail, FiCheck, FiUsers } from 'react-icons/fi';
+import { FiCheck, FiUsers } from 'react-icons/fi';
 import Boton from '@/components/ui/Boton';
 import useOrganizations from '@/modules/organizations/hook/useOrganizations';
 import { useEffect, useState } from 'react';
@@ -28,11 +28,12 @@ export default function MultipleInviteUserModal({
     const [userRolls, setUserRolls] = useState<UserRoll[]>([]);
     const [inviteEmail, setInviteEmail] = useState('');
     const [inviteUserLevelId, setInviteUserLevelId] = useState<string>('');
+    const [inviteError, setInviteError] = useState('');
+    const [isInviting, setIsInviting] = useState(false);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [selectedOrganizations, setSelectedOrganizations] = useState<Set<any>>(new Set());
-    const { data: organizations, isLoading, error, createOrganization, mutate, getUserRolls } = useOrganizations(userId);
+    const { data: organizations, mutate, getUserRolls, inviteUserToOrganization } = useOrganizations(userId);
 
-    console.log(organizations)
 
     const loadInitialData = async () => {
         await mutate();
@@ -56,9 +57,17 @@ export default function MultipleInviteUserModal({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, organizations]);
 
+    const handleClose = () => {
+        // Reset form state on close
+        setInviteEmail('');
+        setInviteUserLevelId('');
+        setInviteError('');
+        setIsInviting(false);
+        setSelectedOrganizations(new Set());
+        onClose();
+    };
 
-
-    /*const handleInviteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleInviteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
  
         if (!inviteUserLevelId || inviteUserLevelId.trim() === '') {
@@ -78,43 +87,50 @@ export default function MultipleInviteUserModal({
             return;
         }
  
-        if (!organization || !organization.id || !user?.id) return;
- 
+        if (!selectedOrganizations || selectedOrganizations.size === 0 ) {
+            setInviteError(t('select_working_groups_message'));
+            return;
+        }
+        console.log(selectedOrganizations);
+        
         setIsInviting(true);
         setInviteError('');
  
         try {
-            const response = await inviteUserToOrganization(organization.id, inviteEmail.trim(), user.id, inviteUserLevelId);
- 
-            if (response.error) {
-                setInviteError(response.message);
+            const invitePromises = Array.from(selectedOrganizations).map(orgId =>
+                inviteUserToOrganization(orgId, inviteEmail.trim(), userId, inviteUserLevelId)
+            );
+
+            const results = await Promise.all(invitePromises);
+
+            const errorResult = results.find(res => res.error);
+            if (errorResult) {
+                setInviteError(errorResult.message);
                 return;
             }
- 
-            // Clear form and close modal on success
-            setInviteEmail('');
-            onInviteModalClose();
- 
-            // Show success toast or notification here if you have a notification system
+
+            handleClose();
         } catch (error) {
             setInviteError(t('unexpected_error_message'));
             console.error(error);
         } finally {
+            setInviteError('');
             setIsInviting(false);
         }
-    };*/
+        
+    };
 
     return (
         <Modal
             isOpen={isOpen}
-            onClose={onClose}
+            onClose={handleClose}
             classNames={{
                 base: "rounded-[15px]",
                 wrapper: "z-[100]"
             }}
         >
             <ModalContent className="rounded-[15px] p-4 bg-white border border-gray-200 shadow-lg">
-                {onClose => (
+                {handleClose => (
                     <>
                         <ModalHeader className="flex flex-col gap-1 p-5 border-b border-gray-100">
                             <div className="flex items-center">
@@ -131,8 +147,8 @@ export default function MultipleInviteUserModal({
                                 </div>
                             </div>
                         </ModalHeader>
-                        <form /*onSubmit={handleSubmit}*/>
-                            <ModalBody className="p-5 max-h-[500px] overflow-y-auto">
+                        <form onSubmit={handleInviteSubmit}>
+                            <ModalBody className="p-5 max-h-[650px] overflow-y-auto">
 
                                 <label htmlFor="email" className="text-sm font-medium text-gray-700 block mb-2">
                                     {t('select_working_groups_label')}
@@ -264,11 +280,11 @@ export default function MultipleInviteUserModal({
                                     </div>
                                 </div>
 
-                                {/*inviteError && <p className="text-danger text-sm mt-2">{inviteError}</p>*/}
+                                {inviteError && <p className="text-danger text-sm mt-2">{inviteError}</p>}
                             </ModalBody>
                             <ModalFooter className="p-5 pt-4 border-t border-gray-100">
-                                <Boton neutral onClick={onClose} text={t('cancel_label')} />
-                                <Boton type="submit" text={t('send_button')} />
+                                <Boton neutral onClick={handleClose} text={t('cancel_label')} />
+                                <Boton loading={isInviting} type="submit" text={t('send_button')} />
                             </ModalFooter>
                         </form>
                     </>

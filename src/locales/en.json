@@ -217,6 +217,7 @@
   "order_message": "Drag and drop the files and folders to change their order.",
   "delete_menber_label": "Delete Member",
   "select_working_groups_label": "Working Groups",
-  "select_working_groups_placeholder": "you can select one or more working groups"
+  "select_working_groups_placeholder": "you can select one or more working groups",
+  "select_working_groups_message": "Please select at least one working group"
 
 }

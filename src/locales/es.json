@@ -217,6 +217,7 @@
   "order_message": "Arrastra y suelta los archivos y carpetas para cambiar su orden.",
   "delete_menber_label": "Eliminar Miembro",
   "select_working_groups_label": "Grupos de Trabajo",
-  "select_working_groups_placeholder": "puedes seleccionar uno o más grupos de trabajo"
+  "select_working_groups_placeholder": "puedes seleccionar uno o más grupos de trabajo",
+  "select_working_groups_message": "Por favor selecciona al menos un grupo de trabajo"
 
 }
