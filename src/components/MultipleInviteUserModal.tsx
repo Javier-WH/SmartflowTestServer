@@ -1,5 +1,5 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select, SelectItem, Chip } from '@heroui/react';
-import type { Key } from '@heroui/react';
+
 import { Input } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 import type { Organization } from '../modules/organizations/types/organizations';
@@ -25,79 +25,84 @@ export default function MultipleInviteUserModal({
 }: InviteUserModalProps) {
     const { t } = useTranslation();
     const [organizationList, setOrganizationList] = useState<Organization | null>(null);
-    const [userRolls, setUserRolls] = useState<UserRoll[] >([]);
+    const [userRolls, setUserRolls] = useState<UserRoll[]>([]);
     const [inviteEmail, setInviteEmail] = useState('');
     const [inviteUserLevelId, setInviteUserLevelId] = useState<string>('');
-    const [selectedOrganizations, setSelectedOrganizations] = useState<Set<Key>>(new Set());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [selectedOrganizations, setSelectedOrganizations] = useState<Set<any>>(new Set());
     const { data: organizations, isLoading, error, createOrganization, mutate, getUserRolls } = useOrganizations(userId);
 
-  
-   const loadInitialData = async () => {
+    console.log(organizations)
+
+    const loadInitialData = async () => {
         await mutate();
-        setOrganizationList(organizations);
-         const rolls = await getUserRolls();
+        // solo deben aparecer los grupos de trabajo donde el usuario tenga permiso de invitar o sea el creador
+        const selectableOrganizations = organizations?.filter(org => (org.invite === true || org.is_creator === true)) || [];
+
+        setOrganizationList(selectableOrganizations);
+        const rolls = await getUserRolls();
         if (rolls.error) {
             console.error(rolls.message);
             return;
         }
         setUserRolls(rolls.data as UserRoll[] || []);
-       setInviteUserLevelId(rolls.data && rolls.data.length > 0 ? rolls.data[rolls.data.length - 1].id : '');
+        setInviteUserLevelId(rolls.data && rolls.data.length > 0 ? rolls.data[rolls.data.length - 1].id : '');
     }
-   
+
     useEffect(() => {
         if (isOpen) {
             loadInitialData();
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, organizations]);
 
 
 
-        /*const handleInviteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-    
-            if (!inviteUserLevelId || inviteUserLevelId.trim() === '') {
-                setInviteError(t('select_role_message'));
+    /*const handleInviteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+ 
+        if (!inviteUserLevelId || inviteUserLevelId.trim() === '') {
+            setInviteError(t('select_role_message'));
+            return;
+        }
+ 
+        if (!inviteEmail.trim()) {
+            setInviteError(t('enter_email_message'));
+            return;
+        }
+ 
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(inviteEmail.trim())) {
+            setInviteError(t('enter_valid_email_message'));
+            return;
+        }
+ 
+        if (!organization || !organization.id || !user?.id) return;
+ 
+        setIsInviting(true);
+        setInviteError('');
+ 
+        try {
+            const response = await inviteUserToOrganization(organization.id, inviteEmail.trim(), user.id, inviteUserLevelId);
+ 
+            if (response.error) {
+                setInviteError(response.message);
                 return;
             }
-    
-            if (!inviteEmail.trim()) {
-                setInviteError(t('enter_email_message'));
-                return;
-            }
-    
-            // Basic email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(inviteEmail.trim())) {
-                setInviteError(t('enter_valid_email_message'));
-                return;
-            }
-    
-            if (!organization || !organization.id || !user?.id) return;
-    
-            setIsInviting(true);
-            setInviteError('');
-    
-            try {
-                const response = await inviteUserToOrganization(organization.id, inviteEmail.trim(), user.id, inviteUserLevelId);
-    
-                if (response.error) {
-                    setInviteError(response.message);
-                    return;
-                }
-    
-                // Clear form and close modal on success
-                setInviteEmail('');
-                onInviteModalClose();
-    
-                // Show success toast or notification here if you have a notification system
-            } catch (error) {
-                setInviteError(t('unexpected_error_message'));
-                console.error(error);
-            } finally {
-                setIsInviting(false);
-            }
-        };*/
+ 
+            // Clear form and close modal on success
+            setInviteEmail('');
+            onInviteModalClose();
+ 
+            // Show success toast or notification here if you have a notification system
+        } catch (error) {
+            setInviteError(t('unexpected_error_message'));
+            console.error(error);
+        } finally {
+            setIsInviting(false);
+        }
+    };*/
 
     return (
         <Modal
@@ -118,18 +123,22 @@ export default function MultipleInviteUserModal({
                                 </div>
                                 <div>
                                     <h2 className="text-lg font-medium text-gray-800">
-                                        {t('invite_user_title')}
+                                        {t('multiple_invite_user_title')}
                                     </h2>
                                     <p className="text-sm text-gray-500">
-                                        {t('invite_user_subtitle')}
+                                        {t('multiple_invite_user_subtitle')}
                                     </p>
                                 </div>
                             </div>
                         </ModalHeader>
                         <form /*onSubmit={handleSubmit}*/>
-                            <ModalBody className="p-5">
+                            <ModalBody className="p-5 max-h-[500px] overflow-y-auto">
+
+                                <label htmlFor="email" className="text-sm font-medium text-gray-700 block mb-2">
+                                    {t('select_working_groups_label')}
+                                </label>
                                 <Select
-                                style={{overflowX:"hidden"}}
+                                    style={{ overflowX: "hidden" }}
                                     id="organizations"
                                     items={
                                         Array.isArray(organizationList)
@@ -141,8 +150,8 @@ export default function MultipleInviteUserModal({
                                     }
                                     selectionMode="multiple"
                                     selectedKeys={selectedOrganizations}
-                                    onSelectionChange={(keys) => setSelectedOrganizations( new Set(keys))}
-                                    placeholder={t('select_organizations_placeholder')}
+                                    onSelectionChange={(keys) => setSelectedOrganizations(new Set(keys))}
+                                    placeholder={t('select_working_groups_placeholder')}
                                     isMultiline
                                     variant="bordered"
                                     renderValue={(items) => (
@@ -168,22 +177,18 @@ export default function MultipleInviteUserModal({
                                     <label htmlFor="email" className="text-sm font-medium text-gray-700 block mb-2">
                                         {t('email_label')}
                                     </label>
-                                    
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <FiMail className="text-gray-400" />
-                                        </div>
-                                        <Input
-                                            id="email"
-                                            className="pl-10 rounded-[15px] border-gray-300 focus:border-gray-400 transition-colors"
-                                            placeholder="email@example.com"
-                                            value={inviteEmail}
-                                            onChange={e => setInviteEmail(e.target.value)}
-                                            type="email"
-                                            autoFocus
-                                            isRequired
-                                        />
-                                    </div>
+
+                                    <Input
+                                        id="email"
+                                        className="pl-0 rounded-[15px] border-gray-300 focus:border-gray-400 transition-colors"
+                                        placeholder="email@example.com"
+                                        value={inviteEmail}
+                                        onChange={e => setInviteEmail(e.target.value)}
+                                        type="email"
+                                        autoFocus
+                                        isRequired
+                                    />
+
                                 </div>
 
                                 <div className="mb-4">
@@ -210,8 +215,8 @@ export default function MultipleInviteUserModal({
                                                 <div
                                                     key={role.id}
                                                     className={`border rounded-[15px] p-4 transition-all cursor-pointer ${inviteUserLevelId === role.id
-                                                            ? 'border-gray-400 bg-gray-100'
-                                                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                                        ? 'border-gray-400 bg-gray-100'
+                                                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                                                         }`}
                                                     onClick={() => setInviteUserLevelId && setInviteUserLevelId(role.id)}
                                                 >

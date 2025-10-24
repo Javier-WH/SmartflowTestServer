@@ -7,6 +7,7 @@
   "edit_organization_title": "Edit Working Group",
   "delete_organization_title": "Delete Working Group ",
   "invite_user_title": "Invite User to ",
+  "multiple_invite_user_title": "Invite new user",
   "leave_organization_title": "Leave Working Group ",
   "document_explorer_title": "Document Explorer",
   "delete_folder_title": "Delete Folder ",
@@ -155,8 +156,8 @@
   "Organization_updated_successfully": "Organization updated successfully",
   "Roles_retrieved_successfully": "Roles retrieved successfully",
   "Role_updated_successfully": "Role updated successfully",
-  "You_have_joined_the_organization": "You have joined the organization",
-  "You_have_left_the_organization": "You have left the organization",
+  "You_have_joined_the_organization": "You have joined the working group",
+  "You_have_left_the_organization": "You have left the working group",
   "organization_not_found": "Organization not found",
   "Something_went_wrong": "Something went wrong",
   "User_already_in_organization": "User already in organization",
@@ -172,8 +173,9 @@
   "duplicate_label": "Duplicate",
   "members_list_heading": "Members List",
   "total_members": "Total Members",
-  "edit_role_subtitle": "Select the role of this member in the organization",
-  "invite_user_subtitle": "Invite a new member to the organization",
+  "edit_role_subtitle": "Select the role of this member in the working group",
+  "invite_user_subtitle": "Invite a new member to the working group",
+  "multiple_invite_user_subtitle": "Invite a new member selected working groups",
   "navigate_without_saving": "Continue without saving",
   "saving_changes_title": "Saving changes",
   "saving_in_progress": "Saving in progress",
@@ -213,6 +215,8 @@
   "sort_root_label": "Sort",
   "save_order_label": "Save order",
   "order_message": "Drag and drop the files and folders to change their order.",
-  "delete_menber_label": "Delete Member"
+  "delete_menber_label": "Delete Member",
+  "select_working_groups_label": "Working Groups",
+  "select_working_groups_placeholder": "you can select one or more working groups"
 
 }
