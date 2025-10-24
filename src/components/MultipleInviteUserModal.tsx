@@ -148,7 +148,7 @@ export default function MultipleInviteUserModal({
                             </div>
                         </ModalHeader>
                         <form onSubmit={handleInviteSubmit}>
-                            <ModalBody className="p-5 max-h-[650px] overflow-y-auto">
+                            <ModalBody className="p-5 max-h-[calc(100vh-300px)] overflow-y-auto">
 
                                 <label htmlFor="email" className="text-sm font-medium text-gray-700 block mb-2">
                                     {t('select_working_groups_label')}
