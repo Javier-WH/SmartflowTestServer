@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MainContext, MainContextValues } from '@/modules/mainContext';
 import './createOrUpdateFolderModal.css';
+import Boton from '@/components/ui/Boton';
 export default function DeleteFolderModal({
     file,
     setFile,
@@ -21,7 +22,7 @@ export default function DeleteFolderModal({
     groupDataByContainer: (request: { data: FolderData[] }) => FolderResquest;
     setFileCountUpdateRequest: (opt: boolean) => void;
 }) {
-    const { setParentFolders} = useContext(MainContext) as MainContextValues;
+    const { setParentFolders } = useContext(MainContext) as MainContextValues;
     const { deleteFile } = useFilesManager();
     const inputRef = useRef<any | null>(null);
     const { organization_id } = useParams();
@@ -30,7 +31,7 @@ export default function DeleteFolderModal({
 
     useEffect(() => {
         setTimeout(() => {
-            inputRef.current?.focus();   
+            inputRef.current?.focus();
         }, 100);
     }, [file]);
 
@@ -61,10 +62,12 @@ export default function DeleteFolderModal({
             open={file != null}
             onOk={handleOk}
             onCancel={handleCancel}
-            okText={t('delete_label')}
-            cancelText={t('cancel_label')}
             className="createOrUpdateFolderModal"
-            okButtonProps={{danger: true }}
+            footer={[<div key="buttons" className="flex justify-end gap-2">
+                <Boton neutral text={t('cancel_label')} onClick={handleCancel} />
+                <Boton danger text={t('delete_label')}  onClick={handleOk} />
+            </div>
+            ]}
         >
             <div>
                 <div>

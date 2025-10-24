@@ -336,7 +336,7 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                                 <DropdownMenu aria-label="Organization actions">
 
                                     {
-                                        organization.id !== 'f47ac10b-58cc-4372-a567-0e02b2c3d479' &&
+                                        (organization.open || organization.is_creator) &&
                                         <DropdownItem
                                             key="leave-option"
                                             className="text-default-900 scale-120"

@@ -2,10 +2,11 @@
 import { type FormEvent, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardBody } from '@heroui/react';
-import { Button, Input } from '@/components/ui';
+import {Input } from '@/components/ui';
 import AlertMessage from '../components/ErrorMessage';
 import useAuth from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
+import Boton from '@/components/ui/Boton';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
@@ -74,9 +75,8 @@ const ForgotPassword = () => {
                     {successMessage && <AlertMessage text={successMessage} type="success" />}
                     {error && <AlertMessage text={error} />}
 
-                    <Button type="submit" isLoading={loading}>
-                        {t("send_button")}
-                    </Button>
+                    <Boton text={t("send_button")} type="submit" loading={loading} />
+             
 
                     <Link to="/auth/signin" className="text-center text-primary underline">
                         {t("back_to_signin_button")}

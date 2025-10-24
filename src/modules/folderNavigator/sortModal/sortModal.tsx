@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { Modal, Typography } from 'antd';
-import {PiFolderOpenLight } from "react-icons/pi";
+import { PiFolderOpenLight } from "react-icons/pi";
 import { RiOrganizationChart } from "react-icons/ri";
 import useFolderManager from '../hooks/useFolderManager';
 import { FolderData, FolderRequestItem, SortableContent } from '../types/folder';
@@ -27,6 +27,7 @@ import {
 import groupDataByContainer from '../context/utils/groupDataByContainer';
 import { t } from 'i18next';
 import { sortByOrder } from './fucntions';
+import Boton from '@/components/ui/Boton';
 
 // ---------------------------------
 
@@ -57,9 +58,9 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
       setIsModalOpen(false);
       return;
     }
-    
-    
-    
+
+
+
 
     const container = containerid === "root" ? null : containerid;
 
@@ -159,7 +160,12 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
       confirmLoading={loading}
       okText={t("save_order_label")}
       cancelText={t("cancel_label")}
-      width={600} // Se reduce un poco el ancho
+      width={600}
+      footer={[<div key="buttons" className="flex justify-end gap-2">
+        <Boton neutral text={t('cancel_label')} onClick={handleCancel} />
+        <Boton  text={t("save_order_label")} onClick={handleOk} />
+      </div>
+      ]}
     >
       <Typography.Paragraph className={styles['modal-description']} >
         {t("order_message")}
