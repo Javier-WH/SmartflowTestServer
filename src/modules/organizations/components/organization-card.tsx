@@ -295,7 +295,7 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
             </span>
         }
     }
-    console.log(organization);
+  
     return (
         <>
             <Card
