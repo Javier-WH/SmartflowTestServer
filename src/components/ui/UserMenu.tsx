@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import { useTranslation } from 'react-i18next';
 import { useContext, useState } from 'react';
-import MultipleInviteUserModal from '../MultipleInviteUserModal';
+//import MultipleInviteUserModal from '../MultipleInviteUserModal';
 
 export default function UserMenu() {
     const { t } = useTranslation();
@@ -14,7 +14,7 @@ export default function UserMenu() {
     const { setParentFolders } = useContext(MainContext) as MainContextValues;
     const isMembersPage = location.pathname.endsWith('/members');
     const { user, signOut } = useAuth();
-    const [openInviteModal, setOpenInviteModal] =  useState(false);
+    //const [openInviteModal, setOpenInviteModal] =  useState(false);
 
     //const isHomePage = location.pathname === '/home';
     //const isOrganizationsPage = location.pathname.startsWith('/organizations');
@@ -77,7 +77,7 @@ export default function UserMenu() {
 
     return (
         <div className="flex items-center gap-4">
-            <MultipleInviteUserModal isOpen={openInviteModal} onClose={() => setOpenInviteModal(false)} userId={user?.id || ''} />
+            {/*<MultipleInviteUserModal isOpen={openInviteModal} onClose={() => setOpenInviteModal(false)} userId={user?.id || ''} />*/}
             <Dropdown placement="bottom-start">
                 <DropdownTrigger>
                     <User
