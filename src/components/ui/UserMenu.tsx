@@ -1,9 +1,9 @@
 import useAuth from '@/modules/auth/hooks/useAuth';
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User} from '@heroui/react';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User } from '@heroui/react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import { useTranslation } from 'react-i18next';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 //import MultipleInviteUserModal from '../MultipleInviteUserModal';
 
 export default function UserMenu() {
@@ -47,13 +47,11 @@ export default function UserMenu() {
         // Logout is always shown if user is authenticated
         if (user) {
             menuItems.push(
-                <DropdownItem key="invite" onPress={() =>setOpenInviteModal(true)}>
-                    Invite User
+
+                <DropdownItem key="custom-divider" className="pointer-events-none p-0">
+                    <div className="h-px bg-default-200 my-2 w-full" />
                 </DropdownItem>,
-                  <DropdownItem key="custom-divider" className="pointer-events-none p-0">
-                  <div className="h-px bg-default-200 my-2 w-full" />
-              </DropdownItem>,
-              
+
                 <DropdownItem
                     key="logout"
                     color="danger"
@@ -73,7 +71,7 @@ export default function UserMenu() {
             </DropdownMenu>
         );
     };
-    
+
 
     return (
         <div className="flex items-center gap-4">
