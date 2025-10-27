@@ -172,7 +172,7 @@ export default function Organizations() {
                             autoFocus
                         />
                     </div>
-                    <div className="flex justify-between items-center create-workgroup-button">
+                    <div className="flex justify-between items-center">
                         <Boton text={t("create_organization_button")} icon={<PlusOutlined />} onClick={handleCreateOrganization} />
                     </div>
                 </div>

@@ -4,7 +4,8 @@
 
 :root {
     /*global*/
-    --mainColor: rgb(109 74 255 / 99%);
+    /*--mainColor: rgb(109 74 255 / 99%);*/
+    --mainColor: #007AC2;
     --backgroundColor: rgba(255, 255, 255);
     --backGroundDangerColor: rgb(255, 34, 34);
     --backGroundNeutralColor: rgb(180, 180, 180);
