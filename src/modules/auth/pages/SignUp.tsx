@@ -155,7 +155,7 @@ const SignUp = () => {
                     <div className="text-center">
                         <span>
                             {t('already_have_account_message')}{' '}
-                            <Link to="/auth/signin" className="text-center text-primary underline">
+                            <Link to="/auth/signin" className="text-center underline" style={{ color: 'var(--mainColor)' }}>
                                 {t("login_button")}
                             </Link>
                             

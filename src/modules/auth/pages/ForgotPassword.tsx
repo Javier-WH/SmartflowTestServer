@@ -78,7 +78,7 @@ const ForgotPassword = () => {
                     <Boton text={t("send_button")} type="submit" loading={loading} />
              
 
-                    <Link to="/auth/signin" className="text-center text-primary underline">
+                    <Link to="/auth/signin" className="text-center underline" style={{ color: 'var(--mainColor)' }}>
                         {t("back_to_signin_button")}
                     </Link>
                 </CardBody>

@@ -303,7 +303,7 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                 isPressable
                 isHoverable
                 onClick={() => handleCardClick(organization.slug || '')}
-                className="border-2 hover:border-primary transition-all duration-200"
+                className="border-2 transition-all duration-200 org-card"
             >
                 <CardBody className="p-5">
                     <div className="flex items-center justify-between">

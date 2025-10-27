@@ -11,7 +11,8 @@ import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.
 import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
-import { Textarea, cn, Spinner } from '@heroui/react';
+import { Textarea, cn } from '@heroui/react';
+import Spinner from '@/components/ui/Spiner.tsx';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { message, Modal } from 'antd';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
@@ -216,7 +217,7 @@ export default function VersionViewer() {
     if (isMutating || (isLoading && !isInitialContentLoaded)) {
         return (
             <div className="flex justify-center items-center h-full">
-                <Spinner size="lg" />
+                <Spinner  />
             </div>
         );
     }
@@ -316,7 +317,7 @@ export default function VersionViewer() {
                 <div className="flex flex-col gap-3 overflow-y-auto flex-grow pr-1 custom-scrollbar h-[calc(100vh-280px)] scrollbar-track-transparent scrollbar-thin">
                     {isLoadingVersions ? (
                         <div className="flex justify-center items-center h-full">
-                            <Spinner size="lg" />
+                            <Spinner />
                         </div>
                     ) : (
                         documentVersions?.map((version) => (
