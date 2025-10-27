@@ -4,7 +4,10 @@
 
 :root {
     /*global*/
-    --mainColor: rgb(109 74 255 / 99%);
+    --mainColor: rgb(109 74 255 / 99%); /*classic*/
+   /* --mainColor: #007AC2;*/ /*insurance*/
+    --mainColorLight: #dccfff;/*classic*/
+    /*--mainColorLight: #cdedff; */ /*insurance*/
     --backgroundColor: rgba(255, 255, 255);
     --backGroundDangerColor: rgb(255, 34, 34);
     --backGroundNeutralColor: rgb(180, 180, 180);
@@ -35,14 +38,21 @@
     --buttonTextColor2: rgb(187, 29, 29);
     --buttonborderColor2: green;
     --buttonBorderThickness: 1px;
-    
-    --boxShadow: 2px 2px 3px 0px rgba(160, 160, 157, 0.99);
+
+    --boxShadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.25);
     --cornetRounded: 30px;
     --butonTextSize: 14px;
 
     
 }
 
+.org-card:hover{
+ border-color: var(--mainColor);
+}
+
+.spiner{
+    color: var(--mainColor) !important;
+}
 
 body {
     background-color: var(--backGroundColor) !important;

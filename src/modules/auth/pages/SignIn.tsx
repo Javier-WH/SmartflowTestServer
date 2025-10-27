@@ -129,7 +129,7 @@ const SignIn = () => {
                    
                     <Boton type='submit' text={t('login_button')} loading={loading}/>
                
-                    <Link to="/forgot-password" className="text-center text-primary underline">
+                    <Link to="/forgot-password" className="text-center underline" style={{ color: 'var(--mainColor)' }}>
                         {t('forgot_password_message')}
                     </Link>
 
@@ -138,7 +138,8 @@ const SignIn = () => {
                             {t('dont_have_account_message')}{' '}
                             <Link
                                 to={`/auth/signup?${redirect ? `redirect=${redirect}` : ''}`}
-                                className="text-center text-primary underline"
+                                className="text-center underline"
+                                style={{ color: 'var(--mainColor)' }}
                             >
                                 {t('sign_up_button')}
                             </Link>

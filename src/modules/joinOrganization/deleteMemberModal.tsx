@@ -33,9 +33,10 @@ export default function DeleteMemberModal({ member, setMember, organization }: E
       aria-labelledby="modal-title"
     >
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">Delete Member</ModalHeader>
-
-        <Boton danger text={t('delete_menber_label')} onClick={handleDeleteMember} />
+        <ModalHeader className="flex flex-col gap-1">{t('delete_menber_label')}</ModalHeader>
+        <div className="flex flex-col gap-4 p-4 w-full justify-center items-center">
+          <Boton width="w-[200px]" danger text={t('delete_menber_label')} onClick={handleDeleteMember} />
+        </div>
 
       </ModalContent>
     </Modal>

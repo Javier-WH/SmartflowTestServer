@@ -1,5 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
-import { Spinner, useDisclosure } from '@heroui/react';
+import { useDisclosure } from '@heroui/react';
+import Spinner from '@/components/ui/Spiner';
 import { Input } from '@/components/ui';
 import { PlusOutlined, TeamOutlined, SearchOutlined } from '@ant-design/icons';
 import useOrganizations from './hook/useOrganizations';
@@ -139,7 +140,7 @@ export default function Organizations() {
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-[calc(100vh-120px)]">
-                <Spinner size="lg" />
+                <Spinner  />
             </div>
         );
     }
@@ -172,7 +173,7 @@ export default function Organizations() {
                             autoFocus
                         />
                     </div>
-                    <div className="flex justify-between items-center create-workgroup-button">
+                    <div className="flex justify-between items-center">
                         <Boton text={t("create_organization_button")} icon={<PlusOutlined />} onClick={handleCreateOrganization} />
                     </div>
                 </div>

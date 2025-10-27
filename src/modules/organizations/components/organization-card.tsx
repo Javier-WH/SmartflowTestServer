@@ -19,7 +19,7 @@ import {
     DeleteOutlined,
     UserAddOutlined,
     LogoutOutlined,
-    TeamOutlined,
+    //TeamOutlined,
     UserOutlined
 } from '@ant-design/icons';
 import type { Organization } from '../types/organizations';
@@ -266,7 +266,7 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
     const getLevelTitle = (organization: Organization): ReactNode => {
 
         if (organization.is_creator) {
-            return <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
+            return <span style={{ backgroundColor: "var(--mainColorLight)", color: "var(--mainColor)" }} className="text-xs  px-2 py-1 rounded-full">
                 {t('creator_label')}
             </span>
 
@@ -303,17 +303,16 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                 isPressable
                 isHoverable
                 onClick={() => handleCardClick(organization.slug || '')}
-                className="border-2 hover:border-primary transition-all duration-200"
+                className="border-2 transition-all duration-200 org-card"
             >
                 <CardBody className="p-5">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <div className="bg-primary/10 p-3 rounded-full">
+                           {/* <div className="bg-primary/10 p-3 rounded-full">
                                 <TeamOutlined style={{ fontSize: '24px', color: 'var(--heroui-colors-primary)' }} />
-                            </div>
-                            <div>
+                            </div>*/}
+                            <div className="ml-2">
                                 <h3 className="text-xl font-medium w-[270px]">{organization.name}</h3>
-
                                 {getLevelTitle(organization)}
                             </div>
                         </div>

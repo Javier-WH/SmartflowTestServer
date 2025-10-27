@@ -61,9 +61,9 @@ export const Boton: React.FC<BotonProps> = ({
   const backgroundAndTextColor = trasparent
     ? 'bg-transparent text-[var(--buttonTextColor)]' // Transparent: Fondo transparente
     : neutral
-      ? 'bg-white text-[var(--backGroundNeutralColor)]' // <-- CORREGIDO: Se agregó bg-white (o el color de fondo base)
+      ? 'bg-white text-[var(--backGroundNeutralColor)]' 
       : danger
-        ? 'bg-[var(--backGroundDangerColor)] text-white'
+        ? 'bg-[var(--backgroundColor)] text-[var(--backGroundDangerColor)]'
         : 'bg-[var(--backgroundColor)] text-[var(--buttonTextColor)]';
 
   // Conditional Border Classes based on the 'borderless' prop (Base state)
@@ -108,8 +108,8 @@ export const Boton: React.FC<BotonProps> = ({
       }
     } else if (danger) {
       // Danger: The button is solid. On hover, it inverts to white background and danger text.
-      hoverBgClass = 'hover:bg-white';
-      hoverTextClass = 'hover:text-[var(--backGroundDangerColor)]';
+      hoverBgClass = 'hover:bg-[var(--backGroundDangerColor)]';
+      hoverTextClass = 'hover:text-[var(--backgroundColor)]';
       if (!borderless) {
         hoverBorderClass = 'hover:border-white';
       }

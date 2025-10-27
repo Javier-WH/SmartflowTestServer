@@ -127,7 +127,7 @@ const ResetPassword = () => {
                         {t("send_button")}
                     </Button>
 
-                    <Link to="/auth/signin" className="text-center text-primary underline">
+                    <Link to="/auth/signin" className="text-center underline" style={{ color: 'var(--mainColor)' }}>
                         {t("go_back_button")}
                     </Link>
                 </CardBody>

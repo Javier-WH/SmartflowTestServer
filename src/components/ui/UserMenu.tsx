@@ -1,10 +1,10 @@
 import useAuth from '@/modules/auth/hooks/useAuth';
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User} from '@heroui/react';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User } from '@heroui/react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import { useTranslation } from 'react-i18next';
-import { useContext, useState } from 'react';
-import MultipleInviteUserModal from '../MultipleInviteUserModal';
+import { useContext } from 'react';
+//import MultipleInviteUserModal from '../MultipleInviteUserModal';
 
 export default function UserMenu() {
     const { t } = useTranslation();
@@ -14,7 +14,7 @@ export default function UserMenu() {
     const { setParentFolders } = useContext(MainContext) as MainContextValues;
     const isMembersPage = location.pathname.endsWith('/members');
     const { user, signOut } = useAuth();
-    const [openInviteModal, setOpenInviteModal] =  useState(false);
+    //const [openInviteModal, setOpenInviteModal] =  useState(false);
 
     //const isHomePage = location.pathname === '/home';
     //const isOrganizationsPage = location.pathname.startsWith('/organizations');
@@ -47,13 +47,11 @@ export default function UserMenu() {
         // Logout is always shown if user is authenticated
         if (user) {
             menuItems.push(
-                <DropdownItem key="invite" onPress={() =>setOpenInviteModal(true)}>
-                    Invite User
+
+                <DropdownItem key="custom-divider" className="pointer-events-none p-0">
+                    <div className="h-px bg-default-200 my-2 w-full" />
                 </DropdownItem>,
-                  <DropdownItem key="custom-divider" className="pointer-events-none p-0">
-                  <div className="h-px bg-default-200 my-2 w-full" />
-              </DropdownItem>,
-              
+
                 <DropdownItem
                     key="logout"
                     color="danger"
@@ -73,11 +71,11 @@ export default function UserMenu() {
             </DropdownMenu>
         );
     };
-    
+
 
     return (
         <div className="flex items-center gap-4">
-            <MultipleInviteUserModal isOpen={openInviteModal} onClose={() => setOpenInviteModal(false)} userId={user?.id || ''} />
+            {/*<MultipleInviteUserModal isOpen={openInviteModal} onClose={() => setOpenInviteModal(false)} userId={user?.id || ''} />*/}
             <Dropdown placement="bottom-start">
                 <DropdownTrigger>
                     <User
