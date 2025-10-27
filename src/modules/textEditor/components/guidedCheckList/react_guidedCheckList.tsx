@@ -405,7 +405,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
             onCancel={() => setOpenDeleteModal(false)}
             title={t("guided_checklist_delete_message")}
             footer={
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-2 ">
                     <Boton neutral text={t("cancel_label")} onClick={() => setOpenDeleteModal(false)} />
                     <Boton danger text={t("delete_label")} onClick={handleDeleteBlot} />
                 </div>

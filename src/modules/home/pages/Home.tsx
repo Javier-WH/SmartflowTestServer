@@ -11,7 +11,6 @@ import {
     IconFilePlus,
     IconFolderPlus
 } from '@tabler/icons-react';
-import { FaSort } from "react-icons/fa";
 import { cn } from '@heroui/react';
 import { ReactNode, useContext, useState } from 'react';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
@@ -21,6 +20,7 @@ import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
 import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
 import { useTranslation } from 'react-i18next';
 import SortModal from '@/modules/folderNavigator/sortModal/sortModal';
+import { TbArrowsSort } from "react-icons/tb";
 
 
 export default function Home() {
@@ -142,8 +142,8 @@ export default function Home() {
                 <div className='md:hidden w-full'>
                     <Boton neutral text={t('document_explorer_title')} height='h-[30px]' width='w-full' icon={isSidebarCollapsed ? <IconChevronDown /> : <IconChevronUp />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
                 </div>
-                
-       
+
+
 
                 <div
                     className={cn('flex flex-col gap-2 h-full relative', {
@@ -168,13 +168,14 @@ export default function Home() {
                                     <div className='flex gap-1'>
                                         {
                                             memberRoll?.write &&
-                                            <Boton width='w-10' icon={<FaSort />} borderless title={t('sort_root_label')} onClick={() => setContainerId("root")} />
+                                            <Boton width='w-10' icon={<TbArrowsSort size={20} />} borderless title={t('sort_root_label')} onClick={() => setContainerId("root")} />
                                         }
                                     </div>
-
-                                    {
-                                        getLevelTitle(memberRoll?.level || "")
-                                    }
+                                    <div style={{marginTop: "5px", marginLeft: "35px"}}>
+                                        {
+                                            getLevelTitle(memberRoll?.level || "")
+                                        }
+                                    </div>
 
                                     <div className='flex gap-1'>
                                         <Boton width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
@@ -199,7 +200,7 @@ export default function Home() {
                         <div className="absolute right-[-13px] top-1/2 -translate-y-1/2 border-2 rounded-full border-gray-200 ">
                             <Boton borderless neutral text='' width='w-[10px]' height='h-[33px]' icon={isSidebarCollapsed ? <IconChevronRight /> : <IconChevronLeft />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
                         </div>
-                
+
                     </nav>
                 </div>
 

@@ -75,7 +75,10 @@ const ForgotPassword = () => {
                     {successMessage && <AlertMessage text={successMessage} type="success" />}
                     {error && <AlertMessage text={error} />}
 
-                    <Boton text={t("send_button")} type="submit" loading={loading} />
+                    
+                    <Boton  text={t("send_button")} type="submit" loading={loading} />
+            
+
              
 
                     <Link to="/auth/signin" className="text-center underline" style={{ color: 'var(--mainColor)' }}>
