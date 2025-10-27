@@ -196,8 +196,8 @@ export default function Home() {
                         </div>
 
                         {/* Desktop Toggle Button */}
-                        <div className="absolute right-[-13px] top-1/2 -translate-y-1/2">
-                            <Boton neutral text='' width='w-[10px]' height='h-[35px]' icon={isSidebarCollapsed ? <IconChevronRight /> : <IconChevronLeft />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
+                        <div className="absolute right-[-13px] top-1/2 -translate-y-1/2 border-2 rounded-full border-gray-200 ">
+                            <Boton borderless neutral text='' width='w-[10px]' height='h-[33px]' icon={isSidebarCollapsed ? <IconChevronRight /> : <IconChevronLeft />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
                         </div>
                 
                     </nav>
