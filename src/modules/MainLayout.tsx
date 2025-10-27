@@ -24,9 +24,17 @@ function Header() {
     //throw new Error('Function not implemented.');
     return (
         <header className="flex justify-end md:justify-between items-center px-8 w-full h-[50px] top-0  shadow-md">
-            <h1 className="max-md:hidden md:block font-[300] text-[40px] tracking-[0.3rem] cursor-pointer" onClick={() => {setParentFolders(''); navigate('/organizations')}}>
+            <h1 className="max-md:hidden relative md:block font-[300] text-[40px] tracking-[0.3rem] cursor-pointer" onClick={() => {setParentFolders(''); navigate('/organizations')}}>
                { /*<span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO*/}
                 <img src={logo} alt="logo" style={{ width: "200px", height: "35px", filter: "hue-rotate(296deg)" }}/>
+                <span
+                    style={{
+                        position: "absolute",
+                        fontSize: "1rem",
+                        right: "0",
+                        top: "50%"
+                    }}                
+                >Insurance</span>
             </h1>
             {
                 parms?.organization_id && !isMembersPage &&
