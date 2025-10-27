@@ -4,9 +4,10 @@
 
 :root {
     /*global*/
-    /*--mainColor: rgb(109 74 255 / 99%);*/ /*classic*/
-    --mainColor: #007AC2; /*insurance*/
-    --mainColorLight: #cdedff;/*insurance*/
+    --mainColor: rgb(109 74 255 / 99%); /*classic*/
+   /* --mainColor: #007AC2;*/ /*insurance*/
+    --mainColorLight: #dccfff;/*classic*/
+    /*--mainColorLight: #cdedff; */ /*insurance*/
     --backgroundColor: rgba(255, 255, 255);
     --backGroundDangerColor: rgb(255, 34, 34);
     --backGroundNeutralColor: rgb(180, 180, 180);
