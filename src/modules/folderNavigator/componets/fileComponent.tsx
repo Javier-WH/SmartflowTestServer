@@ -1,21 +1,21 @@
-import { Dropdown, message, Modal, Spin, Button } from 'antd';
 import type { MenuProps } from 'antd';
-import type { ContainerElement } from '../types/componets';
+import { Button, Dropdown, Modal, message, Spin } from 'antd';
+import { useContext, useEffect, useState } from 'react';
 //import publishedIcon from '../assets/svg/publishedFile.svg';
 //import unPublishedIcon from '../assets/svg/unPublishedFile.svg';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FolderNavigatorContext } from '../context/folderNavigatorContext';
-import { useContext, useEffect, useState } from 'react';
+import type { ContainerElement } from '../types/componets';
 import type { File } from '../types/file';
 import './folderContainer.css';
-import type { FolderData, FolderNavigatorContextValues } from '../types/folder';
+
+import { useTranslation } from 'react-i18next';
+import { CiFileOn } from 'react-icons/ci';
+import { LuFileOutput, LuFiles, LuFileX2 } from 'react-icons/lu';
+import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import useFilesManager from '../hooks/useFileManager';
 import useFolderManager from '../hooks/useFolderManager';
-const pageType = import.meta.env.VITE_PAGE_TYPE;
-import { useTranslation } from 'react-i18next';
-import { CiFileOn } from "react-icons/ci";
-import { MainContext, type MainContextValues } from '@/modules/mainContext';
-import { LuFileX2, LuFileOutput, LuFiles } from "react-icons/lu";
+import type { FolderData, FolderNavigatorContextValues } from '../types/folder';
 
 export function FileComponent({ file }: { file: ContainerElement }) {
     const {
@@ -31,13 +31,12 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     const { moveFileToRoot, duplicateFile } = useFilesManager();
     const { getFolderContent } = useFolderManager();
     const navigate = useNavigate();
-    const { organization_id } = useParams();
+    const { working_group_id } = useParams();
     const [fileName, setFileName] = useState<string>(file.name);
     const { t } = useTranslation();
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [pendingNavigationId, setPendingNavigationId] = useState<string | null>(null);
     const [forceNavigation, setForceNavigation] = useState(false);
-    
 
     useEffect(() => {
         if (changleFileNameRequest?.fileId !== file.id) return;
@@ -49,7 +48,6 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         if (!file) return;
         setFileName(file.name);
     }, [file]);
-
 
     useEffect(() => {
         if (pendingNavigationId && !isSaving) {
@@ -72,10 +70,8 @@ export function FileComponent({ file }: { file: ContainerElement }) {
 
     const performNavigation = (id: string) => {
         setTimeout(() => {
-            if (pageType === 'quill') {
-                navigate(`/${organization_id}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
-                return;
-            }
+            navigate(`/${working_group_id}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
+            return;
         }, 200);
         //navigate(`/page/${id}`);
     };
@@ -96,7 +92,6 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         setPendingNavigationId(null);
         setForceNavigation(false);
     };
-
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, itemId: string, itemType: number) => {
         event.dataTransfer.setData('id', itemId);
@@ -157,7 +152,7 @@ export function FileComponent({ file }: { file: ContainerElement }) {
             return;
         }
 
-        const folder = await getFolderContent(request?.data ?? null, organization_id);
+        const folder = await getFolderContent(request?.data ?? null, working_group_id);
         if (folder.error) {
             message.error(folder.message);
             return;
@@ -165,7 +160,6 @@ export function FileComponent({ file }: { file: ContainerElement }) {
 
         const gruppedByContainer = groupDataByContainer(folder as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
-
     };
 
     const menu: MenuProps['items'] = [
@@ -186,12 +180,10 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         },
     ];
 
-
-
     const popoverContent = (
-        <div className='folderPopPup'>
+        <div className="folderPopPup">
             <LuFileOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()} />
-            <LuFileX2 title={t('delete_file_label')} onClick={() => handleDelete()}/>
+            <LuFileX2 title={t('delete_file_label')} onClick={() => handleDelete()} />
             <LuFiles title={t('duplicate_file_label')} onClick={() => handleDuplicate()} />
         </div>
     );
@@ -199,24 +191,21 @@ export function FileComponent({ file }: { file: ContainerElement }) {
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
-         
-                    <div
-                        key={file.id}
-                        id={file.id}
-                        style={{ display: 'flex', alignItems: 'center', gap: 10, }}
-                        onClick={() => handleClick(file.id)}
-                        className={`file p-2 rounded-lg ${selectedFileId === file.id ? 'selected-file' : ''}`}
-                        draggable
-                        onDragStart={event => handleDragStart(event, file.id, file.type)}
-                    >
-                        {/*<img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />*/}
-                        <CiFileOn size={25} />
-                        <span className="truncate max-h-[50px] w-full file-name" title={fileName}>
-                            {fileName === 'untitled' ? t('untitled_file') : fileName}
-                        </span>
-
-                    </div>
-                
+                <div
+                    key={file.id}
+                    id={file.id}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+                    onClick={() => handleClick(file.id)}
+                    className={`file p-2 rounded-lg ${selectedFileId === file.id ? 'selected-file' : ''}`}
+                    draggable
+                    onDragStart={event => handleDragStart(event, file.id, file.type)}
+                >
+                    {/*<img src={file.published ? publishedIcon : unPublishedIcon} alt="" width={30} />*/}
+                    <CiFileOn size={25} />
+                    <span className="truncate max-h-[50px] w-full file-name" title={fileName}>
+                        {fileName === 'untitled' ? t('untitled_file') : fileName}
+                    </span>
+                </div>
             </Dropdown>
             {/* Modal de guardado */}
             <Modal
@@ -257,25 +246,18 @@ export function FileComponent({ file }: { file: ContainerElement }) {
                         }}
                     >
                         {t('cancel_label')}
-                    </Button>
+                    </Button>,
                 ]}
                 closable={false}
                 maskClosable={false}
             >
                 {/* Contenido del Modal */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '20px 0', width: '100%' }}>
-                    <Spin
-                        size="large"
-                    />
+                    <Spin size="large" />
                     <div>
-                        <p style={{ margin: 0, fontWeight: '600', color: '#333' }}>
-                            {t('saving_in_progress')}
-                        </p>
+                        <p style={{ margin: 0, fontWeight: '600', color: '#333' }}>{t('saving_in_progress')}</p>
                         <p style={{ margin: '8px 0 0 0', color: '#666', fontSize: '14px' }}>
-                            {isSaving
-                                ? (t('please_wait_saving'))
-                                : (t('saving_completed'))
-                            }
+                            {isSaving ? t('please_wait_saving') : t('saving_completed')}
                         </p>
                     </div>
                 </div>

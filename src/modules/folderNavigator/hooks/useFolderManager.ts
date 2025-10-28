@@ -1,14 +1,8 @@
 import supabase from '../../../lib/supabase';
-import type { FolderResponse, SortableContent } from '../types/folder';
 import errorManager from '../errorManager/folderErrorManager';
+import type { FolderResponse, SortableContent } from '../types/folder';
 
-const pageType = import.meta.env.VITE_PAGE_TYPE;
-
-const createFolder = async (
-    folderName: string,
-    containerId: string | null,
-    slug: string,
-): Promise<FolderResponse> => {
+const createFolder = async (folderName: string, containerId: string | null, slug: string): Promise<FolderResponse> => {
     const { data, error } = await supabase
         .rpc('crear_carpeta', {
             p_container_id: containerId,
@@ -60,7 +54,8 @@ const updateRootFolder = async (folderName: string, folderId: string | null) => 
 const getFolders = async (container: string | null): Promise<FolderResponse> => {
     const response = await supabase
         .from('folders')
-        .select('*')[container === null || container === undefined ? 'is' : 'eq']('container', container);
+        .select('*')
+        [container === null || container === undefined ? 'is' : 'eq']('container', container);
 
     if (response.error) return errorManager(response.error);
 
@@ -112,13 +107,11 @@ const moveFolderToRoot = async (folderId: string | null): Promise<FolderResponse
 /**
  * Retrieves the content of a folder by its id or root if null.
  * @param folderId The id of the folder to retrieve its content. If null, retrieves the root content.
- * @param slug The slug of the organization.
+ * @param slug The slug of the working group.
  * @returns A FolderResponse object with the content of the folder.
  */
 const getFolderContent = async (folderId: string | null, slug: string): Promise<FolderResponse> => {
-    const functionName = pageType === 'quill' ? 'getfoldercontentquill' : 'getfoldercontent';
-
-    const { data, error } = await supabase.rpc(functionName, {
+    const { data, error } = await supabase.rpc('getfoldercontentquill', {
         p_folder_id: folderId,
         p_slug: slug,
     });
@@ -132,7 +125,6 @@ const getFolderContent = async (folderId: string | null, slug: string): Promise<
 };
 
 const getRootContent = async (slug: string): Promise<FolderResponse> => {
-
     const { data, error } = await supabase.rpc('getrootcontentquillfiltered', {
         p_slug: slug,
     });
@@ -146,8 +138,7 @@ const getRootContent = async (slug: string): Promise<FolderResponse> => {
 };
 
 const getAllRootContent = async (): Promise<FolderResponse> => {
-    const functionName = pageType === 'quill' ? 'getrootcontentquill' : 'getrootcontent';
-    const { data, error } = await supabase.rpc(functionName);
+    const { data, error } = await supabase.rpc('getrootcontentquill');
     if (error) {
         console.log(error);
         return errorManager(error);
@@ -156,10 +147,9 @@ const getAllRootContent = async (): Promise<FolderResponse> => {
 };
 
 const getHierarchyFolderContent = async (folderId: string | null, p_slug: string): Promise<FolderResponse> => {
-    const functionName = pageType === 'quill' ? 'gethierarchyfoldercontent' : 'gethierarchyfoldercontent';
-    const { data, error } = await supabase.rpc(functionName, {
+    const { data, error } = await supabase.rpc('gethierarchyfoldercontent', {
         p_folder_id: folderId,
-        p_slug
+        p_slug,
     });
 
     if (error) {
@@ -170,9 +160,8 @@ const getHierarchyFolderContent = async (folderId: string | null, p_slug: string
     return { error: false, message: 'Folder content retrieved successfully', data };
 };
 const getFilesCount = async (folderId: string): Promise<FolderResponse> => {
-
     const { data, error } = await supabase.rpc('getfilescount', {
-        p_folder_id: folderId
+        p_folder_id: folderId,
     });
 
     if (error) {
@@ -183,9 +172,7 @@ const getFilesCount = async (folderId: string): Promise<FolderResponse> => {
     return { error: false, message: 'Files count in folder retrieved successfully', data };
 };
 
-const sortFolderContent = async (
-    sorteableContent: SortableContent[]
-): Promise<boolean> => {
+const sortFolderContent = async (sorteableContent: SortableContent[]): Promise<boolean> => {
     const filesItem = [];
     const foldersItem = [];
 
@@ -203,25 +190,16 @@ const sortFolderContent = async (
 
     // Actualizar orden de archivos
     const fileUpdates = filesItem.map(item =>
-        supabase
-            .from('filesquill')
-            .update({ order: item.order })
-            .eq('id', item.id)
+        supabase.from('filesquill').update({ order: item.order }).eq('id', item.id),
     );
 
     // Actualizar orden de carpetas
     const folderUpdates = foldersItem.map(item =>
-        supabase
-            .from('folders')
-            .update({ order: item.order })
-            .eq('id', item.id)
+        supabase.from('folders').update({ order: item.order }).eq('id', item.id),
     );
 
     // Ejecutar ambas actualizaciones en paralelo
-    const [fileResults, folderResults] = await Promise.all([
-        Promise.all(fileUpdates),
-        Promise.all(folderUpdates),
-    ]);
+    const [fileResults, folderResults] = await Promise.all([Promise.all(fileUpdates), Promise.all(folderUpdates)]);
 
     // Verificar errores en archivos
     const fileHasError = fileResults.some(({ error }) => error);
@@ -250,8 +228,6 @@ const sortFolderContent = async (
     console.log('Órdenes de archivos y carpetas actualizadas correctamente');
     return true;
 };
-  
-
 
 export default function useFolderManager() {
     return {
@@ -267,6 +243,6 @@ export default function useFolderManager() {
         getHierarchyFolderContent,
         getAllRootContent,
         getFilesCount,
-        sortFolderContent
+        sortFolderContent,
     };
 }

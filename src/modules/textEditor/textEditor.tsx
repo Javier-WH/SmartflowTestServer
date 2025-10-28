@@ -55,7 +55,7 @@ Font.whitelist = options.fontList;
 Quill.register(Font, true);
 
 export default function TextEditor() {
-    const { id, organization_id } = useParams();
+    const { id, working_group_id } = useParams();
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { setSelectedFileId, setChangleFileNameRequest, memberRoll, setParentFolders, setIsSaving } = useContext(MainContext) as MainContextValues;
@@ -637,7 +637,7 @@ export default function TextEditor() {
 
     const onMenuClick: MenuProps['onClick'] = (e) => {
         if (e.key === '1') {
-            navigate(`/${organization_id}/history/${id}`, { state: { readOnly: !memberRoll.write } })
+            navigate(`/${working_group_id}/history/${id}`, { state: { readOnly: !memberRoll.write } })
         }
     };
 

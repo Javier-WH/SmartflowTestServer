@@ -1,35 +1,31 @@
-import { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { message } from 'antd';
 import { Spinner } from '@heroui/react';
-import { Button } from '@/components/ui';
 import { IconFilePlus } from '@tabler/icons-react';
-import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
-import type { FolderRequestItem } from '../types/folder';
-import type { ContainerElement } from '../types/componets';
-import useFolderManager from '../hooks/useFolderManager';
-import { FolderComponent } from './folderComponent';
-import { FileComponent } from './fileComponent';
-import { FolderNavigatorContext } from '../context/folderNavigatorContext';
-import type { FolderNavigatorContextValues } from '../types/folder';
+import { message } from 'antd';
+import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Button } from '@/components/ui';
+import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
+import { FolderNavigatorContext } from '../context/folderNavigatorContext';
+import useFolderManager from '../hooks/useFolderManager';
 import { sortByOrder } from '../sortModal/fucntions';
+import type { ContainerElement } from '../types/componets';
+import type { FolderNavigatorContextValues, FolderRequestItem } from '../types/folder';
+import { FileComponent } from './fileComponent';
+import { FolderComponent } from './folderComponent';
 
-
-export default function FolderContainer({ folderId, depth = 0 }: { folderId: string | null, depth?: number }) {
-    const { organization_id: slug } = useParams();
+export default function FolderContainer({ folderId, depth = 0 }: { folderId: string | null; depth?: number }) {
+    const { working_group_id: slug } = useParams();
     const { createFile } = useFilesManager();
-    const { Loading, setLoading, updateFolderRequest, memberRoll, setUpdateFolderRequest  } = useContext(
+    const { Loading, setLoading, updateFolderRequest, memberRoll, setUpdateFolderRequest } = useContext(
         FolderNavigatorContext,
     ) as FolderNavigatorContextValues;
-    
+
     const navigate = useNavigate();
     const { getFolderContent, getRootContent } = useFolderManager();
     const [content, setContent] = useState<ContainerElement[] | null>([]);
     const { t } = useTranslation();
-    
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         async function getContent() {
@@ -50,21 +46,17 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
                     container: null,
                     published: item.published,
                     filesnumber: item.filesnumber,
-                    order: item?.order ?? 0
+                    order: item?.order ?? 0,
                 };
             });
-            
-          
+
             setContent(newContent.sort(sortByOrder));
-          
+
             setLoading('x');
         }
         getContent();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [folderId]);
-
-
-
 
     async function getRoot() {
         if (!slug) return;
@@ -82,14 +74,12 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
                 container: null,
                 published: item.published,
                 filesnumber: item.filesnumber,
-                order: item?.order ?? 0
+                order: item?.order ?? 0,
             };
         });
 
         setContent(newItems.sort(sortByOrder) ?? []);
     }
-
-
 
     // on move folder
     useEffect(() => {
@@ -103,7 +93,7 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
         if (!updateFolderRequest) return;
 
         const keys = Object.keys(updateFolderRequest);
-      
+
         if (!keys.includes(folderId ?? '')) {
             return;
         }
@@ -131,14 +121,14 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
             </div>
         );
     }
-    
+
     const handleCreatePage = () => {
         if (!memberRoll?.write) {
             message.error(t('can_not_create_file_message'));
             return;
         }
         if (!slug) {
-            message.error(t('can_not_find_organization_message'));
+            message.error(t('can_not_find_working_group_message'));
             return;
         }
         createFile('untitled', null, slug).then(res => {
@@ -165,12 +155,12 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
 
     if (content?.length === 0 && folderId === null) {
         return (
-            <div className="flex flex-col gap-2 justify-center items-center w-full h-full max-w-[580px] cursor-pointer" onClick={handleCreatePage}>
-                <IconFilePlus className='folder-nav-icon' />
-                <Button
-                    variant="light"
-                    className=" max-w-[580px] w-full h-auto whitespace-normal break-words"
-                >
+            <div
+                className="flex flex-col gap-2 justify-center items-center w-full h-full max-w-[580px] cursor-pointer"
+                onClick={handleCreatePage}
+            >
+                <IconFilePlus className="folder-nav-icon" />
+                <Button variant="light" className=" max-w-[580px] w-full h-auto whitespace-normal break-words">
                     {t('create_your_first_document_message')}
                 </Button>
             </div>
@@ -193,5 +183,3 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
         </div>
     );
 }
-
-

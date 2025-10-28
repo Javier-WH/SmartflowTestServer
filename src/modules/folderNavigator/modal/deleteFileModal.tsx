@@ -24,7 +24,7 @@ export default function DeleteFolderModal({
     const { setParentFolders} = useContext(MainContext) as MainContextValues;
     const { deleteFile } = useFilesManager();
     const inputRef = useRef<any | null>(null);
-    const { organization_id } = useParams();
+    const { working_group_id } = useParams();
     const navigate = useNavigate();
     const { t } = useTranslation();
 
@@ -52,7 +52,7 @@ export default function DeleteFolderModal({
         setFile(null);
         // Redirect to home page after deletion
         setParentFolders('');
-        navigate(`/${organization_id}/home`);
+        navigate(`/${working_group_id}/home`);
     };
 
     return (

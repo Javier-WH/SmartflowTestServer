@@ -1,35 +1,34 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { type MenuProps, message, Button } from 'antd';
+
+import { CaretDownOutlined } from '@ant-design/icons';
+import { Button, Dropdown, type MenuProps, message } from 'antd';
+import { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useAuth from '@/modules/auth/hooks/useAuth';
 import Logo from '../../assets/svg/logo.svg';
 import UserPlaceHolder from '../../assets/svg/userPlaceHolder.svg';
-import { CaretDownOutlined } from '@ant-design/icons';
-import { Dropdown } from 'antd';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { MainContext, type MainContextValues } from '../mainContext';
 import useFilesManager from '../folderNavigator/hooks/useFileManager';
+import { MainContext, type MainContextValues } from '../mainContext';
 import SearchInput from '../search/searchInput';
 import './navBar.css';
-import { useContext, useEffect, useState } from 'react';
-import useGetOrganizationData from './hooks/useOrganizationData';
-
 import type { Folder } from '../folderNavigator/types/folder';
+import useWorkingGroupData from './hooks/useWorkingGroupData';
 
 export default function NavBar() {
     const { signOut } = useAuth();
     const navigate = useNavigate();
     const { inPage, setNewFolderRequest, memberRoll } = useContext(MainContext) as MainContextValues;
     const { createFile } = useFilesManager();
-    const { organization_id: slug } = useParams();
-    const { getOrganizationBasicData } = useGetOrganizationData();
-    const [organizationName, setOrganizationName] = useState<string>('');
+    const { working_group_id: slug } = useParams();
+    const { getWorkingGroupBasicData } = useWorkingGroupData();
+    const [workingGroupName, setWorkingGroupName] = useState<string>('');
 
-    //get organization name
+    //get working group name
     useEffect(() => {
         if (!slug) return;
-        getOrganizationBasicData(slug)
+        getWorkingGroupBasicData(slug)
             .then(res => {
-                setOrganizationName(res?.data[0]?.name ?? 'Unknown');
+                setWorkingGroupName(res?.data[0]?.name ?? 'Unknown');
             })
             .catch(err => console.log(err));
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -38,8 +37,8 @@ export default function NavBar() {
     const userMenu: MenuProps['items'] = [
         {
             key: '1',
-            label: 'Organizations',
-            onClick: () => navigate('/organizations'),
+            label: 'Working Groups',
+            onClick: () => navigate('/working_groups'),
         },
         {
             key: '2',
@@ -72,7 +71,7 @@ export default function NavBar() {
             return;
         }
         if (!slug) {
-            message.error('Cant find organization');
+            message.error('Cant find working group');
             return;
         }
         createFile('untitled', null, slug).then(res => {
@@ -81,12 +80,7 @@ export default function NavBar() {
                 return;
             }
             const id = res.data;
-            const pageType = import.meta.env.VITE_PAGE_TYPE;
-            if (pageType === 'quill') {
-                navigate(`/textEditor/${id}`);
-            } else {
-                navigate(`/page/${id}`);
-            }
+            navigate(`/textEditor/${id}`);
         });
     };
 
@@ -102,7 +96,6 @@ export default function NavBar() {
         setNewFolderRequest(newFolder);
     };
 
-  
     return (
         <header className={`navbar-container ${inPage && 'navbar-page-size'}`}>
             <Dropdown menu={{ items: userMenu }} trigger={['click']}>
@@ -125,7 +118,7 @@ export default function NavBar() {
 
             {!inPage ? (
                 <div className="flex justify-between items-center navbar-buttons px-8 py-2 mt-10">
-                    {!inPage && <div className="navbar-title">{organizationName}</div>}
+                    {!inPage && <div className="navbar-title">{workingGroupName}</div>}
 
                     <div className="create-container">
                         <Dropdown.Button

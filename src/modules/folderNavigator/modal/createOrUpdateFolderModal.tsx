@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Modal, Input, message } from 'antd';
-import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import { Folder, FolderResquest, FolderData } from '../types/folder';
-import useFolderManager from '../hooks/useFolderManager';
+import { Input, Modal, message } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import useFolderManager from '../hooks/useFolderManager';
+import type { Folder, FolderData, FolderResquest } from '../types/folder';
 import './createOrUpdateFolderModal.css';
 
 export default function CreateOrUpdateFolderModal({
@@ -23,7 +23,7 @@ export default function CreateOrUpdateFolderModal({
     const [containerID, setcontainerID] = useState<string | null>(null);
     const [update, setUpdate] = useState(false);
     const inputRef = useRef<any | null>(null);
-    const { organization_id: slug} = useParams();
+    const { working_group_id: slug } = useParams();
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -52,9 +52,9 @@ export default function CreateOrUpdateFolderModal({
     };
 
     const handleOk = async () => {
-        if (!slug){
-            message.error(t('no_organizations_found_message'));
-            return
+        if (!slug) {
+            message.error(t('no_working_group_found_message'));
+            return;
         }
 
         if (update) {
@@ -98,7 +98,7 @@ export default function CreateOrUpdateFolderModal({
             message.error(request.message);
             return;
         }
-        
+
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
         const folderElement = document.getElementById(containerID);

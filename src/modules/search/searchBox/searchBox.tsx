@@ -1,25 +1,29 @@
-import type { SearchBoxInterface } from '../types/searchBox';
 //import unPublishedFile from '../../folderNavigator/assets/svg/unPublishedFile.svg';
 //import folderIcon from '../../folderNavigator/assets/svg/closed_folder.svg';
 import { useNavigate, useParams } from 'react-router-dom';
 import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
-import groupDataByContainer from '../../folderNavigator/context/utils/groupDataByContainer';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
+import groupDataByContainer from '../../folderNavigator/context/utils/groupDataByContainer';
+import type { SearchBoxInterface } from '../types/searchBox';
 import './searhBox.css';
 import { message } from 'antd';
 import { useContext } from 'react';
-import { CiFileOn } from "react-icons/ci";
-import { PiFolderLight } from "react-icons/pi";
+import { CiFileOn } from 'react-icons/ci';
+import { PiFolderLight } from 'react-icons/pi';
 
 export default function SearchBox({
     data,
     word,
     closeBox,
-}: { data: SearchBoxInterface[]; word: string; closeBox: () => void }) {
+}: {
+    data: SearchBoxInterface[];
+    word: string;
+    closeBox: () => void;
+}) {
     const { memberRoll } = useContext(MainContext) as MainContextValues;
     const { getHierarchyFolderContent } = useFolderManager();
     const hasResults = data?.length > 0 && word?.length > 0;
-    const { organization_id: slug } = useParams();
+    const { working_group_id: slug } = useParams();
     const navigate = useNavigate();
 
     // Función waitFor: waits for a condition to be met or a timeout
@@ -45,24 +49,19 @@ export default function SearchBox({
 
     const handleClick = async (id: string, type: number) => {
         if (!slug) {
-            message.error('Cant find organization');
+            message.error('Cant find working group');
             return;
         }
         if (type === 1) {
-            const pageType = import.meta.env.VITE_PAGE_TYPE;
-            if (pageType === 'quill') {
-                console.log(memberRoll);
-                if (memberRoll) {
-                    navigate(`/${slug}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
-                    return;
-                } else {
-                    message.error('Member roll data is unavailable.');
-                }
-
-                //navigate(`/textEditor/${id}`);
+            console.log(memberRoll);
+            if (memberRoll) {
+                navigate(`/${slug}/edit/${id}`, { state: { readOnly: !memberRoll.write } });
+                return;
             } else {
-                navigate(`/page/${id}`);
+                message.error('Member roll data is unavailable.');
             }
+
+            //navigate(`/textEditor/${id}`);
         } else if (type === 0) {
             try {
                 //navigate('/home')
@@ -128,7 +127,7 @@ export default function SearchBox({
             style={{
                 position: 'absolute',
                 width: '100%',
-             
+
                 top: '100%',
                 maxHeight: '250px',
                 overflowY: 'auto',
@@ -136,7 +135,6 @@ export default function SearchBox({
                 backgroundColor: 'white',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 zIndex: 1000,
-
             }}
         >
             {data?.map(item => {
@@ -158,7 +156,7 @@ export default function SearchBox({
                         {/*
                             <img src={item.type === 1 ? unPublishedFile : folderIcon} alt="File icon" width={37} />
                         */}
-                        { item.type === 1  ? <CiFileOn size={25} /> : <PiFolderLight className='folder-icon' />}
+                        {item.type === 1 ? <CiFileOn size={25} /> : <PiFolderLight className="folder-icon" />}
                         <div style={{ flex: 1 }}>
                             <div
                                 style={{

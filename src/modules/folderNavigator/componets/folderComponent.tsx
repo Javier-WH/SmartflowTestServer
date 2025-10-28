@@ -1,28 +1,29 @@
-import { Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
-import type { ContainerElement } from '../types/componets';
-import FolderContainer from './folderContainer';
-import { useState, useContext, useEffect } from 'react';
-import useFolderManager from '../hooks/useFolderManager';
-import useFilesManager from '../hooks/useFileManager';
-import type { Folder, FolderNavigatorContextValues, FolderData } from '../types/folder';
-import { FolderNavigatorContext } from '../context/folderNavigatorContext';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Dropdown, message } from 'antd';
+import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PiFolderLight } from "react-icons/pi";
-import { PiFolderOpenLight } from "react-icons/pi";
+import { PiFolderLight, PiFolderOpenLight } from 'react-icons/pi';
+import { useNavigate, useParams } from 'react-router-dom';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
+import { FolderNavigatorContext } from '../context/folderNavigatorContext';
+import useFilesManager from '../hooks/useFileManager';
+import useFolderManager from '../hooks/useFolderManager';
+import type { ContainerElement } from '../types/componets';
+import type { Folder, FolderData, FolderNavigatorContextValues } from '../types/folder';
+import FolderContainer from './folderContainer';
 import './folderContainer.css';
+import { LuFilePlus2, LuFolderOutput, LuFolderPen, LuFolderPlus, LuFolders, LuFolderX } from 'react-icons/lu';
 import SortModal from '../sortModal/sortModal';
-import { LuFolderOutput, LuFolderPlus, LuFolderPen, LuFolderX, LuFolders, LuFilePlus2 } from "react-icons/lu";
-
-
 
 export function FolderComponent({
     folder,
     containerid,
     depth,
-}: { folder: ContainerElement; containerid: string | null; depth: number }) {
+}: {
+    folder: ContainerElement;
+    containerid: string | null;
+    depth: number;
+}) {
     const {
         setModalFolder,
         setModalDeleteFolder,
@@ -38,10 +39,9 @@ export function FolderComponent({
     const { moveFolder, moveFolderToRoot, getFilesCount } = useFolderManager();
     const { moveFile, createFile } = useFilesManager();
     const [contentId, setContentId] = useState<string | null>(null);
-    const { organization_id: slug } = useParams();
-    const [/*filesCount*/, setFilesCount] = useState<string | number>('0');
+    const { working_group_id: slug } = useParams();
+    const [/*filesCount*/ , setFilesCount] = useState<string | number>('0');
     const [sortFolderId, setSortFolderId] = useState<string | null>(null);
-  
 
     // updates the number of files when a file is moved
     useEffect(() => {
@@ -102,7 +102,7 @@ export function FolderComponent({
             return;
         }
         if (!slug) {
-            message.error(t('can_not_find_organization_message'));
+            message.error(t('can_not_find_working_group_message'));
             return;
         }
         createFile('untitled', folder.id, slug).then(res => {
@@ -111,7 +111,6 @@ export function FolderComponent({
                 return;
             }
             const id = res.data;
-            const pageType = import.meta.env.VITE_PAGE_TYPE;
 
             const currentFolder = document.getElementById(folder.id);
             if (currentFolder) {
@@ -125,11 +124,7 @@ export function FolderComponent({
                 }
             }
 
-            if (pageType === 'quill') {
-                navigate(`/${slug}/edit/${id}`);
-            } else {
-                navigate(`/page/${id}`);
-            }
+            navigate(`/${slug}/edit/${id}`);
         });
     };
 
@@ -240,8 +235,6 @@ export function FolderComponent({
             return;
         }
 
-
-
         if (request.data) {
             const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
             setUpdateFolderRequest(gruppedByContainer);
@@ -252,16 +245,13 @@ export function FolderComponent({
         }
     };
 
-
-
-
     const popoverContent = (
-        <div className='folderPopPup'>
-            <LuFolderOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()}/> 
-            <LuFolderPlus title={t('create_new_folder_label')} onClick={() => handleCreateOrUpdateFolder()} /> 
-            <LuFolderPen title={t('rename_folder_label')} onClick={() => handleCreateOrUpdateFolder(true)} /> 
-            <LuFolderX title={t('delete_folder_label')} onClick={() => handleDeleteFolder()} /> 
-            <LuFolders title={t('sort_folder_label')} onClick={() => handleSortFolder()} /> 
+        <div className="folderPopPup">
+            <LuFolderOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()} />
+            <LuFolderPlus title={t('create_new_folder_label')} onClick={() => handleCreateOrUpdateFolder()} />
+            <LuFolderPen title={t('rename_folder_label')} onClick={() => handleCreateOrUpdateFolder(true)} />
+            <LuFolderX title={t('delete_folder_label')} onClick={() => handleDeleteFolder()} />
+            <LuFolders title={t('sort_folder_label')} onClick={() => handleSortFolder()} />
             <LuFilePlus2 title={t('create_new_file_label')} onClick={() => handleCreateFile()} />
         </div>
     );
@@ -269,26 +259,26 @@ export function FolderComponent({
     return (
         <div>
             <Dropdown menu={{ items: menu }} trigger={['contextMenu']} placement="bottomLeft">
-         
-                    <div
-                        id={folder.id}
-                        data-depth={depth}
-                        style={{ display: 'flex', alignItems: 'center', gap: 10 }}
-                        onClick={() => toggleFolder(folder.id ?? null)}
-                        className={`folder ${contentId === null ? '' : 'opened'} `}
-                        draggable
-                        onDragStart={event => handleDragStart(event, folder.id, folder.type)}
-                        onDragOver={handleDragOver}
-                        onDrop={event => handleDrop(event, folder.id, folder.type)}
-                        onDragLeave={handleDragLeave}
-                        title={folder.name}
-                    >
-
-                        {contentId ? <PiFolderOpenLight className='folder-icon' /> : <PiFolderLight className='folder-icon' />}
-                        <span className="folder-name">{`${folder.id === selectedFolderId || folder.id === sortFolderId ? '•' : ''} ${folder.name}`}</span>
-
-                    </div>
-               
+                <div
+                    id={folder.id}
+                    data-depth={depth}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+                    onClick={() => toggleFolder(folder.id ?? null)}
+                    className={`folder ${contentId === null ? '' : 'opened'} `}
+                    draggable
+                    onDragStart={event => handleDragStart(event, folder.id, folder.type)}
+                    onDragOver={handleDragOver}
+                    onDrop={event => handleDrop(event, folder.id, folder.type)}
+                    onDragLeave={handleDragLeave}
+                    title={folder.name}
+                >
+                    {contentId ? (
+                        <PiFolderOpenLight className="folder-icon" />
+                    ) : (
+                        <PiFolderLight className="folder-icon" />
+                    )}
+                    <span className="folder-name">{`${folder.id === selectedFolderId || folder.id === sortFolderId ? '•' : ''} ${folder.name}`}</span>
+                </div>
             </Dropdown>
             <div className="ml-8">
                 {contentId && (
@@ -297,7 +287,12 @@ export function FolderComponent({
                     </div>
                 )}
             </div>
-            <SortModal containerid={sortFolderId} setContainerid={setSortFolderId} slug={slug} folderName={folder.name} />
+            <SortModal
+                containerid={sortFolderId}
+                setContainerid={setSortFolderId}
+                slug={slug}
+                folderName={folder.name}
+            />
         </div>
     );
 }
