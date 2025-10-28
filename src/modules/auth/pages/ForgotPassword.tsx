@@ -14,7 +14,7 @@ const ForgotPassword = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { token, forgotPassword } = useAuth();
+    const { user, forgotPassword } = useAuth();
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -52,8 +52,8 @@ const ForgotPassword = () => {
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        if (token) navigate('/');
-    }, [token]);
+        if (user) navigate('/');
+    }, [user]);
 
     return (
         <form
