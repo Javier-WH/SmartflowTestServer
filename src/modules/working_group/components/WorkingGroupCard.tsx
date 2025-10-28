@@ -327,9 +327,7 @@ export default function WorkingGroupCard({
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Working Group actions">
-
-                                    {
-                                        (organization.open || organization.is_creator) &&
+                                    {workingGroup.open || workingGroup.is_creator ? (
                                         <DropdownItem
                                             key="leave-option"
                                             className="text-default-900 scale-120"
@@ -340,7 +338,7 @@ export default function WorkingGroupCard({
                                         >
                                             {t('Members_label')}
                                         </DropdownItem>
-                                    )}
+                                    ) : null}
 
                                     {(workingGroup.is_creator || workingGroup.configure) && (
                                         <DropdownItem
