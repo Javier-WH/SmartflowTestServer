@@ -27,7 +27,7 @@ import {
 import groupDataByContainer from '../context/utils/groupDataByContainer';
 import { t } from 'i18next';
 import { sortByOrder } from './fucntions';
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 
 // ---------------------------------
 
@@ -162,8 +162,8 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
       cancelText={t("cancel_label")}
       width={600}
       footer={[<div key="buttons" className="flex justify-end gap-2">
-        <Boton neutral text={t('cancel_label')} onClick={handleCancel} />
-        <Boton  text={t("save_order_label")} onClick={handleOk} />
+        <Button neutral text={t('cancel_label')} onClick={handleCancel} />
+        <Button  text={t("save_order_label")} onClick={handleOk} />
       </div>
       ]}
     >
