@@ -282,7 +282,9 @@ export default function Menbers() {
 
                                         <Dropdown>
                                             <DropdownTrigger className="cursor-pointer outline-none rounded-full">
-                                                <CiMenuKebab className="text-lg" />
+                                                <span>
+                                                    <CiMenuKebab className="text-lg" />
+                                                </span>
                                             </DropdownTrigger>
 
                                             <DropdownMenu

@@ -3,12 +3,11 @@ import {
     EditOutlined,
     LogoutOutlined,
     MoreOutlined,
-    TeamOutlined,
     UserAddOutlined,
     UserOutlined,
 } from '@ant-design/icons';
 import {
-    Button,
+  
     Card,
     CardBody,
     CardFooter,
@@ -19,11 +18,10 @@ import {
     DropdownTrigger,
     useDisclosure,
 } from '@heroui/react';
-import { type ChangeEvent, type ReactNode, useContext, useEffect, useState } from 'react';
+import { type ChangeEvent, type ReactNode,  useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '@/modules/auth/hooks/useAuth';
-import { MainContext, type MainContextValues } from '../../mainContext';
 import useWorkingGroup from '../hook/useWorkingGroup';
 import type { WorkingGroup } from '../types/working_group';
 import type { UserRoll } from '../working_group';
@@ -46,7 +44,7 @@ export default function WorkingGroupCard({
     workingGroup: WorkingGroup;
     userRolls?: UserRoll[];
 }) {
-    const { memberRoll } = useContext<MainContextValues>(MainContext);
+    
     const navigate = useNavigate();
     const { t } = useTranslation();
     // Modal states
