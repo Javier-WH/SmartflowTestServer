@@ -7,6 +7,7 @@
   "edit_organization_title": "Editar Equipo de Trabajo",
   "delete_organization_title": "Eliminar Equipo de Trabajo",
   "invite_user_title": "Invitar Usuario a ",
+  "multiple_invite_user_title": "Invitar nuevo usuario",
   "leave_organization_title": "Abandonar Equipo de Trabajo",
   "document_explorer_title": "Explorador de Documentos",
   "delete_folder_title": "Eliminar Carpeta ",
@@ -174,6 +175,7 @@
   "total_members": "Total de Miembros",
   "edit_role_subtitle": "Selecciona el rol de este miembro en la organización",
   "invite_user_subtitle": "Invita a un nuevo miembro a la organización",
+  "multiple_invite_user_subtitle": "Invita a un nuevo miembro a los equipos de trabajo seleccionados",
   "navigate_without_saving": "Continuar sin guardar",
   "saving_changes_title": "Guardando cambios",
   "saving_in_progress": "Guardando en progreso",
@@ -212,6 +214,10 @@
   "sort_folder_label": "Ordenar Carpeta",
   "sort_root_label": "Ordenar",
   "save_order_label": "Guardar Orden",
-  "order_message": "Arrastra y suelta los archivos y carpetas para cambiar su orden."
+  "order_message": "Arrastra y suelta los archivos y carpetas para cambiar su orden.",
+  "delete_menber_label": "Eliminar Miembro",
+  "select_working_groups_label": "Grupos de Trabajo",
+  "select_working_groups_placeholder": "puedes seleccionar uno o más grupos de trabajo",
+  "select_working_groups_message": "Por favor selecciona al menos un grupo de trabajo"
 
 }

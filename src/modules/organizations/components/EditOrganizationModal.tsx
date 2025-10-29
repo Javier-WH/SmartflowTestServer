@@ -1,7 +1,8 @@
 import type { ChangeEvent } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Textarea } from '@heroui/react';
-import { Button, Input } from '@/components/ui';
+import { Input } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
+import Button from '@/components/ui/Button';
 interface EditOrganizationModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -22,7 +23,6 @@ export default function EditOrganizationModal({
     formData,
     handleInputChange,
     handleSubmit,
-    isSubmitting,
     formError,
 }: EditOrganizationModalProps) {
     const { t } = useTranslation();
@@ -60,12 +60,8 @@ export default function EditOrganizationModal({
                                 {formError && <p className="text-danger text-sm">{formError}</p>}
                             </ModalBody>
                             <ModalFooter>
-                                <Button variant="bordered" onPress={onClose}>
-                                    {t("cancel_label")}
-                                </Button>
-                                <Button type="submit" color="primary" isLoading={isSubmitting}>
-                                    {t("save_changes_label")}
-                                </Button>
+                                <Button neutral text={t("cancel_label")} onClick={onClose}/>
+                                <Button text={t("save_changes_label")}  type='submit'/>
                             </ModalFooter>
                         </form>
                     </>

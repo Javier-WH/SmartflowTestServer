@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import { useTranslation } from 'react-i18next';
 import { useContext } from 'react';
+//import MultipleInviteUserModal from '../MultipleInviteUserModal';
 
 export default function UserMenu() {
     const { t } = useTranslation();
@@ -13,48 +14,68 @@ export default function UserMenu() {
     const { setParentFolders } = useContext(MainContext) as MainContextValues;
     const isMembersPage = location.pathname.endsWith('/members');
     const { user, signOut } = useAuth();
+    //const [openInviteModal, setOpenInviteModal] =  useState(false);
 
-    const isHomePage = location.pathname === '/home';
-    const isOrganizationsPage = location.pathname.startsWith('/organizations');
+    //const isHomePage = location.pathname === '/home';
+    //const isOrganizationsPage = location.pathname.startsWith('/organizations');
 
     const renderMenu = () => {
-        if (isHomePage || isOrganizationsPage) {
-            return (
-                <DropdownMenu aria-label="User Actions" variant="flat">
-                    <DropdownItem key="logout" color="danger" onPress={signOut}>
-                        {t('logout_button')}
-                    </DropdownItem>
-                </DropdownMenu>
-            );
-        }
+        const menuItems = [];
+
+        /*if (isHomePage || isOrganizationsPage) {
+          
+        }*/
 
         if (organization_id) {
-            return (
-                <DropdownMenu aria-label="User Actions" variant="flat">
-                    <DropdownItem key="organizations" onPress={() => { navigate('/organizations'); setParentFolders(''); }}>
-                        {t('organizations_label')}
-                    </DropdownItem>
-                    {!isMembersPage ?
-                        <DropdownItem key="members" onPress={() => { navigate(`/${organization_id}/members`); setParentFolders(''); }}>
-                            {t('Members_label')}
-                        </DropdownItem>
-                        : <DropdownItem key="members" onPress={() => { navigate(`/${organization_id}/home`); setParentFolders(''); }}>
-                            {t('Editor_label')}
-                        </DropdownItem>
-                    }
-
-                    <DropdownItem key="logout" color="danger" onPress={() => { setParentFolders(''); signOut() }}>
-                        {t('logout_button')}
-                    </DropdownItem>
-                </DropdownMenu>
+            menuItems.push(
+                <DropdownItem key="organizations" onPress={() => { navigate('/organizations'); setParentFolders(''); }}>
+                    {t('organizations_label')}
+                </DropdownItem>,
+                <DropdownItem
+                    key="members"
+                    onPress={() => {
+                        const target = isMembersPage ? `/${organization_id}/home` : `/${organization_id}/members`;
+                        navigate(target);
+                        setParentFolders('');
+                    }}
+                >
+                    {isMembersPage ? t('Editor_label') : t('Members_label')}
+                </DropdownItem>
             );
         }
 
-        return null;
+        // Logout is always shown if user is authenticated
+        if (user) {
+            menuItems.push(
+
+                <DropdownItem key="custom-divider" className="pointer-events-none p-0">
+                    <div className="h-px bg-default-200 my-2 w-full" />
+                </DropdownItem>,
+
+                <DropdownItem
+                    key="logout"
+                    color="danger"
+                    onPress={() => {
+                        setParentFolders('');
+                        signOut();
+                    }}
+                >
+                    {t('logout_button')}
+                </DropdownItem>
+            );
+        }
+
+        return (
+            <DropdownMenu aria-label="User Actions" variant="flat">
+                {menuItems}
+            </DropdownMenu>
+        );
     };
+
 
     return (
         <div className="flex items-center gap-4">
+            {/*<MultipleInviteUserModal isOpen={openInviteModal} onClose={() => setOpenInviteModal(false)} userId={user?.id || ''} />*/}
             <Dropdown placement="bottom-start">
                 <DropdownTrigger>
                     <User

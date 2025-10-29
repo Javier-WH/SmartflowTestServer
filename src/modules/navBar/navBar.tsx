@@ -116,7 +116,7 @@ export default function NavBar() {
                     className="logo-container"
                     style={{ display: 'flex', alignItems: 'center', width: '100%', maxWidth: '600px', gap: '10px' }}
                 >
-                    <Link to="/home">
+                    <Link to="/home" style={{ color: 'var(--mainColor)' }}>
                         <img src={Logo} alt="" />
                     </Link>
                     <SearchInput />
