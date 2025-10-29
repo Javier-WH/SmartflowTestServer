@@ -196,7 +196,7 @@ export default function WorkingGroups() {
                         />
                     </div>
                     <div className="flex justify-between items-center">
-                        <Button text={t("create_organization_button")} icon={<PlusOutlined />} onClick={handleCreateWorkingGroup} />
+                        <Button text={t("create_working_group_button")} icon={<PlusOutlined />} onClick={handleCreateWorkingGroup} />
                     </div>
                 </div>
 
@@ -209,7 +209,7 @@ export default function WorkingGroups() {
                         {searchTerm ? (
                             <Button text={t("clear_search_button")} onClick={() => setSearchTerm('')} />
                         ) : (
-                            <Button text={t("create_your_first_organization_message")} onClick={handleCreateWorkingGroup} />
+                            <Button text={t("create_your_first_working_group_message")} onClick={handleCreateWorkingGroup} />
                         )}
                     </div>
                 ) : (

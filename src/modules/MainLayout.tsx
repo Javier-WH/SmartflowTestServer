@@ -5,6 +5,7 @@ import logo from '../assets/svg/Logo_Smartflo.svg';
 import useAuth from './auth/hooks/useAuth';
 import SearchInput from './search/searchInput';
 import useWorkingGroup from './working_group/hook/useWorkingGroup';
+import { MainContextProvider } from './mainContext';
 
 function Header() {
 
@@ -73,7 +74,7 @@ export default function MainLayout() {
     }
 
     return (
-
+        <MainContextProvider>
         <div className="flex flex-col h-full w-full">
             <Header />
             <main className="h-[calc(100%-70px)]">
@@ -81,6 +82,6 @@ export default function MainLayout() {
             </main>
             {/* <Chat /> */}
         </div>
-
+        </MainContextProvider>
     );
 }
