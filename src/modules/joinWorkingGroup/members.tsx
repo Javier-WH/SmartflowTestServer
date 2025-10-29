@@ -3,6 +3,7 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from '@h
 import { message } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CiMenuKebab } from 'react-icons/ci';
 import { FiSearch, FiUsers } from 'react-icons/fi';
 //import { IoMdArrowRoundBack } from 'react-icons/io';
 import { ImUser } from 'react-icons/im';
@@ -14,7 +15,7 @@ import InviteUserModal from '../working_group/components/InviteUserModal';
 import useWorkingGroups from '../working_group/hook/useWorkingGroup';
 import DeleteMemberModal from './deleteMemberModal';
 import EditMemberModal from './editMemberModal';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui';
 
 export interface WorkingGroup {
     id: string;
@@ -239,10 +240,8 @@ export default function Menbers() {
                             </div>
                             <h1 className="text-2xl font-semibold text-gray-800 ">{workingGroup?.name}</h1>
                         </div>
-                            {(workingGroup?.user_id === user?.id || memberRoll?.invite) && (
-
-                                <Button text={t('invite_member_label')} onClick={() => setInviteUserOpen(true)}/>
-                    
+                        {(workingGroup?.user_id === user?.id || memberRoll?.invite) && (
+                            <Button text={t('invite_member_label')} onClick={() => {setInviteUserOpen(true)}}/>
                         )}
                     </div>
 
@@ -282,15 +281,8 @@ export default function Menbers() {
                                         </div>
 
                                         <Dropdown>
-                                            <DropdownTrigger>{/*
-                                                <Button
-                                                variant="light"
-                                                aria-label="Menú de opciones"
-                                                className="rounded-[15px] text-gray-500 hover:bg-gray-100"
-                                                >
-                                                    <CiMenuKebab className="text-lg" />
-                                                </Button>
-                                                */}
+                                            <DropdownTrigger className="cursor-pointer outline-none rounded-full">
+                                                <CiMenuKebab className="text-lg" />
                                             </DropdownTrigger>
 
                                             <DropdownMenu

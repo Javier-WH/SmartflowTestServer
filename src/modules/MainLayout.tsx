@@ -30,17 +30,11 @@ function Header() {
 
     return (
         <header className="flex justify-end md:justify-between items-center px-8 w-full h-[50px] top-0  shadow-md">
-            <h1 className="max-md:hidden relative md:block font-[300] text-[40px] tracking-[0.3rem] cursor-pointer" >
-                <img src={logo} alt="logo" style={{ width: "200px", height: "35px", filter: "hue-rotate(296deg)" }} />
-                { /*<span
-                style={{
-                    position: "absolute",
-                    fontSize: "1rem",
-                    right: "0",
-                    top: "50%"
-                }}                
-            >Insurance</span>*/}
-            </h1>
+            <Link to="/working_group">
+                <h1 className="max-md:hidden relative md:block font-[300] text-[40px] tracking-[0.3rem] cursor-pointer" >
+                    <img src={logo} alt="logo" style={{ width: "200px", height: "35px", filter: "hue-rotate(296deg)" }} />
+                </h1>
+            </Link>
             <div className="flex items-center justify-self-end gap-4 grow">
                 <nav className="[&_a]:text-blue-600 [&_a]:hover:underline">
                     <li className="list-none inline-block mx-4">
@@ -75,13 +69,13 @@ export default function MainLayout() {
 
     return (
         <MainContextProvider>
-        <div className="flex flex-col h-full w-full">
-            <Header />
-            <main className="h-[calc(100%-70px)]">
-                <Outlet />
-            </main>
-            {/* <Chat /> */}
-        </div>
+            <div className="flex flex-col h-full w-full">
+                <Header />
+                <main className="h-[calc(100%-70px)]">
+                    <Outlet />
+                </main>
+                {/* <Chat /> */}
+            </div>
         </MainContextProvider>
     );
 }
