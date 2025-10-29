@@ -10,7 +10,6 @@ import {
     DropdownMenu,
     DropdownItem,
     DropdownTrigger,
-    Button,
     useDisclosure,
 } from '@heroui/react';
 import {
@@ -308,7 +307,7 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                 <CardBody className="p-5">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                           {/* <div className="bg-primary/10 p-3 rounded-full">
+                            {/* <div className="bg-primary/10 p-3 rounded-full">
                                 <TeamOutlined style={{ fontSize: '24px', color: 'var(--heroui-colors-primary)' }} />
                             </div>*/}
                             <div className="ml-2">
@@ -321,16 +320,12 @@ export default function OrganizationCard({ organization, userRolls }: { organiza
                         {(organization.is_creator || organization.is_member) && (
                             <Dropdown>
                                 <DropdownTrigger>
-                                    <Button
-                                        isIconOnly
-                                        variant="light"
-                                        className="text-default-900 scale-120"
-                                        radius="full"
-                                        size="lg"
+                                    <span
+                                        className="text-default-900 scale-120 cursor-pointer"
                                         onClick={e => e.stopPropagation()}
                                     >
                                         <MoreOutlined />
-                                    </Button>
+                                    </span>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Organization actions">
 
