@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 //import { Spinner } from "@heroui/react";
-import Spinner from '@/components/ui/Spiner';
+import Spinner from '@/components/ui/Spinner';
 import { AuthContext } from './modules/auth/context/auth';
 
 const PrivateRoute = ({ children }: { children: React.ReactElement }): React.ReactElement => {

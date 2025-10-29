@@ -6,7 +6,7 @@ import {Input } from '@/components/ui';
 import AlertMessage from '../components/ErrorMessage';
 import useAuth from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
@@ -76,7 +76,7 @@ const ForgotPassword = () => {
                     {error && <AlertMessage text={error} />}
 
                     
-                    <Boton  text={t("send_button")} type="submit" loading={loading} />
+                    <Button  text={t("send_button")} type="submit" loading={loading} />
             
 
              

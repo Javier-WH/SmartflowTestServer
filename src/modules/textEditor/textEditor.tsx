@@ -14,7 +14,7 @@ import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import { getParentFoldersForFile } from '../../utils/pageUtils.ts';
 import { useDebouncedCallback } from 'use-debounce';
 import { Textarea } from '@heroui/react';
-import Spinner from '@/components/ui/Spiner.tsx';
+import Spinner from '@/components/ui/Spinner.tsx';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';

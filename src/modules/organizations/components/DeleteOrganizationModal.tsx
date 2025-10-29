@@ -1,7 +1,7 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react";
 import type { Organization } from '../types/organizations';
 import { useTranslation } from 'react-i18next';
-import Boton from "@/components/ui/Boton";
+import Button from "@/components/ui/Button";
 
 interface DeleteOrganizationModalProps {
     isOpen: boolean;
@@ -34,8 +34,8 @@ export default function DeleteOrganizationModal({
                             {formError && <p className="text-danger text-sm mt-2">{formError}</p>}
                         </ModalBody>
                         <ModalFooter>
-                            <Boton neutral onClick={onClose} text={t("cancel_label")}/> 
-                            <Boton danger onClick={handleDeleteConfirm} text={t("delete_label")}/>
+                            <Button neutral onClick={onClose} text={t("cancel_label")}/> 
+                            <Button danger onClick={handleDeleteConfirm} text={t("delete_label")}/>
                         </ModalFooter>
                     </>
                 )}

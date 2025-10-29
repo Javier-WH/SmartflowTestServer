@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import useOrganizations from '../organizations/hook/useOrganizations.ts';
 import { useTranslation } from 'react-i18next';
 import { FiUser, FiCheck } from 'react-icons/fi';
-import Boton from "@/components/ui/Boton.tsx";
+import Button from "@/components/ui/Button.tsx";
 
 interface EditMemberModalProps {
   member: Member | null;
@@ -143,8 +143,8 @@ export default function EditMemberModal({ member, setMember, rolls, organization
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
 
 
-              <Boton neutral text={t("cancel_label")} onClick={() => setMember(null)} />
-              <Boton text={t("save_label")} onClick={handleSave} />
+              <Button neutral text={t("cancel_label")} onClick={() => setMember(null)} />
+              <Button text={t("save_label")} onClick={handleSave} />
 
 
             </div>

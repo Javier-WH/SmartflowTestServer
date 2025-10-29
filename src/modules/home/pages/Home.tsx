@@ -2,7 +2,7 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import FolderNavigator from '@/modules/folderNavigator/folderNavigator';
 import '../css/home.css';
 
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 import {
     IconChevronDown,
     IconChevronLeft,
@@ -42,7 +42,7 @@ export default function Home() {
     const getLevelTitle = (level: string): ReactNode => {
 
         if (level.toLocaleLowerCase() === "creator") {
-            return <span className="text-xsh-[25px] bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
+            return <span className="text-xs h-[25px] bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
                 {t('creator_label')}
             </span>
 
@@ -140,7 +140,7 @@ export default function Home() {
             <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
                 {/* Mobile Header Container */}
                 <div className='md:hidden w-full'>
-                    <Boton neutral text={t('document_explorer_title')} height='h-[30px]' width='w-full' icon={isSidebarCollapsed ? <IconChevronDown /> : <IconChevronUp />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
+                    <Button neutral text={t('document_explorer_title')} height='h-[30px]' width='w-full' icon={isSidebarCollapsed ? <IconChevronDown /> : <IconChevronUp />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
                 </div>
 
 
@@ -168,7 +168,7 @@ export default function Home() {
                                     <div className='flex gap-1'>
                                         {
                                             memberRoll?.write &&
-                                            <Boton width='w-10' icon={<TbArrowsSort size={20} />} borderless title={t('sort_root_label')} onClick={() => setContainerId("root")} />
+                                            <Button width='w-10' icon={<TbArrowsSort size={20} />} borderless title={t('sort_root_label')} onClick={() => setContainerId("root")} />
                                         }
                                     </div>
                                     <div style={{marginTop: "5px", marginLeft: "35px"}}>
@@ -178,8 +178,8 @@ export default function Home() {
                                     </div>
 
                                     <div className='flex gap-1'>
-                                        <Boton width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
-                                        <Boton width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
+                                        <Button width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
+                                        <Button width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
                                     </div>
                                 </div>
 
@@ -192,13 +192,13 @@ export default function Home() {
                         <div
                             className={`flex flex-col items-center gap-2 pt-4 mt-6 ${isSidebarCollapsed ? 'opacity-100 visible' : 'opacity-0 invisible absolute'}`}
                         >
-                            <Boton trasparent width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
-                            <Boton trasparent width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
+                            <Button trasparent width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
+                            <Button trasparent width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
                         </div>
 
                         {/* Desktop Toggle Button */}
                         <div className="absolute right-[-13px] top-1/2 -translate-y-1/2 border-2 rounded-full border-gray-200 ">
-                            <Boton borderless neutral text='' width='w-[10px]' height='h-[33px]' icon={isSidebarCollapsed ? <IconChevronRight /> : <IconChevronLeft />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
+                            <Button borderless neutral text='' width='w-[10px]' height='h-[33px]' icon={isSidebarCollapsed ? <IconChevronRight /> : <IconChevronLeft />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
                         </div>
 
                     </nav>

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import type { Organization } from '../modules/organizations/types/organizations';
 import { UserRoll } from '../modules/organizations/organizations';
 import { FiCheck, FiUsers } from 'react-icons/fi';
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 import useOrganizations from '@/modules/organizations/hook/useOrganizations';
 import { useEffect, useState } from 'react';
 
@@ -283,8 +283,8 @@ export default function MultipleInviteUserModal({
                                 {inviteError && <p className="text-danger text-sm mt-2">{inviteError}</p>}
                             </ModalBody>
                             <ModalFooter className="p-5 pt-4 border-t border-gray-100">
-                                <Boton neutral onClick={handleClose} text={t('cancel_label')} />
-                                <Boton loading={isInviting} type="submit" text={t('send_button')} />
+                                <Button neutral onClick={handleClose} text={t('cancel_label')} />
+                                <Button loading={isInviting} type="submit" text={t('send_button')} />
                             </ModalFooter>
                         </form>
                     </>
