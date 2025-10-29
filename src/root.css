@@ -4,9 +4,13 @@
 
 :root {
     /*global*/
-    /*--mainColor: rgb(109 74 255 / 99%);*/ /*classic*/
-    --mainColor: #007AC2; /*insurance*/
-    --mainColorLight: #cdedff;/*insurance*/
+    /*classic*/
+    /*--mainColor: rgb(109 74 255 / 99%);*/ 
+    /* --mainColorLight: #cdedff;*/
+    /*insurance*/
+    --mainColor: #007AC2; 
+    --mainColorLight: #cdedff;
+    /**/
     --backgroundColor: rgba(255, 255, 255);
     --backGroundDangerColor: rgb(255, 34, 34);
     --backGroundNeutralColor: rgb(180, 180, 180);
@@ -22,7 +26,6 @@
     --navBarHeight: 300px;
     --pageBarColor: hsla(211, 39%, 23%);
     --pageWidth: 700px;
-    /*--folder-decoration-lines: 2px solid rgb(171, 157, 228);*/
     --folder-decoration-lines: 1px dotted rgb(182, 180, 180);
     --fillColor: rgb(222, 222, 222);
     --strokeColor: rgb(135, 135, 135);
@@ -37,10 +40,10 @@
     --buttonTextColor2: rgb(187, 29, 29);
     --buttonborderColor2: green;
     --buttonBorderThickness: 1px;
+    --buttonBorderRadius: 30px;
+    --buttonTextSize: 14px;
 
     --boxShadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.25);
-    --cornetRounded: 30px;
-    --butonTextSize: 14px;
 
     
 }
@@ -84,14 +87,3 @@ body {
     scale: 1.5;
     fill: rgba(159, 137, 248, 0.99) !important;
 }
-/*
-#searchBox::before{
-    content: " ";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    border: 1px solid gray;
-    pointer-events: none;
-}*/

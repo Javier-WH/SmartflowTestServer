@@ -149,7 +149,7 @@ export const Button: React.FC<ButtonProps> = ({
   // Logic for font size:
   // Uses the 'textSize' value if provided, otherwise, 
   // uses the root CSS variable.
-  const buttonFontSize: string = textSize || 'var(--butonTextSize)';
+  const buttonFontSize: string = textSize || 'var(--buttonTextSize)';
   // ----------------------------------------------------
 
   // Applies styles to the SVG element within the span:
@@ -162,7 +162,7 @@ export const Button: React.FC<ButtonProps> = ({
 
     fontSize: buttonFontSize,
 
-    borderRadius: 'var(--cornetRounded)',
+    borderRadius: 'var(--buttonBorderRadius)',
     ...(borderless ? {} : {
       boxShadow: 'var(--boxShadow)',
       borderWidth: 'var(--buttonBorderThickness)'

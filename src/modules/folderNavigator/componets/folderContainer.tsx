@@ -2,8 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
-//import { Spinner } from '@heroui/react';
-import Spinner from '@/components/ui/Spiner';
+import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui';
 import { IconFilePlus } from '@tabler/icons-react';
 import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
@@ -168,12 +167,7 @@ export default function FolderContainer({ folderId, depth = 0 }: { folderId: str
         return (
             <div className="flex flex-col gap-2 justify-center items-center w-full h-full max-w-[580px] cursor-pointer" onClick={handleCreatePage}>
                 <IconFilePlus className='folder-nav-icon' />
-                <Button
-                    variant="light"
-                    className=" max-w-[580px] w-full h-auto whitespace-normal break-words"
-                >
-                    {t('create_your_first_document_message')}
-                </Button>
+                <Button text={t('create_your_first_document_message')}/>
             </div>
         );
     }

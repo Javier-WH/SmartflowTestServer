@@ -12,7 +12,7 @@ import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import { Textarea, cn } from '@heroui/react';
-import Spinner from '@/components/ui/Spiner.tsx';
+import Spinner from '@/components/ui/Spinner.tsx';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { message, Modal } from 'antd';
 import CustomOrderedList from './components/blots/customOrderedList.ts';

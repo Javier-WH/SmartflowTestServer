@@ -1,6 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
 import { useDisclosure } from '@heroui/react';
-import Spinner from '@/components/ui/Spiner';
+import Spinner from '@/components/ui/Spinner';
 import { Input } from '@/components/ui';
 import { PlusOutlined, TeamOutlined, SearchOutlined } from '@ant-design/icons';
 import useOrganizations from './hook/useOrganizations';

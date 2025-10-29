@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 // import Chat from './chat/chat';
 import { MainContextProvider } from './mainContext';
 //import { Spinner } from '@heroui/react';
-import Spinner from '@/components/ui/Spiner';
+import Spinner from '@/components/ui/Spinner';
 import useOrganizations from './organizations/hook/useOrganizations';
 import useAuth from './auth/hooks/useAuth';
 import UserMenu from '@/components/ui/UserMenu';

@@ -42,7 +42,7 @@ export default function Home() {
     const getLevelTitle = (level: string): ReactNode => {
 
         if (level.toLocaleLowerCase() === "creator") {
-            return <span className="text-xsh-[25px] bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
+            return <span className="text-xs h-[25px] bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
                 {t('creator_label')}
             </span>
 
