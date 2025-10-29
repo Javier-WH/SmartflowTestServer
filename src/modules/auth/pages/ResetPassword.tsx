@@ -2,10 +2,12 @@ import { type FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AlertMessage from '../components/ErrorMessage';
 import { Card, CardBody } from '@heroui/react';
-import { Button, Input } from '@/components/ui';
+import { Input } from '@/components/ui';
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import useAuth from '../hooks/useAuth';
 import { t } from 'i18next';
+import Button from '@/components/ui/Button';
+
 
 const ResetPassword = () => {
     const navigate = useNavigate();
@@ -123,11 +125,9 @@ const ResetPassword = () => {
 
                     {error && <AlertMessage text={error} />}
 
-                    <Button type="submit" isLoading={loading}>
-                        {t("send_button")}
-                    </Button>
+                    <Button type="submit" loading={loading} text ={t("send_button")}/>
 
-                    <Link to="/auth/signin" className="text-center text-primary underline">
+                    <Link to="/auth/signin" className="text-center underline" style={{ color: 'var(--mainColor)' }}>
                         {t("go_back_button")}
                     </Link>
                 </CardBody>

@@ -13,7 +13,8 @@ import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import { getParentFoldersForFile } from '../../utils/pageUtils.ts';
 import { useDebouncedCallback } from 'use-debounce';
-import { Textarea, /*cn,*/ Spinner } from '@heroui/react';
+import { Textarea } from '@heroui/react';
+import Spinner from '@/components/ui/Spinner.tsx';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { Image, message } from 'antd';
 import { MainContext, type MainContextValues } from '../mainContext.tsx';
@@ -536,7 +537,7 @@ export default function TextEditor() {
     if (isLoading && !isInitialContentLoaded) {
         return (
             <div className="flex justify-center items-center h-full">
-                <Spinner size="lg" />
+                <Spinner />
             </div>
         );
     }

@@ -1,8 +1,8 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from '@heroui/react';
 import type { ChangeEvent } from 'react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Textarea } from '@heroui/react';
+import { Input } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
-import { Button, Input } from '@/components/ui';
-
+import Button from '@/components/ui/Button';
 interface EditWorkingGroupModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -23,7 +23,6 @@ export default function EditWorkingGroupModal({
     formData,
     handleInputChange,
     handleSubmit,
-    isSubmitting,
     formError,
 }: EditWorkingGroupModalProps) {
     const { t } = useTranslation();
@@ -61,12 +60,8 @@ export default function EditWorkingGroupModal({
                                 {formError && <p className="text-danger text-sm">{formError}</p>}
                             </ModalBody>
                             <ModalFooter>
-                                <Button variant="bordered" onPress={onClose}>
-                                    {t('cancel_label')}
-                                </Button>
-                                <Button type="submit" color="primary" isLoading={isSubmitting}>
-                                    {t('save_changes_label')}
-                                </Button>
+                                <Button neutral text={t("cancel_label")} onClick={onClose}/>
+                                <Button text={t("save_changes_label")}  type='submit'/>
                             </ModalFooter>
                         </form>
                     </>

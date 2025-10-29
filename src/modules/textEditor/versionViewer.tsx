@@ -11,7 +11,8 @@ import insertGuidedCheckList from './components/guidedCheckList/guidedCheckList.
 import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
-import { Textarea, cn, Spinner } from '@heroui/react';
+import { Textarea, cn } from '@heroui/react';
+import Spinner from '@/components/ui/Spinner.tsx';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { message, Modal } from 'antd';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
@@ -23,6 +24,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import useAuth from '@/modules/auth/hooks/useAuth';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
+import Button from '@/components/ui/Button.tsx';
 
 export interface DocumentVersionData {
     name: string;
@@ -76,6 +78,9 @@ export default function VersionViewer() {
     const { getVersions, addVersion } = useDocumentControlVersion({ documentId: id, userName: `${user?.user_metadata?.name} ${user?.user_metadata?.lastname}` });
     const [isLoadingVersions, setIsLoadingVersions] = useState(false)
     const [selectedVersionId, setSelectedVersionId] = useState<string>('');
+
+    const [isRecoverModalOpen, setIsRecoverModalOpen] = useState(false);
+    const [recoverPayload, setRecoverPayload] = useState<{ htmlContent: string; documentTitle: string } | null>(null);
 
     const debouncedUpdate = useDebouncedCallback(
         async ({ id, htmlContent, title }: { id: string; htmlContent?: string; title?: string }) => {
@@ -191,24 +196,8 @@ export default function VersionViewer() {
 
 
     const handleRecoverClick2 = ({ htmlContent, documentTitle }: { htmlContent: string; documentTitle: string }) => {
-        Modal.confirm({
-            title: t("recovery_version_modal_title"),
-            content: t("recovery_version_modal_description"),
-            okText: t('recovery_version_modal_button'),
-            cancelText: t('cancel_label'),
-            icon: null,
-            okButtonProps: {
-                style: {
-                    backgroundColor: 'rgba(109, 74, 255, 1)',
-                    borderColor: 'rgba(109, 74, 255, 1)',
-                    color: 'white',
-                    outline: 'none'
-                },
-            },
-            onOk: async () => {
-                await debouncedUpdate({ id, htmlContent, title: documentTitle });
-            },
-        });
+        setRecoverPayload({ htmlContent, documentTitle });
+        setIsRecoverModalOpen(true);
     };
 
 
@@ -216,12 +205,39 @@ export default function VersionViewer() {
     if (isMutating || (isLoading && !isInitialContentLoaded)) {
         return (
             <div className="flex justify-center items-center h-full">
-                <Spinner size="lg" />
+                <Spinner  />
             </div>
         );
     }
 
     return (
+        <>  
+            <Modal
+                open={isRecoverModalOpen}
+                onCancel={() => setIsRecoverModalOpen(false)}
+                footer={null}
+                centered
+            >
+                <div className="flex flex-col gap-4">
+                    <h2 className="text-lg font-semibold">{t("recovery_version_modal_title")}</h2>
+                    <p className="text-sm text-gray-600">{t("recovery_version_modal_description")}</p>
+                    <div className="flex justify-end gap-2 mt-4">
+
+                        <Button neutral text={t("cancel_label")} onClick={() => setIsRecoverModalOpen(false)} />
+                        <Button text={t("recovery_version_modal_button")} onClick={async () => {
+                            if (!recoverPayload) return;
+                            await debouncedUpdate({
+                                id,
+                                htmlContent: recoverPayload.htmlContent,
+                                title: recoverPayload.documentTitle,
+                            });
+                            setIsRecoverModalOpen(false);
+                        }} />
+           
+                    </div>
+                </div>
+            </Modal>
+    
         <div style={{ display: "grid", gridTemplateColumns: "1fr 250px", height: "100%" }}>
             <div className="relative flex flex-col h-full overflow-hidden px-[1px]">
 
@@ -316,7 +332,7 @@ export default function VersionViewer() {
                 <div className="flex flex-col gap-3 overflow-y-auto flex-grow pr-1 custom-scrollbar h-[calc(100vh-280px)] scrollbar-track-transparent scrollbar-thin">
                     {isLoadingVersions ? (
                         <div className="flex justify-center items-center h-full">
-                            <Spinner size="lg" />
+                            <Spinner />
                         </div>
                     ) : (
                         documentVersions?.map((version) => (
@@ -372,6 +388,7 @@ export default function VersionViewer() {
             </div>
 
         </div>
+        </>
 
     );
 

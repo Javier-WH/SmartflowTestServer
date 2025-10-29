@@ -261,31 +261,13 @@ export default function WorkingGroupCard({
         }));
     };
 
-    const getLevelTitle = (working_group: WorkingGroup): ReactNode => {
-        if (working_group.is_creator) {
-            return (
-                <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">{t('creator_label')}</span>
-            );
-        } else if (working_group.leveltitle === 'Admin') {
-            return (
-                <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full">
-                    {t('admin_label')}
-                </span>
-            );
-        } else if (working_group.leveltitle === 'Editor') {
-            return (
-                <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full">
-                    {t('editor_label')}
-                </span>
-            );
-        } else if (working_group.leveltitle === 'Lector') {
-            return (
-                <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full">{t('lector_label')}</span>
-            );
-        } else {
-            return (
-                <span className="text-xs bg-pink-500/20 text-red-500 px-2 py-1 rounded-full">{t('unknown_label')}</span>
-            );
+    const getLevelTitle = (organization: WorkingGroup): ReactNode => {
+
+        if (organization.is_creator) {
+            return <span style={{ backgroundColor: "var(--mainColorLight)", color: "var(--mainColor)" }} className="text-xs  px-2 py-1 rounded-full">
+                {t('creator_label')}
+            </span>
+
         }
     };
 
@@ -296,17 +278,16 @@ export default function WorkingGroupCard({
                 isPressable
                 isHoverable
                 onClick={() => handleCardClick(workingGroup.slug || '')}
-                className="border-2 hover:border-primary transition-all duration-200"
+                className="border-2 transition-all duration-200 org-card"
             >
                 <CardBody className="p-5">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <div className="bg-primary/10 p-3 rounded-full">
+                            {/* <div className="bg-primary/10 p-3 rounded-full">
                                 <TeamOutlined style={{ fontSize: '24px', color: 'var(--heroui-colors-primary)' }} />
-                            </div>
-                            <div>
+                            </div>*/}
+                            <div className="ml-2">
                                 <h3 className="text-xl font-medium w-[270px]">{workingGroup.name}</h3>
-
                                 {getLevelTitle(workingGroup)}
                             </div>
                         </div>
@@ -315,30 +296,29 @@ export default function WorkingGroupCard({
                         {(workingGroup.is_creator || workingGroup.is_member) && (
                             <Dropdown>
                                 <DropdownTrigger>
-                                    <Button
-                                        isIconOnly
-                                        variant="light"
-                                        className="text-default-900 scale-120"
-                                        radius="full"
-                                        size="lg"
+                                    <span
+                                        className="text-default-900 scale-120 cursor-pointer"
                                         onClick={e => e.stopPropagation()}
                                     >
                                         <MoreOutlined />
-                                    </Button>
+                                    </span>
                                 </DropdownTrigger>
-                                <DropdownMenu aria-label="Working Group actions">
-                                    {workingGroup.id !== 'f47ac10b-58cc-4372-a567-0e02b2c3d479' && (
-                                        <DropdownItem
-                                            key="leave-option"
-                                            className="text-default-900 scale-120"
-                                            startContent={<UserOutlined />}
-                                            onPress={() => {
-                                                navigate(`/${workingGroup.slug}/members`);
-                                            }}
-                                        >
-                                            {t('Members_label')}
-                                        </DropdownItem>
-                                    )}
+                                <DropdownMenu aria-label="Organization actions">
+
+                                    {
+                                        (workingGroup.open || workingGroup.is_creator) && (
+                                            <DropdownItem
+                                                key="leave-option"
+                                                className="text-default-900 scale-120"
+                                                startContent={<UserOutlined />}
+                                                onPress={() => {
+                                                    navigate(`/${workingGroup.slug}/members`);
+                                                }}
+                                            >
+                                                {t('Members_label')}
+                                            </DropdownItem>
+                                        )
+                                    }
 
                                     {(workingGroup.is_creator || workingGroup.configure) && (
                                         <DropdownItem

@@ -1,15 +1,18 @@
-import { PlusOutlined, SearchOutlined, TeamOutlined } from '@ant-design/icons';
-import { Spinner, useDisclosure } from '@heroui/react';
-import { type ChangeEvent, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button, Input } from '@/components/ui';
+import { useEffect, useState, type ChangeEvent } from 'react';
+import { useDisclosure } from '@heroui/react';
+import Spinner from '@/components/ui/Spinner';
+import { Input } from '@/components/ui';
+import { PlusOutlined, TeamOutlined, SearchOutlined } from '@ant-design/icons';
+import useWorkingGroup from './hook/useWorkingGroup';
 import useAuth from '../auth/hooks/useAuth';
+import type { WorkingGroup, WorkingGroupFormData } from './types/working_group';
 import CreateWorkingGroupModal from './components/CreateWorkingGroupModal';
 import WorkingGroupCard from './components/WorkingGroupCard';
+import { useTranslation } from 'react-i18next';
+import Button from '@/components/ui/Button';
 
-import useWorkingGroup from './hook/useWorkingGroup';
 
-import type { WorkingGroup, WorkingGroupFormData } from './types/working_group';
+
 
 export interface UserRoll {
     id: string;
@@ -150,7 +153,7 @@ export default function WorkingGroups() {
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-[calc(100vh-120px)]">
-                <Spinner size="lg" />
+                <Spinner  />
             </div>
         );
     }
@@ -158,10 +161,8 @@ export default function WorkingGroups() {
     if (error) {
         return (
             <div className="flex flex-col justify-center items-center h-[calc(100vh-120px)]">
-                <p className="text-danger text-lg">{t('error_loading_working_groups')}</p>
-                <Button color="primary" className="mt-4" onClick={() => window.location.reload()}>
-                    Try Again
-                </Button>
+                <p className="text-danger text-lg">{t('error_loading_organizations')}</p>
+                <Button text={t("reload")} icon={<TeamOutlined />} onClick={() => window.location.reload()} />
             </div>
         );
     }
@@ -194,10 +195,8 @@ export default function WorkingGroups() {
                             autoFocus
                         />
                     </div>
-                    <div className="flex justify-between items-center create-workgroup-button">
-                        <Button startContent={<PlusOutlined />} onClick={handleCreateWorkingGroup}>
-                            {t('create_working_group_button')}
-                        </Button>
+                    <div className="flex justify-between items-center">
+                        <Button text={t("create_organization_button")} icon={<PlusOutlined />} onClick={handleCreateWorkingGroup} />
                     </div>
                 </div>
 
@@ -208,13 +207,9 @@ export default function WorkingGroups() {
                             {searchTerm ? t('no_working_group_matched_message') : t('no_working_group_found_message')}
                         </p>
                         {searchTerm ? (
-                            <Button color="primary" variant="light" onClick={() => setSearchTerm('')} className="mt-2">
-                                {t('clear_search_button')}
-                            </Button>
+                            <Button text={t("clear_search_button")} onClick={() => setSearchTerm('')} />
                         ) : (
-                            <Button color="primary" className="mt-4" onClick={handleCreateWorkingGroup}>
-                                {t('create_your_first_working_group_message')}
-                            </Button>
+                            <Button text={t("create_your_first_organization_message")} onClick={handleCreateWorkingGroup} />
                         )}
                     </div>
                 ) : (

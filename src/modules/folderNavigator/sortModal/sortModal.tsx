@@ -121,7 +121,6 @@ export default function SortModal({ containerid, setContainerid, slug, folderNam
 
     return (
         <Modal
-            // 💡 Aplicamos las clases para el estilo minimalista en grises
             wrapClassName={styles['minimal-modal-wrap']} // Para el fondo (backdrop)
             className={styles['minimal-modal']} // Para el cuerpo del modal
             title={

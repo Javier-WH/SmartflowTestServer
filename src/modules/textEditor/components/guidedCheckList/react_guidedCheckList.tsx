@@ -4,7 +4,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DraggableList from 'react-draggable-list';
 import { GoGrabber } from 'react-icons/go';
-import { Input, Collapse, Button, Spin, Modal } from 'antd';
+import { Input, Collapse, Spin, Modal } from 'antd';
 import { RightOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons';
 import reactToWebComponent from 'react-to-webcomponent';
 import 'antd/dist/reset.css';
@@ -16,6 +16,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 import { cn } from '@heroui/react';
 import { t } from 'i18next';
 import { Quill } from 'react-quill';
+import Button from '@/components/ui/Button';
 
 
 // Definir tipos
@@ -73,7 +74,10 @@ class Item extends React.Component<ItemProps> {
                             label: (
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                     <span className="item-index">{item.index + 1}</span>
-                                    {!commonProps.readonly && <Button className='btn-delete-guidance' type="link" icon={<DeleteOutlined />} onClick={handleClickIndex} />}
+                                    {!commonProps.readonly && <div className='btn-delete-guidance'>
+                                            <Button borderless  icon={<DeleteOutlined />} onClick={handleClickIndex} />
+                                        </div>
+                                            }
                                     <Input
                                         readOnly={commonProps.readonly}
                                         placeholder={`${t("what's the")} ${item.index === 0 ? t('first') : t('next')} ${t("step")}?`}
@@ -111,14 +115,7 @@ class Item extends React.Component<ItemProps> {
                                         readonly={commonProps.readonly}
                                     />
                                     <div style={{ width: "100%", display: "flex", justifyContent: "flex-start" }}>
-
-                                        <Button
-                                            className="collapse-next-button"
-                                            onClick={() => commonProps.onNextItem(item.id)}
-
-                                        >
-                                            { }{t('next')}
-                                        </Button>
+                                        <Button text={t('next')} onClick={() => commonProps.onNextItem(item.id)} />
                                     </div>
                                 </>
                             ),
@@ -147,6 +144,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
     const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
 
     const handleDeleteBlot = () => {
@@ -167,17 +165,8 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
         if (!blot) return;
 
         const blotIndex = quillInstance.getIndex(blot);
+        quillInstance.deleteText(blotIndex, 1);
 
-        Modal.confirm({
-            title: t("guided_checklist_delete_message"),
-            okText: t("delete_label"),
-            cancelText: t("cancel_label"),
-            okButtonProps: { danger: true },
-            icon: null,
-            onOk() {
-                quillInstance.deleteText(blotIndex, 1);
-            },
-        });
     };
 
     const handleDuplicateBlot = () => {
@@ -251,46 +240,17 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
         loadData();
     }, [items, title]);
 
-    // update z-index
-    /* useEffect(() => {
-         if (list.length === 0) return;
-         const blotNode = componentRef.current;
-         if (!blotNode) return;
- 
-         const editorContainer = blotNode.closest('.ql-editor')?.parentElement;
-         const quillInstance = (editorContainer as any)?.__quill;
- 
-         if (!quillInstance) {
-             console.error('No se pudo encontrar la instancia de Quill');
-             return;
-         }
- 
-         // Encontrar la posición del blot actual
-         const blot = Quill.find(blotNode);
-         if (!blot) return;
- 
-         const blotIndex = quillInstance.getIndex(blot) + 1;
-         console.log('blotIndex', blotIndex);
- 
- 
-         const baseZIndex = 100;
-         const items = document.querySelectorAll('.guided-checklist > div > div > div');
-     
-         items.forEach((item, index) => {
-             (item as HTMLElement).style.zIndex = ((baseZIndex - index)).toString();
-             //(item as HTMLElement).style.zIndex = "1";
-         });
-     }, [list, list.length]);*/
+
 
     useEffect(() => {
-       
+
         const containers = document.querySelectorAll('.guided-checklist > div > div > div > div');
         containers.forEach((container) => {
             (container as HTMLElement).style.position = "relative";
             (container as HTMLElement).style.zIndex = "auto";
         });
-        
- 
+
+
 
     }, [activeItemId]);
 
@@ -426,13 +386,24 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
             </div>
         );
     return (<>
+        <Modal
+            open={openDeleteModal}
+            onCancel={() => setOpenDeleteModal(false)}
+            title={t("guided_checklist_delete_message")}
+            footer={
+                <div className="flex justify-end gap-2 ">
+                    <Button neutral text={t("cancel_label")} onClick={() => setOpenDeleteModal(false)} />
+                    <Button danger text={t("delete_label")} onClick={handleDeleteBlot} />
+                </div>
+            }
+        >
+        </Modal>
         <div
             contentEditable={false}
             className="guided-checklist"
             ref={el => {
                 if (el) componentRef.current = el.closest('guided-checklist') as HTMLElement | undefined;
             }}
-        //ref={componentRef as React.RefObject<HTMLDivElement>}
         >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center' }}>
                 <Input
@@ -446,8 +417,8 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                 <div className='guided-checklist-header-buttons'>
                     {!commonProps.readonly &&
                         <>
-                            <Button className='btn-delete-gchl' title={t('duplicate_label')} type="link" icon={< CopyOutlined />} onClick={handleDuplicateBlot} />
-                            <Button className='btn-delete-gchl' title={t('delete_label')} type="link" icon={<DeleteOutlined />} onClick={handleDeleteBlot} />
+                            <Button trasparent borderless title={t('duplicate_label')} icon={< CopyOutlined />} onClick={handleDuplicateBlot} />
+                            <Button trasparent borderless title={t('delete_label')} icon={<DeleteOutlined />} onClick={() => setOpenDeleteModal(true)} />
                         </>
                     }
                     <div
@@ -491,13 +462,10 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                         />
                     </div>
                     {!readonly && (
-                        <Button
-                            className="add-item-button"
-                            contentEditable={false}
-                            onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)}
-                        >
-                            +
-                        </Button>
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                            <Button trasparent borderless neutral text='+' onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)} />
+                        </div>
+
                     )}
                 </div>
             )}
@@ -505,14 +473,19 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
         <Modal
             title={t("guidance_delete_index_message")}
             open={deleteItemId !== null}
-            onOk={() => {
-                setList(currentList => currentList.filter(item => item.id !== deleteItemId));
-                setDeleteItemId(null);
-            }}
+
             onCancel={() => setDeleteItemId(null)}
             okText={t("delete_label")}
             cancelText={t("cancel_label")}
-            okButtonProps={{ danger: true }}
+            footer={
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', width: '100%' }}>
+                    <Button neutral text={t("cancel_label")} onClick={() => setDeleteItemId(null)} />
+                    <Button danger text={t("delete_label")} onClick={() => {
+                        setList(currentList => currentList.filter(item => item.id !== deleteItemId));
+                        setDeleteItemId(null);
+                    }} />
+                </div>
+            }
         >
         </Modal>
     </>

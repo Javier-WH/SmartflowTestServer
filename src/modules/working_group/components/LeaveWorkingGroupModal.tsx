@@ -1,7 +1,7 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import type { WorkingGroup } from '../types/working_group';
-
+import Button from "@/components/ui/Button";
 interface LeaveWorkingGroupModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -16,7 +16,6 @@ export default function LeaveWorkingGroup({
     onClose,
     selectedWorkingGroup,
     handleLeaveConfirm,
-    isSubmitting,
     formError,
 }: LeaveWorkingGroupModalProps) {
     const { t } = useTranslation();
@@ -35,12 +34,9 @@ export default function LeaveWorkingGroup({
                             {formError && <p className="text-danger text-sm mt-2">{formError}</p>}
                         </ModalBody>
                         <ModalFooter>
-                            <Button variant="flat" onPress={onClose}>
-                                {t('cancel_label')}
-                            </Button>
-                            <Button color="warning" onPress={handleLeaveConfirm} isLoading={isSubmitting}>
-                                {t('leave_label')}
-                            </Button>
+                            <Button neutral onClick={onClose} text={t("cancel_label")} />
+                            <Button danger onClick={handleLeaveConfirm} text={t("leave_label")} />
+                         
                         </ModalFooter>
                     </>
                 )}
