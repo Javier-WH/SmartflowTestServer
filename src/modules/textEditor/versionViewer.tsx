@@ -12,7 +12,7 @@ import CustomImage from './components/utils/CustonImage.ts';
 import CustomVideo from './components/utils/CustonVideo.ts';
 import GuidedCheckListBlot from './components/blots/guidedCheckListBlot.ts';
 import { Textarea, cn } from '@heroui/react';
-import Spinner from '@/components/ui/Spiner.tsx';
+import Spinner from '@/components/ui/Spinner.tsx';
 import useFileContent from '../folderNavigator/hooks/useFileContent.ts';
 import { message, Modal } from 'antd';
 import CustomOrderedList from './components/blots/customOrderedList.ts';
@@ -24,7 +24,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import useAuth from '@/modules/auth/hooks/useAuth';
 import 'react-quill/dist/quill.snow.css';
 import './textEditor.css';
-import Boton from '@/components/ui/Boton.tsx';
+import Button from '@/components/ui/Button.tsx';
 
 export interface DocumentVersionData {
     name: string;
@@ -223,8 +223,8 @@ export default function VersionViewer() {
                     <p className="text-sm text-gray-600">{t("recovery_version_modal_description")}</p>
                     <div className="flex justify-end gap-2 mt-4">
 
-                        <Boton neutral text={t("cancel_label")} onClick={() => setIsRecoverModalOpen(false)} />
-                        <Boton text={t("recovery_version_modal_button")} onClick={async () => {
+                        <Button neutral text={t("cancel_label")} onClick={() => setIsRecoverModalOpen(false)} />
+                        <Button text={t("recovery_version_modal_button")} onClick={async () => {
                             if (!recoverPayload) return;
                             await debouncedUpdate({
                                 id,

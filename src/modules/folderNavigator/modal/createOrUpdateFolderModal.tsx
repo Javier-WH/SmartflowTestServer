@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { Folder, FolderResquest, FolderData } from '../types/folder';
 import useFolderManager from '../hooks/useFolderManager';
 import { useTranslation } from 'react-i18next';
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 import './createOrUpdateFolderModal.css';
 
 export default function CreateOrUpdateFolderModal({
@@ -124,8 +124,8 @@ export default function CreateOrUpdateFolderModal({
             onCancel={handleCancel}
             className="createOrUpdateFolderModal"
             footer={[<div key="buttons" className="flex justify-end gap-2">
-                <Boton neutral text={t('cancel_label')} onClick={handleCancel} />
-                <Boton text={folder?.name ? t('rename_label') : t('create_label')} disabled={containerName.length === 0} onClick={handleOk} />
+                <Button neutral text={t('cancel_label')} onClick={handleCancel} />
+                <Button text={folder?.name ? t('rename_label') : t('create_label')} disabled={containerName.length === 0} onClick={handleOk} />
             </div>
             ]}
         >

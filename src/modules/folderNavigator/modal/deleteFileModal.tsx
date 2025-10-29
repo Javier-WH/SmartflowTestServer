@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MainContext, MainContextValues } from '@/modules/mainContext';
 import './createOrUpdateFolderModal.css';
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 export default function DeleteFolderModal({
     file,
     setFile,
@@ -64,8 +64,8 @@ export default function DeleteFolderModal({
             onCancel={handleCancel}
             className="createOrUpdateFolderModal"
             footer={[<div key="buttons" className="flex justify-end gap-2">
-                <Boton neutral text={t('cancel_label')} onClick={handleCancel} />
-                <Boton danger text={t('delete_label')}  onClick={handleOk} />
+                <Button neutral text={t('cancel_label')} onClick={handleCancel} />
+                <Button danger text={t('delete_label')}  onClick={handleOk} />
             </div>
             ]}
         >

@@ -6,7 +6,7 @@ import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import useAuth from '../hooks/useAuth';
 import { Card, CardBody } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -127,7 +127,7 @@ const SignIn = () => {
 
                     {error && <AlertMessage text={error} />}
                    
-                    <Boton type='submit' text={t('login_button')} loading={loading}/>
+                    <Button type='submit' text={t('login_button')} loading={loading}/>
                
                     <Link to="/forgot-password" className="text-center underline" style={{ color: 'var(--mainColor)' }}>
                         {t('forgot_password_message')}
