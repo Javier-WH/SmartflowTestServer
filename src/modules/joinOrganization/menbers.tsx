@@ -233,7 +233,7 @@ export default function Menbers() {
                     <div className="flex justify-between items-center mb-8">
                         <div
                             className="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded-[15px]"
-                            onClick={() => navigate(`/${working_group_id}/home`)}
+                            onClick={() => navigate(`/${organization_id}/home`)}
                         >
                             <div className="p-3 bg-gray-100 rounded-[15px] mr-3">
                                 <FiUsers className="text-gray-600 text-xl" />
