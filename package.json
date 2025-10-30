@@ -8,7 +8,8 @@
         "build": "tsc && vite build",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
-        "testserver": "vite --mode testserver"
+        "testserver": "vite --mode testserver",
+        "insuranceTest": "vite --mode insuranceTestserver"
     },
     "dependencies": {
         "@ant-design/icons": "5.6.1",

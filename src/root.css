@@ -5,8 +5,8 @@
 :root {
     /*global*/
     --mainColor: rgb(109 74 255 / 99%); /*classic*/
+    --mainColorLight: #cdc2eb;/*classic*/
    /* --mainColor: #007AC2;*/ /*insurance*/
-    --mainColorLight: #dccfff;/*classic*/
     /*--mainColorLight: #cdedff; */ /*insurance*/
     --backgroundColor: rgba(255, 255, 255);
     --backGroundDangerColor: rgb(255, 34, 34);

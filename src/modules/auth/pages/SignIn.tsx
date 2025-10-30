@@ -7,6 +7,7 @@ import useAuth from '../hooks/useAuth';
 import { Card, CardBody } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
+import logo from "../../../assets/svg/Logo_Smartflo.svg"
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -93,12 +94,14 @@ const SignIn = () => {
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex justify-center items-center h-screen p-4 bg-[linear-gradient(68.66deg,#e8e2ff_1.3%,#f7f5ff_50%)]"
+            className=" relative flex flex-col justify-center items-center h-screen p-4 bg-[linear-gradient(10deg,#e8e2ff_1.3%,#ffffff_100%)]"
+            
         >
-            <Card className="w-full max-w-md border-none" radius="sm">
+            <img src={logo} alt="logo" style={{ marginBottom: "60px", width: "225px", height: "auto"}} />
+            <Card style={{marginBottom: '60px'}} className="w-full max-w-md border-none" radius="sm">
                 <CardBody className="flex flex-col gap-5 p-8">
-                    <h1 className="text-2xl font-bold">{t('login_title')}</h1>
-                    <p className="text-zinc-500">{t('login_message')}</p>
+                    <h1 style={{marginBottom: '10px'}} className="text-2xl font-bold">{t('login_title')}</h1>
+                 
                     <div className="space-y-1">
                         <label htmlFor="email">{t('email_label')}</label>
                         <Input id="email" name="email" autoFocus />
@@ -127,13 +130,17 @@ const SignIn = () => {
 
                     {error && <AlertMessage text={error} />}
                    
+                    <div style={{display: 'flex', width:'100%', justifyContent: "center", marginTop: "20px", marginBottom: "10px"}}>
                     <Button type='submit' text={t('login_button')} loading={loading}/>
+
+                    </div>
                
-                    <Link to="/forgot-password" className="text-center underline" style={{ color: 'var(--mainColor)' }}>
+                    <Link to="/forgot-password" className="text-center underline" style={{ color: 'var(--mainColor)', marginBottom: '10px' }}>
                         {t('forgot_password_message')}
                     </Link>
+     
 
-                    {<div className="text-center">
+                    {/*<div className="text-center">
                         <span>
                             {t('dont_have_account_message')}{' '}
                             <Link
@@ -144,11 +151,25 @@ const SignIn = () => {
                                 {t('sign_up_button')}
                             </Link>
                         </span>
-                    </div>}
+                    </div>*/}
                 </CardBody>
             </Card>
+
+            <div className="text-center" style={{ marginTop: '20px' }}>
+                <span style={{ display: 'flex', flexDirection: 'column' }}>
+                    {t('contact_singup_message')}{' '}
+                    <Link
+                        to={`/auth/signup?${redirect ? `redirect=${redirect}` : ''}`}
+                        className="text-center underline"
+                        style={{ color: 'var(--mainColor)' }}
+                    >
+                        info@smartflo.pro
+                    </Link>
+                </span>
+            </div>
         </form>
     );
 };
 
 export default SignIn;
+//info@smartflo.pro
