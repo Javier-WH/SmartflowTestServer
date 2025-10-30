@@ -35,7 +35,7 @@ export default function Home() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
-    console.log({ memberRoll });
+
 
     const getLevelTitle = (level: string): ReactNode => {
 

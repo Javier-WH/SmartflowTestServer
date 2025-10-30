@@ -14,7 +14,7 @@ export default function UserMenu() {
     const isMembersPage = location.pathname.endsWith('/members');
     const { user, signOut } = useAuth();
 
-    console.log(useParams());
+ 
     const renderMenu = () => {
         const menuItems = [];
 
