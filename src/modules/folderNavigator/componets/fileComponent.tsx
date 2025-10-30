@@ -8,10 +8,8 @@ import { FolderNavigatorContext } from '../context/folderNavigatorContext';
 import type { ContainerElement } from '../types/componets';
 import type { File } from '../types/file';
 import './folderContainer.css';
-
 import { useTranslation } from 'react-i18next';
 import { CiFileOn } from 'react-icons/ci';
-import { LuFileOutput, LuFiles, LuFileX2 } from 'react-icons/lu';
 import { MainContext, type MainContextValues } from '@/modules/mainContext';
 import useFilesManager from '../hooks/useFileManager';
 import useFolderManager from '../hooks/useFolderManager';
@@ -180,13 +178,8 @@ export function FileComponent({ file }: { file: ContainerElement }) {
         },
     ];
 
-    const popoverContent = (
-        <div className="folderPopPup">
-            <LuFileOutput title={t('move_to_root_label')} onClick={() => handleMoveToRoot()} />
-            <LuFileX2 title={t('delete_file_label')} onClick={() => handleDelete()} />
-            <LuFiles title={t('duplicate_file_label')} onClick={() => handleDuplicate()} />
-        </div>
-    );
+
+
 
     return (
         <div>

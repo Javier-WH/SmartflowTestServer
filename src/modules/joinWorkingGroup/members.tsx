@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from '@heroui/react';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from '@heroui/react';
 import { message } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +15,7 @@ import InviteUserModal from '../working_group/components/InviteUserModal';
 import useWorkingGroups from '../working_group/hook/useWorkingGroup';
 import DeleteMemberModal from './deleteMemberModal';
 import EditMemberModal from './editMemberModal';
+import { Button } from '@/components/ui';
 
 export interface WorkingGroup {
     id: string;
@@ -63,7 +63,7 @@ export default function Menbers() {
     const [inviteError, setInviteError] = useState('');
     const [inviteUserLevelId, setInviteUserLevelId] = useState('');
     const { t } = useTranslation();
-
+    
     useEffect(() => {
         if (!rolls || rolls.length === 0) return;
         setInviteUserLevelId(rolls[rolls.length - 1].id);
@@ -241,14 +241,7 @@ export default function Menbers() {
                             <h1 className="text-2xl font-semibold text-gray-800 ">{workingGroup?.name}</h1>
                         </div>
                         {(workingGroup?.user_id === user?.id || memberRoll?.invite) && (
-                            <Button
-                                className="bg-white text-gray-800 border border-gray-300 rounded-[15px] px-6 py-2 font-medium transition-colors duration-200 hover:bg-gray-100"
-                                onPress={() => {
-                                    setInviteUserOpen(true);
-                                }}
-                            >
-                                {t('invite_member_label')}
-                            </Button>
+                            <Button text={t('invite_member_label')} onClick={() => {setInviteUserOpen(true)}}/>
                         )}
                     </div>
 
@@ -288,14 +281,10 @@ export default function Menbers() {
                                         </div>
 
                                         <Dropdown>
-                                            <DropdownTrigger>
-                                                <Button
-                                                    variant="light"
-                                                    aria-label="Menú de opciones"
-                                                    className="rounded-[15px] text-gray-500 hover:bg-gray-100"
-                                                >
+                                            <DropdownTrigger className="cursor-pointer outline-none rounded-full">
+                                                <span>
                                                     <CiMenuKebab className="text-lg" />
-                                                </Button>
+                                                </span>
                                             </DropdownTrigger>
 
                                             <DropdownMenu

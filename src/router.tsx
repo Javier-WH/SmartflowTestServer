@@ -8,7 +8,6 @@ import Home from './modules/home/pages/Home';
 import UserJoinWorkingGroup from './modules/joinWorkingGroup/joinWorkingGroup';
 import Members from './modules/joinWorkingGroup/members';
 import MainLayout from './modules/MainLayout';
-import JoinWorkingGroup from './modules/onboarding/join-working-group';
 import Page from './modules/page/page';
 import TaskManager from './modules/task_manager/pages/TaskManager';
 import TextEditor from './modules/textEditor/textEditor';
@@ -61,10 +60,6 @@ const router = createBrowserRouter([
                 element: <TaskManager />,
             },
         ],
-    },
-    {
-        path: '/org/new',
-        element: <JoinWorkingGroup />,
     },
     {
         path: '/auth',

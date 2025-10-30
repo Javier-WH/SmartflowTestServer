@@ -1,26 +1,27 @@
-import { type ReactNode, useContext, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import FolderNavigator from '@/modules/folderNavigator/folderNavigator';
 import '../css/home.css';
-import { cn } from '@heroui/react';
+
+import Button from '@/components/ui/Button';
 import {
     IconChevronDown,
     IconChevronLeft,
     IconChevronRight,
     IconChevronUp,
-    IconFile,
     IconFilePlus,
-    IconFolderPlus,
+    IconFolderPlus
 } from '@tabler/icons-react';
+import { cn } from '@heroui/react';
+import { ReactNode, useContext, useState } from 'react';
+import { MainContext, type MainContextValues } from '@/modules/mainContext';
+import type { Folder } from '@/modules/folderNavigator/types/folder';
 import { message } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { FaSort } from 'react-icons/fa';
-import { Button } from '@/components/ui';
 import useFilesManager from '@/modules/folderNavigator/hooks/useFileManager';
 import useFolderManager from '@/modules/folderNavigator/hooks/useFolderManager';
+import { useTranslation } from 'react-i18next';
 import SortModal from '@/modules/folderNavigator/sortModal/sortModal';
-import type { Folder } from '@/modules/folderNavigator/types/folder';
-import { MainContext, type MainContextValues } from '@/modules/mainContext';
+import { TbArrowsSort } from "react-icons/tb";
+
 
 export default function Home() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -34,37 +35,39 @@ export default function Home() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
-    console.log({ memberRoll });
+
 
     const getLevelTitle = (level: string): ReactNode => {
-        if (level.toLocaleLowerCase() === 'creator') {
-            return (
-                <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
-                    {t('creator_label')}
-                </span>
-            );
-        } else if (level.toLocaleLowerCase() === 'admin') {
-            return (
-                <span className="text-xs bg-green-500/20 text-green-500 px-2 py-1 rounded-full tracking-tight">
-                    {t('admin_label')}
-                </span>
-            );
-        } else if (level.toLocaleLowerCase() === 'editor') {
-            return (
-                <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full tracking-tight">
-                    {t('editor_label')}
-                </span>
-            );
-        } else if (level.toLocaleLowerCase() === 'lector') {
-            return (
-                <span className="text-xs bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full tracking-tight">
-                    {t('lector_label')}
-                </span>
-            );
-        } else {
-            return <div></div>;
+
+        if (level.toLocaleLowerCase() === "creator") {
+            return <span className="text-xs h-[25px] bg-primary/20 text-primary px-2 py-1 rounded-full tracking-tight">
+                {t('creator_label')}
+            </span>
+
         }
-    };
+        else if (level.toLocaleLowerCase() === "admin") {
+            return <span className="text-xs h-[25px] bg-green-500/20 text-green-500 px-2 py-1 rounded-full tracking-tight">
+                {t('admin_label')}
+            </span>
+        }
+
+
+        else if (level.toLocaleLowerCase() === "editor") {
+            return <span className="text-xs h-[25px] bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full tracking-tight">
+                {t('editor_label')}
+            </span>
+        }
+
+        else if (level.toLocaleLowerCase() === "lector") {
+            return <span className="text-xs h-[25px] bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full tracking-tight">
+                {t('lector_label')}
+            </span>
+        }
+        else {
+            return <div></div>
+        }
+    }
+
 
     const handleCreateFolder = () => {
         if (!memberRoll?.write) {
@@ -128,10 +131,6 @@ export default function Home() {
         setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
-    /*const colapseAllFolders = () => {
-        const openedRootFolder = document.querySelectorAll('.folder[data-depth="0"].opened');
-        openedRootFolder.forEach(folder => (folder as HTMLElement).click());
-    }*/
 
     return (
         <>
@@ -143,22 +142,11 @@ export default function Home() {
             />
             <div className="flex flex-col md:flex-row h-full p-4 gap-2 relative overflow-auto lg:overflow-hidden">
                 {/* Mobile Header Container */}
-                <Button
-                    isIconOnly
-                    className="md:hidden flex items-center justify-between py-6 px-4 bg-gray-100 rounded-lg w-full shadow-md cursor-pointer"
-                    onPress={handleToggleSidebar}
-                >
-                    <span className="flex gap-2 items-center font-medium text-black">
-                        <IconFile className="text-primary" />
-                        {t('document_explorer_title')}
-                    </span>
+                <div className='md:hidden w-full'>
+                    <Button neutral text={t('document_explorer_title')} height='h-[30px]' width='w-full' icon={isSidebarCollapsed ? <IconChevronDown /> : <IconChevronUp />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
+                </div>
 
-                    {isSidebarCollapsed ? (
-                        <IconChevronDown className="text-primary" />
-                    ) : (
-                        <IconChevronUp className="text-primary" />
-                    )}
-                </Button>
+
 
                 <div
                     className={cn('flex flex-col gap-2 h-full relative', {
@@ -177,53 +165,23 @@ export default function Home() {
                                     {`${localStorage.getItem('OrgName') || ''}`}
                                 </div>
 
-                                <div className="absolute top-[50px] left-[50%] transform -translate-x-1/2">
-                                    {getLevelTitle(memberRoll?.level || '')}
-                                </div>
+
                                 <div className="flex justify-between gap-1 px-1 mt-5 ml-2">
-                                    <div>
-                                        {/* <Button className='folder-nav-button' variant="light" isIconOnly onPress={colapseAllFolders}>
-                                        <IconFolderCode className='folder-nav-icon' />
-                                    </Button>
-
-                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('asc')}>
-                                        <IconSortAscendingLetters className='folder-nav-icon' />
-                                    </Button>
-
-                                    <Button className='folder-nav-button' variant="light" isIconOnly onPress={() => setSortOrder('desc')}>
-                                        <IconSortDescendingLetters className='folder-nav-icon' />
-                                    </Button>*/}
-
-                                        {memberRoll?.write && (
-                                            <Button
-                                                className="folder-nav-button"
-                                                variant="light"
-                                                isIconOnly
-                                                onPress={() => setContainerId('root')}
-                                                title={t('sort_root_label')}
-                                            >
-                                                <FaSort className="folder-nav-icon2" />
-                                            </Button>
-                                        )}
+                                    <div className='flex gap-1'>
+                                        {
+                                            memberRoll?.write &&
+                                            <Button width='w-10' icon={<TbArrowsSort size={20} />} borderless title={t('sort_root_label')} onClick={() => setContainerId("root")} />
+                                        }
+                                    </div>
+                                    <div style={{marginTop: "5px", marginLeft: "35px"}}>
+                                        {
+                                            getLevelTitle(memberRoll?.level || "")
+                                        }
                                     </div>
 
-                                    <div>
-                                        <Button
-                                            className="folder-nav-button"
-                                            variant="light"
-                                            isIconOnly
-                                            onPress={handleCreatePage}
-                                        >
-                                            <IconFilePlus className="folder-nav-icon" />
-                                        </Button>
-                                        <Button
-                                            className="folder-nav-button"
-                                            variant="light"
-                                            isIconOnly
-                                            onPress={handleCreateFolder}
-                                        >
-                                            <IconFolderPlus className="folder-nav-icon" />
-                                        </Button>
+                                    <div className='flex gap-1'>
+                                        <Button width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
+                                        <Button width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
                                     </div>
                                 </div>
 
@@ -236,33 +194,15 @@ export default function Home() {
                         <div
                             className={`flex flex-col items-center gap-2 pt-4 mt-6 ${isSidebarCollapsed ? 'opacity-100 visible' : 'opacity-0 invisible absolute'}`}
                         >
-                            <Button variant="light" isIconOnly onPress={handleCreatePage}>
-                                <IconFilePlus />
-                            </Button>
-                            <Button variant="light" isIconOnly onPress={handleCreateFolder}>
-                                <IconFolderPlus />
-                            </Button>
+                            <Button trasparent width='w-10' icon={<IconFilePlus />} borderless title={t('create_page_label')} onClick={handleCreatePage} />
+                            <Button trasparent width='w-10' icon={<IconFolderPlus />} borderless title={t('create_folder_label')} onClick={handleCreateFolder} />
                         </div>
 
                         {/* Desktop Toggle Button */}
-                        <Button
-                            onPress={handleToggleSidebar}
-                            isIconOnly
-                            color="primary"
-                            className={cn(
-                                'max-sm:hidden md:flex absolute -translate-y-1/2 p-1 bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 ease-in-out text-primary',
-                                {
-                                    'left-1/2 -translate-x-1/2 bottom-4': isSidebarCollapsed,
-                                    'left-[95%] top-1/2': !isSidebarCollapsed,
-                                },
-                            )}
-                        >
-                            {isSidebarCollapsed ? (
-                                <IconChevronRight key="sidebar-collapsed" size={16} />
-                            ) : (
-                                <IconChevronLeft key="sidebar-expanded" size={16} />
-                            )}
-                        </Button>
+                        <div className="absolute right-[-13px] top-1/2 -translate-y-1/2 border-2 rounded-full border-gray-200 ">
+                            <Button borderless neutral text='' width='w-[10px]' height='h-[33px]' icon={isSidebarCollapsed ? <IconChevronRight /> : <IconChevronLeft />} title={t('create_folder_label')} onClick={handleToggleSidebar} />
+                        </div>
+
                     </nav>
                 </div>
 

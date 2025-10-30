@@ -1,28 +1,40 @@
 import { Spinner } from '@heroui/react';
-import { useContext } from 'react';
 import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
 import UserMenu from '@/components/ui/UserMenu';
 import logo from '../assets/svg/Logo_Smartflo.svg';
 import useAuth from './auth/hooks/useAuth';
-import { MainContext, MainContextProvider, type MainContextValues } from './mainContext';
 import SearchInput from './search/searchInput';
 import useWorkingGroup from './working_group/hook/useWorkingGroup';
+import { MainContextProvider } from './mainContext';
 
 function Header() {
-    const { setParentFolders } = useContext(MainContext) as MainContextValues;
+
     const parms = useParams();
     const location = useLocation();
     const isMembersPage = location.pathname.endsWith('/members');
 
+    <div className="flex items-center justify-self-end gap-4 grow">
+        <nav className="[&_a]:text-blue-600 [&_a]:hover:underline">
+            <li className="list-none inline-block mx-4">
+                <Link to="task_manager">Task Manager</Link>
+            </li>
+        </nav>
+
+        {parms?.working_group_id && !isMembersPage && (
+            <div className="search-continer ml-auto w-[300px]">
+                <SearchInput />
+                <nav></nav>
+            </div>
+        )}
+    </div>
+
     return (
         <header className="flex justify-end md:justify-between items-center px-8 w-full h-[50px] top-0  shadow-md">
-            <Link to="/working_group" onClick={() => setParentFolders('')}>
-                <h1 className="max-md:hidden md:block font-[300] text-[40px] tracking-[0.3rem] cursor-pointer">
-                    {/*<span className="text-primary">S</span>MAR<span className="text-primary">T</span>FLO*/}
-                    <img src={logo} alt="logo" style={{ width: '200px', height: '35px' }} />
+            <Link to="/working_group">
+                <h1 className="max-md:hidden relative md:block font-[300] text-[40px] tracking-[0.3rem] cursor-pointer" >
+                    <img src={logo} alt="logo" style={{ width: "200px", height: "35px", filter: "hue-rotate(296deg)" }} />
                 </h1>
             </Link>
-
             <div className="flex items-center justify-self-end gap-4 grow">
                 <nav className="[&_a]:text-blue-600 [&_a]:hover:underline">
                     <li className="list-none inline-block mx-4">
@@ -37,10 +49,7 @@ function Header() {
                     </div>
                 )}
             </div>
-
-            <div className="flex-shrink-0">
-                <UserMenu />
-            </div>
+            <UserMenu />
         </header>
     );
 }

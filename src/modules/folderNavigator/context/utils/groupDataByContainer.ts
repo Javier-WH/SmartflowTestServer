@@ -2,28 +2,25 @@ import { FolderData, FolderResquest } from "../../types/folder";
 
 const groupDataByContainer = (request: { data: FolderData[] }): FolderResquest => {
 
-  const containersToClear: Set<string> = new Set();
+
 
   
-  request?.data?.forEach(f => {
-    if (f.old_container_empty === true && f.old_container_id) {
-      containersToClear.add(f.old_container_id);
-    }
-  });
+  const gruppedByContainer = request?.data?.reduce((folderList: FolderResquest, _folder: FolderData) => {
 
-  
-  const gruppedByContainer = request?.data?.reduce((acumulador: FolderResquest, _folder: FolderData) => {
-
-    const { container_id, itemid, name, published, type, filesnumber, order } = _folder;
+    const { container_id, itemid, name, published, type, filesnumber, order, old_container_empty, old_container_id } = _folder;
     const currentContainerId = container_id || 'null_root';
 
-    if (!acumulador[currentContainerId]) {
-      acumulador[currentContainerId] = [];
+    if (!folderList[currentContainerId]) {
+      folderList[currentContainerId] = [];
+    }
+
+    if (old_container_empty === true && old_container_id) {
+      folderList[old_container_id] = []
     }
 
 
 
-    acumulador[currentContainerId].push({
+    folderList[currentContainerId].push({
       id: itemid,
       type,
       name,
@@ -32,7 +29,7 @@ const groupDataByContainer = (request: { data: FolderData[] }): FolderResquest =
       order: order || 0
     });
 
-    return acumulador;
+    return folderList;
   }, {});
 
 

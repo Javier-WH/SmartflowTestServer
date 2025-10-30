@@ -1,6 +1,7 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
-import { useTranslation } from 'react-i18next';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react";
 import type { WorkingGroup } from '../types/working_group';
+import { useTranslation } from 'react-i18next';
+import Button from "@/components/ui/Button";
 
 interface DeleteWorkingGroupModalProps {
     isOpen: boolean;
@@ -16,7 +17,6 @@ export default function DeleteWorkingGroupModal({
     onClose,
     selectedWorkingGroup,
     handleDeleteConfirm,
-    isSubmitting,
     formError,
 }: DeleteWorkingGroupModalProps) {
     const { t } = useTranslation();
@@ -34,12 +34,8 @@ export default function DeleteWorkingGroupModal({
                             {formError && <p className="text-danger text-sm mt-2">{formError}</p>}
                         </ModalBody>
                         <ModalFooter>
-                            <Button variant="flat" onPress={onClose}>
-                                {t('cancel_label')}
-                            </Button>
-                            <Button color="danger" onPress={handleDeleteConfirm} isLoading={isSubmitting}>
-                                {t('delete_label')}
-                            </Button>
+                            <Button neutral onClick={onClose} text={t("cancel_label")}/> 
+                            <Button danger onClick={handleDeleteConfirm} text={t("delete_label")}/>
                         </ModalFooter>
                     </>
                 )}
