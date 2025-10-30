@@ -101,7 +101,7 @@ export default function useWorkingGroups(user_id?: string, search?: string) {
             .insert([
                 {
                     user_id,
-                    organization_id: response.data.id,
+                    working_group_id: response.data.id,
                     roll_id
                 },
             ])
