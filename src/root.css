@@ -48,6 +48,8 @@
     
 }
 
+
+
 .org-card:hover{
  border-color: var(--mainColor);
 }
@@ -80,7 +82,7 @@ body {
 }
 .folder-nav-icon {
     stroke-width: 1px;
-    stroke: rgb(109 74 255 / 99%) !important;  
+    stroke: var(--mainColor) !important;  
 }
 
 .folder-nav-icon2 {

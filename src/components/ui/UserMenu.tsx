@@ -68,26 +68,26 @@ export default function UserMenu() {
         );
     };
 
-
-        return (
-            <div className="flex items-center gap-4">
-         
-                <Dropdown placement="bottom-start">
-                    <DropdownTrigger>
-                        <User
-                            as="button"
-                            className="users__avatar flex items-center transition-transform hover:bg-primary/10 py-1 px-2 mr-"
-                            name={`${user?.user_metadata?.name} ${user?.user_metadata?.lastname}`}
-                            avatarProps={{
-                                size: 'sm',
-                            }}
-                            classNames={{
-                                name: 'capitalize text-md ml-[10px]',
-                            }}
-                        />
-                    </DropdownTrigger>
-                    {renderMenu()}
-                </Dropdown>
-            </div>
-        );
-    }
+   
+    return (
+        <div className="flex items-center gap-4">
+            {/*<MultipleInviteUserModal isOpen={openInviteModal} onClose={() => setOpenInviteModal(false)} userId={user?.id || ''} />*/}
+            <Dropdown placement="bottom-start">
+                <DropdownTrigger>
+                    <User
+                        as="button"
+                        className="users__avatar flex items-center transition-transform hover:bg-[var(--mainColorLight)] py-1 px-2 mr-"
+                        name={`${user?.user_metadata?.name} ${user?.user_metadata?.lastname}`}
+                        avatarProps={{
+                            size: 'sm',
+                        }}
+                        classNames={{
+                            name: 'capitalize text-md ml-[10px]',
+                        }}
+                    />
+                </DropdownTrigger>
+                {renderMenu()}
+            </Dropdown>
+        </div>
+    );
+}
