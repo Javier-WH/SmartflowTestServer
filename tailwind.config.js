@@ -7,8 +7,8 @@ export default {
         extend: {
             colors: {
                 primary: {
-                    DEFAULT: 'hsl(var(--primary))',
-                    foreground: 'hsl(var(--primary-foreground))',
+                    DEFAULT: 'var(--mainColor)',
+                    light: 'var(--mainColorLight)',
                 },
                 background: 'hsl(var(--background))',
                 foreground: 'hsl(var(--foreground))',

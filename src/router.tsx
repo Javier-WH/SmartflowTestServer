@@ -5,10 +5,13 @@ import ResetPassword from './modules/auth/pages/ResetPassword';
 import SignIn from './modules/auth/pages/SignIn';
 import SignUp from './modules/auth/pages/SignUp';
 import Home from './modules/home/pages/Home';
+import UserJoinOrganization from './modules/joinOrganization/joinOrganization';
+import Members from './modules/joinOrganization/menbers';
 import UserJoinWorkingGroup from './modules/joinWorkingGroup/joinWorkingGroup';
 import Members from './modules/joinWorkingGroup/members';
 import MainLayout from './modules/MainLayout';
 import JoinWorkingGroup from './modules/onboarding/join-working-group';
+import Organizations from './modules/organizations/organizations';
 import Page from './modules/page/page';
 import TaskManager from './modules/task_manager/pages/TaskManager';
 import TextEditor from './modules/textEditor/textEditor';
@@ -61,10 +64,6 @@ const router = createBrowserRouter([
                 element: <TaskManager />,
             },
         ],
-    },
-    {
-        path: '/org/new',
-        element: <JoinWorkingGroup />,
     },
     {
         path: '/auth',
