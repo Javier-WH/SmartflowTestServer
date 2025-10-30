@@ -7,7 +7,7 @@ import { Input } from '@/components/ui';
 import { IconEyeOff, IconEye } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/useAuth';
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -143,7 +143,7 @@ const SignUp = () => {
 
                     {error && <AlertMessage text={error} />}
 
-                    <Boton
+                    <Button
                         type="submit"
                         text={t('sign_up_button_label')}
                         loading={loading}

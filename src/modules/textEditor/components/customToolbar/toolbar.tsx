@@ -169,7 +169,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     };
   }, []);
   
-  // Función para calcular botones visibles 
+  // Funtion to calculate which buttons are visible
   const calculateVisibleButtons = useCallback(() => {
     if (!toolbarButtonsRef.current) return;
 
@@ -179,12 +179,12 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     const buttonOrder = [
       'font-selector', 'size-selector', 'header-selector',
       'bold', 'italic', 'underline', 'strike',
-      'list-dropdown', 'align-dropdown', // Separados en dos menús diferentes
+      'list-dropdown', 'align-dropdown', // Separated into two different menus
       'color-text', 'color-background', 'link', 'image', 'video',
       'remove-format', 'guided-checklist'
     ];
 
-    // Mostrar todos los botones primero
+    // show all buttons initially
     buttonOrder.forEach(key => {
       const button = buttonsRef.current[key];
       if (button) {
@@ -192,17 +192,17 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       }
     });
 
-    // Forzar reflow
+    // reflow after showing all
     toolbarButtons.getBoundingClientRect();
 
-    // Verificar si todos caben
+    // check if all fit
     const containerWidth = toolbarButtons.scrollWidth;
     if (containerWidth <= availableWidth) {
       setHiddenButtons([]);
       return;
     }
 
-    // Si no caben, empezar a ocultar desde el final
+    // if not fit, start hiding from the end
     const hidden = [];
     for (let i = buttonOrder.length - 1; i >= 0; i--) {
       const key = buttonOrder[i];
@@ -212,10 +212,10 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         button.style.display = 'none';
         hidden.push(key);
 
-        // Forzar reflow después de ocultar
+        // force reflow
         toolbarButtons.getBoundingClientRect();
 
-        // Verificar si ahora caben
+        // check if it fits again
         if (toolbarButtons.scrollWidth <= availableWidth) {
           break;
         }
@@ -235,7 +235,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       }, 150);
     };
 
-    // Múltiples recálculos para asegurar que todo esté renderizado
+    // several timeouts to ensure proper calculation after resize
     const timeouts = [
       setTimeout(calculateVisibleButtons, 100),
       setTimeout(calculateVisibleButtons, 300),
@@ -251,7 +251,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     };
   }, [calculateVisibleButtons]);
 
-  // Efecto para observar cambios en el contenedor de botones
+  // observer for toolbar size changes
   useEffect(() => {
     if (!toolbarButtonsRef.current) return;
 
@@ -266,7 +266,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     };
   }, [calculateVisibleButtons]);
 
-  // Cerrar dropdowns al hacer clic fuera
+  // close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -289,19 +289,19 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     };
   }, [showDropdown, showListDropdown, showAlignDropdown]);
 
-  // Recalcular cuando cambia el modo oscuro - MEJORADO
+  // recalculate on dark mode change
   useEffect(() => {
     const timeoutId = setTimeout(calculateVisibleButtons, 200);
     return () => clearTimeout(timeoutId);
   }, [darkMode, calculateVisibleButtons]);
 
-  // Recalcular cuando se monta el componente
+  // recalculate on mount
   useEffect(() => {
     const timeoutId = setTimeout(calculateVisibleButtons, 1000);
     return () => clearTimeout(timeoutId);
   }, [calculateVisibleButtons]);
 
-  // Función para guardar el estado actual del editor
+  // function to save editor state
   const saveEditorState = () => {
     const editor = getActiveEditor();
     if (!editor) return null;
@@ -312,7 +312,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     return { editor, range };
   };
 
-  // Función para restaurar el estado del editor y enfocarlo
+  // fuction to restore and focus editor
   const restoreAndFocusEditor = () => {
     if (savedEditor && savedRange) {
       savedEditor.focus();
@@ -328,7 +328,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     if (range) {
       editor.format(format, value ?? true);
 
-      // Actualizar la fuente actual si se cambió la fuente
+      // update current states accordingly
       if (format === 'font') {
         setCurrentFont(value || '');
       }
@@ -494,14 +494,14 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
     action();
   };
 
-  // Función para registrar referencia de botón
+  // function to register button refs
   const registerButtonRef = (key: string, element: HTMLButtonElement | null) => {
     if (element) {
       buttonsRef.current[key] = element;
     }
   };
 
-  // Renderizar botón del dropdown
+  //dropdown render function
   const renderDropdownButton = (key: string, icon: React.ReactNode, onClick: () => void, label: string) => (
     <button
       key={key}
@@ -522,7 +522,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
       <div ref={toolbarRef} className={styles.toolbarContainer}>
 
         <div ref={toolbarButtonsRef} className={styles.toolbarButtons}>
-          {/* Font - Pasamos la fuente actual como prop */}
+          {/* Font - pass currentFont as prop */}
           <div ref={(el) => el && registerButtonRef('font-selector', el?.querySelector('button') || null)}>
             <FontSelector applyFormat={applyFormat} currentFont={currentFont} />
           </div>
@@ -597,7 +597,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
             )}
           </div>
 
-          {/* Dropdown para Alineación */}
+          {/* align dropdown */}
           <div ref={alignDropdownRef} className={styles.dropdownContainer}>
             <button
               ref={(el) => registerButtonRef('align-dropdown', el)}
@@ -674,7 +674,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
               if (editor) {
                 const range = editor.getSelection();
                 editor.removeFormat(range?.index ?? 0, range?.length ?? 0);
-                // También resetear la fuente actual
+                // update current states accordingly
                 setCurrentFont('');
               }
             })}
@@ -703,7 +703,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           </button>
         </div>
 
-        {/* Dropdown para botones que no caben */}
+        {/* Dropdown for hidden buttons */}
         {
           hiddenButtons.length > 0 && (
             <div ref={dropdownRef} className={styles.dropdownContainer}>
@@ -722,7 +722,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
                   {hiddenButtons.includes('underline') && renderDropdownButton('underline-dropdown', <FaUnderline />, () => toggleFormat('underline'), t("underline"))}
                   {hiddenButtons.includes('strike') && renderDropdownButton('strike-dropdown', <FaStrikethrough />, () => toggleFormat('strike'), t("strikethrough"))}
 
-                  {/* Listas en dropdown secundario */}
+                  {/* list dropdown */}
                   {hiddenButtons.includes('list-dropdown') && (
                     <>
                       {renderDropdownButton('list-ordered-dropdown', <FaListOl />, () => applyFormat('list', 'ordered'), t("ordered_list"))}
@@ -732,7 +732,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
                     </>
                   )}
 
-                  {/* Alineación en dropdown secundario */}
+                  {/* align dropdown */}
                   {hiddenButtons.includes('align-dropdown') && (
                     <>
                       {renderDropdownButton('align-left-dropdown', <FaAlignLeft />, () => applyFormat('align', ''), t("align_left"))}
@@ -742,7 +742,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
                     </>
                   )}
 
-                  {/* Botones de color en dropdown secundario */}
+                  {/* color buttons dropdown */}
                   {hiddenButtons.includes('color-text') && (
                     <div className={styles.dropdownColorSection}>
                       <div className={styles.dropdownColorHeader}>
@@ -784,7 +784,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
                   )}
 
 
-                  {/* otros*/}
+                  {/* rest of the buttons */}
 
                   {hiddenButtons.includes('link') && renderDropdownButton('link-dropdown', <FaLink />, openLinkModal, t("insert_link"))}
                   {hiddenButtons.includes('image') && renderDropdownButton('image-dropdown', <FaImage />, openImageModal, t("insert_image"))}
@@ -814,7 +814,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
 
       </div>
 
-      {/* Modal de Insertar Imagen */}
+      {/* Image Modal */}
       <Modal
         key={modalKey}
         title={t("insert_image")}
@@ -841,7 +841,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
           />}
 
           <div className={styles.customFileInput}>
-            {/* Texto que se muestra como un botón */}
+            {/* text thar it shows as a button */}
             {localFile
               ? localFile.name
               : t("select_file_label")
@@ -863,7 +863,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         </div>
       </Modal>
 
-      {/* Modal de Insertar Video */}
+      {/* Inserer Vídeo Modal */}
       <Modal
         title={t("insert_video")}
         open={isVideoModalOpen}
@@ -886,7 +886,7 @@ export default function Toolbar({ darkMode = false }: { darkMode?: boolean }) {
         />
       </Modal>
 
-      {/* Modal de Insertar Enlace */}
+      {/* Inserer Link Modal */}
       <Modal
         title={t("insert_link")}
         open={isLinkModalOpen}

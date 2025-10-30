@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Modal, ModalContent, ModalHeader } from "@heroui/react";
-import { Member, Org } from './menbers.tsx';
+import { Member, WorkingGroup } from './menbers.tsx';
 import useOrganizations from '../organizations/hook/useOrganizations.ts';
-import Boton from "@/components/ui/Boton.tsx";
+import Button from "@/components/ui/Button.tsx";
 import { t } from "i18next";
 
 
@@ -10,7 +10,7 @@ import { t } from "i18next";
 interface EditMemberModalProps {
   member: Member | null;
   setMember: (member: Member | null) => void;
-  organization: Org | null;
+  organization: WorkingGroup | null;
 }
 
 export default function DeleteMemberModal({ member, setMember, organization }: EditMemberModalProps) {
@@ -35,7 +35,7 @@ export default function DeleteMemberModal({ member, setMember, organization }: E
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">{t('delete_menber_label')}</ModalHeader>
         <div className="flex flex-col gap-4 p-4 w-full justify-center items-center">
-          <Boton width="w-[200px]" danger text={t('delete_menber_label')} onClick={handleDeleteMember} />
+          <Button width="w-[200px]" danger text={t('delete_menber_label')} onClick={handleDeleteMember} />
         </div>
 
       </ModalContent>

@@ -4,7 +4,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DraggableList from 'react-draggable-list';
 import { GoGrabber } from 'react-icons/go';
-import { Input, Collapse, Button, Spin, Modal } from 'antd';
+import { Input, Collapse, Spin, Modal } from 'antd';
 import { RightOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons';
 import reactToWebComponent from 'react-to-webcomponent';
 import 'antd/dist/reset.css';
@@ -16,7 +16,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 import { cn } from '@heroui/react';
 import { t } from 'i18next';
 import { Quill } from 'react-quill';
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 
 
 // Definir tipos
@@ -74,7 +74,10 @@ class Item extends React.Component<ItemProps> {
                             label: (
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                     <span className="item-index">{item.index + 1}</span>
-                                    {!commonProps.readonly && <Button className='btn-delete-guidance' type="link" icon={<DeleteOutlined />} onClick={handleClickIndex} />}
+                                    {!commonProps.readonly && <div className='btn-delete-guidance'>
+                                            <Button borderless  icon={<DeleteOutlined />} onClick={handleClickIndex} />
+                                        </div>
+                                            }
                                     <Input
                                         readOnly={commonProps.readonly}
                                         placeholder={`${t("what's the")} ${item.index === 0 ? t('first') : t('next')} ${t("step")}?`}
@@ -112,14 +115,7 @@ class Item extends React.Component<ItemProps> {
                                         readonly={commonProps.readonly}
                                     />
                                     <div style={{ width: "100%", display: "flex", justifyContent: "flex-start" }}>
-
-                                        <Button
-                                            className="collapse-next-button"
-                                            onClick={() => commonProps.onNextItem(item.id)}
-
-                                        >
-                                            { }{t('next')}
-                                        </Button>
+                                        <Button text={t('next')} onClick={() => commonProps.onNextItem(item.id)} />
                                     </div>
                                 </>
                             ),
@@ -170,17 +166,7 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
 
         const blotIndex = quillInstance.getIndex(blot);
         quillInstance.deleteText(blotIndex, 1);
-       /* Modal.confirm({
-            title: t("guided_checklist_delete_message"),
-            okText: t("delete_label"),
-            cancelText: t("cancel_label"),
-            okButtonProps: { danger: true },
-            icon: null,
-            onOk() {
-                quillInstance.deleteText(blotIndex, 1);
-            },
-            
-        });*/
+
     };
 
     const handleDuplicateBlot = () => {
@@ -406,8 +392,8 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
             title={t("guided_checklist_delete_message")}
             footer={
                 <div className="flex justify-end gap-2 ">
-                    <Boton neutral text={t("cancel_label")} onClick={() => setOpenDeleteModal(false)} />
-                    <Boton danger text={t("delete_label")} onClick={handleDeleteBlot} />
+                    <Button neutral text={t("cancel_label")} onClick={() => setOpenDeleteModal(false)} />
+                    <Button danger text={t("delete_label")} onClick={handleDeleteBlot} />
                 </div>
             }
         >
@@ -431,8 +417,8 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                 <div className='guided-checklist-header-buttons'>
                     {!commonProps.readonly &&
                         <>
-                            <Button className='btn-delete-gchl' title={t('duplicate_label')} type="link" icon={< CopyOutlined />} onClick={handleDuplicateBlot} />
-                            <Button className='btn-delete-gchl' title={t('delete_label')} type="link" icon={<DeleteOutlined />} onClick={() => setOpenDeleteModal(true)} />
+                            <Button trasparent borderless title={t('duplicate_label')} icon={< CopyOutlined />} onClick={handleDuplicateBlot} />
+                            <Button trasparent borderless title={t('delete_label')} icon={<DeleteOutlined />} onClick={() => setOpenDeleteModal(true)} />
                         </>
                     }
                     <div
@@ -476,13 +462,10 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
                         />
                     </div>
                     {!readonly && (
-                        <Button
-                            className="add-item-button"
-                            contentEditable={false}
-                            onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)}
-                        >
-                            +
-                        </Button>
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                            <Button trasparent borderless neutral text='+' onClick={() => commonProps.onAddItem(list[list.length - 1]?.id)} />
+                        </div>
+
                     )}
                 </div>
             )}
@@ -496,8 +479,8 @@ const GuidedCheckListWC = ({ title, items, readonly }: { title?: string; items?:
             cancelText={t("cancel_label")}
             footer={
                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', width: '100%' }}>
-                    <Boton neutral text={t("cancel_label")} onClick={() => setDeleteItemId(null)} />
-                    <Boton danger text={t("delete_label")} onClick={() => {
+                    <Button neutral text={t("cancel_label")} onClick={() => setDeleteItemId(null)} />
+                    <Button danger text={t("delete_label")} onClick={() => {
                         setList(currentList => currentList.filter(item => item.id !== deleteItemId));
                         setDeleteItemId(null);
                     }} />

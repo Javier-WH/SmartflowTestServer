@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { Organization } from '../types/organizations';
 import { UserRoll } from '../organizations';
 import { FiMail, FiCheck, FiUsers } from 'react-icons/fi';
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 
 export interface InviteUserModalProps {
     isOpen: boolean;
@@ -160,8 +160,8 @@ export default function InviteUserModal({
                                 {inviteError && <p className="text-danger text-sm mt-2">{inviteError}</p>}
                             </ModalBody>
                             <ModalFooter className="p-5 pt-4 border-t border-gray-100">
-                                <Boton neutral onClick={onClose} text={t('cancel_label')} />
-                                <Boton type="submit" text={t('send_button')} />
+                                <Button neutral onClick={onClose} text={t('cancel_label')} />
+                                <Button type="submit" text={t('send_button')} />
                             </ModalFooter>
                         </form>
                     </>

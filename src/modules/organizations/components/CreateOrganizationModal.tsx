@@ -2,7 +2,7 @@ import type { ChangeEvent } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Textarea } from '@heroui/react';
 import { Input } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
-import Boton from '@/components/ui/Boton';
+import Button from '@/components/ui/Button';
 
 interface CreateOrganizationModalProps {
     isOpen: boolean;
@@ -61,8 +61,8 @@ export default function CreateOrganizationModal({
                                 {formError && <p className="text-danger text-sm">{formError}</p>}
                             </ModalBody>
                             <ModalFooter>
-                                <Boton neutral onClick={onClose} text={t("cancel_label")} />
-                                <Boton type="submit" loading={isSubmitting} text={t("create_label")} />
+                                <Button neutral onClick={onClose} text={t("cancel_label")} />
+                                <Button type="submit" loading={isSubmitting} text={t("create_label")} />
                             </ModalFooter>
                         </form>
                     </>
