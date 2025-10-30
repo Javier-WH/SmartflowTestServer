@@ -158,13 +158,17 @@ const SignIn = () => {
             <div className="text-center" style={{ marginTop: '20px' }}>
                 <span style={{ display: 'flex', flexDirection: 'column' }}>
                     {t('contact_singup_message')}{' '}
-                    <Link
-                        to={`/auth/signup?${redirect ? `redirect=${redirect}` : ''}`}
+                    <div
                         className="text-center underline"
                         style={{ color: 'var(--mainColor)' }}
                     >
-                        info@smartflo.pro
-                    </Link>
+                        <a
+                            href="mailto:info@smartflo.pro"
+                            style={{ color: 'inherit', textDecoration: 'none' }} 
+                        >
+                            info@smartflo.pro
+                        </a>
+                    </div>
                 </span>
             </div>
         </form>
