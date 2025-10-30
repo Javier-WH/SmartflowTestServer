@@ -259,9 +259,9 @@ export default function WorkingGroupCard({
         }));
     };
 
-    const getLevelTitle = (organization: WorkingGroup): ReactNode => {
+    const getLevelTitle = (workingGroup: WorkingGroup): ReactNode => {
 
-        if (organization.is_creator) {
+        if (workingGroup.is_creator) {
             return <span style={{ backgroundColor: "var(--mainColorLight)", color: "var(--mainColor)" }} className="text-xs  px-2 py-1 rounded-full">
                 {t('creator_label')}
             </span>
