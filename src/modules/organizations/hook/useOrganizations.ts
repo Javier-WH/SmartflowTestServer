@@ -81,6 +81,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
         description: string,
         slug: string,
         user_id: string,
+        roll_id: string,
     ): Promise<OrganizationActionResponse> => {
         const response = await supabase
             .from('organizations')
@@ -96,7 +97,7 @@ export default function useOrganizations(user_id?: string, search?: string) {
                 {
                     user_id,
                     organization_id: response.data.id,
-                    roll_id: '320ef7c2-615e-43e3-a855-7577577ce33d',
+                    roll_id
                 },
             ])
             .select('*');
