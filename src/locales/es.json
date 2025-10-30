@@ -218,5 +218,7 @@
   "delete_menber_label": "Eliminar Miembro",
   "select_working_groups_label": "Grupos de Trabajo",
   "select_working_groups_placeholder": "Puedes seleccionar uno o más grupos de trabajo",
-  "select_working_groups_message": "Por favor, selecciona al menos un grupo de trabajo"
+  "select_working_groups_message": "Por favor, selecciona al menos un grupo de trabajo",
+  "contact_singup_message": "Para crear una cuenta en Smartflo Insurance"
+
 }

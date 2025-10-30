@@ -1,5 +1,5 @@
 {
-  "login_title": "Login",
+  "login_title": "Log in",
   "reset_password_title": "Reset Password",
   "create_account_title": "Create your Smartflo account",
   "your_working_group_title": "Your Working Groups",
@@ -218,5 +218,7 @@
   "delete_menber_label": "Delete Member",
   "select_working_groups_label": "Working Groups",
   "select_working_groups_placeholder": "you can select one or more working groups",
-  "select_working_groups_message": "Please select at least one working group"
+  "select_working_groups_message": "Please select at least one working group",
+  "contact_singup_message": "To create a Smartflo Insurance account"
+
 }

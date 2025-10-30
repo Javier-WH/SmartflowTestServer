@@ -63,7 +63,7 @@ export default function Menbers() {
     const [inviteError, setInviteError] = useState('');
     const [inviteUserLevelId, setInviteUserLevelId] = useState('');
     const { t } = useTranslation();
-
+    
     useEffect(() => {
         if (!rolls || rolls.length === 0) return;
         setInviteUserLevelId(rolls[rolls.length - 1].id);

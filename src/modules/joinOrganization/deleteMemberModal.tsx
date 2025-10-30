@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Modal, ModalContent, ModalHeader } from "@heroui/react";
-import { Member, Org } from './menbers.tsx';
+import { Member, WorkingGroup } from './menbers.tsx';
 import useOrganizations from '../organizations/hook/useOrganizations.ts';
 import Button from "@/components/ui/Button.tsx";
 import { t } from "i18next";
@@ -10,7 +10,7 @@ import { t } from "i18next";
 interface EditMemberModalProps {
   member: Member | null;
   setMember: (member: Member | null) => void;
-  organization: Org | null;
+  organization: WorkingGroup | null;
 }
 
 export default function DeleteMemberModal({ member, setMember, organization }: EditMemberModalProps) {

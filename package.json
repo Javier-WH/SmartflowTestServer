@@ -9,7 +9,8 @@
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
         "testserver": "vite --mode testserver",
-        "homelocal": "vite --mode homelocal"
+        "homelocal": "vite --mode homelocal",
+        "insuranceTest": "vite --mode insuranceTestserver"
     },
     "dependencies": {
         "@ant-design/icons": "5.6.1",

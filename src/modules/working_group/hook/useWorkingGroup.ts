@@ -84,6 +84,7 @@ export default function useWorkingGroups(user_id?: string, search?: string) {
         description: string,
         slug: string,
         user_id: string,
+        roll_id: string,
     ): Promise<WorkingGroupActionResponse> => {
         const response = await supabase
             .from('working_group')
@@ -100,8 +101,8 @@ export default function useWorkingGroups(user_id?: string, search?: string) {
             .insert([
                 {
                     user_id,
-                    working_group_id: response.data.id,
-                    roll_id: '320ef7c2-615e-43e3-a855-7577577ce33d',
+                    organization_id: response.data.id,
+                    roll_id
                 },
             ])
             .select('*');
