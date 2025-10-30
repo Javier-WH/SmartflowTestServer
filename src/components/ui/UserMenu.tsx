@@ -72,7 +72,7 @@ export default function UserMenu() {
         );
     };
 
-
+   
     return (
         <div className="flex items-center gap-4">
             {/*<MultipleInviteUserModal isOpen={openInviteModal} onClose={() => setOpenInviteModal(false)} userId={user?.id || ''} />*/}
@@ -80,7 +80,7 @@ export default function UserMenu() {
                 <DropdownTrigger>
                     <User
                         as="button"
-                        className="users__avatar flex items-center transition-transform hover:bg-primary/10 py-1 px-2 mr-"
+                        className="users__avatar flex items-center transition-transform hover:bg-primary-light py-1 px-2 mr-"
                         name={`${user?.user_metadata?.name} ${user?.user_metadata?.lastname}`}
                         avatarProps={{
                             size: 'sm',
