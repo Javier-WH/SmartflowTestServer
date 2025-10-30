@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
-import { Member, MemberRoll, Org } from './menbers.tsx';
+import { Member, MemberRoll, WorkingGroup } from './menbers.tsx';
 import { useEffect, useState } from 'react';
 import useOrganizations from '../organizations/hook/useOrganizations.ts';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ interface EditMemberModalProps {
   member: Member | null;
   setMember: (member: Member | null) => void;
   rolls: MemberRoll[];
-  organization: Org | null;
+  organization: WorkingGroup | null;
 }
 
 export default function EditMemberModal({ member, setMember, rolls, organization }: EditMemberModalProps) {
