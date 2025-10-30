@@ -10,7 +10,6 @@ import MainLayout from './modules/MainLayout';
 import PrivateRoute from './PrivateRoute';
 import TextEditor from './modules/textEditor/textEditor';
 import Organizations from './modules/organizations/organizations';
-import JoinOrganization from './modules/onboarding/join-org';
 import Members from './modules/joinOrganization/menbers';
 import UserJoinOrganization from './modules/joinOrganization/joinOrganization';
 import VersionViewer from './modules/textEditor/versionViewer';
@@ -57,10 +56,6 @@ const router = createBrowserRouter([
                 element: <UserJoinOrganization />,
             },
         ],
-    },
-    {
-        path: '/org/new',
-        element: <JoinOrganization />,
     },
     {
         path: '/auth',
