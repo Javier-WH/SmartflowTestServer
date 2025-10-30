@@ -1,23 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import useAuth from '../auth/hooks/useAuth';
-import useOrganizations from '../organizations/hook/useOrganizations';
-import { useNavigate, useParams } from 'react-router-dom';
-import useGetOrganizationData from '../navBar/hooks/useOrganizationData';
-import { useEffect, useState, useContext } from 'react';
-import { Button, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from '@heroui/react';
 import { message } from 'antd';
+import { useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { CiMenuKebab } from 'react-icons/ci';
+import { FiSearch, FiUsers } from 'react-icons/fi';
 //import { IoMdArrowRoundBack } from 'react-icons/io';
 import { ImUser } from 'react-icons/im';
-import { CiMenuKebab } from 'react-icons/ci';
-import EditMemberModal from './editMemberModal';
-import DeleteMemberModal from './deleteMemberModal';
+import { useNavigate, useParams } from 'react-router-dom';
+import useAuth from '../auth/hooks/useAuth';
+import { MainContext, type MainContextValues } from '../mainContext';
+import useWorkingGroupData from '../navBar/hooks/useOrganizationData';
 import InviteUserModal from '../organizations/components/InviteUserModal';
-import { MainContext, MainContextValues } from '../mainContext';
-import { useTranslation } from 'react-i18next';
-import { FiSearch, FiUsers } from 'react-icons/fi';
+import useWorkingGroups from '../organizations/hook/useOrganizations';
+import DeleteMemberModal from './deleteMemberModal';
+import EditMemberModal from './editMemberModal';
+import { Button } from '@/components/ui';
 
-
-export interface Org {
+export interface WorkingGroup {
     id: string;
     name: string;
     description: string;
@@ -47,9 +47,9 @@ export default function Menbers() {
     const { organization_id } = useParams();
     const { user } = useAuth();
     const navigate = useNavigate();
-    const { getOrganizationMembers, getUserRolls, inviteUserToOrganization } = useOrganizations();
-    const { getOrganizationBasicData } = useGetOrganizationData();
-    const [organization, setOrganization] = useState<Org | null>(null);
+    const { getOrganizationMembers, getUserRolls, inviteUserToOrganization } = useWorkingGroups();
+    const { getOrganizationBasicData } = useWorkingGroupData();
+    const [workingGroup, setWorkingGroup] = useState<WorkingGroup | null>(null);
     const [members, setMembers] = useState<Member[]>([]);
     const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
     const [filter, setFilter] = useState<string>('');
@@ -63,15 +63,15 @@ export default function Menbers() {
     const [inviteError, setInviteError] = useState('');
     const [inviteUserLevelId, setInviteUserLevelId] = useState('');
     const { t } = useTranslation();
-
+    
     useEffect(() => {
         if (!rolls || rolls.length === 0) return;
         setInviteUserLevelId(rolls[rolls.length - 1].id);
     }, [rolls]);
 
     useEffect(() => {
-        setLoading(!organization && !members);
-    }, [organization, members]);
+        setLoading(!workingGroup && !members);
+    }, [workingGroup, members]);
 
     useEffect(() => {
         getUserRolls()
@@ -89,14 +89,14 @@ export default function Menbers() {
         if (!organization_id) return;
         getOrganizationBasicData(organization_id)
             .then(res => {
-                setOrganization(res.data[0]);
+                setWorkingGroup(res.data[0]);
             })
             .catch(err => console.log(err));
     }, [organization_id]);
 
     useEffect(() => {
-        if (!organization) return;
-        getOrganizationMembers(organization.id)
+        if (!workingGroup) return;
+        getOrganizationMembers(workingGroup.id)
             .then(res => {
                 if (res.error) {
                     console.log(res.error);
@@ -105,7 +105,7 @@ export default function Menbers() {
                 setMembers(res.data as Member[]);
             })
             .catch(err => console.log(err));
-    }, [organization, memberToEdit, memberToDelete]);
+    }, [workingGroup, memberToEdit, memberToDelete]);
 
     useEffect(() => {
         if (!members) return;
@@ -123,7 +123,7 @@ export default function Menbers() {
     };
 
     const handleEditMember = (member: Member) => {
-        if (organization?.user_id !== user?.id && !memberRoll?.invite) {
+        if (workingGroup?.user_id !== user?.id && !memberRoll?.invite) {
             message.error(t('can_not_invite_member_message'));
             return;
         }
@@ -133,11 +133,11 @@ export default function Menbers() {
     };
 
     const handleDeleteMember = (member: Member) => {
-        if (organization?.user_id === member.userid) {
+        if (workingGroup?.user_id === member.userid) {
             message.error(t('can_not_invite_yourself_message'));
             return;
         }
-        if (organization?.user_id !== user?.id && !memberRoll?.invite) {
+        if (workingGroup?.user_id !== user?.id && !memberRoll?.invite) {
             message.error(t('can_not_invite_member_message'));
             return;
         }
@@ -148,7 +148,7 @@ export default function Menbers() {
     const handleInviteUser = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (organization?.user_id !== user?.id && !memberRoll?.invite) {
+        if (workingGroup?.user_id !== user?.id && !memberRoll?.invite) {
             message.error(t('can_not_invite_member_message'));
             return;
         }
@@ -165,15 +165,13 @@ export default function Menbers() {
             return;
         }
 
-        if (!organization || !organization.id || !user?.id) return;
+        if (!workingGroup || !workingGroup.id || !user?.id) return;
 
         setIsInviting(true);
         setInviteError('');
 
         try {
-
-
-            const response = await inviteUserToOrganization(organization.id, inviteEmail.trim(), user.id);
+            const response = await inviteUserToOrganization(workingGroup.id, inviteEmail.trim(), user.id);
 
             if (response.error) {
                 setInviteError(response.message);
@@ -201,12 +199,10 @@ export default function Menbers() {
 
     return (
         <>
-
-
             <InviteUserModal
                 isOpen={inviteUserOpen}
                 onClose={handleCloseInviteModal}
-                selectedOrganization={organization}
+                selectedOrganization={workingGroup}
                 inviteEmail={inviteEmail}
                 setInviteEmail={setInviteEmail}
                 handleSubmit={handleInviteUser}
@@ -217,41 +213,35 @@ export default function Menbers() {
                 inviteUserLevelId={inviteUserLevelId}
             />
             <EditMemberModal
-                organization={organization}
+                organization={workingGroup}
                 rolls={rolls}
                 member={memberToEdit}
                 setMember={setMemberToEdit}
                 key={memberToEdit?.userid || 'modal'}
             />
             <DeleteMemberModal
-                organization={organization}
+                organization={workingGroup}
                 member={memberToDelete}
                 setMember={setMemberToDelete}
                 key={memberToDelete?.userid || 'modal'}
             />
-
-
 
             {loading ? (
                 <div className="flex justify-center items-center h-screen">Loading...</div>
             ) : (
                 <section className="py-8 max-w-4xl mx-auto mt-16 px-4">
                     <div className="flex justify-between items-center mb-8">
-                        <div className="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded-[15px]" onClick={() => navigate(`/${organization_id}/home`)}>
+                        <div
+                            className="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded-[15px]"
+                            onClick={() => navigate(`/${organization_id}/home`)}
+                        >
                             <div className="p-3 bg-gray-100 rounded-[15px] mr-3">
                                 <FiUsers className="text-gray-600 text-xl" />
                             </div>
-                            <h1 className="text-2xl font-semibold text-gray-800 " >{organization?.name}</h1>
+                            <h1 className="text-2xl font-semibold text-gray-800 ">{workingGroup?.name}</h1>
                         </div>
-                        {(organization?.user_id === user?.id || memberRoll?.invite) && (
-                            <Button
-                                className="bg-white text-gray-800 border border-gray-300 rounded-[15px] px-6 py-2 font-medium transition-colors duration-200 hover:bg-gray-100"
-                                onPress={() => {
-                                    setInviteUserOpen(true);
-                                }}
-                            >
-                                {t('invite_member_label')}
-                            </Button>
+                        {(workingGroup?.user_id === user?.id || memberRoll?.invite) && (
+                            <Button text={t('invite_member_label')} onClick={() => { setInviteUserOpen(true) }} />
                         )}
                     </div>
 
@@ -268,7 +258,7 @@ export default function Menbers() {
                     <div className="bg-white rounded-[15px] shadow-sm border border-gray-200 overflow-hidden">
                         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
                             <h2 className="font-medium text-gray-700">{t('members_list_heading')}</h2>
-                            <h5 className="text-sm text-gray-500">{`${t("total_members")}: ${filteredMembers.length}`}</h5>
+                            <h5 className="text-sm text-gray-500">{`${t('total_members')}: ${filteredMembers.length}`}</h5>
                         </div>
 
                         <div className="divide-y divide-gray-100">
@@ -283,20 +273,18 @@ export default function Menbers() {
                                                 <ImUser className="text-gray-600" />
                                             </div>
                                             <div>
-                                                <h2 className="text-lg font-medium text-gray-800">{member.useremail}</h2>
+                                                <h2 className="text-lg font-medium text-gray-800">
+                                                    {member.useremail}
+                                                </h2>
                                                 <p className="text-gray-500 text-sm">{member.rollname}</p>
                                             </div>
                                         </div>
 
                                         <Dropdown>
-                                            <DropdownTrigger>
-                                                <Button
-                                                    variant="light"
-                                                    aria-label="Menú de opciones"
-                                                    className="rounded-[15px] text-gray-500 hover:bg-gray-100"
-                                                >
+                                            <DropdownTrigger className="cursor-pointer outline-none rounded-full">
+                                                <span>
                                                     <CiMenuKebab className="text-lg" />
-                                                </Button>
+                                                </span>
                                             </DropdownTrigger>
 
                                             <DropdownMenu

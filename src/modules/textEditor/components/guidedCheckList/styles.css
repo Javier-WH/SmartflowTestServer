@@ -87,7 +87,7 @@
 .guided-checklist-header-buttons {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 5px;
     justify-content: flex-end;
     margin-right: 11px;
     width: 100px;

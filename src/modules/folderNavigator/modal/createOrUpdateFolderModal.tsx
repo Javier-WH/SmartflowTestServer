@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { Folder, FolderResquest, FolderData } from '../types/folder';
 import useFolderManager from '../hooks/useFolderManager';
 import { useTranslation } from 'react-i18next';
+import Button from '@/components/ui/Button';
 import './createOrUpdateFolderModal.css';
 
 export default function CreateOrUpdateFolderModal({
@@ -23,7 +24,7 @@ export default function CreateOrUpdateFolderModal({
     const [containerID, setcontainerID] = useState<string | null>(null);
     const [update, setUpdate] = useState(false);
     const inputRef = useRef<any | null>(null);
-    const { organization_id: slug} = useParams();
+    const { organization_id: slug } = useParams();
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -52,7 +53,7 @@ export default function CreateOrUpdateFolderModal({
     };
 
     const handleOk = async () => {
-        if (!slug){
+        if (!slug) {
             message.error(t('no_organizations_found_message'));
             return
         }
@@ -98,7 +99,7 @@ export default function CreateOrUpdateFolderModal({
             message.error(request.message);
             return;
         }
-        
+
         const gruppedByContainer = groupDataByContainer(request as { data: FolderData[] });
         setUpdateFolderRequest(gruppedByContainer);
         const folderElement = document.getElementById(containerID);
@@ -121,10 +122,12 @@ export default function CreateOrUpdateFolderModal({
             open={folder != null}
             onOk={handleOk}
             onCancel={handleCancel}
-            okText={folder?.name ? t('rename_label') : t('create_label')}
-            cancelText={t('cancel_label')}
             className="createOrUpdateFolderModal"
-            okButtonProps={{ disabled: containerName.length === 0 }}
+            footer={[<div key="buttons" className="flex justify-end gap-2">
+                <Button neutral text={t('cancel_label')} onClick={handleCancel} />
+                <Button text={folder?.name ? t('rename_label') : t('create_label')} disabled={containerName.length === 0} onClick={handleOk} />
+            </div>
+            ]}
         >
             <div>
                 <div>

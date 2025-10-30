@@ -1,22 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Modal, ModalContent, ModalHeader, ModalBody, Button, Input } from "@heroui/react";
-import { Member, Org } from './menbers.tsx';
-import { useState } from 'react';
+import { Modal, ModalContent, ModalHeader } from "@heroui/react";
+import { Member, WorkingGroup } from './menbers.tsx';
 import useOrganizations from '../organizations/hook/useOrganizations.ts';
+import Button from "@/components/ui/Button.tsx";
+import { t } from "i18next";
 
 
 
 interface EditMemberModalProps {
   member: Member | null;
   setMember: (member: Member | null) => void;
-  organization: Org | null;
+  organization: WorkingGroup | null;
 }
 
 export default function DeleteMemberModal({ member, setMember, organization }: EditMemberModalProps) {
 
   const { leaveOrganization, deleteInvitation } = useOrganizations();
-
-  const [deleteInput, setDeleteInput] = useState<string>('');
 
 
   const handleDeleteMember = async () => {
@@ -34,28 +33,11 @@ export default function DeleteMemberModal({ member, setMember, organization }: E
       aria-labelledby="modal-title"
     >
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">Delete Member</ModalHeader>
-        <ModalBody>
-          {member && (<>
-            <label htmlFor="">
-              Write <strong>{member.useremail}</strong> to confirm deletion
-            </label>
-            <Input
-              label="Delete Member"
-              value={deleteInput}
-              onChange={(e) => setDeleteInput(e.target.value)}
-            />
-          </>
-          )}
-          <br />
-          <Button 
-            onClick={handleDeleteMember}
-            disabled={deleteInput !== member?.useremail} 
-            color={ deleteInput === member?.useremail ? 'danger' : 'default'}
-          >
-            Delete Member
-          </Button>
-        </ModalBody>
+        <ModalHeader className="flex flex-col gap-1">{t('delete_menber_label')}</ModalHeader>
+        <div className="flex flex-col gap-4 p-4 w-full justify-center items-center">
+          <Button width="w-[200px]" danger text={t('delete_menber_label')} onClick={handleDeleteMember} />
+        </div>
+
       </ModalContent>
     </Modal>
   );
