@@ -16,7 +16,7 @@ const SignUp = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [redirect, setRedirect] = useState<string | null>(null);
-    const { token, signUp } = useAuth();
+    const { user, signUp } = useAuth();
     const { t } = useTranslation();
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -68,14 +68,14 @@ const SignUp = () => {
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        if (token) {
+        if (user) {
             if (redirect) {
                 navigate(redirect);
                 return;
             }
             navigate('/');
         }
-    }, [token]);
+    }, [user]);
 
     return (
         <form

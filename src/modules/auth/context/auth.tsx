@@ -24,7 +24,7 @@ export const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
     const [token, setTokenState] = useState<string | null>();
 
-    const [user, setUserState] = useState<User | null>(null);
+    const [user, setUserState] = useState<User | null>();
 
     const setToken = (token: string | null | undefined): void => {
         if (token !== undefined) {
@@ -69,34 +69,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }): React
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        supabase.auth.getSession().then(({ data }) => {
-            if (data.session) {
-                setUser(data.session.user);
-                setToken(data.session.access_token);
-            } else {
-                setUser(null);
-                setToken(null);
+        const getSession = async () => {
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
+            setUser(user ?? null);
+
+            supabase.auth.startAutoRefresh();
+        };
+
+        getSession();
+
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event !== "INITIAL_SESSION") {
+                setUser(session?.user ?? null);
             }
         });
 
-        supabase.auth.onAuthStateChange((event, session) => {
-            //console.log('[LS] -> src/modules/auth/context/auth.tsx:83 -> event: ', event);
-            switch (event) {
-                case 'INITIAL_SESSION':
-                case 'SIGNED_OUT':
-                case 'SIGNED_IN':
-                case 'USER_UPDATED':
-                case 'TOKEN_REFRESHED':
-                    if (session) {
-                        setUser(session.user);
-                        setToken(session.access_token);
-                    } else {
-                        setUser(null);
-                        setToken(null);
-                    }
-                    break;
-            }
-        });
+        return () => subscription?.unsubscribe();
     }, []);
 
     return (

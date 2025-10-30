@@ -17,7 +17,7 @@ const SignIn = () => {
     const [loading, setLoading] = useState(false);
     const [redirect, setRedirect] = useState<string | null>(null);
 
-    const { token, signIn } = useAuth();
+    const { user, signIn } = useAuth();
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -64,7 +64,7 @@ const SignIn = () => {
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        if (token) {
+        if (user) {
             // get url params
             const searchParams = new URLSearchParams(location.search);
             const redirectParam = searchParams.get('redirect');
@@ -74,10 +74,11 @@ const SignIn = () => {
                 navigate(redirectParam);
                 return;
             }
+            console.log('navigating to /');
             navigate('/');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
+    }, [user]);
 
     const isValidJoinPath = (path: string) => {
         const uuidv4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

@@ -301,22 +301,19 @@ export default function WorkingGroupCard({
                                         <MoreOutlined />
                                     </span>
                                 </DropdownTrigger>
-                                <DropdownMenu aria-label="Organization actions">
-
-                                    {
-                                        (workingGroup.open || workingGroup.is_creator) && (
-                                            <DropdownItem
-                                                key="leave-option"
-                                                className="text-default-900 scale-120"
-                                                startContent={<UserOutlined />}
-                                                onPress={() => {
-                                                    navigate(`/${workingGroup.slug}/members`);
-                                                }}
-                                            >
-                                                {t('Members_label')}
-                                            </DropdownItem>
-                                        )
-                                    }
+                                <DropdownMenu aria-label="Working Group actions">
+                                    {workingGroup.open || workingGroup.is_creator ? (
+                                        <DropdownItem
+                                            key="leave-option"
+                                            className="text-default-900 scale-120"
+                                            startContent={<UserOutlined />}
+                                            onPress={() => {
+                                                navigate(`/${workingGroup.slug}/members`);
+                                            }}
+                                        >
+                                            {t('Members_label')}
+                                        </DropdownItem>
+                                    ) : null}
 
                                     {(workingGroup.is_creator || workingGroup.configure) && (
                                         <DropdownItem
